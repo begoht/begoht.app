@@ -3,10 +3,12 @@
   "appName": "front-driver",
   "webDir": "www",
   "bundledWebRuntime": false,
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    }
+  },
   "server": {
-    "url": "https://bego.com.ht/driver/",
-    "cleartext": false,
     "androidScheme": "https"
-
   }
 }
