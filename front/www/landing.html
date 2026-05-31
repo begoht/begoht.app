@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f6f8fb">
+  <title>BeGO</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --page: #f6f8fb;
+      --panel: #ffffff;
+      --ink: #101828;
+      --muted: #667085;
+      --line: #d8e1ea;
+      --brand: #0f766e;
+      --brand-dark: #0b5f59;
+      --road: #111827;
+      --gold: #c7902e;
+      --shadow: 0 22px 64px rgba(16, 24, 40, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      min-height: 100dvh;
+      font-family: Inter, "Segoe UI", system-ui, -apple-system, sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(135deg, rgba(15, 118, 110, 0.12), transparent 34%),
+        linear-gradient(315deg, rgba(199, 144, 46, 0.14), transparent 30%),
+        var(--page);
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .entry-shell {
+      width: min(1040px, 100%);
+      min-height: 620px;
+      display: grid;
+      grid-template-columns: minmax(300px, 0.95fr) minmax(360px, 1.05fr);
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .brand-panel {
+      background:
+        linear-gradient(160deg, rgba(17, 24, 39, 0.98), rgba(15, 118, 110, 0.96)),
+        var(--road);
+      color: #ffffff;
+      padding: 38px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 30px;
+    }
+
+    .brand-mark {
+      width: fit-content;
+      min-height: 50px;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 14px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      font-weight: 950;
+    }
+
+    .brand-mark img {
+      width: 34px;
+      height: 34px;
+      object-fit: cover;
+      border-radius: 8px;
+      background: #ffffff;
+    }
+
+    .brand-copy {
+      display: grid;
+      gap: 14px;
+    }
+
+    .eyebrow {
+      color: #d8b36d;
+      font-size: 12px;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .brand-copy h1 {
+      max-width: 11ch;
+      font-size: clamp(40px, 5vw, 60px);
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .brand-copy p {
+      max-width: 35ch;
+      color: #d8e2ef;
+      line-height: 1.6;
+      font-size: 15px;
+    }
+
+    .brand-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .brand-metrics div {
+      padding: 14px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .brand-metrics strong,
+    .brand-metrics span {
+      display: block;
+    }
+
+    .brand-metrics strong {
+      font-size: 18px;
+    }
+
+    .brand-metrics span {
+      margin-top: 4px;
+      color: #c7d2df;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .entry-panel {
+      padding: 42px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 24px;
+    }
+
+    .entry-head {
+      display: grid;
+      gap: 8px;
+    }
+
+    .entry-head h2 {
+      font-size: clamp(30px, 4vw, 38px);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .entry-head p {
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .entry-actions {
+      display: grid;
+      gap: 12px;
+    }
+
+    .entry-card {
+      min-height: 92px;
+      display: grid;
+      grid-template-columns: 52px 1fr auto;
+      align-items: center;
+      gap: 14px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfe;
+      color: var(--ink);
+      text-decoration: none;
+      transition: border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .entry-card:hover {
+      border-color: var(--brand);
+      transform: translateY(-1px);
+      box-shadow: 0 14px 26px rgba(15, 118, 110, 0.12);
+    }
+
+    .entry-icon {
+      width: 52px;
+      height: 52px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: #e7f7f4;
+      color: var(--brand);
+      font-weight: 950;
+    }
+
+    .entry-card.driver .entry-icon {
+      background: #fff6e5;
+      color: #9a6417;
+    }
+
+    .entry-card strong {
+      display: block;
+      font-size: 17px;
+    }
+
+    .entry-card span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .entry-arrow {
+      color: var(--brand);
+      font-size: 22px;
+      font-weight: 900;
+    }
+
+    .entry-note {
+      padding: 12px;
+      border-radius: 8px;
+      background: #eef3f7;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    @media (max-width: 820px) {
+      body {
+        padding: 0;
+        place-items: stretch;
+      }
+
+      .entry-shell {
+        min-height: 100dvh;
+        grid-template-columns: 1fr;
+        border: 0;
+        border-radius: 0;
+      }
+
+      .brand-panel {
+        min-height: 250px;
+        padding: 26px 22px;
+      }
+
+      .brand-copy h1 {
+        max-width: 12ch;
+        font-size: 36px;
+      }
+
+      .brand-copy p {
+        font-size: 14px;
+      }
+
+      .brand-metrics {
+        display: none;
+      }
+
+      .entry-panel {
+        justify-content: flex-start;
+        padding: 30px 20px 36px;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .brand-panel {
+        min-height: 220px;
+      }
+
+      .brand-copy h1 {
+        font-size: 32px;
+      }
+
+      .entry-panel {
+        padding-inline: 16px;
+      }
+
+      .entry-card {
+        grid-template-columns: 46px 1fr;
+      }
+
+      .entry-icon {
+        width: 46px;
+        height: 46px;
+      }
+
+      .entry-arrow {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="entry-shell">
+    <section class="brand-panel" aria-label="BeGO">
+      <div class="brand-mark">
+        <img src="/assets/logo_primcial.png" alt="">
+        <span>BeGO</span>
+      </div>
+
+      <div class="brand-copy">
+        <p class="eyebrow">Entrada oficial</p>
+        <h1>Elige como quieres entrar.</h1>
+        <p>La misma plataforma para pedir viajes o trabajar como motorista.</p>
+      </div>
+
+      <div class="brand-metrics" aria-hidden="true">
+        <div>
+          <strong>GPS</strong>
+          <span>En vivo</span>
+        </div>
+        <div>
+          <strong>24/7</strong>
+          <span>Activo</span>
+        </div>
+        <div>
+          <strong>PIN</strong>
+          <span>Seguro</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="entry-panel">
+      <div class="entry-head">
+        <p class="eyebrow">bego.com.ht</p>
+        <h2>Acceso BeGO</h2>
+        <p>Selecciona tu perfil para abrir la experiencia correcta.</p>
+      </div>
+
+      <div class="entry-actions">
+        <a class="entry-card passenger" href="/registro.html">
+          <span class="entry-icon">P</span>
+          <span>
+            <strong>Pasajero</strong>
+            <span>Pedir viaje, gestionar pagos y ver tu cuenta.</span>
+          </span>
+          <span class="entry-arrow" aria-hidden="true">›</span>
+        </a>
+
+        <a class="entry-card driver" href="/driver/login.html">
+          <span class="entry-icon">M</span>
+          <span>
+            <strong>Motorista</strong>
+            <span>Entrar al panel, activar disponibilidad y recibir viajes.</span>
+          </span>
+          <span class="entry-arrow" aria-hidden="true">›</span>
+        </a>
+      </div>
+
+      <p class="entry-note">Si ya tienes la app instalada, puedes seguir usandola normalmente.</p>
+    </section>
+  </main>
+</body>
+</html>

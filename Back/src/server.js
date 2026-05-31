@@ -124,15 +124,15 @@ app.get("/healthz", (req, res) => {
 const driverPath = path.resolve(__dirname, "../../front-driver/www");
 const pasajeroPath = path.resolve(__dirname, "../../front/www");
 
+app.get("/", (req, res) => {
+  res.sendFile(path.join(pasajeroPath, "landing.html"));
+});
+
 app.use("/driver", express.static(driverPath));
 app.use(express.static(pasajeroPath));
 
 app.get("/driver/*", (req, res) => {
   res.sendFile(path.join(driverPath, "index.html"));
-});
-
-app.get("/", (req, res) => {
-  res.sendFile(path.join(pasajeroPath, "index.html"));
 });
 
 // ============================
