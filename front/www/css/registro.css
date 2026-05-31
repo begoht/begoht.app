@@ -403,6 +403,73 @@ select:focus {
   accent-color: var(--brand);
 }
 
+.download-block,
+.social-block {
+  display: grid;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.download-title,
+.social-title {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 900;
+  text-align: center;
+}
+
+.download-links,
+.social-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.download-link,
+.social-link {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.download-link {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #ffffff;
+}
+
+.download-link.driver {
+  background: #111827;
+  border-color: #111827;
+}
+
+.download-link span,
+.social-link span {
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: #eef3f7;
+  color: var(--brand);
+  font-size: 10px;
+}
+
+.download-link span {
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+}
+
 @media (max-width: 820px) {
   .auth-page {
     padding: 0;

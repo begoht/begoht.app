@@ -235,6 +235,70 @@
       line-height: 1.45;
     }
 
+    .download-block,
+    .social-block {
+      display: grid;
+      gap: 10px;
+    }
+
+    .download-title,
+    .social-title {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .download-links,
+    .social-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .download-link,
+    .social-link {
+      min-height: 38px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #ffffff;
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .download-link {
+      background: var(--brand);
+      color: #ffffff;
+      border-color: var(--brand);
+    }
+
+    .download-link.driver {
+      background: var(--road);
+      border-color: var(--road);
+    }
+
+    .download-link span,
+    .social-link span {
+      width: 22px;
+      height: 22px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: #eef3f7;
+      color: var(--brand);
+      font-size: 11px;
+    }
+
+    .download-link span {
+      background: rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+    }
+
     @media (max-width: 820px) {
       body {
         padding: 0;
@@ -358,6 +422,33 @@
       </div>
 
       <p class="entry-note">Si ya tienes la app instalada, puedes seguir usandola normalmente.</p>
+
+      <div class="download-block">
+        <p class="download-title">Descargar app Android</p>
+        <div class="download-links">
+          <a class="download-link" href="/download/bego-pasajero.apk" download>
+            <span>↓</span> App pasajero
+          </a>
+          <a class="download-link driver" href="/download/bego-motorista.apk" download>
+            <span>↓</span> App motorista
+          </a>
+        </div>
+      </div>
+
+      <div class="social-block">
+        <p class="social-title">Redes sociales oficiales</p>
+        <div class="social-links">
+          <a class="social-link" href="https://www.facebook.com/search/top?q=bego%20haiti" target="_blank" rel="noopener">
+            <span>f</span> BeGO Haiti
+          </a>
+          <a class="social-link" href="https://www.instagram.com/bego.haiti" target="_blank" rel="noopener">
+            <span>IG</span> @bego.haiti
+          </a>
+          <a class="social-link" href="https://www.tiktok.com/@bego.ht" target="_blank" rel="noopener">
+            <span>TT</span> @bego.ht
+          </a>
+        </div>
+      </div>
     </section>
   </main>
 </body>

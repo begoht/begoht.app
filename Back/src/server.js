@@ -123,6 +123,7 @@ app.get("/healthz", (req, res) => {
 
 const driverPath = path.resolve(__dirname, "../../front-driver/www");
 const pasajeroPath = path.resolve(__dirname, "../../front/www");
+const downloadsPath = path.resolve(__dirname, "../../downloads");
 
 app.get("/", (req, res) => {
   res.sendFile(path.join(pasajeroPath, "landing.html"));
@@ -130,6 +131,20 @@ app.get("/", (req, res) => {
 
 app.use("/driver", express.static(driverPath));
 app.use(express.static(pasajeroPath));
+
+app.get("/download/:apk", (req, res) => {
+  const allowed = {
+    "bego-pasajero.apk": "bego-pasajero.apk",
+    "bego-motorista.apk": "bego-motorista.apk"
+  };
+  const fileName = allowed[req.params.apk];
+
+  if (!fileName) {
+    return res.status(404).send("Archivo no encontrado");
+  }
+
+  res.download(path.join(downloadsPath, fileName), fileName);
+});
 
 app.get("/driver/*", (req, res) => {
   res.sendFile(path.join(driverPath, "index.html"));
