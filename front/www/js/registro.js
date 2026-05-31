@@ -11,6 +11,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const registroBox = document.querySelector(".registro");
   const loginBox = document.querySelector(".login");
+  const authPage = document.querySelector(".auth-page");
+  const tabLogin = document.querySelector(".tab-login");
+  const tabRegister = document.querySelector(".tab-register");
 
   const irLogin = document.getElementById("irLogin");
   const irRegistro = document.getElementById("irRegistro");
@@ -45,6 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const loginTelefono = document.getElementById("loginTelefono");
   const loginPassword = document.getElementById("loginPassword");
   const msgLogin = document.getElementById("msgLogin");
+  setAuthMode("login");
 
   // =============================
   // UTILIDADES MENSAJES
@@ -66,25 +70,35 @@ document.addEventListener("DOMContentLoaded", () => {
   // CAMBIO ENTRE LOGIN / REGISTRO
   // =============================
 
-  irRegistro?.addEventListener("click", () => {
+  function setAuthMode(mode) {
+    authPage?.setAttribute("data-mode", mode);
+  }
+
+  function showRegistro() {
     loginBox?.classList.remove("active");
     registroBox?.classList.add("active");
     slider.style.transform = "translateX(0%)";
+    setAuthMode("registro");
     limpiarMsg(msgRegistro);
-  });
+  }
 
-  irLogin?.addEventListener("click", () => {
+  function showLogin() {
     registroBox?.classList.remove("active");
     loginBox?.classList.add("active");
     slider.style.transform = "translateX(0%)";
+    setAuthMode("login");
     limpiarMsg(msgRegistro);
-  });
+    limpiarMsg(msgLogin);
+  }
+
+  irRegistro?.addEventListener("click", showRegistro);
+  tabRegister?.addEventListener("click", showRegistro);
+
+  irLogin?.addEventListener("click", showLogin);
+  tabLogin?.addEventListener("click", showLogin);
 
   volverLogin?.addEventListener("click", () => {
-    registroBox?.classList.remove("active");
-    loginBox?.classList.add("active");
-    slider.style.transform = "translateX(0%)";
-    limpiarMsg(msgRegistro);
+    showLogin();
   });
 
   // =============================
@@ -110,7 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    slider.style.transform = "translateX(-100%)";
+    slider.style.transform = "translateX(-50%)";
   });
 
   // =============================

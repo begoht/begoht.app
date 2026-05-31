@@ -1,97 +1,152 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="theme-color" content="#0b0c18">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BeGO - Acceso</title>
-
-<link rel="stylesheet" href="./css/registro.css">
+  <meta charset="UTF-8">
+  <meta name="theme-color" content="#f6f8fb">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BeGO - Acceso pasajero</title>
+  <link rel="stylesheet" href="./css/registro.css">
 </head>
 <body>
-
-<div class="app-wrapper">
-
-  <div class="auth-container">
-
-    <!-- ================= LOGIN ================= -->
-    <div class="auth-box login active">
-
-      <div class="logo">BeGO</div>
-      <h2>Iniciar Sesión</h2>
-
-      <input type="tel" id="loginTelefono" placeholder="Teléfono">
-      <input type="password" id="loginPassword" placeholder="Contraseña">
-
-      <button id="btnLogin">Ingresar</button>
-      <button id="btnHuella" class="btn-huella" type="button">Ingresar con huella</button>
-      <div id="msgLogin" class="msg"></div>
-
-      <p class="switch">
-        ¿No tienes cuenta? <a id="irRegistro">Regístrate</a>
-      </p>
-
-    </div>
-
-    <!-- ================= REGISTRO ================= -->
-    <div class="auth-box registro">
-
-      <div class="register-slider">
-
-        <!-- PASO 1 -->
-        <div class="register-step step-1">
-
-          <div class="logo">BeGO</div>
-          <h2>Crear Cuenta</h2>
-
-          <input type="text" id="nombre" placeholder="Nombre">
-          <input type="text" id="apellido" placeholder="Apellido">
-          <input type="tel" id="telefono" placeholder="Teléfono">
-          <input type="email" id="email" placeholder="Email (opcional)">
-
-          <button id="btnNext">Continuar</button>
-
-          <p class="switch">
-            ¿Ya tienes cuenta? <a id="volverLogin">Inicia sesión</a>
-          </p>
-
+  <main class="auth-page">
+    <section class="auth-shell" aria-label="Acceso BeGO">
+      <aside class="auth-brand">
+        <div class="brand-mark" aria-hidden="true">
+          <span>BeGO</span>
         </div>
 
-        <!-- PASO 2 -->
-        <div class="register-step step-2">
-
-          <h2>Seguridad</h2>
-
-          <label class="rol" for="rol">Tipo de usuario</label>
-          <select id="rol">
-            <option value="pasajero">Pasajero</option>
-            <option value="motorista">Motorista</option>
-          </select>
-
-          <input type="password" id="password" placeholder="Contraseña">
-          <input type="password" id="confirmPassword" placeholder="Confirmar contraseña">
-
-          <label class="check">
-            <input type="checkbox" id="terminos">
-            Acepto términos y condiciones
-          </label>
-
-          <button id="btnRegistro">Crear Cuenta</button>
-          <button type="button" class="secondary" id="btnBack">Atrás</button>
-
-          <!-- UN SOLO MENSAJE PARA TODO EL REGISTRO -->
-          <div id="msgRegistro" class="msg"></div>
-
+        <div class="brand-copy">
+          <p class="eyebrow">Pasajeros BeGO</p>
+          <h1>Tu viaje empieza con una cuenta segura.</h1>
+          <p>Entra rapido, revisa tu perfil y pide tu motorista cuando estes listo.</p>
         </div>
 
-      </div>
-    </div>
+        <div class="brand-metrics" aria-hidden="true">
+          <div>
+            <strong>24/7</strong>
+            <span>Disponible</span>
+          </div>
+          <div>
+            <strong>GPS</strong>
+            <span>En vivo</span>
+          </div>
+          <div>
+            <strong>PIN</strong>
+            <span>Seguro</span>
+          </div>
+        </div>
+      </aside>
 
-  </div>
+      <section class="auth-panel">
+        <div class="auth-topline">
+          <div>
+            <span class="panel-kicker">Cuenta pasajero</span>
+            <h2>Bienvenido a BeGO</h2>
+          </div>
+          <span class="secure-pill">Conexion segura</span>
+        </div>
 
-</div>
+        <div class="auth-tabs">
+          <button class="tab-pill tab-login" type="button">Ingresar</button>
+          <button class="tab-pill tab-register" type="button">Crear cuenta</button>
+        </div>
 
-<script type="module" src="./js/registro.js"></script>
-<script type="module" src="./js/modules/huellas/huellas.login.js"></script>
+        <div class="auth-container">
+          <section class="auth-box login active" aria-label="Iniciar sesion">
+            <div class="form-heading">
+              <h3>Iniciar sesion</h3>
+              <p>Usa tu telefono o email registrado.</p>
+            </div>
+
+            <label class="field">
+              <span>Telefono o email</span>
+              <input type="tel" id="loginTelefono" placeholder="Ej: 8090000000" autocomplete="username">
+            </label>
+
+            <label class="field">
+              <span>Contrasena</span>
+              <input type="password" id="loginPassword" placeholder="Tu contrasena" autocomplete="current-password">
+            </label>
+
+            <button id="btnLogin" class="primary-action" type="button">Ingresar</button>
+            <button id="btnHuella" class="btn-huella" type="button">Ingresar con huella</button>
+            <div id="msgLogin" class="msg" role="status" aria-live="polite"></div>
+
+            <p class="switch">
+              No tienes cuenta? <a id="irRegistro">Registrate</a>
+            </p>
+          </section>
+
+          <section class="auth-box registro" aria-label="Crear cuenta">
+            <div class="register-slider">
+              <div class="register-step step-1">
+                <div class="form-heading">
+                  <h3>Crear cuenta</h3>
+                  <p>Datos basicos para identificarte en tus viajes.</p>
+                </div>
+
+                <label class="field">
+                  <span>Nombre</span>
+                  <input type="text" id="nombre" placeholder="Tu nombre" autocomplete="given-name">
+                </label>
+
+                <label class="field">
+                  <span>Apellido</span>
+                  <input type="text" id="apellido" placeholder="Tu apellido" autocomplete="family-name">
+                </label>
+
+                <label class="field">
+                  <span>Telefono</span>
+                  <input type="tel" id="telefono" placeholder="8090000000" autocomplete="tel">
+                </label>
+
+                <label class="field">
+                  <span>Email opcional</span>
+                  <input type="email" id="email" placeholder="nombre@email.com" autocomplete="email">
+                </label>
+
+                <input type="hidden" id="rol" value="pasajero">
+
+                <button id="btnNext" class="primary-action" type="button">Continuar</button>
+
+                <p class="switch">
+                  Ya tienes cuenta? <a id="volverLogin">Inicia sesion</a>
+                </p>
+              </div>
+
+              <div class="register-step step-2">
+                <div class="form-heading">
+                  <h3>Seguridad</h3>
+                  <p>Crea una contrasena fuerte para proteger tu cuenta.</p>
+                </div>
+
+                <label class="field">
+                  <span>Contrasena</span>
+                  <input type="password" id="password" placeholder="Minimo 8 caracteres" autocomplete="new-password">
+                </label>
+
+                <label class="field">
+                  <span>Confirmar contrasena</span>
+                  <input type="password" id="confirmPassword" placeholder="Repite tu contrasena" autocomplete="new-password">
+                </label>
+
+                <label class="check">
+                  <input type="checkbox" id="terminos">
+                  <span>Acepto terminos y condiciones</span>
+                </label>
+
+                <button id="btnRegistro" class="primary-action" type="button">Crear cuenta</button>
+                <button type="button" class="secondary-action" id="btnBack">Atras</button>
+                <div id="msgRegistro" class="msg" role="status" aria-live="polite"></div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script type="module" src="./js/registro.js"></script>
+  <script type="module" src="./js/modules/huellas/huellas.login.js"></script>
 </body>
 </html>
