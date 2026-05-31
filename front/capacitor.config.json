@@ -3,9 +3,12 @@
   "appName": "BeGO",
   "webDir": "www",
   "bundledWebRuntime": false,
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    }
+  },
   "server": {
-    "url": "https://bego.com.ht",
-    "cleartext": false,
     "androidScheme": "https"
   }
 }

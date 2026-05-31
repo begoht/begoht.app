@@ -3,36 +3,47 @@ export function renderCuenta() {
   <div class="css-cuenta">
     <main class="cuenta-page">
 
-      <!-- MENU RAPIDO -->
-      <section class="menu">
-
-        <button class="ripple" href="#/ayuda" data-link>
-          <i class="fa-solid fa-circle-question"></i> Ayuda
-        </button>
-
-        <button class="ripple" href="#/seguridad" data-link>
-          <i class="fa-solid fa-shield-halved"></i> Seguridad
-        </button>
-
-        <button class="ripple" href="#/wallet" data-link>
-          <i class="fa-solid fa-wallet"></i> Billetera
-        </button>
-
-        <button class="ripple" href="#/soporte" data-link>
-          <i class="fa-solid fa-headset"></i> Soporte
-        </button>
-
+      <section class="cuenta-hero">
+        <div class="cuenta-avatar" id="cuentaIniciales">B</div>
+        <div class="cuenta-identidad">
+          <span>Cuenta personal</span>
+          <strong id="nombreCuentaUsuario">Invitado</strong>
+          <p id="aliasCuentaUsuario">Perfil BeGO</p>
+        </div>
+        <a class="cuenta-edit ripple" href="#/configuracion" data-link aria-label="Editar cuenta" title="Editar cuenta">
+          <i class="fa-solid fa-pen"></i>
+        </a>
       </section>
 
-      <!-- PROMOS -->
-      <section class="promos-cuenta">
+      <section class="menu">
+        <a class="ripple" href="#/ayuda" data-link>
+          <i class="fa-solid fa-circle-question"></i>
+          <span>Ayuda</span>
+        </a>
 
+        <a class="ripple" href="#/seguridad" data-link>
+          <i class="fa-solid fa-shield-halved"></i>
+          <span>Seguridad</span>
+        </a>
+
+        <a class="ripple" href="#/wallet" data-link>
+          <i class="fa-solid fa-wallet"></i>
+          <span>Billetera</span>
+        </a>
+
+        <a class="ripple" href="#/soporte" data-link>
+          <i class="fa-solid fa-headset"></i>
+          <span>Soporte</span>
+        </a>
+      </section>
+
+      <section class="promos-cuenta">
         <a class="ripple promo" href="#/promos" data-link>
           <div class="promo-izq">
             <i class="fa-solid fa-gift"></i>
             <div>
-              <span>Probá BeGO sin costo</span>
-              <p>Desbloqueá un 15% en créditos</p>
+              <span>Proba BeGO sin costo</span>
+              <p>Desbloquea un 15% en creditos</p>
             </div>
           </div>
           <i class="fa-solid fa-chevron-right"></i>
@@ -43,54 +54,47 @@ export function renderCuenta() {
             <i class="fa-solid fa-shield-halved"></i>
             <div>
               <span>Centro de Seguridad</span>
-              <p>Hacé tus viajes más seguros</p>
+              <p>Viajes mas seguros y acompanados</p>
             </div>
           </div>
           <i class="fa-solid fa-chevron-right"></i>
         </a>
-
       </section>
 
-      <!-- OPCIONES -->
       <section class="opciones-cuenta">
-
-        <!-- WALLET -->
         <a class="ripple opcion" href="#/wallet" data-link>
           <div class="opcion-izq">
             <i class="fa-solid fa-wallet"></i>
             <div>
               <span>Wallet BeGO</span>
-              <p id="saldoWallet">Cargando saldo…</p>
+              <p id="saldoWallet">Cargando saldo...</p>
             </div>
           </div>
           <i class="fa-solid fa-chevron-right"></i>
         </a>
 
-        <!-- FAMILIA -->
         <a class="ripple opcion" id="btnFamilia" data-pro="true" href="#/familia" data-link>
           <div class="opcion-izq">
             <i class="fa-solid fa-people-roof"></i>
             <div>
               <span>Familia PRO</span>
-              <p>Administrá cuentas familiares</p>
+              <p>Administra cuentas familiares</p>
             </div>
           </div>
           <i class="fa-solid fa-chevron-right"></i>
         </a>
 
-        <!-- CONFIG -->
         <a class="ripple opcion" href="#/configuracion" data-link>
           <div class="opcion-izq">
             <i class="fa-solid fa-gear"></i>
             <div>
-              <span>Configuración</span>
-              <p>Personalizá tu experiencia</p>
+              <span>Configuracion</span>
+              <p>Personaliza tu experiencia</p>
             </div>
           </div>
           <i class="fa-solid fa-chevron-right"></i>
         </a>
 
-        <!-- MODO -->
         <div class="ripple opcion" id="modoToggleBtn">
           <div class="opcion-izq">
             <i class="fa-solid fa-eye"></i>
@@ -105,28 +109,27 @@ export function renderCuenta() {
           </label>
         </div>
 
-        <!-- GANANCIAS -->
         <a class="ripple opcion" href="#/ganancias" data-link id="btnGanancias" data-pro="true">
           <div class="opcion-izq">
             <i class="fa-solid fa-money-bill-trend-up"></i>
             <div>
               <span>Generar ganancias</span>
-              <p>Ganá dinero con BeGO</p>
+              <p>Gana dinero con BeGO</p>
             </div>
           </div>
           <i class="fa-solid fa-chevron-right"></i>
         </a>
 
-        <!-- LOGOUT -->
         <a class="ripple opcion" id="logoutBtn" href="#">
           <div class="opcion-izq">
             <i class="fa-solid fa-right-from-bracket"></i>
             <div>
-              <span>Cerrar sesión</span>
+              <span>Cerrar sesion</span>
+              <p>Salir de este dispositivo</p>
             </div>
           </div>
+          <i class="fa-solid fa-chevron-right"></i>
         </a>
-
       </section>
 
     </main>

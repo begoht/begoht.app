@@ -17,7 +17,7 @@ exports.register = async (req, res) => {
   try {
     session.startTransaction();
 
-    const { nombre, telefono, email, password } = req.body;
+    const { nombre, apellido, telefono, email, password } = req.body;
 
     const existe = await User.findOne({ telefono }).session(session);
     if (existe) {
@@ -30,6 +30,7 @@ exports.register = async (req, res) => {
 
     const user = new User({
       nombre,
+      apellido: apellido || "",
       telefono,
       email: email || null,
       password: hash,
@@ -64,7 +65,9 @@ exports.register = async (req, res) => {
       user: {
         id: user._id,
         nombre: user.nombre,
+        apellido: user.apellido || "",
         rol: user.rol,
+        alias: user.alias || "",
       },
     });
       
@@ -133,7 +136,9 @@ exports.login = async (req, res) => {
       user: {
         id: user._id,
         nombre: user.nombre,
+        apellido: user.apellido || "",
         rol: user.rol,
+        alias: user.alias || "",
       },
     });
   } catch (err) {
@@ -182,7 +187,9 @@ exports.loginMotorista = async (req, res) => {
       user: {
         id: user._id,
         nombre: user.nombre,
+        apellido: user.apellido || "",
         rol: user.rol,
+        alias: user.alias || "",
       },
     });
   } catch (err) {
@@ -225,7 +232,9 @@ exports.refresh = async (req, res) => {
       user: {
         id: user._id,
         nombre: user.nombre,
+        apellido: user.apellido || "",
         rol: user.rol,
+        alias: user.alias || "",
       },
     });
   } catch (err) {

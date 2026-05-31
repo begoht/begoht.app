@@ -1,129 +1,251 @@
 /* =========================================
-   👤 CUENTA SPA WRAPPER (ESTILO NEUMÓRFICO)
+   Cuenta SPA - premium compact
    ========================================= */
 
-.css-cuenta .opciones-cuenta {
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px; /* Un poco más de aire para las sombras */
+.css-cuenta {
+  width: min(100%, 560px);
+  margin: 0 auto;
+  padding: 8px 0 calc(var(--footer-height, 76px) + env(safe-area-inset-bottom) + 24px);
 }
 
-.css-cuenta .opciones-cuenta button,
-.css-cuenta .opciones-cuenta a,
-.css-cuenta .opciones-cuenta .opcion {
+.css-cuenta .cuenta-page {
+  display: grid;
+  gap: 14px;
+}
+
+.css-cuenta .cuenta-hero {
+  margin: 8px 16px 2px;
+  padding: 14px;
+  min-height: 86px;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--text-main);
+  background:
+    radial-gradient(circle at 16% 0%, rgba(255, 122, 0, 0.14), transparent 32%),
+    linear-gradient(180deg, rgba(22, 24, 31, 0.98), rgba(7, 9, 16, 0.98));
+  border: 1px solid rgba(255, 255, 255, 0.055);
+  box-shadow:
+    10px 14px 28px rgba(0, 0, 0, 0.56),
+    inset 0 1px 1px rgba(255, 255, 255, 0.08),
+    inset 0 -12px 18px rgba(0, 0, 0, 0.36);
+}
+
+.css-cuenta .cuenta-avatar,
+.css-cuenta .cuenta-edit {
+  width: 48px;
+  height: 48px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+}
+
+.css-cuenta .cuenta-avatar {
+  color: #fff;
+  font-weight: 900;
+  letter-spacing: 0;
+  background:
+    radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.28), transparent 18%),
+    linear-gradient(180deg, #ff8b1a, #d94d00);
+  box-shadow:
+    0 10px 22px rgba(255, 106, 0, 0.2),
+    inset 0 1px 1px rgba(255, 255, 255, 0.2);
+}
+
+.css-cuenta .cuenta-identidad {
+  min-width: 0;
+  flex: 1 1 auto;
+  display: grid;
+  gap: 3px;
+}
+
+.css-cuenta .cuenta-identidad span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.css-cuenta .cuenta-identidad strong {
+  color: #f8fafc;
+  font-size: 1.18rem;
+  font-weight: 900;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.css-cuenta .cuenta-identidad p {
+  margin: 0;
+  color: var(--secondary);
+  font-size: 0.82rem;
+  font-weight: 750;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.css-cuenta .cuenta-edit {
+  color: #d5d7dc;
+  text-decoration: none;
+  background:
+    radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.13), transparent 18%),
+    linear-gradient(180deg, rgba(25, 27, 33, 0.98), rgba(10, 11, 15, 0.98));
+  box-shadow:
+    0 10px 22px rgba(0, 0, 0, 0.34),
+    inset 0 1px 1px rgba(255, 255, 255, 0.08),
+    inset 0 -7px 12px rgba(0, 0, 0, 0.34);
+}
+
+.css-cuenta .menu {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  padding: 0 16px;
+  margin-top: 0;
+}
+
+.css-cuenta .menu a {
+  min-width: 0;
+  min-height: 74px;
+  padding: 12px 6px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  gap: 7px;
+  color: var(--text-main);
+  text-align: center;
+  text-decoration: none;
+  font-size: 0.74rem;
+  font-weight: 800;
   background: var(--bg-card);
-  border: none; /* Adiós a los bordes sólidos */
+  border: 0;
+  box-shadow:
+    6px 6px 12px rgba(0, 0, 0, 0.58),
+    -3px -3px 10px rgba(255, 255, 255, 0.02);
+}
+
+.css-cuenta .menu a i {
+  font-size: 20px;
+  color: var(--secondary);
+}
+
+.css-cuenta .promos-cuenta,
+.css-cuenta .opciones-cuenta {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 16px;
+}
+
+.css-cuenta .opciones-cuenta {
+  padding-bottom: 4px;
+}
+
+.css-cuenta .promo,
+.css-cuenta .opcion {
+  min-height: 72px;
+  padding: 15px;
   border-radius: 20px;
-  padding: 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
   color: var(--text-main);
   text-decoration: none;
   cursor: pointer;
   position: relative;
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-
-  /* Efecto de botón físico salido */
-  box-shadow: 
-    6px 6px 12px rgba(0, 0, 0, 0.6), 
+  background: var(--bg-card);
+  border: 0;
+  box-shadow:
+    6px 6px 12px rgba(0, 0, 0, 0.6),
     -3px -3px 10px rgba(255, 255, 255, 0.02);
-}
-
-/* IZQUIERDA (Icono + Textos) */
-.css-cuenta .opcion-izq {
-  display: flex;
-  gap: 14px;
-  align-items: center;
-}
-
-.css-cuenta .opcion-izq i {
-  font-size: 22px;
-  color: var(--secondary);
-  min-width: 28px;
-  display: flex;
-  justify-content: center;
-  transition: color 0.3s ease;
-}
-
-.css-cuenta .opcion-izq span {
-  font-weight: 700;
-  font-size: 14px;
-  display: block;
-  letter-spacing: 0.3px;
-}
-
-.css-cuenta .opcion-izq p {
-  font-size: 12px;
-  color: var(--muted);
-  margin-top: 2px;
-}
-
-/* Flecha de la derecha */
-.css-cuenta .opciones-cuenta button > i,
-.css-cuenta .opciones-cuenta a > i {
-  color: var(--muted);
-  font-size: 12px;
-  opacity: 0.5;
-}
-
-/* =========================================
-   🎁 SECCIÓN PROMOS (DESTAQUE FÍSICO)
-   ========================================= */
-.css-cuenta .promos-cuenta {
-  padding: 0 16px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+  transition: transform 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
 }
 
 .css-cuenta .promo {
-  background: var(--bg-card); /* Mismo fondo para mimetizarse */
-  border: none;
-  border-radius: 22px;
-  padding: 18px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-
-  /* Elevación ligeramente mayor para las promos */
-  box-shadow: 
-    8px 8px 16px rgba(0, 0, 0, 0.7), 
+  background:
+    radial-gradient(circle at 12% 0%, rgba(56, 189, 248, 0.09), transparent 34%),
+    var(--bg-card);
+  box-shadow:
+    8px 8px 16px rgba(0, 0, 0, 0.66),
     -4px -4px 12px rgba(255, 255, 255, 0.03);
 }
 
+.css-cuenta .opcion-izq,
 .css-cuenta .promo-izq {
+  min-width: 0;
   display: flex;
   gap: 14px;
   align-items: center;
 }
 
-/* =========================================
-   ✨ INTERACCIÓN (EL EFECTO "HUNDIDO")
-   ========================================= */
-.css-cuenta .opciones-cuenta button:active,
-.css-cuenta .opciones-cuenta a:active,
-.css-cuenta .promo:active {
+.css-cuenta .opcion-izq i,
+.css-cuenta .promo-izq i {
+  width: 30px;
+  min-width: 30px;
+  display: flex;
+  justify-content: center;
+  color: var(--secondary);
+  font-size: 21px;
+  transition: color 0.18s ease;
+}
+
+.css-cuenta .opcion-izq div,
+.css-cuenta .promo-izq div {
+  min-width: 0;
+}
+
+.css-cuenta .opcion-izq span,
+.css-cuenta .promo-izq span {
+  display: block;
+  color: #f8fafc;
+  font-size: 0.88rem;
+  font-weight: 850;
+  letter-spacing: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.css-cuenta .opcion-izq p,
+.css-cuenta .promo-izq p {
+  margin: 3px 0 0;
+  color: var(--muted);
+  font-size: 0.76rem;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.css-cuenta .promo > i,
+.css-cuenta .opcion > i {
+  color: var(--muted);
+  font-size: 12px;
+  opacity: 0.55;
+  flex: 0 0 auto;
+}
+
+.css-cuenta .menu a:active,
+.css-cuenta .promo:active,
+.css-cuenta .opcion:active,
+.css-cuenta .cuenta-edit:active {
   transform: scale(0.97);
   color: var(--orange);
-  
-  /* Cambio a sombra interior (Inset) */
-  box-shadow: 
-    inset 5px 5px 10px rgba(0, 0, 0, 0.8), 
+  box-shadow:
+    inset 5px 5px 10px rgba(0, 0, 0, 0.78),
     inset -3px -3px 10px rgba(255, 255, 255, 0.02);
 }
 
-.css-cuenta .opciones-cuenta button:active .opcion-izq i,
-.css-cuenta .opciones-cuenta a:active .opcion-izq i {
+.css-cuenta .menu a:active i,
+.css-cuenta .promo:active .promo-izq i,
+.css-cuenta .opcion:active .opcion-izq i {
   color: var(--orange);
 }
 
-/* =========================================
-   ⚙️ MODOS PRO / SIMPLE (VISIBILIDAD)
-   ========================================= */
 body.modo-simple [data-pro="true"] {
   display: none !important;
 }
@@ -132,11 +254,17 @@ body.modo-pro [data-simple="true"] {
   display: none !important;
 }
 
-/* Ajuste del menú rápido de la cuenta */
-.css-cuenta .menu button i {
-  display: block;
-  font-size: 20px;
-  margin-bottom: 8px;
-  color: var(--secondary);
-  transition: color 0.3s ease;
+@media (max-width: 360px) {
+  .css-cuenta .menu {
+    gap: 8px;
+  }
+
+  .css-cuenta .menu a {
+    min-height: 68px;
+    font-size: 0.68rem;
+  }
+
+  .css-cuenta .cuenta-hero {
+    padding: 12px;
+  }
 }

@@ -28,9 +28,9 @@ function getRouteMeta(route) {
 
 function renderAvatar() {
   return `
-    <div class="header-avatar ripple" id="avatarBtn" role="button" tabindex="0" aria-label="Cambiar foto de perfil" title="Cambiar foto" style="width:48px;height:48px;max-width:48px;max-height:48px;border-radius:50%;overflow:hidden;display:grid;place-items:center;flex:0 0 auto;">
-      <span id="avatarFallback" aria-hidden="true" style="display:grid;place-items:center;width:100%;height:100%;font-weight:850;color:#fff;background:linear-gradient(180deg,#ff8b1a,#d94d00);">B</span>
-      <img id="fotoPerfil" src="" alt="Foto de perfil" style="display:none;width:100%;height:100%;max-width:48px;max-height:48px;object-fit:cover;">
+    <div class="header-avatar ripple" id="avatarBtn" role="button" tabindex="0" aria-label="Cambiar foto de perfil" title="Cambiar foto">
+      <span id="avatarFallback" aria-hidden="true">B</span>
+      <img id="fotoPerfil" src="" alt="Foto de perfil">
       <span class="avatar-status" aria-hidden="true"></span>
       <input type="file" id="inputFoto" accept="image/*">
     </div>
@@ -48,6 +48,12 @@ function renderNotificationButton() {
 
 export function renderHeader(route) {
   const meta = getRouteMeta(route);
+  const statusPill = `
+    <div class="header-center-brand" aria-label="${meta.subtitle}">
+      <span class="brand-mark"><i class="fa-solid ${meta.icon}"></i></span>
+      <span>${meta.subtitle}</span>
+    </div>
+  `;
 
   if (route === "/") {
     return `
@@ -60,10 +66,7 @@ export function renderHeader(route) {
           </div>
         </div>
 
-        <div class="header-center-brand" aria-label="Estado de viaje">
-          <span class="brand-mark"><i class="fa-solid ${meta.icon}"></i></span>
-          <span>${meta.subtitle}</span>
-        </div>
+        ${statusPill}
 
         <div class="header-actions">
           <a href="#/wallet" data-link class="header-icon-btn ripple" aria-label="Wallet" title="Wallet">
@@ -86,6 +89,8 @@ export function renderHeader(route) {
           <strong>${meta.title}</strong>
         </div>
       </div>
+
+      ${statusPill}
 
       <div class="header-actions">
         ${renderNotificationButton()}

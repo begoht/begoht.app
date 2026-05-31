@@ -19,6 +19,12 @@ const UserSchema = new mongoose.Schema(
       trim: true,
     },
 
+    apellido: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
     telefono: {
       type: String,
       required: true,

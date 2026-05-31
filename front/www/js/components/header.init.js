@@ -7,6 +7,19 @@ function getStoredUser() {
   }
 }
 
+function getDisplayName(user) {
+  const firstName = String(user?.nombre || "Invitado").trim().split(/\s+/)[0] || "Invitado";
+  const lastName = String(user?.apellido || "").trim().split(/\s+/)[0];
+  const fallbackLastName = String(user?.nombre || "")
+    .trim()
+    .split(/\s+/)
+    .slice(1)
+    .join(" ");
+  const initial = (lastName || fallbackLastName).trim()[0];
+
+  return initial ? `${firstName} ${initial.toUpperCase()}.` : firstName;
+}
+
 function getInitials(name = "Invitado") {
   return encodeURIComponent(
     name
@@ -75,7 +88,7 @@ function bindAvatar(user) {
   const avatar = document.getElementById("avatarBtn");
   if (!foto || !input || !avatar) return;
 
-  const userName = user?.nombre || "Invitado";
+  const userName = getDisplayName(user);
   if (fallback) {
     fallback.textContent = decodeURIComponent(getInitials(userName)).slice(0, 2) || "B";
   }
@@ -124,7 +137,7 @@ export function initHeader() {
   const nombreEl = document.getElementById("nombreUsuario");
 
   if (nombreEl) {
-    nombreEl.textContent = user?.nombre || "Invitado";
+    nombreEl.textContent = getDisplayName(user);
   }
 
   bindAvatar(user);
