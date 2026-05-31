@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>BeGO Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17202a;
+      --muted: #687385;
+      --line: #dfe5ec;
+      --panel: #ffffff;
+      --soft: #f5f7fa;
+      --brand: #0f766e;
+      --brand-2: #2563eb;
+      --danger: #dc2626;
+      --warn: #b45309;
+      --ok: #15803d;
+      --shadow: 0 16px 42px rgba(20, 30, 45, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #eef2f6;
+      color: var(--ink);
+    }
+
+    .admin-shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+    }
+
+    .sidebar {
+      background: #111827;
+      color: #fff;
+      padding: 22px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 48px;
+    }
+
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: #0f766e;
+    }
+
+    .brand strong { display: block; font-size: 18px; }
+    .brand span { color: #aab3c2; font-size: 12px; }
+
+    .nav {
+      display: grid;
+      gap: 6px;
+    }
+
+    .nav button {
+      appearance: none;
+      border: 0;
+      border-radius: 8px;
+      padding: 12px 14px;
+      color: #cdd5e1;
+      background: transparent;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .nav button.active,
+    .nav button:hover {
+      background: rgba(255,255,255,0.09);
+      color: #fff;
+    }
+
+    .sidebar-foot {
+      margin-top: auto;
+      border-top: 1px solid rgba(255,255,255,0.12);
+      padding-top: 16px;
+      color: #aab3c2;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .main {
+      padding: 24px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .topbar {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px 18px;
+      box-shadow: var(--shadow);
+    }
+
+    h1, h2, h3, p { margin: 0; }
+    h1 { font-size: 24px; letter-spacing: 0; }
+    h2 { font-size: 16px; }
+    h3 { font-size: 14px; }
+    .muted { color: var(--muted); font-size: 13px; }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .input, .select {
+      border: 1px solid var(--line);
+      background: #fff;
+      min-height: 38px;
+      border-radius: 8px;
+      padding: 0 12px;
+      color: var(--ink);
+      font-weight: 600;
+      outline: none;
+    }
+
+    .btn {
+      border: 0;
+      min-height: 38px;
+      border-radius: 8px;
+      padding: 0 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: #fff;
+      background: #17202a;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .btn.secondary { background: #e7edf4; color: var(--ink); }
+    .btn.danger { background: var(--danger); }
+    .btn.good { background: var(--brand); }
+    .btn.small { min-height: 32px; font-size: 12px; padding: 0 10px; }
+
+    .section {
+      display: none;
+      gap: 18px;
+    }
+
+    .section.active { display: grid; }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(170px, 1fr));
+      gap: 14px;
+    }
+
+    .metric,
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .metric {
+      padding: 16px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .metric-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .metric i {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: #eaf5f4;
+      color: var(--brand);
+    }
+
+    .metric strong {
+      font-size: 24px;
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(360px, 0.75fr);
+      gap: 18px;
+    }
+
+    .panel-head {
+      padding: 16px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .panel-body { padding: 16px; }
+    .chart-box { height: 250px; }
+
+    .table-wrap {
+      width: 100%;
+      overflow: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 760px;
+    }
+
+    th, td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: middle;
+      font-size: 13px;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0;
+      background: #f9fbfd;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 11px;
+      font-weight: 800;
+      background: #edf2f7;
+      color: #475569;
+      white-space: nowrap;
+    }
+
+    .status.finalizado, .status.pagado, .status.activo { background: #dcfce7; color: var(--ok); }
+    .status.en_curso, .status.asignado, .status.buscando { background: #dbeafe; color: var(--brand-2); }
+    .status.cancelado, .status.bloqueado { background: #fee2e2; color: var(--danger); }
+    .status.deuda { background: #ffedd5; color: var(--warn); }
+
+    .money { font-weight: 800; white-space: nowrap; }
+    .money.good { color: var(--ok); }
+    .money.bad { color: var(--danger); }
+    .money.warn { color: var(--warn); }
+
+    .split-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .empty {
+      min-height: 130px;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      background: #111827;
+      color: #fff;
+      padding: 12px 14px;
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      display: none;
+      z-index: 10;
+      max-width: 340px;
+    }
+
+    .toast.show { display: block; }
+
+    @media (max-width: 1100px) {
+      .admin-shell { grid-template-columns: 1fr; }
+      .sidebar {
+        height: auto;
+        position: static;
+      }
+      .nav { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 700px) {
+      .main { padding: 14px; }
+      .topbar { align-items: flex-start; flex-direction: column; }
+      .nav { grid-template-columns: 1fr 1fr; }
+      .metrics { grid-template-columns: 1fr; }
+      h1 { font-size: 21px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon"><i class="fa-solid fa-shield-halved"></i></div>
+        <div>
+          <strong>BeGO Admin</strong>
+          <span>Centro operativo</span>
+        </div>
+      </div>
+
+      <nav class="nav" aria-label="Secciones">
+        <button class="active" type="button" data-section-target="overview"><i class="fa-solid fa-chart-simple"></i>Resumen</button>
+        <button type="button" data-section-target="trips"><i class="fa-solid fa-route"></i>Viajes</button>
+        <button type="button" data-section-target="wallets"><i class="fa-solid fa-wallet"></i>Wallets</button>
+        <button type="button" data-section-target="users"><i class="fa-solid fa-users-gear"></i>Usuarios</button>
+      </nav>
+
+      <div class="sidebar-foot">
+        <strong id="adminName">Admin</strong><br />
+        <span id="lastSync">Sin sincronizar</span>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <h1>Operacion del sistema</h1>
+          <p class="muted">Viajes, pagos, deuda de comisiones y usuarios en tiempo real operativo.</p>
+        </div>
+        <div class="toolbar">
+          <input class="input" id="globalSearch" type="search" placeholder="Buscar nombre, telefono o viaje" />
+          <button class="btn good" id="refreshBtn" type="button"><i class="fa-solid fa-rotate"></i>Actualizar</button>
+        </div>
+      </header>
+
+      <section class="section active" id="section-overview">
+        <div class="metrics">
+          <article class="metric">
+            <div class="metric-top"><span>Viajes hoy</span><i class="fa-solid fa-motorcycle"></i></div>
+            <strong id="mTripsToday">0</strong>
+            <span class="muted">Solicitudes creadas</span>
+          </article>
+          <article class="metric">
+            <div class="metric-top"><span>Cobrado</span><i class="fa-solid fa-sack-dollar"></i></div>
+            <strong id="mCharged">0 G</strong>
+            <span class="muted">Viajes finalizados</span>
+          </article>
+          <article class="metric">
+            <div class="metric-top"><span>Comision</span><i class="fa-solid fa-scale-balanced"></i></div>
+            <strong id="mCommission">0 G</strong>
+            <span class="muted">Auditada por viaje</span>
+          </article>
+          <article class="metric">
+            <div class="metric-top"><span>Deuda motoristas</span><i class="fa-solid fa-file-invoice-dollar"></i></div>
+            <strong id="mDebt">0 G</strong>
+            <span class="muted">Saldo negativo por efectivo</span>
+          </article>
+        </div>
+
+        <div class="grid-2">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Tendencia 30 dias</h2>
+                <p class="muted">Viajes e ingresos diarios</p>
+              </div>
+            </div>
+            <div class="panel-body chart-box">
+              <canvas id="trendChart"></canvas>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Estado de viajes</h2>
+                <p class="muted">Distribucion actual</p>
+              </div>
+            </div>
+            <div class="panel-body chart-box">
+              <canvas id="stateChart"></canvas>
+            </div>
+          </section>
+        </div>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Viajes activos</h2>
+              <p class="muted">Seguimiento operativo</p>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Viaje</th><th>Estado</th><th>Pasajero</th><th>Motorista</th><th>Monto</th><th>Pago</th><th>Actualizado</th></tr>
+              </thead>
+              <tbody id="activeTripsRows"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <section class="section" id="section-trips">
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Viajes recientes</h2>
+              <p class="muted">Historial operativo y financiero</p>
+            </div>
+            <select class="select" id="tripStatusFilter">
+              <option value="todos">Todos</option>
+              <option value="buscando">Buscando</option>
+              <option value="asignado">Asignado</option>
+              <option value="en_curso">En curso</option>
+              <option value="finalizado">Finalizado</option>
+              <option value="cancelado">Cancelado</option>
+            </select>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Viaje</th><th>Estado</th><th>Pasajero</th><th>Motorista</th><th>Total</th><th>Motorista</th><th>Comision</th><th>Pago</th><th>Fecha</th></tr>
+              </thead>
+              <tbody id="tripRows"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <section class="section" id="section-wallets">
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Wallets</h2>
+              <p class="muted">Balances, saldo retenido y comisiones pendientes</p>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Usuario</th><th>Rol</th><th>Saldo</th><th>Retenido</th><th>Estado</th><th>Ultimo movimiento</th></tr>
+              </thead>
+              <tbody id="walletRows"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <section class="section" id="section-users">
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Usuarios</h2>
+              <p class="muted">Roles, bloqueo y verificacion</p>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Nombre</th><th>Contacto</th><th>Rol</th><th>Estado</th><th>Verificado</th><th>Alta</th><th>Acciones</th></tr>
+              </thead>
+              <tbody id="userRows"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const API_BASE = (location.hostname === "localhost" || location.hostname === "127.0.0.1")
+      ? "http://localhost:3000"
+      : window.location.origin;
+
+    const state = {
+      resumen: null,
+      usuarios: [],
+      viajes: [],
+      filtroViajes: "todos",
+      search: "",
+      charts: {}
+    };
+
+    document.addEventListener("DOMContentLoaded", () => {
+      protectAdmin();
+      bindUi();
+      loadAll();
+    });
+
+    function protectAdmin() {
+      const user = readUser();
+      const token = getToken();
+      if (!user || !token) return location.replace("../login.html");
+      if (user.rol !== "admin") {
+        alert("Acceso solo para administradores");
+        return location.replace("../index.html");
+      }
+      document.getElementById("adminName").textContent = user.nombre || user.alias || "Admin";
+    }
+
+    function bindUi() {
+      document.querySelectorAll("[data-section-target]").forEach((btn) => {
+        btn.addEventListener("click", () => setSection(btn.dataset.sectionTarget));
+      });
+
+      document.getElementById("refreshBtn").addEventListener("click", loadAll);
+      document.getElementById("tripStatusFilter").addEventListener("change", (event) => {
+        state.filtroViajes = event.target.value;
+        loadTrips();
+      });
+      document.getElementById("globalSearch").addEventListener("input", (event) => {
+        state.search = event.target.value.trim().toLowerCase();
+        renderAll();
+      });
+    }
+
+    function setSection(name) {
+      document.querySelectorAll("[data-section-target]").forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.sectionTarget === name);
+      });
+      document.querySelectorAll(".section").forEach((section) => {
+        section.classList.toggle("active", section.id === `section-${name}`);
+      });
+    }
+
+    async function loadAll() {
+      try {
+        const [resumen, usuarios] = await Promise.all([
+          api("/api/dashboard/resumen"),
+          api("/api/admin/usuarios")
+        ]);
+        state.resumen = resumen;
+        state.usuarios = Array.isArray(usuarios) ? usuarios : [];
+        state.viajes = resumen.ultimosViajes || [];
+        renderAll();
+        document.getElementById("lastSync").textContent = `Actualizado ${new Date().toLocaleTimeString()}`;
+        showToast("Panel actualizado");
+      } catch (err) {
+        console.error(err);
+        showToast("No se pudo cargar el panel");
+      }
+    }
+
+    async function loadTrips() {
+      try {
+        state.viajes = await api(`/api/dashboard/viajes?estado=${encodeURIComponent(state.filtroViajes)}`);
+        renderTrips();
+      } catch (err) {
+        console.error(err);
+        showToast("No se pudieron cargar los viajes");
+      }
+    }
+
+    function renderAll() {
+      renderMetrics();
+      renderCharts();
+      renderActiveTrips();
+      renderTrips();
+      renderWallets();
+      renderUsers();
+    }
+
+    function renderMetrics() {
+      const metricas = state.resumen?.metricas || {};
+      setText("mTripsToday", metricas.viajesHoy || 0);
+      setText("mCharged", money(metricas.totalCobrado));
+      setText("mCommission", money(metricas.totalComision));
+      setText("mDebt", money(metricas.deudaComisiones));
+    }
+
+    function renderCharts() {
+      const tendencia = state.resumen?.tendencia || [];
+      const viajes = state.resumen?.viajes || {};
+
+      drawChart("trendChart", {
+        type: "line",
+        data: {
+          labels: tendencia.map((item) => item._id),
+          datasets: [
+            { label: "Viajes", data: tendencia.map((item) => item.viajes), borderColor: "#2563eb", backgroundColor: "rgba(37,99,235,0.12)", tension: 0.35, yAxisID: "y" },
+            { label: "Ingresos", data: tendencia.map((item) => item.ingresos), borderColor: "#0f766e", backgroundColor: "rgba(15,118,110,0.12)", tension: 0.35, yAxisID: "y1" }
+          ]
+        },
+        options: chartOptions(true)
+      });
+
+      drawChart("stateChart", {
+        type: "doughnut",
+        data: {
+          labels: Object.keys(viajes),
+          datasets: [{ data: Object.values(viajes), backgroundColor: ["#2563eb", "#0f766e", "#b45309", "#dc2626", "#64748b", "#7c3aed"] }]
+        },
+        options: chartOptions(false)
+      });
+    }
+
+    function renderActiveTrips() {
+      const rows = filterRows(state.resumen?.viajesActivos || [], tripSearchText);
+      document.getElementById("activeTripsRows").innerHTML = rows.length
+        ? rows.map((trip) => tripRow(trip, false)).join("")
+        : emptyRow(7, "No hay viajes activos");
+    }
+
+    function renderTrips() {
+      const rows = filterRows(state.viajes || [], tripSearchText);
+      document.getElementById("tripRows").innerHTML = rows.length
+        ? rows.map((trip) => tripRow(trip, true)).join("")
+        : emptyRow(9, "No hay viajes para este filtro");
+    }
+
+    function renderWallets() {
+      const rows = filterRows(state.resumen?.wallets || [], (wallet) => {
+        const user = wallet.userId || {};
+        return `${user.nombre || ""} ${user.telefono || ""} ${user.rol || ""}`;
+      });
+
+      document.getElementById("walletRows").innerHTML = rows.length
+        ? rows.map((wallet) => {
+          const user = wallet.userId || {};
+          const saldo = Number(wallet.saldo || 0);
+          const last = [...(wallet.movimientos || [])].sort((a, b) => new Date(b.fecha) - new Date(a.fecha))[0];
+          const status = saldo < 0 ? `<span class="status deuda">Comision pendiente</span>` : `<span class="status activo">Al dia</span>`;
+          return `
+            <tr>
+              <td><strong>${escapeHtml(user.nombre || "Usuario")}</strong><br><span class="muted">${escapeHtml(user.telefono || shortId(wallet._id) || "-")}</span></td>
+              <td>${escapeHtml(user.rol || "-")}</td>
+              <td><span class="money ${saldo < 0 ? "bad" : "good"}">${money(saldo)}</span></td>
+              <td><span class="money warn">${money(wallet.saldoBloqueado)}</span></td>
+              <td>${status}</td>
+              <td>${last ? `${escapeHtml(formatType(last.tipo))}<br><span class="muted">${formatDate(last.fecha)}</span>` : "-"}</td>
+            </tr>
+          `;
+        }).join("")
+        : emptyRow(6, "No hay wallets para mostrar");
+    }
+
+    function renderUsers() {
+      const rows = filterRows(state.usuarios || [], (user) => `${user.nombre || ""} ${user.email || ""} ${user.telefono || ""} ${user.rol || ""}`);
+      document.getElementById("userRows").innerHTML = rows.length
+        ? rows.map((user) => `
+          <tr>
+            <td><strong>${escapeHtml(user.nombre || "Usuario")}</strong><br><span class="muted">${escapeHtml(user.alias || "")}</span></td>
+            <td>${escapeHtml(user.telefono || "-")}<br><span class="muted">${escapeHtml(user.email || "")}</span></td>
+            <td>${escapeHtml(user.rol || "-")}</td>
+            <td>${user.saldoBloqueado ? `<span class="status bloqueado">Bloqueado</span>` : `<span class="status activo">Activo</span>`}</td>
+            <td>${user.verificado ? "Si" : "No"}</td>
+            <td>${formatDate(user.createdAt)}</td>
+            <td>
+              <div class="split-actions">
+                <button class="btn small secondary" type="button" onclick="changeRole('${user._id}')"><i class="fa-solid fa-user-gear"></i>Rol</button>
+                <button class="btn small ${user.saldoBloqueado ? "good" : "danger"}" type="button" onclick="toggleBlock('${user._id}', ${!!user.saldoBloqueado})">
+                  <i class="fa-solid ${user.saldoBloqueado ? "fa-lock-open" : "fa-lock"}"></i>${user.saldoBloqueado ? "Desbloquear" : "Bloquear"}
+                </button>
+              </div>
+            </td>
+          </tr>
+        `).join("")
+        : emptyRow(7, "No hay usuarios para mostrar");
+    }
+
+    function tripRow(trip, full) {
+      const passenger = trip.pasajero?.nombre || "Pasajero";
+      const driver = trip.motorista?.nombre || "-";
+      const cells = [
+        `<strong>${shortId(trip._id)}</strong><br><span class="muted">${escapeHtml(routeText(trip))}</span>`,
+        `<span class="status ${trip.estado}">${formatType(trip.estado)}</span>`,
+        escapeHtml(passenger),
+        escapeHtml(driver),
+        `<span class="money">${money(trip.precio)}</span>`
+      ];
+
+      if (full) {
+        cells.push(
+          `<span class="money good">${money(trip.pagoMotorista || trip.paBeGOrista)}</span>`,
+          `<span class="money warn">${money(trip.comision)}</span>`,
+          `<span class="status ${trip.estadoPago}">${formatType(trip.estadoPago || "-")}</span>`,
+          formatDate(trip.finViajeAt || trip.createdAt)
+        );
+      } else {
+        cells.push(
+          `<span class="status ${trip.estadoPago}">${formatType(trip.estadoPago || "-")}</span>`,
+          formatDate(trip.updatedAt || trip.createdAt)
+        );
+      }
+
+      return `<tr>${cells.map((cell) => `<td>${cell}</td>`).join("")}</tr>`;
+    }
+
+    async function changeRole(id) {
+      const rol = prompt("Nuevo rol: pasajero, motorista o admin");
+      if (!["pasajero", "motorista", "admin"].includes(rol)) return;
+      await api(`/api/admin/usuarios/${id}/rol`, { method: "PUT", body: { rol } });
+      await loadAll();
+    }
+
+    async function toggleBlock(id, blocked) {
+      await api(`/api/admin/usuarios/${id}/bloqueo`, { method: "PUT", body: { saldoBloqueado: !blocked } });
+      await loadAll();
+    }
+
+    async function api(path, options = {}) {
+      const token = getToken();
+      const res = await fetch(`${API_BASE}${path}`, {
+        method: options.method || "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          "ngrok-skip-browser-warning": "true"
+        },
+        body: options.body ? JSON.stringify(options.body) : undefined
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    }
+
+    function getToken() {
+      const token = localStorage.getItem("token") || localStorage.getItem("BeGO_token");
+      return token?.startsWith("\"") ? token.slice(1, -1) : token;
+    }
+
+    function readUser() {
+      return safeJson(localStorage.getItem("BeGO_user")) || safeJson(localStorage.getItem("usuario")) || safeJson(localStorage.getItem("user"));
+    }
+
+    function drawChart(id, config) {
+      const ctx = document.getElementById(id);
+      if (!ctx || !window.Chart) return;
+      state.charts[id]?.destroy();
+      state.charts[id] = new Chart(ctx, config);
+    }
+
+    function chartOptions(dualAxis) {
+      return {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { labels: { usePointStyle: true, boxWidth: 8 } } },
+        scales: dualAxis ? {
+          y: { beginAtZero: true, grid: { color: "#edf2f7" } },
+          y1: { beginAtZero: true, position: "right", grid: { display: false } }
+        } : undefined
+      };
+    }
+
+    function filterRows(rows, picker) {
+      if (!state.search) return rows;
+      return rows.filter((row) => String(picker(row)).toLowerCase().includes(state.search));
+    }
+
+    function tripSearchText(trip) {
+      return `${trip._id || ""} ${trip.estado || ""} ${trip.estadoPago || ""} ${trip.pasajero?.nombre || ""} ${trip.motorista?.nombre || ""}`;
+    }
+
+    function routeText(trip) {
+      const origen = trip.origen?.direccion || "Origen";
+      const destino = trip.destino?.direccion || "Destino";
+      return `${origen.split(",")[0]} -> ${destino.split(",")[0]}`;
+    }
+
+    function emptyRow(cols, text) {
+      return `<tr><td colspan="${cols}"><div class="empty">${text}</div></td></tr>`;
+    }
+
+    function setText(id, value) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = String(value);
+    }
+
+    function money(value) {
+      const n = Number(value || 0);
+      return `${n.toLocaleString(undefined, { maximumFractionDigits: 2 })} G`;
+    }
+
+    function formatDate(value) {
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? "-" : date.toLocaleString();
+    }
+
+    function formatType(value) {
+      return String(value || "-").replace(/_/g, " ");
+    }
+
+    function shortId(value) {
+      return value ? String(value).slice(-8) : "-";
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#039;"
+      }[char]));
+    }
+
+    function safeJson(value) {
+      try { return value ? JSON.parse(value) : null; } catch { return null; }
+    }
+
+    function showToast(text) {
+      const toast = document.getElementById("toast");
+      toast.textContent = text;
+      toast.classList.add("show");
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove("show"), 2200);
+    }
+  </script>
+</body>
+</html>

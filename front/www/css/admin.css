@@ -1,0 +1,63 @@
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: #f5f5f5;
+  color: #111;
+}
+
+.admin-header {
+  padding: 16px;
+  background: linear-gradient(135deg,#111,#222);
+  color: #fff;
+}
+
+.admin-header h1 { margin:0; font-size:1.5rem; }
+.admin-stats span { margin-right:12px; font-size:0.9rem; }
+
+.admin-container {
+  display: flex;
+  height: calc(100vh - 80px);
+}
+
+/* USUARIOS */
+.panel-usuarios {
+  width: 260px;
+  background: #fff;
+  padding: 16px;
+  border-right: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.panel-usuarios h2 { margin:0 0 6px 0; font-size:1.1rem; }
+.panel-usuarios input { padding: 8px; border-radius: 10px; border:1px solid #ccc; outline:none; }
+.panel-usuarios ul { list-style:none; padding:0; margin:0; flex-grow:1; overflow-y:auto; }
+.panel-usuarios ul li { padding:8px 10px; margin-bottom:6px; border-radius:8px; cursor:pointer; position:relative; background:#f9f9f9; }
+.panel-usuarios ul li:hover { background:#e0e0e0; }
+.panel-usuarios .badge { position:absolute; right:8px; top:50%; transform:translateY(-50%); background:red; color:#fff; font-size:0.75rem; padding:2px 5px; border-radius:50%; display:none; }
+.panel-usuarios button { padding:8px 10px; border:none; background:#111; color:#fff; border-radius:8px; cursor:pointer; display:flex; align-items:center; gap:6px; }
+.panel-usuarios button:hover { background:#333; }
+
+/* CHAT */
+.panel-chat { flex-grow:1; display:flex; flex-direction:column; background:#fefefe; }
+.chat-body { flex-grow:1; padding:16px; overflow-y:auto; }
+.mensaje { margin-bottom:10px; padding:8px 12px; border-radius:12px; max-width:80%; word-wrap:break-word; }
+.mensaje.usuario { background:#e1f5fe; align-self:flex-start; }
+.mensaje.soporte { background:#c8e6c9; align-self:flex-end; }
+.input-chat { display:flex; padding:10px 16px; border-top:1px solid #ddd; gap:8px; }
+.input-chat input[type="text"] { flex-grow:1; padding:10px; border-radius:12px; border:1px solid #ccc; outline:none; }
+.input-chat button { background:#111; color:#fff; border:none; border-radius:12px; padding:10px 14px; cursor:pointer; }
+.input-chat button:hover { background:#333; }
+
+/* ESTADÍSTICAS */
+.panel-estadisticas {
+  width: 320px;
+  background:#fff;
+  padding:16px;
+  border-left:1px solid #ddd;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.panel-estadisticas h2 { margin:0 0 8px 0; font-size:1.1rem; }

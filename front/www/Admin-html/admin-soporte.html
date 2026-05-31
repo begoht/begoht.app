@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Soporte Profesional | BeGO</title>
+
+  <link rel="stylesheet" href="../css/index.css">
+  <link rel="stylesheet" href="../css/admin.css">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<header class="admin-header">
+  <h1>Admin Soporte BeGO</h1>
+  <div class="admin-stats">
+    <span>Total conectados: <b id="totalConectados">0</b></span>
+    <span>Total mensajes: <b id="totalMensajes">0</b></span>
+    <span id="alertas">Alertas enviadas: 0</span>
+  </div>
+</header>
+
+<main class="admin-container">
+
+  <!-- PANEL USUARIOS -->
+  <aside class="panel-usuarios">
+    <h2>Usuarios en soporte</h2>
+    <input type="text" id="searchUsuarios" placeholder="Buscar usuario…">
+    <ul id="listaUsuarios"></ul>
+    <button id="alertaUsuarios" class="ripple"><i class="fa-solid fa-bell"></i> Enviar alerta a todos</button>
+    <button id="limpiarChat" class="ripple"><i class="fa-solid fa-trash"></i> Limpiar chat</button>
+    <button id="logoutBtn" class="ripple"><i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión</button>
+  </aside>
+
+  <!-- PANEL CHAT -->
+  <section class="panel-chat">
+    <div id="chatBody" class="chat-body"></div>
+    <div class="input-chat">
+      <input type="hidden" id="userIdSeleccionado">
+      <input type="text" id="mensaje" placeholder="Escribir mensaje...">
+      <button id="sendBtn"><i class="fa-solid fa-paper-plane"></i> Enviar</button>
+    </div>
+  </section>
+
+  <!-- PANEL ESTADÍSTICAS -->
+  <aside class="panel-estadisticas">
+    <h2>Estadísticas</h2>
+    <canvas id="chartMensajes" height="200"></canvas>
+  </aside>
+
+</main>
+
+<script src="../js/Admin-js/admin-soporte.js"></script>
+</body>
+</html>

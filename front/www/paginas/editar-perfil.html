@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Editar perfil</title>
+
+  <link rel="stylesheet" href="../css/index.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<header class="app-header">
+  <nav>
+    <button class="icon-btn ripple" onclick="history.back()">
+      <i class="fa-solid fa-arrow-left"></i>
+    </button>
+    <strong>Editar perfil</strong>
+  </nav>
+</header>
+
+<main class="perfil-main">
+
+  <!-- FOTO -->
+  <section class="perfil-foto">
+    <img id="previewFoto" src="../assets/logo-BeGO.png" alt="Foto de perfil">
+    <input type="file" id="inputFoto" accept="image/*" hidden>
+    <button class="btn-secundario ripple" id="btnCambiarFoto">
+      Cambiar foto
+    </button>
+  </section>
+
+  <!-- FORMULARIO -->
+  <section class="perfil-form">
+    <label>
+      Nombre completo
+      <input type="text" id="nombre" placeholder="Tu nombre">
+    </label>
+
+    <label>
+      Email
+      <input type="email" id="email" placeholder="correo@email.com">
+    </label>
+    
+
+    <button id="guardarPerfil" class="btn-principal ripple">
+      Guardar cambios
+    </button>
+  </section>
+
+</main>
+
+<script type="module" src="../js/editar-perfil.js"></script>
+</body>
+</html>

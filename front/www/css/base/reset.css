@@ -1,0 +1,15 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: system-ui, sans-serif;
+}
+
+body {
+  background: var(--bg-main);
+  color: var(--text-main);
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding-bottom: calc(var(--footer-height, 76px) + env(safe-area-inset-bottom) + 18px);
+  overscroll-behavior-y: none;
+}

@@ -1,0 +1,508 @@
+/* =============================================
+   🎨 VARIABLES DE MARCA Y CONFIGURACIÓN
+   ============================================= */
+:root {
+  /* Paleta Principal */
+  --bg-main: #0f172a;
+  --bg-card: #020617;
+  --primary: #2563eb;
+  --secondary: #38bdf8;
+  --success: #10b981;
+  --orange: #ff7a00;
+  
+  /* Texto y Estados */
+  --text-main: #e5e7eb;
+  --muted: #94a3b8;
+  
+  /* Footer Config */
+  --footer-height: 76px;
+  --btn-size: 72px;
+}
+
+/* =============================================
+   📱 FOOTER PRO – DISEÑO CON "HUECO"
+   ============================================= */
+footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  z-index: 1200;
+  pointer-events: none;
+  padding: 0 12px calc(env(safe-area-inset-bottom) + 8px);
+}
+
+footer nav {
+  pointer-events: all;
+  width: min(100%, 560px);
+  max-width: 560px;
+  height: var(--footer-height);
+  background:
+    linear-gradient(180deg, rgba(15, 23, 42, 0.94), rgba(2, 6, 23, 0.95));
+  position: relative;
+  border-radius: 24px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.46), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+}
+
+footer ul {
+  list-style: none;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0 12px;
+}
+
+footer li {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+footer li.center-btn {
+  flex: 1.2; /* Espacio extra para el botón central */
+}
+
+/* =============================================
+   🔘 LINKS LATERALES (EFECTO BOTÓN REAL / 3D)
+   ============================================= */
+footer a {
+  text-decoration: none;
+  color: var(--muted);
+  font-size: 21px;
+  
+  /* Dimensiones fijas para crear el botón físico */
+  width: 48px;
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 14px;
+  
+  /* Mismo fondo que el nav para que parezca hecho del mismo material */
+  background: rgba(15, 23, 42, 0.86);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  
+  /* Magia del Neumorfismo (Efecto Salido) adaptado a oscuros */
+  box-shadow: 
+    0 10px 22px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Ocultamos cualquier texto (span) ya que el diseño es de puros iconos */
+footer a span {
+  display: none; 
+}
+
+/* ESTADO ACTIVO / PRESIONADO (Efecto Hundido) */
+footer a:active,
+footer a.active {
+  color: var(--orange);
+  /* Cambiamos las sombras a interiores (inset) para que parezca presionado */
+  box-shadow: 
+    inset 4px 4px 8px rgba(0, 0, 0, 0.8), 
+    inset -4px -4px 8px rgba(255, 255, 255, 0.02);
+  
+  /* Pequeño ajuste para dar sensación de pulsación física */
+  transform: scale(0.96);
+}
+
+/* Puntito naranja indicador para el botón activo */
+footer a.active::after {
+  content: '';
+  position: absolute;
+  bottom: 8px; /* Ajusta la altura del puntito dentro del botón */
+  width: 4px;
+  height: 4px;
+  background-color: var(--orange);
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(255, 122, 0, 0.6);
+}
+
+/* =============================================
+   🔘 BOTÓN CENTRAL (PEDIR VIAJE)
+   ============================================= */
+.btn-footer-principal {
+  all: unset;
+  cursor: pointer;
+  position: absolute;
+  left: 50%;
+  top: -34px;
+  --center: translateX(-50%);
+  transform: var(--center);
+  width: var(--btn-size);
+  height: var(--btn-size);
+  border-radius: 22px;
+  background: linear-gradient(160deg, #38bdf8 0%, #2563eb 52%, #020617 100%);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  z-index: 1000;
+  border: 6px solid var(--bg-main);
+  box-shadow: 0 14px 30px rgba(37, 99, 235, 0.28), 0 10px 22px rgba(0, 0, 0, 0.42);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.btn-footer-principal.btn-ready {
+  background-color: var(--success);
+  color: white;
+  transform: var(--center) scale(1.05);
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+}
+
+.btn-footer-principal:active {
+  transform: var(--center) scale(0.9);
+}
+
+.icon-car {
+  font-size: 28px;
+  transition: 0.3s ease;
+}
+
+/* =============================================
+   🔍 ESTADO: BUSCANDO (ANIMACIONES)
+   ============================================= */
+.spinner {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border: 3px solid rgba(26, 21, 21, 0.2);
+  border-top-color: white;
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+footer.buscando .icon-car {
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+footer.buscando .spinner {
+  opacity: 1;
+  animation: spin 0.8s linear infinite;
+}
+
+footer.buscando .btn-footer-principal {
+  animation: pulseHueco 1.5s infinite;
+  background: var(--bg-card);
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pulseHueco {
+  0%, 100% { transform: translateX(-50%) scale(1); }
+  50% { transform: translateX(-50%) scale(1.08); }
+}
+/* =============================================
+   💳 MÉTODOS DE PAGO (ESTILO NEUMÓRFICO PRO)
+   ============================================= */
+.titulo-pago {
+  padding: 18px 5% 12px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.pago-opciones {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px; /* Aumentado un poco para que las sombras respiren */
+  padding: 0 5% 20px;
+}
+
+.btn-pago {
+  background: var(--bg-card);
+  border-radius: 16px;
+  border: none; /* Eliminamos el borde sólido */
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--text-main);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  
+  /* Sombra "Salida" (Efecto 3D hacia afuera) */
+  box-shadow: 
+    6px 6px 12px rgba(0, 0, 0, 0.7), 
+    -3px -3px 8px rgba(255, 255, 255, 0.03);
+  
+  position: relative;
+  overflow: hidden;
+}
+
+/* EFECTO AL PRESIONAR (Feedback táctil rápido) */
+.btn-pago:active {
+  transform: scale(0.95);
+}
+
+/* ================================
+   ✨ ESTADO SELECCIONADO (ACTIVO)
+   ================================ */
+.btn-pago.activo {
+  color: var(--orange); /* O var(--primary) si prefieres azul */
+  
+  /* Efecto "Hundido" (Mismo que header y footer) */
+  box-shadow: 
+    inset 4px 4px 8px rgba(0, 0, 0, 0.8), 
+    inset -4px -4px 8px rgba(255, 255, 255, 0.02);
+    
+  /* Eliminamos el gradiente para que el efecto "hundido" sea el protagonista */
+  background: var(--bg-card); 
+  
+  /* Animación de entrada suave */
+  animation: pulsePago 0.3s ease-out;
+}
+
+/* Iconos de pago */
+.btn-pago i {
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+}
+
+.btn-pago.activo {
+  background: linear-gradient(135deg, var(--primary), var(--bg-main));
+  border-color: var(--secondary);
+  color: white;
+  animation: pulsePago 0.3s ease-out;
+}
+
+@keyframes pulsePago {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.97); }
+  100% { transform: scale(1); }
+}
+
+/* =============================================
+   ⚡ RESPONSIVE ADAPTATIONS
+   ============================================ */
+@media (max-width: 380px) {
+  footer {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  footer nav { height: 68px; border-radius: 22px; }
+
+  footer a {
+    width: 43px;
+    height: 43px;
+    font-size: 19px;
+  }
+
+  .btn-footer-principal {
+    width: 64px;
+    height: 64px;
+    top: -30px;
+    border-width: 4px;
+  }
+}
+
+/* =============================================
+   🎯 VISIBILIDAD POR RUTA (CLAVE PRO)
+   ============================================= */
+
+/* 🔴 oculto SOLO el botón */
+.btn-footer-principal {
+  display: none;
+}
+
+/* 🟢 visible SOLO en HOME */
+.route-home .btn-footer-principal {
+  display: flex;
+}
+
+/* =============================================
+   BOTON PEDIR VIAJE - PREMIUM DOCK
+   Inspirado en el footer de referencia.
+   ============================================= */
+footer nav {
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 122, 0, 0.08), transparent 24%),
+    linear-gradient(180deg, rgba(31, 31, 35, 0.98), rgba(12, 13, 17, 0.98));
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow:
+    0 18px 38px rgba(0, 0, 0, 0.58),
+    inset 0 8px 18px rgba(255, 255, 255, 0.035),
+    inset 0 -12px 20px rgba(0, 0, 0, 0.52);
+}
+
+footer a {
+  color: #d5d7dc;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  border-radius: 18px;
+}
+
+footer a:active,
+footer a.active {
+  color: var(--orange);
+  text-shadow: 0 0 12px rgba(255, 122, 0, 0.34);
+  box-shadow: none;
+}
+
+footer a.active::after {
+  width: 5px;
+  height: 5px;
+}
+
+.btn-footer-principal {
+  top: -38px;
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.32), transparent 16%),
+    linear-gradient(180deg, #ff8b1a 0%, #ff6a00 62%, #d94d00 100%);
+  border: 6px solid #111217;
+  box-shadow:
+    0 16px 28px rgba(0, 0, 0, 0.58),
+    0 0 0 7px rgba(255, 122, 0, 0.08),
+    inset 0 2px 2px rgba(255, 255, 255, 0.22),
+    inset 0 -10px 16px rgba(139, 45, 0, 0.28);
+}
+
+.btn-footer-principal::before,
+.btn-footer-principal::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.btn-footer-principal::before {
+  inset: -15px;
+  background:
+    radial-gradient(circle at 18% 42%, #16a34a 0 3px, transparent 4px),
+    radial-gradient(circle at 26% 28%, #22c55e 0 3px, transparent 4px),
+    radial-gradient(circle at 32% 18%, #16a34a 0 2px, transparent 3px),
+    radial-gradient(circle at 72% 22%, #22c55e 0 3px, transparent 4px),
+    radial-gradient(circle at 82% 40%, #16a34a 0 3px, transparent 4px),
+    radial-gradient(circle at 74% 78%, #22c55e 0 3px, transparent 4px),
+    radial-gradient(circle at 28% 80%, #16a34a 0 3px, transparent 4px);
+  filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.35));
+  opacity: 0.96;
+}
+
+.btn-footer-principal::after {
+  inset: -10px;
+  border: 2px solid rgba(34, 197, 94, 0.42);
+  border-left-color: transparent;
+  border-right-color: transparent;
+  transform: rotate(-18deg);
+}
+
+.footer-action-core,
+.spinner-core {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  position: relative;
+  z-index: 2;
+  font-size: 29px;
+  line-height: 1;
+  transition: transform 0.24s ease, opacity 0.24s ease;
+}
+
+.btn-footer-principal.btn-idle {
+  cursor: default;
+  opacity: 0.72;
+  filter: saturate(0.72);
+}
+
+.btn-footer-principal.btn-idle .footer-action-core {
+  font-size: 30px;
+}
+
+.btn-footer-principal.btn-ready {
+  background:
+    radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.34), transparent 16%),
+    linear-gradient(180deg, #ff8b1a 0%, #ff6a00 62%, #d94d00 100%);
+  transform: var(--center) scale(1.05);
+  box-shadow:
+    0 18px 34px rgba(255, 106, 0, 0.36),
+    0 0 0 8px rgba(255, 122, 0, 0.1),
+    inset 0 2px 2px rgba(255, 255, 255, 0.22),
+    inset 0 -10px 16px rgba(139, 45, 0, 0.28);
+}
+
+.btn-footer-principal.btn-ready .footer-action-core {
+  font-size: 27px;
+}
+
+footer.buscando .btn-footer-principal,
+.btn-footer-principal.btn-searching {
+  cursor: progress;
+  animation: pulseHueco 1.15s infinite;
+  background:
+    radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.22), transparent 16%),
+    linear-gradient(180deg, #1f2937 0%, #0f172a 100%);
+  box-shadow:
+    0 16px 30px rgba(0, 0, 0, 0.55),
+    0 0 0 8px rgba(56, 189, 248, 0.08),
+    inset 0 2px 2px rgba(255, 255, 255, 0.12);
+}
+
+footer.buscando .spinner-core,
+.btn-footer-principal.btn-searching .spinner-core {
+  animation: rideSearch 0.86s ease-in-out infinite;
+  font-size: 30px;
+}
+
+footer.asignado .btn-footer-principal,
+.btn-footer-principal.btn-cancel {
+  background:
+    radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.26), transparent 16%),
+    linear-gradient(180deg, #ef4444 0%, #b91c1c 100%);
+  box-shadow:
+    0 18px 34px rgba(239, 68, 68, 0.28),
+    0 0 0 8px rgba(239, 68, 68, 0.1),
+    inset 0 2px 2px rgba(255, 255, 255, 0.18),
+    inset 0 -10px 16px rgba(97, 10, 10, 0.32);
+}
+
+@keyframes rideSearch {
+  0%, 100% { transform: translateX(-2px) rotate(-5deg) scale(1); }
+  50% { transform: translateX(3px) rotate(5deg) scale(1.08); }
+}
+
+@media (max-width: 380px) {
+  footer nav {
+    border-radius: 999px;
+  }
+
+  .btn-footer-principal {
+    width: 68px;
+    height: 68px;
+    top: -31px;
+    border-width: 4px;
+  }
+
+  .footer-action-core,
+  .spinner-core {
+    width: 48px;
+    height: 48px;
+    font-size: 25px;
+  }
+}

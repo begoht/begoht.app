@@ -1,0 +1,157 @@
+/* =========================================
+   🌐 BODY & ESTRUCTURA BASE
+   ========================================= */
+body {
+  background: var(--bg-main);
+  color: var(--text-main);
+  opacity: 1;
+  transition: opacity 0.2s ease;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+body.fade-out {
+  opacity: 0;
+}
+
+/* =========================================
+   📦 SECCIONES DE BOTONES (ESTILO 3D)
+   ========================================= */
+
+/* Estilo común para botones en secciones (Config, Seguridad, etc.) */
+main section:nth-of-type(2),
+main section:nth-of-type(3) {
+  padding: 14px;
+  display: flex;
+
+  gap: 14px;
+}
+
+main section:nth-of-type(2) button,
+main section:nth-of-type(3) button {
+  background: var(--bg-card);
+  border: none; /* Eliminamos bordes sólidos */
+  border-radius: 18px;
+  padding: 16px;
+  color: var(--text-main);
+  text-align: left;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  /* Efecto neumórfico elevado */
+  box-shadow: 
+    5px 5px 10px rgba(0, 0, 0, 0.6), 
+    -2px -2px 6px rgba(255, 255, 255, 0.03);
+}
+
+/* EFECTO HUNDIDO AL TOCAR */
+main section:nth-of-type(2) button:active,
+main section:nth-of-type(3) button:active {
+  transform: scale(0.97);
+  color: var(--orange);
+  box-shadow: 
+    inset 4px 4px 8px rgba(0, 0, 0, 0.8), 
+    inset -3px -3px 6px rgba(255, 255, 255, 0.02);
+}
+
+/* Tipografía interna de los botones */
+main section:nth-of-type(2) span,
+main section:nth-of-type(3) span {
+  font-weight: 700;
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.95rem;
+}
+
+main section:nth-of-type(2) p,
+main section:nth-of-type(3) p {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+}
+
+/* =========================================
+   🚀 PÁGINAS Y CONTENEDORES
+   ========================================= */
+
+.pagos {
+  margin-top: 100px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+/* =========================================
+   💰 SECCIÓN GANANCIAS (HERO)
+   ========================================= */
+
+.ganancias {
+  padding: 100px 14px 40px;
+}
+
+.ganancias-hero {
+  /* Fondo con profundidad */
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(2, 6, 23, 0.8));
+  border-radius: 24px;
+  padding: 24px;
+  text-align: center;
+  margin-bottom: 24px;
+  
+  /* Elevación especial para el Hero */
+  box-shadow: 
+    8px 8px 20px rgba(0, 0, 0, 0.5), 
+    -4px -4px 12px rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.ganancias-hero h2 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+  color: #fff;
+}
+
+.ganancias-hero p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* =========================================
+   ✨ UTILIDADES Y ANIMACIONES
+   ========================================= */
+
+.vista.oculto {
+  display: none !important;
+}
+
+.vista {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(10px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+/* Mensajes vacíos */
+.familia-container p {
+  text-align: center;
+  color: var(--muted);
+  margin-top: 40px;
+  font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 420px) {
+  .ganancias-opciones {
+    grid-template-columns: 1fr;
+  }
+}

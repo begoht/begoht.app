@@ -1,0 +1,30 @@
+/* =========================
+   LAYOUT SPA AUTOMÁTICO
+========================= */
+
+/* VARIABLES DINÁMICAS */
+:root {
+  --header-h: var(--header-height, 76px);
+  --footer-h: var(--footer-height, 76px);
+}
+
+/* HEADER */
+.app-header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+/* FOOTER */
+#appFooter {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.home-page {
+  padding-top: 0;
+  padding-bottom: calc(var(--footer-h) + env(safe-area-inset-bottom) + 18px);
+}

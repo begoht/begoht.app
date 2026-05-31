@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../css/panel.css">
+</head>
+<body>
+    <!-- ⚙️ PANEL DE PARÁMETROS -->
+<div id="configPanel" class="config-panel hidden">
+
+  <div class="config-header">
+    <h3>Parámetros</h3>
+    <button class="close-btn" onclick="cerrarConfig()">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+
+  <ul class="config-list">
+
+    <li onclick="location.href='cuenta.html'">
+      <i class="fa-solid fa-user"></i>
+      <span>Mi cuenta</span>
+    </li>
+
+    <li onclick="location.href='pago.html'">
+      <i class="fa-solid fa-credit-card"></i>
+      <span>Métodos de pago</span>
+    </li>
+
+    <li onclick="location.href='actividad.html'">
+      <i class="fa-solid fa-clock-rotate-left"></i>
+      <span>Historial de viajes</span>
+    </li>
+
+    <li>
+      <i class="fa-solid fa-bell"></i>
+      <span>Notificaciones</span>
+      <input type="checkbox" checked>
+    </li>
+
+    <li>
+      <i class="fa-solid fa-moon"></i>
+      <span>Modo oscuro</span>
+      <input type="checkbox" onchange="toggleDarkMode(this)">
+    </li>
+
+    <li onclick="cerrarSesion()" class="logout">
+      <i class="fa-solid fa-right-from-bracket"></i>
+      <span>Cerrar sesión</span>
+    </li>
+
+  </ul>
+</div>
+
+<script src="../js/panel.js"></script>
+</body>
+</html>

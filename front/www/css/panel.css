@@ -1,0 +1,184 @@
+/* ===============================
+   VARIABLES
+================================ */
+:root {
+  --bg-panel: #ffffff;
+  --bg-item: #f6f7f9;
+  --bg-hover: #eef0f3;
+  --text-main: #111;
+  --text-muted: #666;
+  --accent: #00c2ff;
+  --danger: #ff4d4f;
+  --border: #e3e5e8;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+body.dark {
+  --bg-panel: #121212;
+  --bg-item: #1c1c1c;
+  --bg-hover: #262626;
+  --text-main: #f1f1f1;
+  --text-muted: #aaa;
+  --border: #2a2a2a;
+}
+
+/* ===============================
+   PANEL CONTENEDOR
+================================ */
+.config-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 85%;
+  max-width: 360px;
+  height: 100vh;
+  background: var(--bg-panel);
+  box-shadow: var(--shadow);
+  z-index: 9999;
+  transform: translateX(100%);
+  transition: transform 0.35s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.config-panel.show {
+  transform: translateX(0);
+}
+
+.hidden {
+  display: none;
+}
+
+/* ===============================
+   HEADER
+================================ */
+.config-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.config-header h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.close-btn:hover {
+  color: var(--accent);
+}
+
+/* ===============================
+   LISTA
+================================ */
+.config-list {
+  list-style: none;
+  padding: 10px;
+  margin: 0;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.config-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 15px;
+  border-radius: 12px;
+  background: var(--bg-item);
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.config-list li:hover {
+  background: var(--bg-hover);
+  transform: scale(0.99);
+}
+
+.config-list li i {
+  font-size: 18px;
+  color: var(--accent);
+  min-width: 22px;
+}
+
+.config-list li span {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-main);
+}
+
+/* ===============================
+   SWITCH (CHECKBOX)
+================================ */
+.config-list input[type="checkbox"] {
+  appearance: none;
+  width: 42px;
+  height: 22px;
+  background: #ccc;
+  border-radius: 50px;
+  position: relative;
+  outline: none;
+  cursor: pointer;
+  transition: background 0.25s ease;
+}
+
+.config-list input[type="checkbox"]::before {
+  content: "";
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.25s ease;
+}
+
+.config-list input[type="checkbox"]:checked {
+  background: var(--accent);
+}
+
+.config-list input[type="checkbox"]:checked::before {
+  transform: translateX(20px);
+}
+
+/* ===============================
+   LOGOUT
+================================ */
+.config-list li.logout {
+  background: rgba(255, 77, 79, 0.12);
+}
+
+.config-list li.logout i,
+.config-list li.logout span {
+  color: var(--danger);
+}
+
+.config-list li.logout:hover {
+  background: rgba(255, 77, 79, 0.2);
+}
+
+/* ===============================
+   SCROLLBAR
+================================ */
+.config-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.config-list::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 10px;
+}

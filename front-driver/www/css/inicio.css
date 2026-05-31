@@ -1,0 +1,990 @@
+/* =========================================
+   🚀 RESET & BASE
+   ========================================= */
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  list-style: none;
+  text-decoration: none;
+  scroll-behavior: smooth;
+}
+
+:root {
+  --text-color: #f5f5f5;
+  --hover-color: #12f7ff;
+  --bg-color: #000000; /* Fondo negro puro para look premium */
+  --secon-bg-color: #1a1a1a;
+  --uber-blue: #276ef1;
+  --uber-green: #00ff88;
+  --uber-red: #ff3b3b;
+  
+  --big-font: 2.5rem;
+  --neon-shadow: 0 0 .5rem #12f7ff;
+  --font-neon-shadow: 0 0 10px rgba(18,247,255,.3);
+}
+
+body {
+  font-family: 'Inter', Arial, sans-serif;
+  background: var(--bg-color);
+  color: var(--text-color);
+  overflow-x: hidden;
+}
+
+/* =========================================
+   📱 NAVEGACIÓN (SIDEBAR & MENU)
+   ========================================= */
+.menu-btn {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  font-size: 1.5rem;
+  background: var(--secon-bg-color);
+  color: var(--text-color);
+  border: none;
+  padding: 12px 18px;
+  cursor: pointer;
+  z-index: 1100;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+
+.sidebar {
+  width: 280px;
+  height: 100vh;
+  background: var(--secon-bg-color);
+  position: fixed;
+  top: 0;
+  left: -100%;
+  transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  padding-top: 0;
+  z-index: 1050;
+  box-shadow: 5px 0 25px rgba(0,0,0,0.8);
+}
+
+.sidebar.active { left: 0; }
+
+.sidebar a {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 18px 25px;
+  color: var(--text-color);
+  font-size: 1.1rem;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.sidebar a:hover {
+  background: #2a2a2a;
+  color: var(--hover-color);
+}
+
+#backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+  display: none;
+  z-index: 1000;
+}
+
+#backdrop.active { display: block; }
+
+/* =========================================
+   🗺️ MAPA & UI SUPERIOR
+   ========================================= */
+.panel-superior {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  z-index: 100;
+}
+
+.estado-btn {
+  background: var(--secon-bg-color);
+  padding: 10px 20px;
+  border-radius: 50px;
+  border: 1px solid #333;
+  text-align: center;
+}
+
+.status {
+  color: var(--uber-green);
+  font-weight: bold;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+
+.mapa-container {
+  width: 100%;
+  height: 100vh; /* Mapa ocupa toda la pantalla */
+}
+
+#map { width: 100%; height: 100%; z-index: 1; }
+
+/* =========================================
+   🚖 PANEL DE OFERTA (ESTILO UBER)
+   ========================================= */
+.oferta-panel {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 20px;
+  z-index: 2000;
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.oferta-panel.hidden {
+  transform: translateY(110%);
+}
+
+.oferta-card-premium {
+  background: #111;
+  color: white;
+  border-radius: 30px;
+  padding: 25px;
+  box-shadow: 0 -10px 40px rgba(0,0,0,0.8);
+  max-width: 500px;
+  margin: 0 auto;
+  position: relative;
+  border: 1px solid #222;
+}
+
+/* Temporizador Circular */
+.timer-container {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-ring { position: absolute; transform: rotate(-90deg); }
+
+.progress-ring__circle {
+  stroke: var(--uber-blue);
+  stroke-dasharray: 213.6; /* Circumference de r=34 */
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1s linear;
+  transform-origin: center;
+}
+
+.contador-texto {
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+/* Información del Viaje */
+.precio-valor {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: white;
+  display: block;
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+.info-secundaria {
+  display: flex;
+  justify-content: space-around;
+  margin: 20px 0;
+  background: #1a1a1a;
+  padding: 12px;
+  border-radius: 15px;
+}
+
+.destino-box {
+  background: #222;
+  padding: 15px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  border-left: 4px solid var(--uber-blue);
+}
+
+/* Botones de Acción */
+.btn-aceptar {
+  width: 100%;
+  background: var(--uber-blue);
+  color: white;
+  padding: 20px;
+  border-radius: 18px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-rechazar-mini {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: #222;
+  color: #888;
+  border: none;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* =========================================
+   🚦 CONTROLES DE VIAJE ACTIVO
+   ========================================= */
+.viaje-control {
+  position: fixed;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 92%;
+  max-width: 450px;
+  background: rgba(15, 15, 15, 0.98);
+  backdrop-filter: blur(15px);
+  padding: 20px;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  z-index: 1500;
+  border: 1px solid #333;
+}
+
+.viaje-control.hidden { display: none; }
+
+.estado-tag {
+  background: #222;
+  padding: 6px 15px;
+  border-radius: 50px;
+  display: inline-block;
+  margin-bottom: 15px;
+  font-size: 0.85rem;
+  border: 1px solid #444;
+}
+
+.btn-llegue, .btn-iniciar, .btn-finalizar {
+  width: 100%;
+  padding: 16px;
+  border-radius: 14px;
+  font-weight: bold;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn-llegue { background: white; color: black; }
+.btn-iniciar { background: var(--uber-green); color: black; }
+.btn-finalizar { background: var(--uber-red); color: white; }
+
+/* =========================================
+   🧠 PANEL COLA / SIGUIENTE VIAJE
+   ========================================= */
+#panelSiguienteViaje {
+  position: fixed;
+  bottom: 140px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1a1a1a;
+  padding: 15px 25px;
+  border-radius: 20px;
+  border: 2px solid var(--uber-blue);
+  z-index: 1400;
+  text-align: center;
+  display: none;
+  animation: slidePop 0.3s ease-out;
+}
+
+@keyframes slidePop {
+  0% { transform: translateX(-50%) translateY(20px) scale(0.9); opacity: 0; }
+  100% { transform: translateX(-50%) translateY(0) scale(1); opacity: 1; }
+}
+
+/* =========================================
+   🛠️ UTILIDADES
+   ========================================= */
+.badge {
+  background: var(--uber-red);
+  color: white;
+  font-size: 0.7rem;
+  padding: 2px 7px;
+  border-radius: 50%;
+  margin-left: 5px;
+}
+
+.rutas-box div {
+    transition: all 0.3s ease;
+}
+
+/* =========================================
+   📍 DISEÑO DE RUTAS EN OFERTA
+   ========================================= */
+.rutas-box {
+  background: #1a1a1a;
+  padding: 15px;
+  border-radius: 18px;
+  margin-bottom: 20px;
+  border: 1px solid #222;
+}
+
+.ruta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ruta-item small {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+#ofertaOrigenNombre, #ofertaDestinoNombre {
+  font-size: 0.9rem;
+  color: #eee;
+  /* Truncar texto largo con puntos suspensivos */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+/* Separador visual opcional entre origen y destino */
+.ruta-item:first-child {
+  padding-bottom: 8px;
+  border-bottom: 1px solid #2a2a2a;
+  margin-bottom: 8px;
+}
+
+.mini-mapa {
+  height: 150px; /* O el alto que prefieras */
+  width: 100%;
+  border-radius: 12px;
+  margin-top: 10px;
+  background-color: #1a1a1a;
+}
+
+#miniMapaOferta {
+  width: 100%;
+  height: 150px; /* Altura obligatoria para que Leaflet aparezca */
+  border-radius: 12px;
+  margin-bottom: 15px;
+  background: #222; /* Color de fondo mientras carga */
+}
+
+.hidden { display: none !important; }
+
+/* =========================================
+   DRIVER SPA PREMIUM
+   ========================================= */
+.driver-shell {
+  min-height: 100dvh;
+  background:
+    radial-gradient(circle at top left, rgba(39, 110, 241, 0.18), transparent 34%),
+    radial-gradient(circle at bottom right, rgba(22, 163, 74, 0.14), transparent 28%),
+    #05070a;
+}
+
+.driver-home-view {
+  min-height: 100dvh;
+}
+
+.driver-menu-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 82px;
+  padding: 18px 22px;
+  border-bottom: 1px solid #2a2f38;
+  background: #111827;
+}
+
+.driver-menu-head strong,
+.driver-menu-head small {
+  display: block;
+}
+
+.driver-menu-head small {
+  margin-top: 3px;
+  color: #9ca3af;
+  font-size: 0.8rem;
+}
+
+.driver-status-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #f59e0b;
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.14);
+}
+
+.driver-status-dot.online {
+  background: #22c55e;
+  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.16);
+}
+
+.driver-status-dot.offline {
+  background: #ef4444;
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.16);
+}
+
+.driver-status-dot.syncing {
+  background: #f59e0b;
+}
+
+.sidebar a.active {
+  background: #0f172a;
+  color: #ffffff;
+  border-left: 3px solid #22c55e;
+}
+
+.sidebar > a[href="#"] {
+  display: none;
+}
+
+.panel-superior {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.driver-availability-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 16px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  color: #ffffff;
+  background: #111827;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.32);
+}
+
+.driver-availability-toggle.is-online {
+  background: #166534;
+  border-color: rgba(34, 197, 94, 0.45);
+}
+
+.driver-availability-toggle.is-offline {
+  background: #7f1d1d;
+  border-color: rgba(239, 68, 68, 0.42);
+}
+
+.wallet-mini {
+  min-height: 48px;
+  min-width: 88px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #030712;
+  font-weight: 900;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.26);
+}
+
+.driver-page-view {
+  min-height: 100dvh;
+  padding: 74px 16px 96px;
+  color: #f9fafb;
+  overflow-y: auto;
+}
+
+.driver-page-shell {
+  width: min(980px, 100%);
+  margin: 0 auto;
+}
+
+.driver-page-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.driver-page-back {
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  background: #111827;
+  color: #ffffff;
+}
+
+.driver-eyebrow {
+  display: block;
+  color: #a7f3d0;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
+.driver-page-header h1 {
+  margin: 2px 0 0;
+  font-size: 1.75rem;
+  line-height: 1.1;
+}
+
+.driver-kpi-grid,
+.driver-action-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.driver-kpi,
+.driver-panel,
+.driver-list-item,
+.driver-wallet-hero,
+.driver-profile-card,
+.driver-action-tile,
+.driver-toggle-row {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(17, 24, 39, 0.92);
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.24);
+}
+
+.driver-kpi {
+  min-height: 142px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.driver-kpi i {
+  color: #60a5fa;
+  font-size: 1.2rem;
+}
+
+.driver-kpi span,
+.driver-kpi small,
+.driver-muted,
+.driver-list-item span,
+.driver-profile-card p {
+  color: #9ca3af;
+}
+
+.driver-kpi strong {
+  font-size: 1.6rem;
+}
+
+.driver-panel {
+  padding: 16px;
+  margin-bottom: 14px;
+}
+
+.driver-panel-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.driver-panel-title h2,
+.driver-trip-now h2,
+.driver-profile-card h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.driver-progress {
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #263244;
+  margin-bottom: 10px;
+}
+
+.driver-progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #22c55e, #60a5fa);
+}
+
+.driver-list {
+  display: grid;
+  gap: 10px;
+}
+
+.driver-list-item,
+.driver-profile-card,
+.driver-trip-now {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  color: #f9fafb;
+  text-decoration: none;
+}
+
+.driver-list-item > i:first-child {
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: #1f2937;
+  color: #fbbf24;
+}
+
+.driver-list-item > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.driver-list-item strong,
+.driver-list-item span {
+  display: block;
+}
+
+.driver-list-item span {
+  margin-top: 3px;
+  font-size: 0.88rem;
+  line-height: 1.35;
+}
+
+.driver-wallet-hero {
+  padding: 18px;
+  margin-bottom: 14px;
+  background: linear-gradient(135deg, #f8fafc, #dbeafe);
+  color: #020617;
+}
+
+.driver-wallet-hero span,
+.driver-wallet-hero small {
+  display: block;
+  color: #475569;
+}
+
+.driver-wallet-hero strong {
+  display: block;
+  margin: 8px 0;
+  font-size: 2rem;
+}
+
+.driver-action-tile {
+  min-height: 92px;
+  color: #f9fafb;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+}
+
+.driver-action-tile i {
+  color: #22c55e;
+}
+
+.driver-avatar-xl {
+  width: 58px;
+  height: 58px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: #0f766e;
+  color: white;
+  font-size: 1.35rem;
+}
+
+.driver-toggle-row {
+  min-height: 58px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.driver-toggle-row input {
+  width: 22px;
+  height: 22px;
+  accent-color: #22c55e;
+}
+
+.driver-bottom-nav {
+  position: fixed;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  z-index: 1300;
+  width: min(520px, calc(100% - 24px));
+  min-height: 66px;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 4px;
+  padding: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(10, 14, 22, 0.94);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.42);
+}
+
+.driver-bottom-nav a {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: #9ca3af;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border-radius: 6px;
+}
+
+.driver-bottom-nav a.active {
+  color: #ffffff;
+  background: #1f2937;
+}
+
+.driver-bottom-nav i {
+  font-size: 1rem;
+}
+
+body[data-driver-availability="offline"] .oferta-panel {
+  transform: translateY(110%);
+}
+
+body[data-driver-availability="offline"] .status {
+  color: #f87171;
+}
+
+body[data-driver-availability="syncing"] .status {
+  color: #fbbf24;
+}
+
+.driver-activity-hero {
+  min-height: 128px;
+  margin-bottom: 14px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(39, 110, 241, 0.24), rgba(34, 197, 94, 0.1)),
+    rgba(17, 24, 39, 0.92);
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.24);
+}
+
+.driver-activity-hero h2,
+.driver-activity-hero p {
+  margin: 0;
+}
+
+.driver-activity-hero h2 {
+  margin-top: 3px;
+  font-size: 1.25rem;
+}
+
+.driver-activity-hero p {
+  margin-top: 5px;
+  color: #9ca3af;
+  font-size: 0.9rem;
+}
+
+.driver-activity-hero > i {
+  width: 54px;
+  height: 54px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  color: #a7f3d0;
+  background: rgba(34, 197, 94, 0.12);
+  font-size: 1.35rem;
+}
+
+.driver-filter-row {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.driver-filter-row::-webkit-scrollbar {
+  display: none;
+}
+
+.driver-filter-row button {
+  min-height: 38px;
+  flex: 0 0 auto;
+  padding: 0 13px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  color: #f9fafb;
+  background: #111827;
+  font-weight: 800;
+}
+
+.driver-filter-row button.active {
+  color: #04111f;
+  border-color: transparent;
+  background: linear-gradient(135deg, #60a5fa, #a7f3d0);
+}
+
+.driver-activity-list {
+  display: grid;
+  gap: 10px;
+}
+
+.driver-trip-row {
+  min-height: 86px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(17, 24, 39, 0.92);
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.22);
+}
+
+.driver-trip-icon {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  color: #ffffff;
+  background: #2563eb;
+}
+
+.driver-trip-row.cancelado .driver-trip-icon {
+  background: #dc2626;
+}
+
+.driver-trip-row.reservado .driver-trip-icon {
+  background: #7c3aed;
+}
+
+.driver-trip-main {
+  min-width: 0;
+  flex: 1;
+}
+
+.driver-trip-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.driver-trip-top strong,
+.driver-trip-top span {
+  font-size: 0.95rem;
+}
+
+.driver-trip-top span {
+  color: #86efac;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.driver-trip-row.cancelado .driver-trip-top span {
+  color: #9ca3af;
+}
+
+.driver-trip-main p,
+.driver-trip-main small {
+  display: block;
+  margin: 4px 0 0;
+  color: #9ca3af;
+  font-size: 0.84rem;
+  line-height: 1.35;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.driver-empty-state {
+  min-height: 82px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #9ca3af;
+  text-align: center;
+  border: 1px dashed rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  background: rgba(17, 24, 39, 0.72);
+}
+
+@media (min-width: 760px) {
+  .driver-page-view {
+    padding-top: 94px;
+  }
+
+  .driver-kpi-grid,
+  .driver-action-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .panel-superior {
+    left: 76px;
+    right: 10px;
+    top: 10px;
+    justify-content: flex-end;
+  }
+
+  .estado-btn {
+    max-width: 112px;
+    padding: 8px 10px;
+  }
+
+  .estado-btn h3 {
+    font-size: 0.9rem;
+  }
+
+  .driver-availability-toggle {
+    min-height: 44px;
+    padding: 0 12px;
+  }
+
+  .driver-availability-toggle span {
+    display: none;
+  }
+
+  .wallet-mini {
+    min-width: 70px;
+    min-height: 44px;
+    font-size: 0.82rem;
+  }
+
+  .driver-bottom-nav span {
+    font-size: 0.66rem;
+  }
+}

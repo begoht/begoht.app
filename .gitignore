@@ -1,0 +1,57 @@
+# Dependencies
+node_modules/
+*/node_modules/
+**/node_modules/
+
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+!.env.production.example
+
+# Logs
+logs/
+*.log
+server.err.log
+server.out.log
+
+# Build outputs and caches
+dist/
+build/
+coverage/
+.cache/
+.turbo/
+.parcel-cache/
+
+# Capacitor / Android native projects are rebuilt from web sources locally.
+**/android/
+
+# Mobile signing / platform secrets
+*.jks
+google-services.json
+front/oracleJdk-25/
+front/readme.txt
+
+# Large generated routing/map data
+*.pbf
+*.osrm*
+
+# Archives and release bundles
+*.zip
+*.tgz
+*.tar
+*.tar.gz
+*.rar
+
+# Nested/old repositories and scratch projects
+**/.git/
+.nested-git-backups/
+Back/begoht.app/
+mongo-fix/
+gomoto-tiktok-video/
+
+# Editor and OS files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

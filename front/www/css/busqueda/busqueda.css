@@ -1,0 +1,231 @@
+/* =========================================
+   🏠 BIENVENIDA Y HOME (ESTILO UNIFICADO)
+   ========================================= */
+
+
+
+.user_home {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.5px;
+  margin-bottom: 5px;
+}
+
+/* 🗺️ MAPA (EFECTO ELEVADO) */
+#map {
+  height: clamp(280px, 38vh, 430px);
+  min-height: 280px;
+  display: block;
+  border-radius: 22px;
+  margin: calc(var(--header-height, 76px) + env(safe-area-inset-top) + 18px) 16px 20px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  background-color: var(--bg-card);
+  
+  /* Sombra de elevación para el mapa */
+  box-shadow: 
+    10px 10px 20px rgba(0, 0, 0, 0.5), 
+    -5px -5px 15px rgba(255, 255, 255, 0.02);
+  
+  overflow: hidden;
+  z-index: 1;
+  touch-action: pan-x pan-y;
+}
+
+#map .leaflet-control-container {
+  z-index: 20;
+}
+
+#map .leaflet-top,
+#map .leaflet-bottom {
+  z-index: 25;
+}
+
+#map.hidden {
+  display: none !important;
+}
+
+/* 🔍 INPUT PRINCIPAL (ESTILO HUECO/INSET) */
+.inicio {
+  width: 100%;
+  background: var(--bg-card);
+  border: none;
+  color: var(--text-main);
+  padding: 18px 20px;
+  border-radius: 20px;
+  font-size: 16px;
+  font-weight: 500;
+  outline: none;
+  
+  /* Efecto hundido para indicar que es un campo de escritura */
+  box-shadow: 
+    inset 6px 6px 12px rgba(0, 0, 0, 0.8), 
+    inset -4px -4px 10px rgba(255, 255, 255, 0.02);
+  
+  margin-bottom: 25px;
+  transition: all 0.3s ease;
+}
+
+/* =============================================
+   🎯 TARJETA DE BÚSQUEDA (NEUMÓRFICA)
+   ============================================= */
+.busqueda {
+  background: var(--bg-card);
+  margin: 0 16px;
+  padding: 24px;
+  border-radius: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.02);
+  position: relative;
+  
+  /* Sombra de bloque sólido */
+  box-shadow: 
+    15px 15px 30px rgba(0, 0, 0, 0.6), 
+    -5px -5px 15px rgba(255, 255, 255, 0.02);
+}
+
+@media (max-width: 380px) {
+  #map {
+    height: 280px;
+    margin-left: 12px;
+    margin-right: 12px;
+  }
+
+  .busqueda {
+    margin-left: 12px;
+    margin-right: 12px;
+    padding: 18px;
+    border-radius: 22px;
+  }
+}
+
+.desde, .hacia {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+  z-index: 2;
+}
+
+.desde {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.2); /* Más oscuro para resaltar el hueco */
+  border: none;
+  color: var(--text-main);
+  padding: 16px 18px;
+  border-radius: 16px;
+  font-size: 15px;
+  outline: none;
+  transition: all 0.3s ease;
+  
+  /* Efecto hueco profundo */
+  box-shadow: 
+  inset 4px 4px 8px rgba(0, 0, 0, 0.9), 
+  inset -2px -2px 6px rgba(255, 255, 255, 0.01);
+}
+
+/* Decoración de ruta (Línea conectora) */
+.desde::before {
+  content: "";
+  position: absolute;
+  left: -18px;
+  top: 38px;
+  width: 10px;
+  height: 10px;
+  background: var(--secondary);
+  border-radius: 50%;
+  box-shadow: 0 0 12px var(--secondary);
+}
+
+.desde::after {
+  content: "";
+  position: absolute;
+  left: -14px;
+  top: 52px;
+  width: 2px;
+  height: 45px;
+  background: repeating-linear-gradient(to bottom, var(--muted) 0, var(--muted) 4px, transparent 4px, transparent 8px);
+  opacity: 0.3;
+}
+
+.hacia::before {
+  content: "";
+  position: absolute;
+  left: -18px;
+  top: 42px;
+  width: 10px;
+  height: 10px;
+  background: var(--success);
+  border-radius: 3px;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+}
+
+
+
+/* 🔘 BOTÓN UBICACIÓN ACTUAL (ESTILO BOTÓN FÍSICO) */
+#btnUbicacion {
+  all: unset;
+  cursor: pointer;
+  background: var(--bg-card);
+  color: var(--secondary);
+  padding: 14px 30px;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  
+  /* Efecto salido */
+  box-shadow: 
+    5px 5px 10px rgba(0, 0, 0, 0.5), 
+    -3px -3px 8px rgba(255, 255, 255, 0.03);
+}
+
+#btnUbicacion:active {
+  color: #fff;
+  /* Efecto hundido al pulsar */
+  box-shadow: 
+    inset 4px 4px 8px rgba(0, 0, 0, 0.8), 
+    inset -3px -3px 8px rgba(255, 255, 255, 0.02);
+  transform: scale(0.96);
+}
+
+/* ⌨️ INPUT DESTINO (ESTILO HUECO) */
+#inputDestino {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.2); /* Más oscuro para resaltar el hueco */
+  border: none;
+  color: var(--text-main);
+  padding: 16px 18px;
+  border-radius: 16px;
+  font-size: 15px;
+  outline: none;
+  transition: all 0.3s ease;
+  
+  /* Efecto hueco profundo */
+  box-shadow: 
+    inset 4px 4px 8px rgba(0, 0, 0, 0.9), 
+    inset -2px -2px 6px rgba(255, 255, 255, 0.01);
+}
+
+#inputDestino:focus {
+  box-shadow: 
+    inset 4px 4px 10px rgba(0, 0, 0, 1), 
+    inset -2px -2px 8px rgba(56, 189, 248, 0.1); /* Brillo sutil azul al enfocar */
+}
+
+/* Placeholder */
+::placeholder {
+  color: var(--muted);
+  opacity: 0.5;
+}
+
+/* =============================================
+   🎯 VISIBILIDAD POR RUTA
+   ============================================= */
+.center-btn {
+  display: none;
+}
+
+.route-home .center-btn {
+  display: flex;
+}

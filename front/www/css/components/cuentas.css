@@ -1,0 +1,142 @@
+/* =========================================
+   👤 CUENTA SPA WRAPPER (ESTILO NEUMÓRFICO)
+   ========================================= */
+
+.css-cuenta .opciones-cuenta {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px; /* Un poco más de aire para las sombras */
+}
+
+.css-cuenta .opciones-cuenta button,
+.css-cuenta .opciones-cuenta a,
+.css-cuenta .opciones-cuenta .opcion {
+  background: var(--bg-card);
+  border: none; /* Adiós a los bordes sólidos */
+  border-radius: 20px;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-main);
+  text-decoration: none;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  /* Efecto de botón físico salido */
+  box-shadow: 
+    6px 6px 12px rgba(0, 0, 0, 0.6), 
+    -3px -3px 10px rgba(255, 255, 255, 0.02);
+}
+
+/* IZQUIERDA (Icono + Textos) */
+.css-cuenta .opcion-izq {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.css-cuenta .opcion-izq i {
+  font-size: 22px;
+  color: var(--secondary);
+  min-width: 28px;
+  display: flex;
+  justify-content: center;
+  transition: color 0.3s ease;
+}
+
+.css-cuenta .opcion-izq span {
+  font-weight: 700;
+  font-size: 14px;
+  display: block;
+  letter-spacing: 0.3px;
+}
+
+.css-cuenta .opcion-izq p {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* Flecha de la derecha */
+.css-cuenta .opciones-cuenta button > i,
+.css-cuenta .opciones-cuenta a > i {
+  color: var(--muted);
+  font-size: 12px;
+  opacity: 0.5;
+}
+
+/* =========================================
+   🎁 SECCIÓN PROMOS (DESTAQUE FÍSICO)
+   ========================================= */
+.css-cuenta .promos-cuenta {
+  padding: 0 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.css-cuenta .promo {
+  background: var(--bg-card); /* Mismo fondo para mimetizarse */
+  border: none;
+  border-radius: 22px;
+  padding: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  /* Elevación ligeramente mayor para las promos */
+  box-shadow: 
+    8px 8px 16px rgba(0, 0, 0, 0.7), 
+    -4px -4px 12px rgba(255, 255, 255, 0.03);
+}
+
+.css-cuenta .promo-izq {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+/* =========================================
+   ✨ INTERACCIÓN (EL EFECTO "HUNDIDO")
+   ========================================= */
+.css-cuenta .opciones-cuenta button:active,
+.css-cuenta .opciones-cuenta a:active,
+.css-cuenta .promo:active {
+  transform: scale(0.97);
+  color: var(--orange);
+  
+  /* Cambio a sombra interior (Inset) */
+  box-shadow: 
+    inset 5px 5px 10px rgba(0, 0, 0, 0.8), 
+    inset -3px -3px 10px rgba(255, 255, 255, 0.02);
+}
+
+.css-cuenta .opciones-cuenta button:active .opcion-izq i,
+.css-cuenta .opciones-cuenta a:active .opcion-izq i {
+  color: var(--orange);
+}
+
+/* =========================================
+   ⚙️ MODOS PRO / SIMPLE (VISIBILIDAD)
+   ========================================= */
+body.modo-simple [data-pro="true"] {
+  display: none !important;
+}
+
+body.modo-pro [data-simple="true"] {
+  display: none !important;
+}
+
+/* Ajuste del menú rápido de la cuenta */
+.css-cuenta .menu button i {
+  display: block;
+  font-size: 20px;
+  margin-bottom: 8px;
+  color: var(--secondary);
+  transition: color 0.3s ease;
+}

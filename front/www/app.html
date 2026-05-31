@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BeGO - Cargando</title>
+<style>
+  body { display:flex; justify-content:center; align-items:center; height:100vh; font-family:'Segoe UI'; background:linear-gradient(135deg,#00b4d8,#0077b6); color:white; flex-direction:column; }
+  h1 { font-size:3rem; margin-bottom:20px; }
+  .loader { border:5px solid #f3f3f3; border-top:5px solid #fff; border-radius:50%; width:50px; height:50px; animation:spin 1s linear infinite; }
+  @keyframes spin { 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
+</style>
+</head>
+<body>
+<h1>BeGO</h1>
+<div class="loader"></div>
+
+<script>
+  setTimeout(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      window.location.href = "index.html"; // ya está logueado
+    } else {
+      window.location.href = "registro.html"; // requiere login/registro
+    }
+  }, 500);
+</script>
+</body>
+</html>

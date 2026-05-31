@@ -1,0 +1,256 @@
+.route-actividad .actividad-page {
+  padding: 30px 16px 96px;
+  color: var(--text-main);
+}
+
+.route-actividad .actividad-hero {
+  margin-bottom: 14px;
+}
+
+.route-actividad .actividad-kicker {
+  color: #a7f3d0;
+  font-size: 11px;
+  font-weight: 850;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
+.route-actividad .titulo-actividad {
+  margin: 4px 0 6px;
+  font-size: 28px;
+  line-height: 1.08;
+  font-weight: 900;
+}
+
+.route-actividad .actividad-hero p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.route-actividad .actividad-resumen {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.route-actividad .actividad-resumen article {
+  min-height: 92px;
+  padding: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  border-radius: 8px;
+  background: rgba(2, 6, 23, 0.94);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.22);
+}
+
+.route-actividad .actividad-resumen i {
+  color: var(--secondary);
+}
+
+.route-actividad .actividad-resumen span,
+.route-actividad .actividad-info small {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.route-actividad .actividad-resumen strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 24px;
+}
+
+/* FILTROS EN FILAS */
+.route-actividad .actividad-filtros {
+  display: flex;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.route-actividad .actividad-filtros::-webkit-scrollbar {
+  display: none;
+}
+
+.route-actividad .actividad-filtros button {
+  width: 100%;
+  min-height: 42px;
+  padding: 0 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--text-main);
+
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 999px;
+
+  background: rgba(15, 23, 42, 0.9);
+
+  font-size: 11px;
+  font-weight: 800;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.route-actividad .actividad-filtros button:active {
+  transform: scale(0.97);
+}
+
+.route-actividad .actividad-filtros .activo {
+  color: #03111f;
+  border-color: transparent;
+  background: linear-gradient(135deg, #38bdf8, #a7f3d0);
+}
+
+.route-actividad .actividad-activa {
+  margin-bottom: 14px;
+  cursor: pointer;
+}
+
+.route-actividad .actividad-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.route-actividad .actividad-btn {
+  padding: 0;
+  color: inherit;
+  text-align: left;
+  border: 0;
+  background: transparent;
+}
+
+.route-actividad .actividad-card {
+  width: 100%;
+  min-height: 76px;
+  padding: 14px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  border-radius: 8px;
+
+  background: rgba(2, 6, 23, 0.94);
+
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.2);
+}
+
+.route-actividad .actividad-izq {
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.route-actividad .actividad-icon {
+  width: 42px;
+  height: 42px;
+
+  flex: 0 0 auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px;
+
+  color: white;
+  font-size: 17px;
+}
+
+.route-actividad .actividad-icon.viaje {
+  background: linear-gradient(135deg, #2563eb, #38bdf8);
+}
+
+.route-actividad .actividad-icon.envio,
+.route-actividad .actividad-icon.recarga {
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+}
+
+.route-actividad .actividad-icon.cancelado {
+  background: #dc2626;
+}
+
+.route-actividad .actividad-info {
+  min-width: 0;
+}
+
+.route-actividad .actividad-info span {
+  display: block;
+  font-size: 14px;
+  font-weight: 850;
+}
+
+.route-actividad .actividad-info p {
+  margin: 3px 0;
+
+  color: var(--muted);
+
+  font-size: 12px;
+  line-height: 1.35;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.route-actividad .actividad-der {
+  flex: 0 0 auto;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.route-actividad .precio {
+  color: var(--success);
+  font-size: 14px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.route-actividad .actividad-card.cancelado .precio,
+.route-actividad .actividad-btn.cancelado .precio {
+  color: var(--muted);
+}
+
+.route-actividad .empty {
+  margin: 0;
+  padding: 18px;
+
+  text-align: center;
+  color: var(--muted);
+
+  border: 1px dashed rgba(148, 163, 184, 0.18);
+  border-radius: 8px;
+}
+
+.route-actividad main {
+  padding: 0;
+}
+
+.route-actividad #map {
+  display: none;
+}
+
+@media (min-width: 680px) {
+  .route-actividad .actividad-page {
+    width: min(860px, 100%);
+    margin: 0 auto;
+  }
+
+  .route-actividad .actividad-filtros button {
+    flex: 1 1 calc(25% - 8px);
+  }
+}

@@ -1,0 +1,187 @@
+import { viajeState } from "../../viaje/viaje.state.js";
+import { mostrarMotoristaEnMapa } from "../../map/map.motorista.js";
+import { mostrarDestinoEnMapa } from "../../map/map.destino.js";
+import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js";
+import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js";
+import { getMap } from "../../map/map.singleton.js";
+
+let lastEstadoPersistido = null;
+let rutaInicialRenderizada = false;
+
+// 🔥 Jerarquía real de estados
+const JERARQUIA = {
+  "asignado": 1,
+  "aceptado": 1,
+  "reservado": 1,
+  "llego": 2,
+  "en_curso": 3,
+  "finalizado": 4
+};
+
+// 🔥 estados válidos (anti-basura)
+const ESTADOS_TRACK = [
+  "asignado",
+  "aceptado",
+  "reservado",
+  "llego",
+  "en_curso"
+];
+
+export const handleTrack = (data) => {
+  if (viajeState.finalizado) {
+    console.warn("⚠️ Track ignorado: finalizado");
+    return;
+  }
+
+  if (!data || !viajeState.viajeId) return;
+
+  // 🛡️ anti-track zombie
+  if (
+    data.viajeId &&
+    data.viajeId !== viajeState.viajeId
+  ) {
+    console.warn("⚠️ Track viejo ignorado");
+    return;
+  }
+
+  
+  if (!data || !viajeState.viajeId) return;
+
+  const {
+    lat,
+    lng,
+    estado: estadoServer,
+    origen,
+    destino,
+    proximoDestino,
+    distancia,
+    eta
+  } = data;
+
+  if (lat == null || lng == null) return;
+
+  const map = getMap();
+  if (!map) return;
+
+  /*************************************************
+   * 1. MOTORISTA SIEMPRE
+   *************************************************/
+  mostrarMotoristaEnMapa({ lat, lng });
+
+  /*************************************************
+   * 2. FILTRO DE ESTADO (CRÍTICO)
+   *************************************************/
+  let estadoSeguro = viajeState.estado;
+
+  if (ESTADOS_TRACK.includes(estadoServer)) {
+    const nivelActual = JERARQUIA[viajeState.estado] || 0;
+    const nivelNuevo = JERARQUIA[estadoServer] || 0;
+
+    if (nivelNuevo >= nivelActual) {
+      if (estadoServer !== viajeState.estado) {
+        console.log(`⚡ Sync estado desde track: ${estadoServer}`);
+        estadoSeguro = estadoServer;
+        rutaInicialRenderizada = false;
+      }
+    }
+  } else {
+    // 🔥 ignorar estados corruptos tipo "desconocido"
+    estadoSeguro = viajeState.estado;
+  }
+
+  viajeState.estado = estadoSeguro;
+
+  /*************************************************
+   * 3. SYNC CONTEXTO
+   *************************************************/
+  viajeState.motorista = {
+    ...viajeState.motorista,
+    lat,
+    lng
+  };
+
+  if (origen) viajeState.origen = origen;
+  if (destino) {
+    viajeState.destino = destino;
+    mostrarDestinoEnMapa(destino);
+  }
+  if (proximoDestino) viajeState.proximoDestino = proximoDestino;
+
+  /*************************************************
+   * 4. CONDICIÓN DE RUTA (FIX CLAVE 🔥)
+   *************************************************/
+  const estadoFinal = viajeState.estado;
+
+  const tieneTargetAsignado =
+    proximoDestino || viajeState.origen;
+
+  const puedeRenderizar =
+    (estadoFinal === "en_curso" && viajeState.destino) ||
+    (["asignado", "aceptado"].includes(estadoFinal) && tieneTargetAsignado) ||
+    (estadoFinal === "reservado" && viajeState.origen) ||
+    estadoFinal === "llego";
+
+  if (puedeRenderizar) {
+    if (!rutaInicialRenderizada) {
+      resetRutaController();
+      rutaInicialRenderizada = true;
+    }
+
+    actualizarRutaSegunEstado({
+      estado: estadoFinal,
+      motorista: viajeState.motorista,
+      origen: viajeState.origen,
+      destino: viajeState.destino,
+      proximoDestino: proximoDestino || viajeState.proximoDestino || null
+    });
+  }
+
+  /*************************************************
+   * 5. UI
+   *************************************************/
+  actualizarUIDriver(viajeState.motorista, estadoFinal, {
+    eta,
+    distancia,
+    origen: viajeState.origen,
+    destino: viajeState.destino,
+    proximoDestino: proximoDestino || viajeState.proximoDestino || null
+  });
+  actualizarTextoEstado(estadoFinal, distancia, eta);
+
+  /*************************************************
+   * 6. PERSISTENCIA
+   *************************************************/
+  if (estadoFinal !== lastEstadoPersistido) {
+    guardarSesionViaje(estadoFinal);
+    lastEstadoPersistido = estadoFinal;
+  }
+};
+
+/*************************************************
+ * 🧾 TEXTO UI
+ *************************************************/
+function actualizarTextoEstado(estado, distancia, eta) {
+  const box = document.getElementById("estadoViaje");
+  if (!box) return;
+
+  const distNum = Number(distancia);
+  const distText = Number.isFinite(distNum) && distNum > 0
+    ? `${distNum < 10 ? distNum.toFixed(1) : Math.round(distNum)} km`
+    : "Cerca";
+  const etaText = eta ? ` | ⏱ ${eta} min` : "";
+
+  const textos = {
+    "en_curso": "🚀 En camino al destino...",
+    "llego": "📍 ¡El conductor llegó!",
+    "reservado": "⌛ El conductor está terminando un viaje...",
+    "asignado": `🛵 Conductor en camino: ${distText}${etaText}`,
+    "aceptado": `🛵 Conductor en camino: ${distText}${etaText}`
+  };
+
+  box.innerText = textos[estado] || "Buscando conductor...";
+}
+
+window.__resetTrackHandler = () => {
+  lastEstadoPersistido = null;
+  rutaInicialRenderizada = false;
+};

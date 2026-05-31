@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seguir viaje BeGO</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f8f9fa; }
+        #map { height: 60vh; width: 100%; }
+        
+        .panel { padding: 15px; background: #fff; border-radius: 20px 20px 0 0; margin-top: -20px; position: relative; z-index: 1000; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); }
+        
+        .driver-info { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+        .driver-detail { display: flex; align-items: center; gap: 12px; }
+        .driver-detail img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; background: #eee; }
+        .driver-name { font-weight: bold; font-size: 1.1em; }
+        .plate-badge { background: #eee; padding: 2px 8px; border-radius: 4px; font-size: 0.8em; font-weight: bold; }
+
+        /* Contenedor de Acciones */
+        .driver-acciones { display: flex; gap: 10px; justify-content: space-between; }
+        .driver-btn { 
+            flex: 1; border: none; border-radius: 12px; padding: 12px 5px; 
+            display: flex; flex-direction: column; align-items: center; gap: 5px;
+            cursor: pointer; background: #f3f3f8; transition: 0.2s; font-size: 12px; font-weight: 600;
+        }
+        .driver-btn i { font-size: 18px; }
+        .driver-btn:active { transform: scale(0.95); }
+        
+        /* Colores */
+        .compartir { color: #7352FF; }
+        .llamar { color: #007bff; }
+        .whatsapp { color: #25D366; }
+        .perfil { color: #666; }
+    </style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<div class="panel">
+    <div class="driver-info">
+        <div class="driver-detail">
+            <img id="driverFoto" src="/assets/default-user.png" />
+            <div>
+                <div id="driverNombre">Cargando...</div>
+                <div id="driverAuto" class="plate-badge">---</div>
+            </div>
+        </div>
+        <div id="distanciaInfo" style="font-size: 0.9em; color: #666;"></div>
+    </div>
+
+    <div class="driver-acciones">
+        <button id="btnCompartirViaje" class="driver-btn compartir">
+            <i class="fa-solid fa-share-nodes"></i> Compartir
+        </button>
+        <button id="btnLlamarDriver" class="driver-btn llamar">
+            <i class="fa-solid fa-phone"></i> Llamar
+        </button>
+        <button id="btnWhatsDriver" class="driver-btn whatsapp">
+            <i class="fa-brands fa-whatsapp"></i> WhatsApp
+        </button>
+        <button id="btnVerPerfil" class="driver-btn perfil">
+            <i class="fa-solid fa-id-card"></i> Perfil
+        </button>
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="../js/seguir.js"></script>
+</body>
+</html>

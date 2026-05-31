@@ -1,0 +1,74 @@
+/* =========================
+   OVERLAY BUSCANDO
+========================= */
+#overlayBuscando {
+  position: fixed;
+  inset: 0;
+  background: rgba(2,6,23,.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s ease;
+}
+
+#overlayBuscando.activo {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.overlay-box {
+  background: #020617;
+  padding: 26px;
+  border-radius: 20px;
+  text-align: center;
+  border: 1px solid #1e293b;
+  animation: pop .35s ease;
+}
+
+/* TEXTO */
+.overlay-box h3 {
+  margin-bottom: 6px;
+}  
+
+.overlay-box p {
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+/* =========================
+   ESTADO ENCONTRADO
+========================= */
+.overlay-box.encontrado .spinner {
+  display: none;
+}
+
+.overlay-box.encontrado i {
+  font-size: 46px;
+  color: #22c55e;
+  margin-bottom: 10px;
+  animation: pop .4s ease;
+}
+
+/* SPINNER */
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #1e293b;
+  border-top: 4px solid #38bdf8;
+  border-radius: 50%;
+  margin: 0 auto 14px;
+  animation: spin 1s linear infinite;
+}
+
+.loader {
+  margin: 40px auto;
+  width: 48px;
+  height: 48px;
+  border: 4px solid rgba(255,255,255,.15);
+  border-top: 4px solid var(--secondary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}

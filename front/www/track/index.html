@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Seguimiento en vivo - BeGO</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --primary: #6c5ce7; --text: #2d3436; }
+        body { margin: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #f4f7f6; overflow: hidden; }
+        
+        #map { height: 60vh; width: 100%; }
+
+        /* Contenedor Flotante Inferior */
+        .details-panel {
+            height: 40vh;
+            background: white;
+            border-top-left-radius: 25px;
+            border-top-right-radius: 25px;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 1001;
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .drag-handle { width: 40px; height: 5px; background: #dfe6e9; border-radius: 10px; margin: 0 auto 15px; }
+
+        .trip-status { color: var(--primary); font-weight: bold; margin-bottom: 15px; font-size: 14px; }
+
+        .address-box { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        .address-item { display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--text); }
+        .address-item i { font-size: 12px; width: 15px; }
+        .dot-origin { color: #00b894; }
+        .dot-dest { color: #d63031; }
+
+        .divider { height: 1px; background: #eee; margin: 10px 0; }
+
+        .driver-info { display: flex; align-items: center; justify-content: space-between; margin-top: auto; }
+        .driver-profile { display: flex; align-items: center; gap: 15px; }
+        .driver-img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; background: #eee; }
+        .car-plate { background: #f1f2f6; padding: 4px 8px; border-radius: 5px; font-weight: bold; font-family: monospace; font-size: 14px; border: 1px solid #ddd; }
+        
+        .btn-call { 
+            width: 45px; height: 45px; border-radius: 50%; background: #6c5ce7; 
+            color: white; display: flex; align-items: center; justify-content: center; 
+            text-decoration: none; box-shadow: 0 4px 10px rgba(108, 92, 231, 0.3);
+        }
+        
+        .custom-label {
+            background: #6c5ce7;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        
+        /* Quitar la flechita del tooltip de Leaflet */
+        .leaflet-tooltip-top:before {
+            border-top-color: #6c5ce7;
+        }
+
+        /* Labels del Mapa Estilo Cabify */
+        .custom-label { background: #6c5ce7; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; border: none; }
+    </style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<div class="details-panel">
+    <div class="drag-handle"></div>
+    <div class="trip-status" id="tripStatus">Moto en camino...</div>
+    
+    <div class="address-box">
+        <div class="address-item">
+            <i class="fa-solid fa-circle dot-origin"></i>
+            <span id="originText">Cargando origen...</span>
+        </div>
+        <div class="address-item">
+            <i class="fa-solid fa-location-dot dot-dest"></i>
+            <span id="destText">Cargando destino...</span>
+        </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="driver-info">
+        <div class="driver-profile">
+            <img src="" id="driverImg" class="driver-img" alt="Conductor">
+            <div>
+                <div style="font-weight: bold;" id="driverName">Marcelo</div>
+                <div style="font-size: 12px; color: #636e72;" id="carModel">Fiat Siena</div>
+            </div>
+        </div>
+        <div style="text-align: right;">
+            <div class="car-plate" id="carPlate">AA899TU</div>
+            <a href="#" class="btn-call" id="callBtn"><i class="fa-solid fa-phone"></i></a>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script src="./seguir.js"></script>
+
+</body>
+</html>

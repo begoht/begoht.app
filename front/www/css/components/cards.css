@@ -1,0 +1,206 @@
+/* CARD MOTORISTA */
+.motorista-card {
+  background: #020617;
+  border: 1px solid #1e293b;
+  border-radius: 16px;
+  padding: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+/* CARD */
+.actividad-card {
+  background: var(--bg-card);
+  border: 1px solid #1e293b;
+  border-radius: 18px;
+  padding: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* CARD */
+.servicio-card {
+  background: var(--bg-card);
+  border: 1px solid #1e293b;
+  border-radius: 18px;
+  padding: 16px 12px;
+  text-align: center;
+  color: var(--text-main);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ICONO */
+.servicio-card i {
+  font-size: 26px;
+  color: var(--secondary);
+  margin-bottom: 4px;
+}
+
+/* TEXTO */
+.servicio-card span {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.servicio-card p {
+  font-size: 12px;
+  color: var(--muted);
+}  
+
+
+/* CARD */
+.ganancia-card {
+  background: var(--bg-card);
+  border: 1px solid #1e293b;
+  border-radius: 20px;
+  padding: 18px 14px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ICONO */
+.ganancia-card i {
+  font-size: 32px;
+  color: var(--secondary);
+}
+
+/* TITULO */
+.ganancia-card h3 {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+/* TEXTO */
+.ganancia-card p {
+  font-size: 13px;
+  color: var(--muted);
+  min-height: 36px;
+}
+
+/* CARD BASE */
+.seguridad-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--bg-card);
+  border: 1px solid #1e293b;
+  border-radius: 18px;
+  padding: 14px;
+  color: var(--text-main);
+}
+
+/* ICONOS */
+.seguridad-card > i {
+  font-size: 22px;
+  color: var(--secondary);
+  min-width: 26px;
+}
+
+/* TEXTO */
+.seguridad-card div {
+  flex: 1;
+}
+
+.seguridad-card span,
+.seguridad-card h3 {
+  font-weight: 700;
+  font-size: 14px;
+  display: block;
+}
+
+.seguridad-card p {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* FLECHA */
+.seguridad-card .fa-chevron-right {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.seguridad-card.emergencia {
+  background: linear-gradient(
+    135deg,
+    rgba(239,68,68,0.25),
+    rgba(220,38,38,0.15)
+  );
+  border: 1px solid #ef4444;
+}
+
+.seguridad-card.emergencia i {
+  color: #ef4444;
+}
+
+.seguridad-card.ripple:active {
+  transform: scale(0.98);
+}
+
+
+/* Tarjeta de familiar */
+.familia-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  animation: fadeIn 0.3s ease;
+}
+
+.familia-card h4 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #222;
+}
+
+.familia-card small {
+  display: block;
+  margin-top: 4px;
+  color: #666;
+  font-size: 13px;
+}
+
+/* Botón eliminar */
+.familia-card button {
+  margin-top: 12px;
+  background: #ff5252;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.familia-card button:active {
+  transform: scale(0.96);
+}
+/* CARD */
+.detalle-card {
+  background: var(--bg-card);
+  border: 1px solid #1e293b;
+  border-radius: 18px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.detalle-card h3 {
+  font-size: 14px;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.driver-card {
+
+  display: flex;
+  gap: 50px;
+  align-items: flex-start;
+}

@@ -1,0 +1,30 @@
+/* =========================
+   RIPPLE EFFECT ANDROID
+========================= */
+.ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple::after {
+  content: "";
+  position: absolute;
+  width: 120%;
+  height: 120%;
+  top: 50%;
+  left: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(56,189,248,.35) 10%,
+    transparent 60%
+  );
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  transition: transform .4s ease, opacity .6s ease;
+  pointer-events: none;
+}
+
+.ripple:active::after {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+}

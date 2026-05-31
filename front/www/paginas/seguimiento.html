@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seguimiento en vivo</title>
+
+  <!-- Leaflet -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
+
+  <!-- ICONOS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="../css/index.css">
+
+  <style>
+    #map {
+      height: 100vh;
+      width: 100%;
+    }
+
+    .tracking-panel {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #fff;
+      border-radius: 20px 20px 0 0;
+      padding: 16px;
+      box-shadow: 0 -4px 20px rgba(0,0,0,.2);
+    }
+
+    .estado {
+      font-weight: bold;
+      color: #1dbf73;
+    }
+
+    .motorista {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .motorista i {
+      font-size: 26px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header class="app-header">
+  <nav>
+    <button class="icon-btn ripple" onclick="history.back()">
+      <i class="fa-solid fa-arrow-left"></i>
+    </button>
+    <strong>Seguimiento en vivo</strong>
+  </nav>
+</header>
+
+<div id="map"></div>
+
+<div class="tracking-panel">
+  <div class="estado" id="estadoViaje">🚕 Motorista en camino</div>
+
+  <div class="motorista">
+    <i class="fa-solid fa-motorcycle"></i>
+    <div>
+      <strong id="nombreMotorista">Jean</strong><br>
+      <small id="placaMoto">Placa: GM-4521</small>
+    </div>
+  </div>
+</div>
+
+<!-- Leaflet -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- Socket.IO -->
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
+<script src="../js/seguimiento.js"></script>
+</body>
+</html>

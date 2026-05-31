@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BeGO | Inicio</title>
+
+  <link rel="stylesheet" href="../css/home.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- LEAFLET -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header class="top-bar">
+    <div>
+      <h2 id="saludoUsuario">Hola 👋</h2>
+      <p>¿A dónde vamos hoy?</p>
+    </div>
+    <img src="https://cdn-icons-png.flaticon.com/512/1946/1946429.png" class="avatar">
+  </header>
+
+  <!-- 🗺️ MAPA EMBEBIDO -->
+  <section class="map-container">
+    <div id="homeMap"></div>
+
+    <button class="btn-viaje" onclick="irMapa()">
+      <i class="fas fa-motorcycle"></i> Pedir un viaje
+    </button>
+  </section>
+
+  <!-- TARJETA PRINCIPAL -->
+  <section class="card main-action">
+    <button onclick="irMapa()">
+      <i class="fas fa-motorcycle"></i>
+      Pedir un viaje
+    </button>
+  </section>
+
+  <!-- ACCESOS RÁPIDOS -->
+  <section class="grid">
+    <div class="item" onclick="irWallet()">
+      <i class="fas fa-wallet"></i>
+      <span>Wallet</span>
+    </div>
+
+    <div class="item" onclick="irFamilia()">
+      <i class="fas fa-people-roof"></i>
+      <span>Familia PRO</span>
+    </div>
+
+    <div class="item" onclick="irHistorial()">
+      <i class="fas fa-clock-rotate-left"></i>
+      <span>Historial</span>
+    </div>
+
+    <div class="item" onclick="irSeguridad()">
+      <i class="fas fa-shield-halved"></i>
+      <span>Seguridad</span>
+    </div>
+
+    <div class="item" onclick="irPerfil()">
+      <i class="fas fa-user"></i>
+      <span>Perfil</span>
+    </div>
+
+    <div class="item" onclick="irSoporte()">
+      <i class="fas fa-headset"></i>
+      <span>Soporte</span>
+    </div>
+  </section>
+
+
+  <!-- NAVBAR -->
+  <nav class="bottom-nav">
+    <button onclick="irHome()"><i class="fas fa-house"></i></button>
+    <button onclick="irMapa()"><i class="fas fa-map"></i></button>
+    <button onclick="irWallet()"><i class="fas fa-wallet"></i></button>
+    <button onclick="irPerfil()"><i class="fas fa-user"></i></button>
+  </nav>
+
+  <!-- SCRIPTS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="../js/home.js"></script>
+  <script src="../js/home-map.js"></script>
+
+</body>
+</html>

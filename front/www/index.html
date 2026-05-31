@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BeGO</title>
+  <link rel="icon" href="data:,">
+
+  <!-- ICONOS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <!-- CSS -->
+  <link rel="stylesheet" href="./css/fouter/footer.css">
+<link rel="stylesheet" href="./css/main.css">
+<link rel="stylesheet" href="./css/busqueda/busqueda.css">
+<link rel="stylesheet" href="./wallet/wallet.css">
+  <!-- LEAFLET -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+</head>
+
+<body>
+  
+  <header id="appHeader" class="app-header">
+  </header>
+  <div id="app"></div>
+  <div id="map"></div>
+  <main id="appMain" class="home-page">
+
+  <button id="btnUbicacion">Usar ubicación actual</button>
+  
+  <section class="busqueda">
+    <div class="desde">
+      <span>Desde</span>
+      <input
+      id="inputInicio"
+      class="inicio"
+      type="text"
+      placeholder="¿A dónde te gustaría ir hoy?"
+      />
+    </div>
+    
+    <div class="hacia">
+      <span>Hacia</span>
+      <input id="inputDestino" type="text" placeholder="Ingresa tu destino"/>
+    </div>
+  </section>
+  <!-- 💳 MÉTODO DE PAGO -->
+  <h3 class="titulo-pago">¿Cómo deseas pagar?</h3>
+
+  <div class="pago-opciones">
+    <button class="btn-pago" onclick="seleccionarPago('efectivo', this)">💵 Efectivo</button>
+    <button class="btn-pago" onclick="seleccionarPago('wallet', this)">💳 Wallet BeGO</button>
+    <button class="btn-pago" onclick="seleccionarPago('moncash', this)">📱 MonCash</button>
+    <button class="btn-pago" onclick="seleccionarPago('natcash', this)">🏦 NatCash</button>
+  </div>
+
+
+  
+  <section class="servicios-section">
+    <span>Promociones</span>
+    <div class="servicios-container">
+      <div class="servicios">
+        <!-- Tarjeta de Promoción 1 -->
+        <div class="servicio-card">
+          <button>
+            <i class="fa-solid fa-percent"></i>
+            <div class="promo-content">
+              <span class="promo-title">¡Viaje al 50%!</span>
+              <span class="promo-desc">Usa el código: MITAD</span>
+            </div>
+          </button>
+        </div>
+        <!-- Tarjeta de Promoción 2 -->
+        <div class="servicio-card">
+          <button>
+            <i class="fa-solid fa-gift"></i>
+            <div class="promo-content">
+              <span class="promo-title">Envío Gratis</span>
+              <span class="promo-desc">En tu primera compra</span>
+            </div>
+          </button>
+        </div>
+        <!-- Tarjeta de Promoción 3 -->
+        <div class="servicio-card">
+          <button>
+            <i class="fa-solid fa-star"></i>
+            <div class="promo-content">
+              <span class="promo-title">Puntos Dobles</span>
+              <span class="promo-desc">Solo por hoy</span>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer id="appFooter">
+</footer>
+
+
+
+<!-- OVERLAY BUSCANDO -->
+<div id="overlayBuscando">
+  <div class="overlay-box">
+    <div class="spinner"></div>
+    <h3>Buscando motorista</h3>
+    <p>Esto puede tardar unos segundos…</p>
+  </div>
+</div>
+
+<!-- 🔥 MENÚ UNIFICADO (LISTA → ASIGNADO) -->
+<div id="menuDriver" class="menu-driver oculto">
+
+
+<!-- ========================= -->
+<!-- ESTADO: ASIGNADO / RESERVA -->
+<!-- ========================= -->
+<div id="driverAsignado" class="driver-body oculto">
+  
+  <!-- 🔘 BOTÓN MINIMIZAR -->
+  <button id="btnMinimizarDriver" class="btn-min-driver">—</button>
+
+  <div class="driver-card">
+    
+    <!-- FOTO -->
+    <div class="driver-avatar">
+      <img id="driverFoto" src="assets/logo_primcial.png" alt="Foto del motorista" />
+    </div>
+    
+    <!-- COLUMNA DERECHA -->
+    <div class="driver-right">
+      
+      <small class="driver-badge">Conductor verificado</small>
+      
+      <h3 id="driverNombre"></h3>
+      
+      <div class="driver-rating">
+        ⭐ <span id="driverRating">4.9</span>
+      </div>
+      
+      <p class="driver-text">
+        <span id="driverTelefono"></span>
+      </p>
+
+      <p class="driver-text placa">
+        <span id="driverPlaca"></span>
+      </p>
+      
+    </div>
+  </div>
+  
+  <div class="driver-premium-grid">
+    <div class="driver-premium-stat">
+      <span>Tarifa</span>
+      <strong id="driverPrecio">--</strong>
+    </div>
+    <div class="driver-premium-stat">
+      <span>Pago</span>
+      <strong id="driverPago">--</strong>
+    </div>
+    <div class="driver-premium-stat">
+      <span>Distancia</span>
+      <strong id="driverDistancia">--</strong>
+    </div>
+    <div class="driver-premium-stat">
+      <span>ETA</span>
+      <strong id="driverEtaText">Calculando</strong>
+    </div>
+  </div>
+
+  <div class="driver-route-card">
+    <div class="driver-route-line">
+      <span class="route-dot pickup"></span>
+      <div>
+        <small>Recogida</small>
+        <strong id="driverOrigen">Origen confirmado</strong>
+      </div>
+    </div>
+    <div class="driver-route-line">
+      <span class="route-dot dropoff"></span>
+      <div>
+        <small>Destino</small>
+        <strong id="driverDestino">Destino confirmado</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="driver-service-strip">
+    <span id="driverTripId">Viaje activo</span>
+    <span id="driverVehicleColor">Vehiculo verificado</span>
+  </div>
+
+  <!-- ========================= -->
+  <!-- ETA PRINCIPAL -->
+  <!-- ========================= -->
+  <div class="driver-eta-box">
+
+    <div id="estadoViaje" class="estado-viaje-text"></div>
+
+    <div class="eta-bar-container">
+      <div id="driverEtaBar" class="eta-bar"></div>
+    </div>
+
+    <div class="eta-detalle">
+      <div id="driverEtaActual" class="eta-line oculto"></div>
+      <div id="driverEtaTotal" class="eta-line oculto"></div>
+    </div>
+
+  </div>
+
+  <!-- ========================= -->
+  <!-- ACCIONES -->
+  <!-- ========================= -->
+  <div class="driver-acciones">
+
+    <button id="btnCompartirViaje" class="driver-btn compartir">
+      <i class="fa-solid fa-share-nodes"></i> Compartir
+    </button>
+
+    <button id="btnLlamarDriver" class="driver-btn llamar">
+      <i class="fa-solid fa-phone"></i> Llamar
+    </button>
+
+    <button id="btnWhatsDriver" class="driver-btn whatsapp">
+      <i class="fa-brands fa-whatsapp"></i> WhatsApp
+    </button>
+
+    <button id="btnVerPerfil" class="driver-btn perfil">
+      <i class="fa-solid fa-id-card"></i> Ver perfil
+    </button>
+  </div>
+
+</div>
+
+<!-- ========================= -->
+<!-- 🟢 BURBUJA MINIMIZADA -->
+<!-- ========================= -->
+<div id="driverMiniBubble" class="driver-mini oculto">
+
+  <div class="mini-avatar">
+    <span class="mini-pulse"></span>
+    <img id="miniFoto" src="assets/logo_primcial.png" />
+  </div>
+
+  <div class="mini-info">
+    <span id="miniNombre">Motorista</span>
+    <span id="miniETA">En camino</span>
+  </div>
+
+</div>
+
+
+
+<audio id="sonidoLlegada" preload="auto">
+  <source src="https://assets.mixkit.co/active_storage/sfx/933/933-preview.mp3" type="audio/mpeg">
+</audio>
+
+
+<!-- 🚕 MODAL CONFIRMAR VIAJE -->
+<div id="modalConfirmarViaje" class="modal hidden">
+  <div class="modal-content">
+    <h3>🚕 Confirmar viaje</h3>
+
+    <p>
+      Precio estimado:
+      <strong id="precioViaje">$0</strong>
+    </p>
+
+    <div class="modal-actions">
+      <button id="btnConfirmarViaje" class="btn-primary">
+        ✅ Confirmar
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const links = document.querySelectorAll("footer ul li a");
+    const currentPath = window.location.pathname;
+
+    links.forEach(link => {
+      const linkPath = new URL(link.href).pathname;
+
+      if (currentPath.includes(linkPath)) {
+        link.classList.add("active");
+      }
+    });
+  });
+</script>
+
+
+<!-- JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script type="module">
+  import { initApp } from "./js/core/app/app.js";
+  initApp();
+</script>
+
+<script type="module" src="./js/compartirViaje.js"></script>
+
+</body>
+</html>

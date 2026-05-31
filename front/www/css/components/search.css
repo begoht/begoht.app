@@ -1,0 +1,78 @@
+
+.hacia {
+    position: relative;
+    width: 100%;
+}
+
+/* LISTA DE RESULTADOS (MODO GLASS) */
+#search-results {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    z-index: 1100; /* Por encima de todo */
+    
+    /* Estilo Glassmorphism coherente con tu .driver-body */
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    background: rgba(2, 6, 23, 0.95); 
+    
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 18px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    
+    max-height: 280px;
+    overflow-y: auto;
+    animation: pop 0.3s ease;
+}
+
+/* CADA ITEM DE LA LISTA */
+.search-item {
+    padding: 14px 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.search-item:last-child {
+    border-bottom: none;
+}
+
+.search-item:hover, .search-item:active {
+    background: rgba(37, 99, 235, 0.15); /* Color primary con transparencia */
+}
+
+/* TEXTOS DENTRO DEL ITEM */
+.search-item strong {
+    display: block;
+    color: var(--text-main);
+    font-size: 14px;
+    margin-bottom: 2px;
+}
+
+.search-item small {
+    display: block;
+    color: var(--muted);
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* MENSAJE SIN RESULTADOS */
+.no-results {
+    padding: 20px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    font-style: italic;
+}
+
+/* Scrollbar personalizado para el buscador */
+#search-results::-webkit-scrollbar {
+    width: 4px;
+}
+#search-results::-webkit-scrollbar-thumb {
+    background: var(--muted);
+    border-radius: 10px;
+}

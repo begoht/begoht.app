@@ -1,0 +1,186 @@
+// oferta.render.js
+
+import { 
+  UI, 
+  mostrarPanel, 
+  reproducirSonido, 
+  ocultarPanel, 
+  resetBotonAceptar,
+  actualizarCirculoProgreso
+} from "./oferta.ui.js";
+
+import { setViajeActual, ofertaState, getViajeId } from "./oferta.state.js";
+import { initMiniMapa, renderMiniRuta } from "./oferta.miniMap.js";
+import { siguienteDeCola } from "./oferta.queue.js";
+import { isDriverOnline } from "../driver.status.js";
+
+/*************************************************
+ * 🧹 LIMPIAR OFERTA
+ *************************************************/
+export function limpiarOferta({ resetViaje = true } = {}) {
+  try {
+    if (ofertaState.intervalo) {
+      clearInterval(ofertaState.intervalo);
+      ofertaState.intervalo = null;
+    }
+
+    if (ofertaState.failSafeTimer) {
+      clearTimeout(ofertaState.failSafeTimer);
+      ofertaState.failSafeTimer = null;
+    }
+
+    ofertaState.aceptando = false;
+    ofertaState.viajeMostradoId = null;
+
+    if (resetViaje) {
+      setViajeActual(null);
+    }
+
+    ocultarPanel();
+    resetBotonAceptar();
+
+    actualizarCirculoProgreso(15, 15);
+
+    // 🔁 Procesar siguiente en cola
+    const siguiente = siguienteDeCola();
+    if (siguiente) {
+      setTimeout(() => renderOferta(siguiente), 250);
+    }
+
+  } catch (err) {
+    console.error("❌ Error en limpiarOferta:", err);
+  }
+}
+
+/*************************************************
+ * 🎯 RENDER OFERTA
+ *************************************************/
+export async function renderOferta(viaje, opts = {}) {
+  try {
+    if (!isDriverOnline()) {
+      ocultarPanel();
+      return;
+    }
+
+    if (!viaje) return;
+
+    const vId = getViajeId(viaje);
+    if (!vId) return;
+
+    const actualId = ofertaState.viajeMostradoId;
+
+    /*************************************************
+     * 🧠 DEDUP + CONTROL DE REEMPLAZO
+     *************************************************/
+    // 👉 misma oferta (duplicado)
+    if (actualId && actualId === vId) {
+      console.log("⚠️ Oferta duplicada, ignorando:", vId);
+      return;
+    }
+
+    // 👉 hay otra oferta visible → decidir comportamiento
+    if (actualId && actualId !== vId) {
+      // Si está aceptando, NO interrumpir
+      if (ofertaState.aceptando) {
+        console.log("⏳ En proceso de aceptación, enviando a cola:", vId);
+        return;
+      }
+
+      console.log("🔄 Nueva oferta reemplaza la actual:", vId);
+      limpiarOferta({ resetViaje: false });
+    }
+
+    // 🔒 Registrar nueva oferta visible
+    ofertaState.viajeMostradoId = vId;
+    setViajeActual(viaje);
+
+    /*************************************************
+     * 🧾 UI TEXTO
+     *************************************************/
+    if (UI.precio) {
+      UI.precio.textContent = `${viaje.precio?.toLocaleString() || 0} G`;
+    }
+
+    if (UI.metodo) {
+      UI.metodo.textContent = (viaje.metodoPago || "Efectivo").toUpperCase();
+    }
+
+    if (UI.origenNombre) {
+      UI.origenNombre.textContent = viaje.origen?.direccion || "Buscando origen...";
+    }
+
+    if (UI.destinoNombre) {
+      UI.destinoNombre.textContent = viaje.destino?.direccion || "Buscando destino...";
+    }
+
+    /*************************************************
+     * 🎨 MOSTRAR UI
+     *************************************************/
+    mostrarPanel();
+    reproducirSonido();
+
+    /*************************************************
+     * 🌍 GEOCODING (NO BLOQUEANTE)
+     *************************************************/
+    if (!viaje.origen?.direccion && viaje.origen?.lat) {
+      obtenerDireccion(viaje.origen.lat, viaje.origen.lng)
+        .then(d => {
+          if (UI.origenNombre && d) UI.origenNombre.textContent = d;
+        })
+        .catch(() => {});
+    }
+
+    if (!viaje.destino?.direccion && viaje.destino?.lat) {
+      obtenerDireccion(viaje.destino.lat, viaje.destino.lng)
+        .then(d => {
+          if (UI.destinoNombre && d) UI.destinoNombre.textContent = d;
+        })
+        .catch(() => {});
+    }
+
+    /*************************************************
+     * 🗺️ MINI MAPA
+     *************************************************/
+    setTimeout(() => {
+      try {
+        initMiniMapa();
+        if (viaje.origen && viaje.destino) {
+          renderMiniRuta(viaje.origen, viaje.destino);
+        }
+      } catch (err) {
+        console.warn("⚠️ Error mini mapa:", err);
+      }
+    }, 50);
+
+    /*************************************************
+     * ⏱️ TIMER
+     *************************************************/
+
+    const TIEMPO_TOTAL = 15;
+    const inicioLocal = Date.now();
+    
+    ofertaState.intervalo = setInterval(() => {
+      try {
+        const elapsed = Math.floor((Date.now() - inicioLocal) / 1000);
+        const restante = Math.max(0, TIEMPO_TOTAL - elapsed);
+        
+        if (UI.contador) {
+          UI.contador.textContent = restante;
+        }
+        
+        actualizarCirculoProgreso(restante, TIEMPO_TOTAL);
+        
+        if (restante <= 0) {
+          console.log("⏳ Oferta expirada (local):", vId);
+          limpiarOferta();
+        }
+        
+      } catch (err) {
+        console.error("❌ Error en timer oferta:", err);
+      }
+    }, 1000);
+      
+    } catch (error) {
+      console.error("❌ Error en renderOferta:", error);
+    }
+}

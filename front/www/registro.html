@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="theme-color" content="#0b0c18">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BeGO - Acceso</title>
+
+<link rel="stylesheet" href="./css/registro.css">
+</head>
+<body>
+
+<div class="app-wrapper">
+
+  <div class="auth-container">
+
+    <!-- ================= LOGIN ================= -->
+    <div class="auth-box login active">
+
+      <div class="logo">BeGO</div>
+      <h2>Iniciar Sesión</h2>
+
+      <input type="tel" id="loginTelefono" placeholder="Teléfono">
+      <input type="password" id="loginPassword" placeholder="Contraseña">
+
+      <button id="btnLogin">Ingresar</button>
+      <button id="btnHuella" class="btn-huella" type="button">Ingresar con huella</button>
+      <div id="msgLogin" class="msg"></div>
+
+      <p class="switch">
+        ¿No tienes cuenta? <a id="irRegistro">Regístrate</a>
+      </p>
+
+    </div>
+
+    <!-- ================= REGISTRO ================= -->
+    <div class="auth-box registro">
+
+      <div class="register-slider">
+
+        <!-- PASO 1 -->
+        <div class="register-step step-1">
+
+          <div class="logo">BeGO</div>
+          <h2>Crear Cuenta</h2>
+
+          <input type="text" id="nombre" placeholder="Nombre">
+          <input type="text" id="apellido" placeholder="Apellido">
+          <input type="tel" id="telefono" placeholder="Teléfono">
+          <input type="email" id="email" placeholder="Email (opcional)">
+
+          <button id="btnNext">Continuar</button>
+
+          <p class="switch">
+            ¿Ya tienes cuenta? <a id="volverLogin">Inicia sesión</a>
+          </p>
+
+        </div>
+
+        <!-- PASO 2 -->
+        <div class="register-step step-2">
+
+          <h2>Seguridad</h2>
+
+          <label class="rol" for="rol">Tipo de usuario</label>
+          <select id="rol">
+            <option value="pasajero">Pasajero</option>
+            <option value="motorista">Motorista</option>
+          </select>
+
+          <input type="password" id="password" placeholder="Contraseña">
+          <input type="password" id="confirmPassword" placeholder="Confirmar contraseña">
+
+          <label class="check">
+            <input type="checkbox" id="terminos">
+            Acepto términos y condiciones
+          </label>
+
+          <button id="btnRegistro">Crear Cuenta</button>
+          <button type="button" class="secondary" id="btnBack">Atrás</button>
+
+          <!-- UN SOLO MENSAJE PARA TODO EL REGISTRO -->
+          <div id="msgRegistro" class="msg"></div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script type="module" src="./js/registro.js"></script>
+<script type="module" src="./js/modules/huellas/huellas.login.js"></script>
+</body>
+</html>

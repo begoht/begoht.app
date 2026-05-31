@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Verificar Recibo | BeGO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="./css/index.css">
+<style>
+body{
+  background:#020617;
+  color:white;
+  font-family:sans-serif;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+}
+.card{
+  background:#0f172a;
+  padding:30px;
+  border-radius:20px;
+  width:100%;
+  max-width:420px;
+  box-shadow:0 0 40px rgba(0,0,0,.6);
+}
+input{
+  width:100%;
+  padding:14px;
+  border-radius:12px;
+  border:none;
+  margin-top:15px;
+  font-size:16px;
+}
+button{
+  width:100%;
+  padding:14px;
+  background:#22c55e;
+  border:none;
+  border-radius:12px;
+  font-size:16px;
+  font-weight:bold;
+  margin-top:15px;
+  cursor:pointer;
+}
+.ok{ color:#22c55e; }
+.err{ color:#ef4444; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h2>🔎 Verificar Recibo BeGO</h2>
+  <p>Ingrese la firma digital del recibo</p>
+
+  <input id="firma" placeholder="GM-XXXX-YYYY">
+  <button onclick="verificar()">Verificar</button>
+
+  <div id="resultado" style="margin-top:20px"></div>
+</div>
+
+<script>
+const API_BASE = (location.hostname === "localhost" || location.hostname === "127.0.0.1")
+  ? "http://localhost:3000"
+  : window.location.origin;
+
+async function verificar(){
+  const firma = document.getElementById("firma").value.trim();
+  const res = await fetch(`${API_BASE}/api/recargas/verificar/${firma}`);
+  const data = await res.json();
+
+  const div = document.getElementById("resultado");
+
+  if(!data.valido){
+    div.innerHTML = "<p class='err'>❌ Recibo inválido</p>";
+    return;
+  }
+
+  const r = data.recibo;
+
+  div.innerHTML = `
+    <p class="ok">✅ Recibo válido</p>
+    <p><b>Cliente:</b> ${r.cliente}</p>
+    <p><b>Número:</b> ${r.numero}</p>
+    <p><b>Operadora:</b> ${r.operadora}</p>
+    <p><b>Monto:</b> HTG ${r.monto}</p>
+    <p><b>Fecha:</b> ${new Date(r.fecha).toLocaleString()}</p>
+    <p><b>Firma:</b> ${r.firma}</p>
+  `;
+}
+</script>
+
+</body>
+</html>

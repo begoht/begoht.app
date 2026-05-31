@@ -1,0 +1,73 @@
+import { isDriverOnline, updateDriverPosition } from "./driver.status.js";
+
+let socketInstance = null;
+
+export function initSocket(serverUrl, token) {
+
+  if (socketInstance) return socketInstance;
+
+  socketInstance = io(serverUrl, {
+    auth: { token, role: "motorista" },
+    transports: ["websocket"],
+    reconnection: true,
+    reconnectionAttempts: 10,
+    reconnectionDelay: 2000,
+    timeout: 10000
+  });
+
+  /*************************************************
+   * 🔌 CONEXIÓN
+   *************************************************/
+  socketInstance.on("connect", () => {
+    console.log("🟢 Socket conectado:", socketInstance.id);
+    socketInstance.emit("wallet:subscribe");
+    enviarPosicionActual();
+  });
+  
+  socketInstance.on("connect_error", (err) => {
+    console.error("❌ Error conexión:", err.message);
+    
+    if (err.message?.includes("jwt") || err.message?.includes("token")) {
+      localStorage.clear();
+      window.location.href = "login.html";
+    }
+  });
+  
+  function enviarPosicionActual() {
+    if (!navigator.geolocation) return;
+    
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        updateDriverPosition({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude
+        });
+        socketInstance.emit("motoristas:ubicacion", {
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+          disponible: isDriverOnline()
+        });
+      },
+      (err) => console.error("❌ Error GPS:", err),
+      { enableHighAccuracy: true }
+    );
+  }
+
+  /*************************************************
+   * 💰 WALLET GLOBAL
+   *************************************************/
+  socketInstance.on("wallet:update", (w) => {
+    if (!w) return;
+
+    const saldoBox = document.getElementById("saldo");
+    const saldoBloqueadoBox = document.getElementById("saldoBloqueado");
+
+    saldoBox && (saldoBox.textContent = (w.saldo || 0).toFixed(2));
+    saldoBloqueadoBox && (saldoBloqueadoBox.textContent = (w.saldoBloqueado || 0).toFixed(2));
+    window.dispatchEvent(new CustomEvent("wallet:update", { detail: w }));
+  });
+
+  window.socket = socketInstance;
+
+  return socketInstance;
+}

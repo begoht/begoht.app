@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light dark" />
+  <title>Riders App - Driver</title>
+  <link rel="icon" href="data:,">
+
+  <script>
+    (function () {
+      try {
+        var token = localStorage.getItem("token");
+        if (!token) {
+          window.location.replace("login.html");
+          return;
+        }
+        document.documentElement.classList.add("driver-booting");
+      } catch (err) {
+        window.location.replace("login.html");
+      }
+    })();
+  </script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <link rel="stylesheet" href="./css/inicio.css" />
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+  <style>
+    /* 🎨 ESTILOS PREMIUM UBER-STYLE */
+    :root {
+      --uber-black: #000000;
+      --uber-blue: #276ef1;
+      --uber-white: #ffffff;
+    }
+
+    html.driver-booting main,
+    html.driver-booting #sidebar,
+    html.driver-booting #backdrop,
+    html.driver-booting #menuBtn {
+      visibility: hidden;
+    }
+
+    .boot-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: #05070a;
+      color: #ffffff;
+      text-align: center;
+      padding: 24px;
+    }
+
+    html.driver-booting .boot-screen {
+      display: flex;
+    }
+
+    .boot-box {
+      width: min(320px, 92vw);
+    }
+
+    .boot-spinner {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 4px solid rgba(255, 255, 255, 0.16);
+      border-top-color: var(--uber-blue);
+      margin: 0 auto 16px;
+      animation: bootSpin 0.9s linear infinite;
+    }
+
+    .boot-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .boot-status {
+      color: #b8c0cc;
+      font-size: 0.92rem;
+      line-height: 1.4;
+    }
+
+    @keyframes bootSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Panel de Oferta Flotante */
+    .oferta-panel {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      z-index: 2000;
+      padding: 15px;
+      box-sizing: border-box;
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .oferta-panel.hidden {
+      transform: translateY(100%);
+      display: block !important; /* Mantenemos el DOM pero fuera de vista */
+    }
+
+    .oferta-card-premium {
+      background: var(--uber-black);
+      color: white;
+      border-radius: 24px 24px 24px 24px;
+      padding: 20px;
+      box-shadow: 0 -5px 30px rgba(0,0,0,0.4);
+      text-align: center;
+    }
+
+    /* Círculo de progreso */
+    .timer-container {
+      position: relative;
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .progress-ring {
+      position: absolute;
+      transform: rotate(-90deg);
+    }
+
+    .progress-ring__circle {
+      transition: stroke-dashoffset 0.35s;
+      transform-origin: 50% 50%;
+      stroke: var(--uber-blue);
+    }
+
+    .contador-texto {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    /* Detalles del Viaje */
+    .precio-valor {
+      font-size: 2.2rem;
+      font-weight: 800;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .info-secundaria {
+      display: flex;
+      justify-content: space-around;
+      margin: 15px 0;
+      font-size: 0.9rem;
+      color: #cbcbcb;
+    }
+
+    .destino-box {
+      background: #1f1f1f;
+      padding: 12px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    /* Botones */
+    .btn-aceptar {
+      background: var(--uber-blue);
+      color: white;
+      border: none;
+      width: 100%;
+      padding: 18px;
+      border-radius: 15px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: filter 0.2s;
+    }
+
+    .btn-rechazar-mini {
+      position: absolute;
+      top: 10px;
+      right: 25px;
+      background: none;
+      border: none;
+      color: #666;
+      font-size: 1.5rem;
+      padding: 10px;
+    }
+
+    /* Animación de entrada */
+    @keyframes slideIn {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+  </style>
+</head>
+
+<body class="theme-auto">
+
+  <div id="driverBootScreen" class="boot-screen">
+    <div class="boot-box">
+      <div class="boot-spinner"></div>
+      <div class="boot-title">Conectando GoMoto Driver</div>
+      <div id="driverBootStatus" class="boot-status">Verificando sesion y ubicacion...</div>
+    </div>
+  </div>
+
+  <button id="menuBtn" class="menu-btn" onclick="toggleMenu()">☰</button>
+  <div id="backdrop" onclick="toggleMenu()"></div>
+
+  <div id="sidebar" class="sidebar">
+    <div class="driver-menu-head">
+      <span class="driver-status-dot offline" id="driverAvailabilityDot"></span>
+      <div>
+        <strong>BeGO Driver</strong>
+        <small id="driverPageStatus">Desconectado</small>
+      </div>
+    </div>
+    <div class="menu-arreglo">
+      <a href="#/" class="item" data-driver-route><i class="fa-solid fa-map-location-dot"></i><span>Inicio</span></a>
+      <a href="#/ganancias" class="item" data-driver-route><i class="fa-solid fa-chart-line"></i><span>Ganancias</span></a>
+      <a href="#/actividad" class="item" data-driver-route><i class="fa-solid fa-clock-rotate-left"></i><span>Actividad</span></a>
+      <a href="#/wallet" class="item billeteras" data-driver-route><i class="fa-solid fa-wallet"></i><span>Billetera</span> <span id="walletBadge" class="badge hidden">0</span></a>
+      <a href="#/soporte" class="item horas" data-driver-route><i class="fa-solid fa-headset"></i><span>Soporte</span></a>
+    </div>
+    <a href="#/cuenta" data-driver-route><i class="fa-solid fa-user-shield"></i><span>Cuenta</span></a>
+    <a href="#/ajustes" data-driver-route><i class="fa-solid fa-sliders"></i><span>Ajustes</span></a>
+    <a href="#"><i class="fa-solid fa-gear"></i><span>Configuración</span></a>
+  </div>
+  
+  <main id="driverAppShell" class="driver-shell">
+    <section id="driverHomeView" class="driver-home-view">
+    <section class="panel-superior">
+      <button class="estado-btn">
+        <h3 id="driverName">Motorista</h3>
+        <p class="status" id="onlineStatus">Offline</p>
+      </button>
+      <button id="driverAvailabilityToggle" class="driver-availability-toggle is-offline" type="button" aria-pressed="false">
+        <i class="fa-solid fa-signal"></i><span>Conectar</span>
+      </button>
+      <div class="wallet-mini">
+        <span id="saldo">$0.00</span>
+      </div>
+    </section>
+    <span id="reservaBadge" class="hidden bg-blue-500 text-white text-xs px-2 py-1 rounded-full animate-bounce">
+      1 VIAJE EN ESPERA
+    </span>
+    
+    <section class="mapa-container">
+      <div id="map"></div>
+    </section>
+    <div id="panelOferta" class="oferta-panel hidden">
+      <div class="oferta-card-premium">
+        <button id="btnRechazar" class="btn-rechazar-mini">✕</button>
+        
+        <div class="timer-container">
+          <svg class="progress-ring" width="80" height="80">
+            <circle class="progress-ring__circle" stroke-width="6" fill="transparent" r="34" cx="40" cy="40"/>
+          </svg>
+          <span class="contador-texto" id="contadorOferta">15</span>
+        </div>
+        
+        <div id="miniMapaOferta" class="mini-mapa"></div>
+        <div class="oferta-body">
+          <span class="precio-valor" id="ofertaPrecio">0 G</span>
+          
+          <div class="info-secundaria">
+            <span><i class="fa-solid fa-person-walking"></i> <span id="ofertaDistanciaPasajero">--</span> min</span>
+            <span><i class="fa-solid fa-wallet"></i> <span id="ofertaMetodo">Efectivo</span></span>
+          </div>
+          
+          <div class="rutas-box">
+            <div class="ruta-item">
+              <small style="color: #22c55e;">RECOGER EN:</small>
+              <div id="ofertaOrigenNombre" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500;">
+                Buscando origen...
+              </div>
+            </div>
+            <div class="ruta-item" style="margin-top: 8px;">
+              <small style="color: #ef4444;">DESTINO FINAL:</small>
+              <div id="ofertaDestinoNombre" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500;">
+                Buscando destino...
+              </div>
+            </div>
+          </div>
+        </div>
+        <button id="btnAceptar" class="btn-aceptar">ACEPTAR</button>
+      </div>
+    </div>
+  
+    <div id="panelViajeControl" class="viaje-control hidden">
+      <div class="info-pasajero-mini">
+        <div id="estadoViaje" class="estado-tag">🟡 En camino</div>
+      </div>
+      
+      <div class="viaje-actions">
+        <button id="btnLlegue" class="btn-llegue" style="display: none;" >
+          📍 LLEGUÉ AL PUNTO
+        </button>
+        
+        <button id="btnIniciarViaje" class="btn-iniciar" style="display:none;">
+          🚀 INICIAR VIAJE
+        </button>
+        
+        <button id="btnFinalizar" class="btn-finalizar" style="display:none;">
+          🏁 FINALIZAR
+        </button>
+      </div>
+    </div>
+    </section>
+
+    <section id="driverPageView" class="driver-page-view hidden"></section>
+
+    <nav class="driver-bottom-nav" aria-label="Navegacion motorista">
+      <a href="#/" data-driver-route><i class="fa-solid fa-map"></i><span>Inicio</span></a>
+      <a href="#/ganancias" data-driver-route><i class="fa-solid fa-chart-simple"></i><span>Ganancias</span></a>
+      <a href="#/actividad" data-driver-route><i class="fa-solid fa-route"></i><span>Actividad</span></a>
+      <a href="#/wallet" data-driver-route><i class="fa-solid fa-wallet"></i><span>Wallet</span></a>
+      <a href="#/cuenta" data-driver-route><i class="fa-solid fa-user"></i><span>Cuenta</span></a>
+    </nav>
+
+  </main>
+
+  <audio id="sonidoOferta" src="./assets/sounds/new-offer.mp3" preload="auto"></audio>
+
+  <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+  <script src="./js/core/conexion.js"></script>
+  <script type="module" src="js/modules/driver.main.js"></script>
+
+  <script>
+    // Configuración de tema
+    document.documentElement.setAttribute(
+      "data-theme",
+      window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+    );
+  </script>
+
+</body>
+</html>

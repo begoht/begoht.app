@@ -1,0 +1,10 @@
+{
+  "appId": "com.BeGO.driver",
+  "appName": "front-driver",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+
+  }
+}

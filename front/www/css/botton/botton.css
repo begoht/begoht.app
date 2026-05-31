@@ -1,0 +1,123 @@
+/* =========================
+   VARIABLES DE MARCA
+========================= */
+:root {
+  --bg-main: #0f172a;
+  --bg-card: #020617;
+  --primary: #2563eb;
+  --secondary: #38bdf8;
+  --text-main: #e5e7eb;
+  --muted: #94a3b8;
+  --success: #22c55e;
+}
+
+/* ================================
+   💳 MÉTODOS DE PAGO – PREMIUM GRID
+================================ */
+
+.titulo-pago {
+  margin-top: 18px;
+  margin-bottom: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-main); /* Texto claro como en la foto */
+  padding-left: 5%;
+}
+
+.pago-opciones {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Mantiene tus 2 columnas */
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-left: 5%;
+  padding-right: 5%;
+}
+
+.btn-pago {
+  /* Fondo oscuro basado en tu variable --bg-card */
+  background: var(--bg-card); 
+  border-radius: 16px;
+  /* Borde sutil para definir la tarjeta en fondo oscuro */
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 16px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Efecto de brillo sutil al pasar */
+.btn-pago::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.03), transparent);
+  opacity: 0;
+  transition: 0.4s;
+}
+
+.btn-pago:hover {
+  transform: translateY(-3px);
+  background: #0f172a; /* Cambio ligero al color principal */
+  border-color: var(--secondary);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+}
+
+.btn-pago:hover::after {
+  opacity: 1;
+}
+
+/* Iconos */
+.btn-pago i {
+  font-size: 18px;
+  color: var(--secondary); /* Color acento para iconos */
+}
+
+/* ESTADO SELECCIONADO (ACTIVO) */
+.btn-pago.activo {
+  /* Gradiente usando tus variables primary y bg-main */
+  background: linear-gradient(135deg, var(--primary), var(--bg-main));
+  color: white;
+  border: 1px solid var(--secondary);
+  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+}
+
+.btn-pago.activo i {
+  color: white; /* El icono cambia a blanco cuando está activo */
+}
+
+/* Animación de entrada al seleccionar */
+.btn-pago.activo {
+  animation: pulsePago 0.3s ease-out;
+}
+
+@keyframes pulsePago {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Ajuste para móviles muy pequeños */
+@media (max-width: 350px) {
+  .btn-pago {
+    font-size: 12px;
+    padding: 12px 5px;
+  }
+}
+
+
+
+#btnPedirViaje.btn-ready {
+    background-color: #10b981; /* Verde esmeralda */
+    color: white;
+    transform: scale(1.05);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+}

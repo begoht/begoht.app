@@ -1,0 +1,99 @@
+export const UI = {
+  panel: null, 
+  precio: null, 
+  metodo: null, 
+  contador: null,
+  sonido: null, 
+  btnAceptar: null, 
+  btnRechazar: null,
+  origenNombre: null, 
+  destinoNombre: null,
+  // Agregamos estos para la animación y el mapa
+  circulo: null,
+  miniMapaContainer: null 
+};
+
+export function initUI() {
+  UI.panel = document.getElementById("panelOferta");
+  UI.precio = document.getElementById("ofertaPrecio");
+  UI.metodo = document.getElementById("ofertaMetodo");
+  UI.contador = document.getElementById("contadorOferta");
+  UI.sonido = document.getElementById("sonidoOferta");
+  UI.btnAceptar = document.getElementById("btnAceptar");
+  UI.btnRechazar = document.getElementById("btnRechazar");
+  UI.origenNombre = document.getElementById("ofertaOrigenNombre");
+  UI.destinoNombre = document.getElementById("ofertaDestinoNombre");
+  
+  // Nuevas referencias según tu HTML
+  UI.circulo = document.querySelector(".progress-ring__circle");
+  UI.miniMapaContainer = document.getElementById("miniMapaOferta");
+
+  // Configuración inicial del círculo de progreso
+  if (UI.circulo) {
+    const radius = UI.circulo.r.baseVal.value;
+    const circumference = radius * 2 * Math.PI;
+    UI.circulo.style.strokeDasharray = `${circumference} ${circumference}`;
+    UI.circulo.style.strokeDashoffset = circumference;
+  }
+}
+
+export const mostrarPanel = () => {
+  if (UI.panel) UI.panel.classList.remove("hidden");
+};
+
+export const ocultarPanel = () => {
+  if (UI.panel) UI.panel.classList.add("hidden");
+};
+
+export function resetBotonAceptar() {
+  if (!UI.btnAceptar) return;
+  UI.btnAceptar.disabled = false;
+  UI.btnAceptar.style.pointerEvents = "auto";
+  UI.btnAceptar.innerHTML = "ACEPTAR";
+}
+
+export function notificar(msj, color = "#22c55e") {
+  if (typeof Toastify !== "undefined") {
+    Toastify({
+      text: msj, 
+      duration: 3500, 
+      gravity: "top", 
+      position: "right",
+      style: { background: color, borderRadius: "12px", fontWeight: "600" }
+    }).showToast();
+  } else {
+    console.log("Notificación:", msj);
+  }
+}
+
+export function reproducirSonido() {
+  if (!UI.sonido) return;
+
+  UI.sonido.pause();
+  UI.sonido.currentTime = 0;
+
+  const playPromise = UI.sonido.play();
+
+  if (playPromise !== undefined) {
+    playPromise
+      .then(() => {
+        // 🔊 Sonido reproducido correctamente
+      })
+      .catch((err) => {
+        console.warn("🔇 Audio bloqueado por el navegador:", err.message);
+      });
+  }
+}
+
+/**
+ * Actualiza visualmente el progreso del círculo
+ * @param {number} restante Segundos que quedan
+ * @param {number} total Segundos totales (ej. 15)
+ */
+export function actualizarCirculoProgreso(restante, total = 15) {
+  if (!UI.circulo) return;
+  const radius = UI.circulo.r.baseVal.value;
+  const circumference = radius * 2 * Math.PI;
+  const offset = circumference - (restante / total) * circumference;
+  UI.circulo.style.strokeDashoffset = offset;
+}

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro Motorista - BeGO</title>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body{
+      height:100vh;
+      background: linear-gradient(135deg,#250821,#1a1a2e);
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      color:white;
+    }
+
+    .card{
+      width:400px;
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(15px);
+      border-radius:20px;
+      padding:30px;
+      box-shadow: 0 0 30px rgba(18,247,255,0.3);
+      animation: fadeIn 0.8s ease;
+    }
+
+    .card h2{
+      text-align:center;
+      margin-bottom:20px;
+      color:#12f7ff;
+    }
+
+    .input-group{
+      margin-bottom:15px;
+    }
+
+    .input-group label{
+      font-size:0.9rem;
+      opacity:0.8;
+    }
+
+    .input-group input{
+      width:100%;
+      padding:12px;
+      margin-top:5px;
+      border:none;
+      border-radius:10px;
+      background:#292e33;
+      color:white;
+      outline:none;
+      transition:0.3s;
+    }
+
+    .input-group input:focus{
+      box-shadow:0 0 10px #12f7ff;
+    }
+
+    .btn{
+      width:100%;
+      padding:14px;
+      border:none;
+      border-radius:10px;
+      background:#12f7ff;
+      color:black;
+      font-weight:bold;
+      cursor:pointer;
+      transition:0.3s;
+      margin-top:10px;
+    }
+
+    .btn:hover{
+      transform:scale(1.05);
+      box-shadow:0 0 15px #12f7ff;
+    }
+
+    .link{
+      text-align:center;
+      margin-top:15px;
+    }
+
+    .link a{
+      color:#12f7ff;
+      text-decoration:none;
+    }
+
+    @keyframes fadeIn{
+      from{opacity:0; transform:translateY(20px);}
+      to{opacity:1; transform:translateY(0);}
+    }
+
+    @media(max-width:450px){
+      .card{
+        width:90%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2>Registro Motorista</h2>
+
+    <div class="input-group">
+      <label>Nombre completo</label>
+      <input type="text" id="nombre">
+    </div>
+
+    <div class="input-group">
+      <label>Email</label>
+      <input type="text" id="email">
+    </div>
+
+    <div class="input-group">
+      <label>Teléfono</label>
+      <input type="text" id="telefono">
+    </div>
+    
+
+    <div class="input-group">
+      <label>Contraseña</label>
+      <input type="password" id="password">
+    </div>
+
+    <div class="input-group">
+      <label>Marca del vehículo</label>
+      <input type="text" id="marca">
+    </div>
+
+    <div class="input-group">
+      <label>Modelo</label>
+      <input type="text" id="modelo">
+    </div>
+
+    <div class="input-group">
+      <label>Placa</label>
+      <input type="text" id="placa">
+    </div>
+
+    <button class="btn" id="btnRegistro">Crear Cuenta</button>
+
+    <div class="link">
+      ¿Ya tienes cuenta? <a href="login.html">Iniciar sesión</a>
+    </div>
+  </div>
+
+  <script src="./js/core/conexion.js"></script>
+  <script src="./js/auth/registro.js"></script>
+
+
+</body>
+</html>
