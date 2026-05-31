@@ -4,6 +4,8 @@
   "webDir": "www",
   "bundledWebRuntime": false,
   "server": {
+    "url": "https://bego.com.ht/driver/",
+    "cleartext": false,
     "androidScheme": "https"
 
   }
