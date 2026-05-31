@@ -1,4 +1,4 @@
-import { renderHeader } from "../../components/header.js";
+import { renderHeader } from "../../components/header.js?v=20260531-header-premium";
 import { renderFooter } from "../../components/footer.js";
 
 export function renderLayout(route, mainClass, contentHTML) {
