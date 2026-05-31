@@ -28,8 +28,9 @@ function getRouteMeta(route) {
 
 function renderAvatar() {
   return `
-    <div class="header-avatar ripple" id="avatarBtn" role="button" tabindex="0" aria-label="Cambiar foto de perfil" title="Cambiar foto">
-      <img id="fotoPerfil" src="assets/logo_primcial.png" alt="Foto de perfil">
+    <div class="header-avatar ripple" id="avatarBtn" role="button" tabindex="0" aria-label="Cambiar foto de perfil" title="Cambiar foto" style="width:48px;height:48px;max-width:48px;max-height:48px;border-radius:50%;overflow:hidden;display:grid;place-items:center;flex:0 0 auto;">
+      <span id="avatarFallback" aria-hidden="true" style="display:grid;place-items:center;width:100%;height:100%;font-weight:850;color:#fff;background:linear-gradient(180deg,#ff8b1a,#d94d00);">B</span>
+      <img id="fotoPerfil" src="" alt="Foto de perfil" style="display:none;width:100%;height:100%;max-width:48px;max-height:48px;object-fit:cover;">
       <span class="avatar-status" aria-hidden="true"></span>
       <input type="file" id="inputFoto" accept="image/*">
     </div>

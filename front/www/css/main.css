@@ -8,7 +8,7 @@
 @import "./base/animations.css";
 
 /* 4. LAYOUT (estructura) */
-@import "./layout/header.css?v=20260531-header-premium";
+@import "./layout/header.css?v=20260531-header-avatar-fix";
 @import "./layout/containers.css";
 @import "./layout/grid.css";
 @import "./layout/app-layout.css";

@@ -70,14 +70,26 @@ function bindNotifications() {
 
 function bindAvatar(user) {
   const foto = document.getElementById("fotoPerfil");
+  const fallback = document.getElementById("avatarFallback");
   const input = document.getElementById("inputFoto");
   const avatar = document.getElementById("avatarBtn");
   if (!foto || !input || !avatar) return;
 
   const userName = user?.nombre || "Invitado";
-  foto.src = user?.foto || "assets/logo_primcial.png";
+  if (fallback) {
+    fallback.textContent = decodeURIComponent(getInitials(userName)).slice(0, 2) || "B";
+  }
+
+  if (user?.foto) {
+    foto.src = user.foto;
+    foto.style.display = "block";
+    if (fallback) fallback.style.display = "none";
+  }
+
   foto.onerror = () => {
-    foto.src = `https://ui-avatars.com/api/?name=${getInitials(userName)}&background=111827&color=ffffff&bold=true`;
+    foto.removeAttribute("src");
+    foto.style.display = "none";
+    if (fallback) fallback.style.display = "grid";
     foto.onerror = null;
   };
 
@@ -96,6 +108,8 @@ function bindAvatar(user) {
     const reader = new FileReader();
     reader.onload = () => {
       foto.src = reader.result;
+      foto.style.display = "block";
+      if (fallback) fallback.style.display = "none";
       localStorage.setItem("BeGO_user", JSON.stringify({
         ...(user || {}),
         foto: reader.result
