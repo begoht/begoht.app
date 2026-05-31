@@ -3,157 +3,107 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registro Motorista - BeGO</title>
-
-  <style>
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-      font-family: 'Segoe UI', sans-serif;
-    }
-
-    body{
-      height:100vh;
-      background: linear-gradient(135deg,#250821,#1a1a2e);
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      color:white;
-    }
-
-    .card{
-      width:400px;
-      background: rgba(255,255,255,0.05);
-      backdrop-filter: blur(15px);
-      border-radius:20px;
-      padding:30px;
-      box-shadow: 0 0 30px rgba(18,247,255,0.3);
-      animation: fadeIn 0.8s ease;
-    }
-
-    .card h2{
-      text-align:center;
-      margin-bottom:20px;
-      color:#12f7ff;
-    }
-
-    .input-group{
-      margin-bottom:15px;
-    }
-
-    .input-group label{
-      font-size:0.9rem;
-      opacity:0.8;
-    }
-
-    .input-group input{
-      width:100%;
-      padding:12px;
-      margin-top:5px;
-      border:none;
-      border-radius:10px;
-      background:#292e33;
-      color:white;
-      outline:none;
-      transition:0.3s;
-    }
-
-    .input-group input:focus{
-      box-shadow:0 0 10px #12f7ff;
-    }
-
-    .btn{
-      width:100%;
-      padding:14px;
-      border:none;
-      border-radius:10px;
-      background:#12f7ff;
-      color:black;
-      font-weight:bold;
-      cursor:pointer;
-      transition:0.3s;
-      margin-top:10px;
-    }
-
-    .btn:hover{
-      transform:scale(1.05);
-      box-shadow:0 0 15px #12f7ff;
-    }
-
-    .link{
-      text-align:center;
-      margin-top:15px;
-    }
-
-    .link a{
-      color:#12f7ff;
-      text-decoration:none;
-    }
-
-    @keyframes fadeIn{
-      from{opacity:0; transform:translateY(20px);}
-      to{opacity:1; transform:translateY(0);}
-    }
-
-    @media(max-width:450px){
-      .card{
-        width:90%;
-      }
-    }
-  </style>
+  <meta name="theme-color" content="#111827">
+  <title>Motorista BeGO - Registro</title>
+  <link rel="stylesheet" href="./css/driver-auth.css">
 </head>
 <body>
+  <main class="driver-auth-page">
+    <section class="driver-auth-shell" aria-label="Registro motorista BeGO">
+      <aside class="driver-auth-brand">
+        <div class="brand-mark">
+          <span class="brand-dot" aria-hidden="true"></span>
+          <span>BeGO Driver</span>
+        </div>
 
-  <div class="card">
-    <h2>Registro Motorista</h2>
+        <div class="driver-auth-copy">
+          <p class="eyebrow">Alta de motorista</p>
+          <h1>Activa tu perfil para trabajar.</h1>
+          <p>Registra tus datos y la informacion de tu vehiculo para empezar a recibir viajes.</p>
+        </div>
 
-    <div class="input-group">
-      <label>Nombre completo</label>
-      <input type="text" id="nombre">
-    </div>
+        <div class="driver-auth-metrics" aria-hidden="true">
+          <div>
+            <strong>ID</strong>
+            <span>Perfil</span>
+          </div>
+          <div>
+            <strong>Moto</strong>
+            <span>Vehiculo</span>
+          </div>
+          <div>
+            <strong>PIN</strong>
+            <span>Seguro</span>
+          </div>
+        </div>
+      </aside>
 
-    <div class="input-group">
-      <label>Email</label>
-      <input type="text" id="email">
-    </div>
+      <section class="driver-auth-panel">
+        <header class="driver-auth-head">
+          <div>
+            <span class="form-kicker">Cuenta motorista</span>
+            <h2>Crear cuenta</h2>
+          </div>
+          <span class="status-pill">Registro seguro</span>
+        </header>
 
-    <div class="input-group">
-      <label>Teléfono</label>
-      <input type="text" id="telefono">
-    </div>
-    
+        <div class="driver-auth-card">
+          <div class="form-row">
+            <label for="nombre">Nombre completo</label>
+            <input type="text" id="nombre" placeholder="Tu nombre y apellido" autocomplete="name">
+          </div>
 
-    <div class="input-group">
-      <label>Contraseña</label>
-      <input type="password" id="password">
-    </div>
+          <div class="form-grid">
+            <div class="form-row">
+              <label for="email">Email</label>
+              <input type="email" id="email" placeholder="nombre@email.com" autocomplete="email">
+            </div>
 
-    <div class="input-group">
-      <label>Marca del vehículo</label>
-      <input type="text" id="marca">
-    </div>
+            <div class="form-row">
+              <label for="telefono">Telefono</label>
+              <input type="tel" id="telefono" placeholder="8090000000" autocomplete="tel">
+            </div>
+          </div>
 
-    <div class="input-group">
-      <label>Modelo</label>
-      <input type="text" id="modelo">
-    </div>
+          <div class="form-row">
+            <label for="password">Contrasena</label>
+            <input type="password" id="password" placeholder="Minimo 8 caracteres" autocomplete="new-password">
+          </div>
 
-    <div class="input-group">
-      <label>Placa</label>
-      <input type="text" id="placa">
-    </div>
+          <div class="form-grid">
+            <div class="form-row">
+              <label for="marca">Marca del vehiculo</label>
+              <input type="text" id="marca" placeholder="Honda, Yamaha...">
+            </div>
 
-    <button class="btn" id="btnRegistro">Crear Cuenta</button>
+            <div class="form-row">
+              <label for="modelo">Modelo</label>
+              <input type="text" id="modelo" placeholder="Wave, Navi...">
+            </div>
+          </div>
 
-    <div class="link">
-      ¿Ya tienes cuenta? <a href="login.html">Iniciar sesión</a>
-    </div>
-  </div>
+          <div class="form-row">
+            <label for="placa">Placa</label>
+            <input type="text" id="placa" placeholder="Numero de placa">
+          </div>
+
+          <button class="btn" id="btnRegistro" type="button">Crear cuenta</button>
+          <div id="msgRegistro" class="driver-msg" role="status" aria-live="polite"></div>
+
+          <div class="driver-note">
+            <span aria-hidden="true">OK</span>
+            <p><strong>Importante:</strong> usa datos reales para que soporte pueda validar tu perfil si hace falta.</p>
+          </div>
+
+          <div class="link">
+            Ya tienes cuenta? <a href="login.html">Iniciar sesion</a>
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
 
   <script src="./js/core/conexion.js"></script>
   <script src="./js/auth/registro.js"></script>
-
-
 </body>
 </html>
