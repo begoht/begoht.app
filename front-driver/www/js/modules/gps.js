@@ -5,7 +5,7 @@ let ultimaPosicion = null;
 let motoristaMarker = null;
 let ultimaEmisionTime = 0;
 
-const FRECUENCIA_MS = 2000;
+const FRECUENCIA_MS = 4000;
 const HEARTBEAT_MS = 25000;
 const DISTANCIA_MINIMA_METROS = 0.00002;
 

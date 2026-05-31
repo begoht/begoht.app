@@ -16,7 +16,7 @@ const API_BASE = (location.hostname === "localhost" || location.hostname === "12
 
 const socket = io(API_BASE, {
   auth: { token },
-  transports: ["websocket", "polling"],
+  transports: ["websocket"],
 });
 
 // 🧩 DOM

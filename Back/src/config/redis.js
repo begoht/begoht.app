@@ -22,10 +22,19 @@ const redis = new Redis(redisConfig);
 // Cliente dedicado EXCLUSIVAMENTE a suscripciones (Pub/Sub)
 const subClient = new Redis(redisConfig);
 
+// Dedicated clients for the Socket.IO Redis adapter.
+const socketPubClient = new Redis(redisConfig);
+const socketSubClient = socketPubClient.duplicate();
+
 redis.on("error", (err) => console.error("❌ Redis Main Error:", err.message));
 subClient.on("error", (err) => console.error("❌ Redis Sub Error:", err.message));
 
 redis.on("connect", () => console.log("🚀 Redis conectado (Main)"));
 subClient.on("connect", () => console.log("📡 Redis conectado (Sub/Events)"));
 
-module.exports = { redis, subClient,redisConfig };
+socketPubClient.on("error", (err) => console.error("Redis Socket Pub Error:", err.message));
+socketSubClient.on("error", (err) => console.error("Redis Socket Sub Error:", err.message));
+socketPubClient.on("connect", () => console.log("Redis conectado (Socket Pub)"));
+socketSubClient.on("connect", () => console.log("Redis conectado (Socket Sub)"));
+
+module.exports = { redis, subClient, socketPubClient, socketSubClient, redisConfig };

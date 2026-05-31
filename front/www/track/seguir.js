@@ -53,7 +53,7 @@ async function obtenerViaje(token) {
 
 function iniciarSocket(token) {
   socket = io(API, {
-    transports: ["websocket", "polling"],
+    transports: ["websocket"],
     auth: { tracking: true },
     reconnection: true,
     reconnectionAttempts: Infinity,

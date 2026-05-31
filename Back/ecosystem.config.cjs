@@ -4,11 +4,14 @@ module.exports = {
       name: "bego-api",
       script: "src/server.js",
       cwd: "/var/www/bego/Back",
-      instances: 1,
-      exec_mode: "fork",
+      instances: Number(process.env.WEB_CONCURRENCY) || 2,
+      exec_mode: "cluster",
       env: {
         NODE_ENV: "production",
         PORT: 3000,
+        SOCKET_TRANSPORTS: "websocket",
+        LOCATION_MIN_INTERVAL_MS: 3000,
+        LOCATION_MONGO_SNAPSHOT_ENABLED: "false",
         PUBLIC_API_URL: "https://bego.com.ht",
         API_URL: "https://bego.com.ht"
       },

@@ -11,7 +11,7 @@ if (token?.startsWith('"') && token.endsWith('"')) {
 // Inicializar socket
 const socket = io(getServerUrl(), {
   auth: { token },
-  transports: ["polling"], // evita problemas en móviles
+  transports: ["websocket"],
 });
 
 socket.on("connect", () => {

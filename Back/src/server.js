@@ -1,12 +1,13 @@
 require("dotenv").config();
 require("./services/email/email.service");
 
-const redis = require("./config/redis").redis;
+const { redis, socketPubClient, socketSubClient } = require("./config/redis");
 const express = require("express");
 const http = require("http");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const { Server } = require("socket.io");
+const { createAdapter } = require("@socket.io/redis-adapter");
 const path = require("path");
 const limpiarEstadosHuerfanos = require("./utils/startupCleanup");
 
@@ -56,13 +57,20 @@ server.on("error", (err) => {
 // ============================
 // 🔹 SOCKET.IO
 // ============================
+const socketTransports = (process.env.SOCKET_TRANSPORTS || "websocket")
+  .split(",")
+  .map((transport) => transport.trim())
+  .filter(Boolean);
+if (!socketTransports.length) socketTransports.push("websocket");
+
 const io = new Server(server, {
   cors: { origin: "*", methods: ["GET", "POST"], credentials: true },
-  transports: ["polling", "websocket"],
+  transports: socketTransports,
   pingInterval: 25000,
   pingTimeout: 60000,
 });
 
+io.adapter(createAdapter(socketPubClient, socketSubClient));
 io.setMaxListeners(20);
 
 global.io = io;
@@ -512,6 +520,8 @@ if (user.rol === "motorista") {
 // 🔹 DATABASE + START
 // ============================
 mongoose.set("bufferCommands", false);
+const shouldRunSingletonJobs =
+  !process.env.NODE_APP_INSTANCE || process.env.NODE_APP_INSTANCE === "0";
 
 mongoose
   .connect(process.env.MONGO_URI)
@@ -519,16 +529,22 @@ mongoose
     console.log("🟢 MongoDB conectado");
 
     // 🔹 Limpieza estados huérfanos al iniciar
-    try {
-      await limpiarEstadosHuerfanos();
-    } catch (e) {
-      console.error("⚠️ Error en cleanup:", e);
+    if (shouldRunSingletonJobs) {
+      try {
+        await limpiarEstadosHuerfanos();
+      } catch (e) {
+        console.error("⚠️ Error en cleanup:", e);
+      }
     }
 
     // 🔹 Workers después de DB
-    const { initMatchingWorker } = require("./worker/matching.worker");
-    initMatchingWorker();
-    console.log("👷 Workers de BullMQ inicializados");
+    if (shouldRunSingletonJobs) {
+      const { initMatchingWorker } = require("./worker/matching.worker");
+      initMatchingWorker();
+      console.log("👷 Workers de BullMQ inicializados");
+    } else {
+      console.log("Workers singleton omitidos en esta instancia PM2");
+    }
 
     const PORT = process.env.PORT || 3000;
 
