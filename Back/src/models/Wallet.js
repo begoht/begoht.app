@@ -25,7 +25,6 @@ const WalletSchema = new mongoose.Schema(
     saldo: {
       type: Number,
       default: 0,
-      min: 0,
     },
 
     saldoBloqueado: {
@@ -118,10 +117,6 @@ WalletSchema.methods.capturar = function (monto, ref = null) {
 ===================================================== */
 
 WalletSchema.pre("save", function () {
-  if (this.saldo < 0) {
-    throw new Error("Saldo no puede ser negativo");
-  }
-
   if (this.saldoBloqueado < 0) {
     throw new Error("saldoBloqueado no puede ser negativo");
   }
