@@ -1,6 +1,8 @@
 const { redis } = require("../../config/redis");
-const { calcularDistanciaMetros } = require("../../utils/geo");
 const { inferCityFromPoint } = require("../../config/cities");
+const {
+  evaluarElegibilidadReserva
+} = require("./reservaEligibility.service");
 
 const GEO_KEY = "motoristas:ubicacion";
 const DEBUG = true;
@@ -134,24 +136,25 @@ async function obtenerCandidatos(viaje, radioKm = DISTANCIA_MAX_KM) {
       const tieneReserva = !!lock;
       const enViaje = data.viajeActualId && data.viajeActualId !== "null";
       const disponible = data.disponible === "true";
-      const estadoInterno = data.estadoInterno;
       let kmRestantes = safeNumber(data.kmRestantes);
+      let reservaElegible = null;
 
-      if (enViaje && kmRestantes === 999) {
-        const latM = safeNumber(data.lat, null);
-        const lngM = safeNumber(data.lng, null);
+      if (enViaje) {
+        reservaElegible = await evaluarElegibilidadReserva({
+          motoristaId: id,
+          data,
+          tieneReserva
+        });
 
-        if (latM && lngM) {
-          kmRestantes = calcularDistanciaMetros(lat, lng, latM, lngM) / 1000;
+        if (reservaElegible.kmRestantes != null) {
+          kmRestantes = reservaElegible.kmRestantes;
         }
       }
 
       const esLibre = disponible && !enViaje;
       const esB2B =
         enViaje &&
-        !tieneReserva &&
-        ["en_curso", "viajando", "llego"].includes(estadoInterno) &&
-        kmRestantes <= B2B_MEDIO_KM;
+        reservaElegible?.permitir === true;
 
       let tipo = null;
       if (esLibre) tipo = "LIBRE";

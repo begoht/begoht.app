@@ -1,4 +1,7 @@
 const { redis } = require("../../../config/redis");
+const {
+    evaluarElegibilidadReserva
+} = require("../reservaEligibility.service");
 
 const GPS_TIMEOUT_MS = 120000;
 const TIEMPO_OFERTA_MS = 15000;
@@ -52,7 +55,6 @@ async function enviarWave({
 
         const enViaje = mData.viajeActualId && mData.viajeActualId !== "null";
         const disponible = mData.disponible === "true";
-        const estadoInterno = mData.estadoInterno;
 
         let km = parseFloat(mData.kmRestantes);
         if (isNaN(km)) km = 999;
@@ -62,9 +64,14 @@ async function enviarWave({
         if (disponible && !enViaje) {
             permitir = true;
         } else if (enViaje) {
-            if (!tieneReserva &&
-                ["en_curso", "viajando", "llego"].includes(estadoInterno) &&
-                km <= 2.5) {
+            const reservaElegible = await evaluarElegibilidadReserva({
+                motoristaId,
+                data: mData,
+                tieneReserva: !!tieneReserva
+            });
+
+            if (reservaElegible.permitir) {
+                km = reservaElegible.kmRestantes ?? km;
                 permitir = true;
             }
         }

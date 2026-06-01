@@ -10,6 +10,9 @@ const actualizarContextoViaje = require("./viajeContext.service");
 const publicarViaje = require("./viajePubSub.service");
 const snapshotMotorista = require("./motoristaSnapshot.service");
 const { obtenerProximoDestinoReserva } = require("./reservaRoute.service");
+const {
+    evaluarElegibilidadReserva
+} = require("../../../../services/matching_services/reservaEligibility.service");
 
 const { motoristas } = require("../../state");
 
@@ -45,6 +48,20 @@ module.exports = async ({
             : "asignado";
 
         if (nuevoEstadoDB === "reservado") {
+            const tieneReserva = await redis.exists(`lock:cola:${motoristaId}`);
+            const reservaElegible = await evaluarElegibilidadReserva({
+                motoristaId,
+                data,
+                tieneReserva: !!tieneReserva
+            });
+
+            if (!reservaElegible.permitir) {
+                return {
+                    success: false,
+                    error: "reserva_no_disponible"
+                };
+            }
+
             const locked = await redis.set(
                 `lock:cola:${motoristaId}`,
                 viajeId,
