@@ -1,5 +1,5 @@
 import { pasajeroIcon } from "./map.icons.js";
-import { cityConfig, coordsInCity } from "./config/index.js";
+import { ACTIVE_CITY, cityConfig, coordsInCity, inferCityConfigFromCoords, persistDetectedCity } from "./config/index.js";
 import { viajeState } from "../viaje/viaje.state.js";
 import { reverseGeocode } from "./services/map.reverse.js";
 
@@ -63,6 +63,25 @@ function renderPasajeroMarker(map, lat, lng, direccion) {
   `);
 }
 
+function switchCityFromGpsIfNeeded(lat, lng) {
+  const detectedCity = inferCityConfigFromCoords({ lat, lng });
+
+  if (!detectedCity || detectedCity.id === ACTIVE_CITY || viajeProtegido()) {
+    return false;
+  }
+
+  const reloadKey = `BEGO_CITY_RELOAD_${detectedCity.id}`;
+  if (sessionStorage.getItem(reloadKey) === "1") return false;
+
+  if (persistDetectedCity(detectedCity.id)) {
+    sessionStorage.setItem(reloadKey, "1");
+    window.location.reload();
+    return true;
+  }
+
+  return false;
+}
+
 export async function initGeo(map) {
   if (!map || typeof map.addLayer !== "function") {
     console.error("Mapa invalido");
@@ -84,6 +103,8 @@ export async function initGeo(map) {
     let lat = pos.coords.latitude;
     let lng = pos.coords.longitude;
     let direccion = "Tu ubicacion";
+
+    if (switchCityFromGpsIfNeeded(lat, lng)) return;
 
     const gpsDentroDeCiudad = coordsInCity({ lat, lng });
 
@@ -122,6 +143,8 @@ export async function initGeo(map) {
     (pos) => {
       const lat = pos.coords.latitude;
       const lng = pos.coords.longitude;
+
+      if (switchCityFromGpsIfNeeded(lat, lng)) return;
 
       if (!coordsInCity({ lat, lng })) {
         return;

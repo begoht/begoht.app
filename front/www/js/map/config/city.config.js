@@ -6,7 +6,9 @@ const DEFAULT_CITY_ID = "jacmel";
 export const CITY_CONFIGS = {
   cordoba: {
     ...cordobaConfig,
-    enabled: false
+    enabled: true,
+    launch: false,
+    test: true
   },
   ...haitiCityConfigs
 };
@@ -34,6 +36,17 @@ export const cityConfig =
 
 export function getEnabledCityConfigs() {
   return Object.values(CITY_CONFIGS).filter((city) => city.enabled !== false);
+}
+
+export function inferCityConfigFromCoords(coords) {
+  return getEnabledCityConfigs().find((city) => coordsInCity(coords, city)) || null;
+}
+
+export function persistDetectedCity(cityId) {
+  if (!cityId || !CITY_CONFIGS[cityId] || cityId === ACTIVE_CITY) return false;
+
+  localStorage.setItem("BEGO_CITY", cityId);
+  return true;
 }
 
 export function getBoundsObject(city = cityConfig) {

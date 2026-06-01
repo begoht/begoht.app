@@ -1,7 +1,9 @@
 const haitiCities = require("./haiti");
+const argentinaCities = require("./argentina");
 
 const CITY_CONFIGS = {
-  ...haitiCities
+  ...haitiCities,
+  ...argentinaCities
 };
 
 const DEFAULT_CITY_ID = process.env.DEFAULT_CITY || "jacmel";

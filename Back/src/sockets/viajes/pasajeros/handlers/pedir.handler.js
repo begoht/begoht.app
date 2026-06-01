@@ -39,7 +39,7 @@ module.exports = async function pedirViaje(socket, io, data) {
 
     if (err.type === "city") {
       return socket.emit("viaje-error", {
-        mensaje: "Estamos preparando BeGO para mas ciudades. Por ahora puedes pedir viajes dentro de Jacmel."
+        mensaje: "BeGO no esta disponible en esa zona. Para probar, usa ubicaciones dentro de Jacmel o Cordoba."
       });
     }
 
