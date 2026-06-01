@@ -505,7 +505,34 @@
     ["Consulta movimientos antes de iniciar un reclamo.", "Consultez les mouvements avant de commencer une reclamation."],
     ["Guía de uso", "Guide d'utilisation"],
     ["Guia de uso", "Guide d'utilisation"],
-    ["Preguntas rápidas sobre BeGO.", "Questions rapides sur BeGO."]
+    ["Preguntas rápidas sobre BeGO.", "Questions rapides sur BeGO."],
+
+    ["Centro de control", "Centre de controle"],
+    ["Ajusta tu cuenta, seguridad, privacidad y experiencia de uso en BeGO.", "Ajustez votre compte, securite, confidentialite et experience BeGO."],
+    ["Abrir cuenta", "Ouvrir le compte"],
+    ["Perfil activo", "Profil actif"],
+    ["Cuenta BeGO protegida", "Compte BeGO protege"],
+    ["Identidad", "Identite"],
+    ["Nombre, foto y datos personales.", "Nom, photo et donnees personnelles."],
+    ["Cambiar número", "Changer le numero"],
+    ["Cambiar numero", "Changer le numero"],
+    ["Actualiza tu teléfono de contacto.", "Mettez a jour votre telephone de contact."],
+    ["Actualiza tu telefono de contacto.", "Mettez a jour votre telephone de contact."],
+    ["Cambiar contraseña", "Changer le mot de passe"],
+    ["Cambiar contrasena", "Changer le mot de passe"],
+    ["Refuerza el acceso a tu cuenta.", "Renforcez l'acces a votre compte."],
+    ["Experiencia", "Experience"],
+    ["Apariencia premium nocturna.", "Apparence premium nocturne."],
+    ["Interfaz más directa y liviana.", "Interface plus directe et legere."],
+    ["Interfaz mas directa y liviana.", "Interface plus directe et legere."],
+    ["Alertas de viaje, pagos y seguridad.", "Alertes de course, paiements et securite."],
+    ["Seguridad y privacidad", "Securite et confidentialite"],
+    ["Protección", "Protection"],
+    ["Proteccion", "Protection"],
+    ["Compartir viaje, SOS y reportes.", "Partager la course, SOS et signalements."],
+    ["Permisos de GPS para viajes precisos.", "Autorisations GPS pour des courses precises."],
+    ["Asistencia", "Assistance"],
+    ["Soporte para cuenta, pagos o seguridad.", "Assistance pour compte, paiements ou securite."]
   ].forEach(([from, to]) => add(from, to));
 
   const regexRules = [

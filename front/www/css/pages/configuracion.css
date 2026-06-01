@@ -1,120 +1,295 @@
-/* =========================
-   CONFIGURACION SPA
-========================= */
+.css-config {
+  width: 100%;
+}
 
 .css-config .config-main {
-  margin-top: 40px;
-  padding: 16px;
+  width: min(980px, 100%);
+  margin: 0 auto;
+  padding: 12px 14px calc(var(--footer-height, 76px) + 18px);
+  display: grid;
+  gap: 14px;
 }
 
-/* SECCIONES */
-.css-config .config-section {
-  margin-bottom: 24px;
+.config-hero {
+  min-height: 150px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px;
+  border-radius: 8px;
+  color: #f8fafc;
+  background:
+    radial-gradient(circle at 86% 8%, rgba(255, 122, 0, 0.2), transparent 28%),
+    radial-gradient(circle at 4% 100%, rgba(56, 189, 248, 0.15), transparent 30%),
+    linear-gradient(150deg, rgba(15, 23, 42, 0.98), rgba(2, 6, 23, 0.96));
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  box-shadow:
+    0 18px 42px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
-.css-config .config-section h3 {
-  margin-bottom: 10px;
-  font-size: 13px;
-  color: var(--muted);
-  font-weight: 600;
+.config-kicker {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  color: #ffcc8a;
+  background: rgba(255, 122, 0, 0.12);
+  border: 1px solid rgba(255, 122, 0, 0.22);
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
 }
 
-/* ITEMS */
-.css-config .config-item {
+.config-hero h1 {
+  margin: 5px 0 6px;
+  font-size: clamp(1.65rem, 4vw, 2.45rem);
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.config-hero p {
+  max-width: 50ch;
+  margin: 0;
+  color: #cbd5e1;
+  font-size: 0.94rem;
+  line-height: 1.45;
+}
+
+.config-hero-icon,
+.config-edit {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: #fff;
+  text-decoration: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background:
+    radial-gradient(circle at 34% 24%, rgba(255, 255, 255, 0.28), transparent 18%),
+    linear-gradient(180deg, #ff8b1a, #ff6a00);
+}
+
+.config-hero-icon {
+  width: 54px;
+  height: 54px;
+  box-shadow: 0 16px 30px rgba(255, 106, 0, 0.24);
+}
+
+.config-profile-card,
+.config-panel {
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.82);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.28);
+}
+
+.config-profile-card {
+  min-height: 82px;
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr) 42px;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+}
+
+.config-avatar {
+  width: 54px;
+  height: 54px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: #04130b;
+  font-weight: 950;
+  font-size: 1.2rem;
+  background: linear-gradient(180deg, #86efac, #22c55e);
+}
+
+.config-profile-card span,
+.config-section-title small {
+  color: #94a3b8;
+  font-size: 0.76rem;
+  font-weight: 850;
+}
+
+.config-profile-card strong {
+  display: block;
+  margin-top: 2px;
+  color: #f8fafc;
+  font-size: 1rem;
+}
+
+.config-profile-card p {
+  margin: 3px 0 0;
+  color: #94a3b8;
+  font-size: 0.8rem;
+}
+
+.config-edit {
+  width: 40px;
+  height: 40px;
+  background:
+    radial-gradient(circle at 34% 24%, rgba(255, 255, 255, 0.24), transparent 18%),
+    linear-gradient(180deg, rgba(31, 41, 55, 0.96), rgba(15, 23, 42, 0.98));
+}
+
+.config-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.config-panel {
+  padding: 14px;
+  display: grid;
+  gap: 8px;
+}
+
+.config-section-title {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: var(--bg-card);
-  border: 1px solid #1e293b;
-  padding: 14px;
-  border-radius: 14px;
-  margin-bottom: 10px;
-  color: var(--text-main);
+  gap: 12px;
+  margin-bottom: 2px;
 }
 
-/* ICONOS */
-.css-config .config-item i:first-child {
-  width: 24px;
-  color: var(--secondary);
+.config-section-title span {
+  color: #f8fafc;
+  font-size: 1rem;
+  font-weight: 950;
 }
 
-.css-config .config-item span {
-  flex: 1;
-  margin-left: 10px;
-  font-size: 14px;
+.config-row,
+.config-toggle-row {
+  min-height: 68px;
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  color: #e5e7eb;
+  text-align: left;
+  text-decoration: none;
+  background: rgba(2, 6, 23, 0.55);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  font: inherit;
 }
 
-/* FLECHA */
-.css-config .config-item i:last-child {
-  color: var(--muted);
-  font-size: 13px;
+.config-row > i:first-child,
+.config-toggle-row > i:first-child {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: #7dd3fc;
+  background: rgba(56, 189, 248, 0.12);
 }
 
-/* =========================
-   SWITCH (PRO STYLE)
-========================= */
-.css-config .switch {
+.config-row span,
+.config-toggle-row span:not(.config-switch):not(.config-switch span) {
+  display: block;
+  font-size: 0.92rem;
+  font-weight: 900;
+}
+
+.config-row p,
+.config-toggle-row p {
+  margin: 3px 0 0;
+  color: #94a3b8;
+  font-size: 0.78rem;
+  line-height: 1.3;
+}
+
+.config-row > i:last-child {
+  color: #64748b;
+  font-size: 0.82rem;
+}
+
+.config-switch {
   position: relative;
-  width: 44px;
-  height: 24px;
+  width: 50px;
+  height: 30px;
+  display: inline-block;
 }
 
-.css-config .switch input {
-  display: none;
+.config-switch input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
 }
 
-.css-config .slider {
+.config-switch span {
   position: absolute;
   inset: 0;
+  border-radius: 999px;
   background: #334155;
-  border-radius: 34px;
-  cursor: pointer;
-  transition: 0.3s;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  transition: background 0.2s ease;
 }
 
-.css-config .slider::before {
+.config-switch span::before {
   content: "";
   position: absolute;
-  height: 18px;
-  width: 18px;
+  width: 22px;
+  height: 22px;
   left: 3px;
-  bottom: 3px;
-  background: white;
+  top: 3px;
   border-radius: 50%;
-  transition: 0.3s;
+  background: #fff;
+  transition: transform 0.2s ease;
 }
 
-/* ACTIVO */
-.css-config input:checked + .slider {
-  background: var(--secondary);
+.config-switch input:checked + span {
+  background: linear-gradient(180deg, #38bdf8, #2563eb);
 }
 
-.css-config input:checked + .slider::before {
+.config-switch input:checked + span::before {
   transform: translateX(20px);
 }
 
-/* =========================
-   EFECTO APP (TOUCH)
-========================= */
-.css-config .config-item {
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+.config-logout {
+  min-height: 56px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 8px;
+  color: #fecaca;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(239, 68, 68, 0.16), transparent 30%),
+    rgba(15, 23, 42, 0.86);
+  font: inherit;
+  font-weight: 950;
 }
 
-.css-config .config-item:active {
-  transform: scale(0.97);
-}
-
-.css-config {
-  animation: fadeIn .25s ease;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
+@media (max-width: 760px) {
+  .config-grid {
+    grid-template-columns: 1fr;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+}
+
+@media (max-width: 430px) {
+  .css-config .config-main {
+    padding-inline: 12px;
+  }
+
+  .config-hero {
+    min-height: 138px;
+    padding: 17px;
+  }
+
+  .config-profile-card {
+    grid-template-columns: 48px minmax(0, 1fr) 38px;
+  }
+
+  .config-avatar {
+    width: 48px;
+    height: 48px;
   }
 }
