@@ -5,6 +5,7 @@ const { redis } = require("../config/redis");
 const { activarSiguienteViaje } = require("./activarSiguienteViaje");
 const { actualizarSnapshotMotorista } = require("../sockets/viajes/motorista/motoristaSnapshot.service");
 const { calcularDistanciaMetros } = require("../utils/geo");
+const { PLATFORM_WALLET_ID } = require("../config/constants");
 const crypto = require("crypto");
 
 const LOCK_TTL = 30000;
@@ -150,6 +151,8 @@ function construirTrayectoriaFinal({ viaje, trayectoriaReal, ultimaPosicion }) {
 }
 
 async function liquidarWallet({ viaje, motoristaId, neto, comision, session }) {
+  const plataformaId = new mongoose.Types.ObjectId(PLATFORM_WALLET_ID);
+
   if (viaje.metodoPago === "wallet") {
     const pasajeroId = viaje.pasajero._id || viaje.pasajero;
     const walletPasajero = await Wallet.findOne({ userId: pasajeroId }).session(session);
@@ -183,29 +186,57 @@ async function liquidarWallet({ viaje, motoristaId, neto, comision, session }) {
 
     walletMotorista.recargar(neto, "pago_viaje", `VIAJE-${viaje._id}`);
 
+    const walletPlataforma = await Wallet.findOneAndUpdate(
+      { userId: plataformaId },
+      { $setOnInsert: { userId: plataformaId, saldo: 0, saldoBloqueado: 0 } },
+      { upsert: true, new: true, session }
+    );
+    walletPlataforma.recargar(comision, "comision_viaje", `VIAJE-${viaje._id}`);
+
     await walletPasajero.save({ session });
     await walletMotorista.save({ session });
+    await walletPlataforma.save({ session });
     return;
   }
 
   if (viaje.metodoPago === "efectivo") {
-    await Wallet.updateOne(
-      { userId: motoristaId },
-      {
-        $setOnInsert: { userId: motoristaId, saldoBloqueado: 0 },
-        $inc: { saldo: -comision },
-        $push: {
-          movimientos: {
-            tipo: "comision_viaje",
-            monto: -comision,
-            descripcion: "Comision viaje en efectivo",
-            ref: `VIAJE-${viaje._id}`,
-            fecha: new Date()
+    await Promise.all([
+      Wallet.updateOne(
+        { userId: motoristaId },
+        {
+          $setOnInsert: { userId: motoristaId, saldoBloqueado: 0 },
+          $inc: { saldo: -comision },
+          $push: {
+            movimientos: {
+              tipo: "comision_viaje",
+              monto: -comision,
+              descripcion: "Comision viaje en efectivo",
+              ref: `VIAJE-${viaje._id}`,
+              fecha: new Date()
+            }
           }
-        }
-      },
-      { upsert: true, session }
-    );
+        },
+        { upsert: true, session }
+      ),
+      Wallet.updateOne(
+        { userId: plataformaId },
+        {
+          $setOnInsert: { userId: plataformaId, saldo: 0, saldoBloqueado: 0 },
+          $inc: { saldo: comision },
+          $push: {
+            movimientos: {
+              tipo: "comision_viaje",
+              monto: comision,
+              descripcion: "Comision recibida por viaje en efectivo",
+              ref: `VIAJE-${viaje._id}`,
+              metadata: { motoristaId, metodoPago: "efectivo" },
+              fecha: new Date()
+            }
+          }
+        },
+        { upsert: true, session }
+      )
+    ]);
   }
 }
 

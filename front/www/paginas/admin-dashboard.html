@@ -1070,10 +1070,29 @@
       <section class="section" id="section-finance">
         <div class="kpi-grid">
           <article class="kpi-card"><div class="kpi-top"><span>Comision</span><i class="fa-solid fa-scale-balanced"></i></div><strong id="mCommission">0 HTG</strong><span class="trend">Plataforma</span></article>
+          <article class="kpi-card"><div class="kpi-top"><span>Wallet admin</span><i class="fa-solid fa-building-shield"></i></div><strong id="mPlatformWallet">0 HTG</strong><span class="trend">Comisiones recibidas</span></article>
           <article class="kpi-card"><div class="kpi-top"><span>Motoristas</span><i class="fa-solid fa-money-bill-transfer"></i></div><strong id="mDriverPay">0 HTG</strong><span class="trend">Pago calculado</span></article>
           <article class="kpi-card"><div class="kpi-top"><span>Wallets</span><i class="fa-solid fa-vault"></i></div><strong id="mWallets">0 HTG</strong><span class="trend">Saldo total</span></article>
           <article class="kpi-card"><div class="kpi-top"><span>Retenido</span><i class="fa-solid fa-shield"></i></div><strong id="mHeld">0 HTG</strong><span class="trend">Escrow/retiros</span></article>
         </div>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Wallet BeGO</h2>
+              <p class="muted">Cuenta interna donde entran automaticamente las comisiones de cada viaje.</p>
+            </div>
+            <span class="status activo" id="mPlatformHeld">0 HTG retenido</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Movimiento</th><th>Tipo</th><th>Monto</th><th>Referencia</th><th>Fecha</th></tr>
+              </thead>
+              <tbody id="platformWalletRows"></tbody>
+            </table>
+          </div>
+        </section>
 
         <div class="layout-2">
           <section class="panel">
@@ -1270,6 +1289,7 @@
       renderUsers();
       renderTrips();
       renderPackages();
+      renderPlatformWallet();
       renderWallets();
       renderWithdraws();
       renderCredits();
@@ -1293,6 +1313,8 @@
       setText("mPackagesActive", metricas.paquetesActivos || 0);
       setText("mReservations", metricas.reservasActivas || 0);
       setText("mCommission", money(metricas.totalComision));
+      setText("mPlatformWallet", money(metricas.walletPlataforma));
+      setText("mPlatformHeld", `${money(metricas.walletPlataformaRetenido)} retenido`);
       setText("mDriverPay", money(metricas.totalMotoristas));
       setText("mWallets", money(metricas.saldoWallets));
       setText("mHeld", money(metricas.saldoRetenido));
@@ -1358,6 +1380,11 @@
     function renderWallets() {
       const rows = filterRows(state.resumen?.wallets || [], walletSearchText);
       setRows("walletRows", rows, 6, "No hay wallets para mostrar", walletRow);
+    }
+
+    function renderPlatformWallet() {
+      const rows = filterRows(state.resumen?.plataformaWallet?.movimientos || [], platformMovementSearchText);
+      setRows("platformWalletRows", rows, 5, "La wallet BeGO aun no tiene movimientos", platformMovementRow);
     }
 
     function renderWithdraws() {
@@ -1461,6 +1488,17 @@
         cell("Retenido", `<span class="money warn">${money(wallet.saldoBloqueado)}</span>`),
         cell("Estado", saldo < 0 ? `<span class="status deuda">Deuda</span>` : `<span class="status activo">Al dia</span>`),
         cell("Movimiento", last ? `${escapeHtml(formatType(last.tipo))}<span class="row-sub">${formatDate(last.fecha)}</span>` : "-")
+      ]);
+    }
+
+    function platformMovementRow(movimiento) {
+      const amount = Number(movimiento.monto || 0);
+      return row([
+        cell("Movimiento", `<span class="row-main">${shortId(movimiento._id || movimiento.ref)}</span><span class="row-sub">${escapeHtml(movimiento.descripcion || "Comision recibida")}</span>`),
+        cell("Tipo", `<span class="status activo">${formatType(movimiento.tipo)}</span>`),
+        cell("Monto", `<span class="money ${amount >= 0 ? "good" : "bad"}">${money(amount)}</span>`),
+        cell("Referencia", escapeHtml(movimiento.ref || "-")),
+        cell("Fecha", formatDate(movimiento.fecha))
       ]);
     }
 
@@ -1613,6 +1651,10 @@
     function walletSearchText(wallet) {
       const user = wallet.userId || {};
       return `${user.nombre || ""} ${user.telefono || ""} ${user.rol || ""}`;
+    }
+
+    function platformMovementSearchText(movimiento) {
+      return `${movimiento.tipo || ""} ${movimiento.descripcion || ""} ${movimiento.ref || ""} ${movimiento.monto || ""}`;
     }
 
     function withdrawSearchText(retiro) {

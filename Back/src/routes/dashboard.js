@@ -4,9 +4,10 @@ const Wallet = require("../models/Wallet");
 const User = require("../models/User");
 const Viaje = require("../models/Viaje");
 const authAdmin = require("../middleware/authAdmin");
+const { PLATFORM_WALLET_ID } = require("../config/constants");
 
 const router = express.Router();
-const PLATAFORMA_ID = new mongoose.Types.ObjectId("000000000000000000000001");
+const PLATAFORMA_ID = new mongoose.Types.ObjectId(PLATFORM_WALLET_ID);
 
 router.get("/comisiones", authAdmin, async (req, res) => {
   try {
@@ -93,6 +94,7 @@ router.get("/resumen", authAdmin, async (req, res) => {
       viajesPorTipo,
       pagosPorMetodo,
       ciudades,
+      plataformaWallet,
     ] = await Promise.all([
       User.aggregate([{ $group: { _id: "$rol", total: { $sum: 1 } } }]),
       Viaje.aggregate([{ $group: { _id: "$estado", total: { $sum: 1 } } }]),
@@ -103,7 +105,7 @@ router.get("/resumen", authAdmin, async (req, res) => {
         .sort({ updatedAt: -1 })
         .limit(12)
         .lean(),
-      Wallet.find()
+      Wallet.find({ userId: { $ne: PLATAFORMA_ID } })
         .populate("userId", "nombre telefono rol")
         .sort({ updatedAt: -1 })
         .limit(40)
@@ -214,7 +216,14 @@ router.get("/resumen", authAdmin, async (req, res) => {
         { $sort: { total: -1 } },
         { $limit: 8 },
       ]),
+      Wallet.findOne({ userId: PLATAFORMA_ID })
+        .select("saldo saldoBloqueado movimientos updatedAt")
+        .slice("movimientos", -20)
+        .lean(),
     ]);
+
+    const movimientosPlataforma = [...(plataformaWallet?.movimientos || [])]
+      .sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
     res.json({
       usuarios: Object.fromEntries(usuariosPorRol.map((item) => [item._id || "sin_rol", item.total])),
@@ -228,10 +237,25 @@ router.get("/resumen", authAdmin, async (req, res) => {
         deudaComisiones: deudaComisionesAgg[0]?.total || 0,
         saldoWallets: walletStats[0]?.saldoWallets || 0,
         saldoRetenido: walletStats[0]?.saldoRetenido || 0,
+        walletPlataforma: plataformaWallet?.saldo || 0,
+        walletPlataformaRetenido: plataformaWallet?.saldoBloqueado || 0,
         usuariosOnline,
         motoristasDisponibles,
         paquetesActivos,
         reservasActivas: reservasActivas.length,
+      },
+      plataformaWallet: plataformaWallet ? {
+        _id: plataformaWallet._id,
+        userId: plataformaWallet.userId,
+        saldo: plataformaWallet.saldo || 0,
+        saldoBloqueado: plataformaWallet.saldoBloqueado || 0,
+        updatedAt: plataformaWallet.updatedAt,
+        movimientos: movimientosPlataforma,
+      } : {
+        userId: PLATAFORMA_ID,
+        saldo: 0,
+        saldoBloqueado: 0,
+        movimientos: [],
       },
       operacion: {
         viajesPorTipo: Object.fromEntries(viajesPorTipo.map((item) => [item._id || "sin_tipo", item.total])),
