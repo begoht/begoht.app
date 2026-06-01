@@ -90,8 +90,6 @@ export function renderHeader(route) {
         </div>
       </div>
 
-      ${statusPill}
-
       <div class="header-actions">
         ${renderNotificationButton()}
         <a class="header-icon-btn ripple ${route === "/configuracion" ? "active" : ""}" id="btnConfig" data-link href="#/configuracion" aria-label="Configuracion" title="Configuracion">

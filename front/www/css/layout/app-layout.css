@@ -6,6 +6,8 @@
 :root {
   --header-h: var(--header-height, 76px);
   --footer-h: var(--footer-height, 76px);
+  --app-top-space: calc(var(--header-h) + env(safe-area-inset-top) + 14px);
+  --app-bottom-space: calc(var(--footer-h) + env(safe-area-inset-bottom) + 22px);
 }
 
 /* HEADER */
@@ -24,7 +26,17 @@
   z-index: 1000;
 }
 
-.home-page {
+#appMain.app-main {
+  min-height: 100dvh;
+  padding-top: var(--app-top-space);
+  padding-bottom: var(--app-bottom-space);
+}
+
+#appMain.app-main > :first-child {
+  margin-top: 0;
+}
+
+#appMain.app-main.home-page {
   padding-top: 0;
-  padding-bottom: calc(var(--footer-h) + env(safe-area-inset-bottom) + 18px);
+  padding-bottom: var(--app-bottom-space);
 }

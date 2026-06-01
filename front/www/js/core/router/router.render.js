@@ -1,4 +1,4 @@
-import { renderHeader } from "../../components/header.js?v=20260531-header-avatar-fix";
+import { renderHeader } from "../../components/header.js?v=20260601-layout-fix";
 import { renderFooter } from "../../components/footer.js";
 
 export function renderLayout(route, mainClass, contentHTML) {

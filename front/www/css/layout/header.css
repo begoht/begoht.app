@@ -38,6 +38,10 @@
     inset 0 -12px 20px rgba(0, 0, 0, 0.48);
 }
 
+.header-shell-page {
+  max-width: min(100%, 560px);
+}
+
 .header-profile,
 .header-page-left,
 .header-actions,
@@ -56,6 +60,14 @@
 .header-actions {
   flex: 0 0 auto;
   gap: 6px;
+}
+
+.header-shell-page .header-page-left {
+  flex: 1 1 auto;
+}
+
+.header-shell-page .header-actions {
+  margin-left: auto;
 }
 
 .header-avatar,
@@ -254,10 +266,6 @@
 .header-toast.visible {
   opacity: 1;
   transform: translate(-50%, 0);
-}
-
-main {
-  padding-top: calc(var(--header-height, 76px) + env(safe-area-inset-top));
 }
 
 .ripple {
