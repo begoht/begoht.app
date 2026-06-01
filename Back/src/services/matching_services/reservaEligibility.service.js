@@ -2,7 +2,7 @@ const Viaje = require("../../models/Viaje");
 const { redis } = require("../../config/redis");
 const { calcularDistanciaMetros } = require("../../utils/geo");
 
-const RESERVA_MAX_DISTANCIA_METROS = 2500;
+const RESERVA_MAX_DISTANCIA_METROS = 500;
 const ESTADOS_RESERVA_PERMITIDOS = new Set(["en_curso"]);
 
 function normalizarId(value) {
