@@ -9,6 +9,7 @@ const routes = {
   "/": renderHome,
   "/ganancias": renderGanancias,
   "/actividad": renderActividad,
+  "/creditos": renderCreditos,
   "/wallet": renderWallet,
   "/cuenta": renderCuenta,
   "/ajustes": renderAjustes,
@@ -87,6 +88,7 @@ function initDriverPage(route) {
   if (route === "/actividad") loadDriverActivity();
   if (route === "/wallet") loadDriverWallet();
   if (route === "/ganancias") loadDriverEarnings();
+  if (route === "/creditos") loadDriverCredits();
   if (route === "/cuenta") hydrateDriverAccount();
 }
 
@@ -114,6 +116,59 @@ function renderGanancias() {
 
     <section class="driver-list" id="driverEarningsList">
       ${listItem("Cargando actividad", "Buscando tus viajes finalizados.", "fa-circle-notch")}
+    </section>
+  `);
+}
+
+function renderCreditos() {
+  return pageShell("Creditos", "Capital para motoristas top", `
+    <section class="driver-credit-hero">
+      <div class="driver-credit-ring" style="--credit-progress: 0deg">
+        <div>
+          <span id="driverCreditRingLabel">0%</span>
+          <small>Rendimiento</small>
+        </div>
+      </div>
+      <div class="driver-credit-copy">
+        <span class="driver-eyebrow" id="driverCreditStatus">Evaluando</span>
+        <h2 id="driverCreditAmount">--</h2>
+        <p id="driverCreditCaption">Calculando elegibilidad automatica.</p>
+      </div>
+    </section>
+
+    <section class="driver-credit-detail">
+      <div>
+        <span>Monto del credito</span>
+        <strong id="driverCreditMonto">--</strong>
+      </div>
+      <div>
+        <span>Cuota semanal</span>
+        <strong id="driverCreditCuota">--</strong>
+      </div>
+      <div>
+        <span>Tasa semanal</span>
+        <strong id="driverCreditTasa">--</strong>
+      </div>
+    </section>
+
+    <section class="driver-kpi-grid">
+      ${kpi("Viajes", "--", "Finalizados", "fa-motorcycle", "driverCreditTrips")}
+      ${kpi("Meta", "--", "Para activar credito", "fa-flag-checkered", "driverCreditGoal")}
+      ${kpi("Semana", "--", "Viajes actuales", "fa-calendar-week", "driverCreditWeek")}
+      ${kpi("Score", "--", "Rendimiento semanal", "fa-gauge-high", "driverCreditScore")}
+    </section>
+
+    <section class="driver-panel">
+      <div class="driver-panel-title">
+        <h2>Progreso</h2>
+        <span id="driverCreditProgressLabel">--</span>
+      </div>
+      <div class="driver-progress"><span id="driverCreditProgress" style="width: 0%"></span></div>
+      <p class="driver-muted" id="driverCreditHelp">Al llegar a 1000 viajes finalizados, BeGO calcula tu credito semanal automaticamente.</p>
+    </section>
+
+    <section class="driver-list" id="driverCreditList">
+      ${loadingRow("Cargando creditos")}
     </section>
   `);
 }
@@ -167,9 +222,9 @@ function renderWallet() {
 
     <section class="driver-action-grid">
       ${actionTile("Retirar", "fa-money-bill-transfer", "#/soporte")}
+      ${actionTile("Creditos", "fa-hand-holding-dollar", "#/creditos")}
       ${actionTile("Recargar", "fa-plus", "#/wallet")}
       ${actionTile("Movimientos", "fa-receipt", "#/wallet")}
-      ${actionTile("Seguridad", "fa-shield-halved", "#/cuenta")}
     </section>
 
     <section class="driver-list" id="driverWalletMovements">
@@ -192,6 +247,7 @@ function renderCuenta() {
     <section class="driver-list">
       ${listItem("Datos personales", "Telefono, foto y documentos.", "fa-id-card", "#/ajustes")}
       ${listItem("Vehiculo", "Marca, placa, color y seguro.", "fa-motorcycle", "#/ajustes")}
+      ${listItem("Creditos BeGO", "Preaprobado automatico desde 1000 viajes.", "fa-hand-holding-dollar", "#/creditos")}
       ${listItem("Reputacion", "Calificacion, puntualidad y comentarios.", "fa-star", "#/actividad")}
       ${listItem("Centro de seguridad", "PIN, huella y contactos de emergencia.", "fa-shield", "#/soporte")}
     </section>
@@ -339,6 +395,70 @@ async function loadDriverEarnings() {
       return;
     }
     if (list) list.innerHTML = emptyState("No pudimos cargar tus ganancias.");
+  }
+}
+
+async function loadDriverCredits() {
+  const list = document.getElementById("driverCreditList");
+
+  try {
+    const data = await fetchJson("/api/driver/creditos/resumen");
+    const monto = Number(data.montoCredito || 0);
+    const cuota = Number(data.cuotaSemanal || 0);
+    const tasa = Number(data.interesSemanal || 0) * 100;
+    const viajes = Number(data.totalViajesFinalizados || 0);
+    const minimo = Number(data.minimoViajes || 1000);
+    const progreso = Math.min(100, Math.round((viajes / minimo) * 100));
+    const score = Math.max(0, Math.min(160, Number(data.rendimientoSemanal || 0)));
+    const ring = document.querySelector(".driver-credit-ring");
+
+    if (ring) {
+      ring.style.setProperty("--credit-progress", `${Math.min(100, score) * 3.6}deg`);
+    }
+
+    setText("driverCreditRingLabel", `${Math.round(score)}%`);
+    setText("driverCreditStatus", data.elegible ? "Credito preaprobado" : "Construyendo elegibilidad");
+    setText("driverCreditAmount", data.elegible ? `${formatMoney(monto)} G` : `${data.viajesRestantes || 0} viajes restantes`);
+    setText(
+      "driverCreditCaption",
+      data.elegible
+        ? "Monto calculado por tu volumen semanal y promedio reciente."
+        : "Al completar 1000 viajes se activa la linea automaticamente."
+    );
+    setText("driverCreditMonto", data.elegible ? `${formatMoney(monto)} G` : "--");
+    setText("driverCreditCuota", data.elegible ? `${formatMoney(cuota)} G` : "--");
+    setText("driverCreditTasa", `${tasa.toFixed(2)}%`);
+    setText("driverCreditTrips", viajes);
+    setText("driverCreditGoal", `${progreso}%`);
+    setText("driverCreditWeek", data.viajesSemanaActual || 0);
+    setText("driverCreditScore", `${Math.round(score)}%`);
+    setText("driverCreditProgressLabel", `${viajes} / ${minimo} viajes`);
+    setText(
+      "driverCreditHelp",
+      data.elegible
+        ? `Esta semana hiciste ${data.viajesSemanaActual || 0} viajes sobre una meta de ${data.objetivoSemanal || 0}.`
+        : `Te faltan ${data.viajesRestantes || 0} viajes finalizados para activar creditos.`
+    );
+
+    const bar = document.getElementById("driverCreditProgress");
+    if (bar) bar.style.width = `${progreso}%`;
+
+    if (list) {
+      list.innerHTML = data.elegible
+        ? [
+            listItem("Disponible ahora", `${formatMoney(monto)} G preaprobados`, "fa-circle-check"),
+            listItem("Cuotas", `${data.cuotas || 16} pagos semanales de ${formatMoney(cuota)} G`, "fa-calendar-days"),
+            listItem("Proximo cobro estimado", formatDate(data.proximoCobro), "fa-clock")
+          ].join("")
+        : [
+            listItem("Aun no disponible", "La linea se activa al superar 1000 viajes finalizados.", "fa-lock"),
+            listItem("Rendimiento semanal", `${Math.round(score)}% segun tus viajes de la semana.`, "fa-chart-simple"),
+            listItem("Sigue completando viajes", "Cada viaje finalizado acerca tu credito automatico.", "fa-motorcycle")
+          ].join("");
+    }
+  } catch (err) {
+    console.error(err);
+    if (list) list.innerHTML = emptyState("No pudimos cargar tus creditos.");
   }
 }
 

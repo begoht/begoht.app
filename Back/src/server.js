@@ -165,6 +165,7 @@ app.use("/api/recargas", require("./routes/recargas"));
 app.use("/api/pagos", require("./routes/pagos"));
 app.use("/api/webhook", require("./routes/webhook"));
 app.use("/api/driver/auth", require("./routes/driver.auth"));
+app.use("/api/driver/creditos", require("./routes/driver.creditos"));
 app.use("/api/pagos", shareRoutes);
 app.use("/api/viajes", require("./routes/actividad"));
 app.use("/api/cities", require("./routes/cities"));
