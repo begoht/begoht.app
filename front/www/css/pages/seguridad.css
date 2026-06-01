@@ -40,12 +40,14 @@
   color: #f8fafc;
   font-size: 0.9rem;
   font-weight: 900;
+  overflow-wrap: anywhere;
 }
 
 .security-active-trip p {
   margin: 3px 0 0;
   color: #94a3b8;
   font-size: 0.8rem;
+  overflow-wrap: anywhere;
 }
 
 .security-active-trip a {
@@ -105,6 +107,7 @@
   font-size: 0.93rem;
   font-weight: 900;
   line-height: 1.12;
+  overflow-wrap: anywhere;
 }
 
 .security-command p {
@@ -112,6 +115,7 @@
   color: #94a3b8;
   font-size: 0.78rem;
   line-height: 1.32;
+  overflow-wrap: anywhere;
 }
 
 .security-list-panel {
@@ -121,5 +125,26 @@
 @media (max-width: 760px) {
   .security-command-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 360px) {
+  .security-command-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .security-command {
+    min-height: 96px;
+  }
+
+  .security-active-trip {
+    grid-template-columns: 38px minmax(0, 1fr) 24px;
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .security-active-trip > i {
+    width: 36px;
+    height: 36px;
   }
 }
