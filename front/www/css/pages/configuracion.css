@@ -291,7 +291,51 @@
 
 @media (max-width: 760px) {
   .config-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .config-panel {
+    padding: 10px;
+  }
+
+  .config-section-title {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .config-section-title span {
+    font-size: 0.9rem;
+  }
+
+  .config-section-title small {
+    font-size: 0.7rem;
+  }
+
+  .config-row,
+  .config-toggle-row {
+    min-height: 62px;
+    grid-template-columns: 34px minmax(0, 1fr) auto;
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .config-row > i:first-child,
+  .config-toggle-row > i:first-child {
+    width: 32px;
+    height: 32px;
+  }
+
+  .config-row div > span,
+  .config-toggle-row div > span {
+    font-size: 0.8rem;
+  }
+
+  .config-row p,
+  .config-toggle-row p {
+    font-size: 0.7rem;
+    line-height: 1.24;
   }
 }
 
@@ -338,15 +382,15 @@
 
   .config-row,
   .config-toggle-row {
-    grid-template-columns: 38px minmax(0, 1fr) auto;
+    grid-template-columns: 32px minmax(0, 1fr) auto;
     gap: 8px;
     padding: 9px;
   }
 
   .config-row > i:first-child,
   .config-toggle-row > i:first-child {
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
   }
 
   .config-switch {

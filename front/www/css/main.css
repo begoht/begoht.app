@@ -31,13 +31,13 @@
 @import "./pages/detalle-viaje.css";
 @import "./pages/billetera.css";
 @import "./pages/pagos.css";
-@import "./pages/configuracion.css?v=20260601-mobile-premium";
+@import "./pages/configuracion.css?v=20260601-mobile-cards";
 @import "./pages/perfil.css";
 @import "./pages/ganancias.css";
-@import "./pages/seguridad.css?v=20260601-mobile-premium";
+@import "./pages/seguridad.css?v=20260601-mobile-cards";
 @import "./pages/familia.css";
-@import "./pages/ayuda.css?v=20260601-mobile-premium";
-@import "./pages/soporte.css?v=20260601-mobile-premium";
+@import "./pages/ayuda.css?v=20260601-mobile-cards";
+@import "./pages/soporte.css?v=20260601-mobile-cards";
 @import "./pages/recarga.css";
 @import "./pages/recibo.css";
 

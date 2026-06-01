@@ -386,7 +386,8 @@
 
 @media (max-width: 360px) {
   .support-quick-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
   }
 
   .support-hero {
@@ -407,5 +408,25 @@
   .support-list-row > i:first-child {
     width: 36px;
     height: 36px;
+  }
+
+  .support-action-card {
+    min-height: 118px;
+    padding: 10px;
+    gap: 8px;
+  }
+
+  .support-action-card i {
+    width: 34px;
+    height: 34px;
+  }
+
+  .support-action-card span {
+    font-size: 0.86rem;
+  }
+
+  .support-action-card p {
+    font-size: 0.72rem;
+    line-height: 1.25;
   }
 }
