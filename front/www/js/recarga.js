@@ -16,7 +16,8 @@ export function initRecarga() {
   const btnRecargar = document.getElementById("recargarBtn");
   const overlay = document.getElementById("overlayProcesando");
 
-  const sonidoExito = new Audio("/sounds/success.mp3");
+  const sonidoExito = new Audio(new URL("../assets/sounds/bego-success.wav", import.meta.url));
+  sonidoExito.preload = "auto";
 
   function generarFirmaBeGO() {
     const userId = JSON.parse(atob(token.split(".")[1])).id;

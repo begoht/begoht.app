@@ -11,7 +11,7 @@ import { reconstruirUIDesdeEstado, limpiarViajeMain } from "./viajeUI.js";
 /*************************************************
  * 🔊 AUDIO
  *************************************************/
-const offerSound = new Audio(new URL("../assets/sounds/new-offer.mp3", import.meta.url));
+const offerSound = new Audio(new URL("../../../assets/sounds/bego-offer.wav", import.meta.url));
 offerSound.preload = "auto";
 
 export function playOfferSound() {
