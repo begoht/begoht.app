@@ -3,6 +3,52 @@ import { getServerUrl } from "../../conexion.js";
 const ENABLED_KEY = "huella:pasajero:enabled";
 const CREDENTIAL_KEY = "huella:pasajero:credential";
 
+function normalizarToken(value) {
+  if (value?.startsWith('"') && value.endsWith('"')) {
+    return value.slice(1, -1);
+  }
+
+  return value || null;
+}
+
+function safeJson(value) {
+  try {
+    return value ? JSON.parse(value) : null;
+  } catch {
+    return null;
+  }
+}
+
+function usuarioGuardado() {
+  return (
+    safeJson(localStorage.getItem("BeGO_user")) ||
+    safeJson(localStorage.getItem("usuario")) ||
+    safeJson(localStorage.getItem("user"))
+  );
+}
+
+function guardarSesion(data) {
+  if (data.accessToken) {
+    localStorage.setItem("token", data.accessToken);
+    localStorage.setItem("BeGO_token", data.accessToken);
+  }
+
+  if (data.refreshToken) {
+    localStorage.setItem("refreshToken", data.refreshToken);
+    localStorage.setItem("BeGO_refreshToken", data.refreshToken);
+  }
+
+  if (data.user) {
+    localStorage.setItem("user", JSON.stringify(data.user));
+    localStorage.setItem("usuario", JSON.stringify(data.user));
+    localStorage.setItem("BeGO_user", JSON.stringify(data.user));
+  }
+
+  if (data.user?.rol) {
+    localStorage.setItem("rol", data.user.rol);
+  }
+}
+
 function getPlugins() {
   return window.Capacitor?.Plugins || {};
 }
@@ -82,23 +128,11 @@ async function autenticarConPluginNativo() {
 }
 
 export function tokenGuardado() {
-  let token = localStorage.getItem("token");
-
-  if (token?.startsWith('"') && token.endsWith('"')) {
-    token = token.slice(1, -1);
-  }
-
-  return token || null;
+  return normalizarToken(localStorage.getItem("token") || localStorage.getItem("BeGO_token"));
 }
 
 export function refreshGuardado() {
-  let refreshToken = localStorage.getItem("refreshToken");
-
-  if (refreshToken?.startsWith('"') && refreshToken.endsWith('"')) {
-    refreshToken = refreshToken.slice(1, -1);
-  }
-
-  return refreshToken || null;
+  return normalizarToken(localStorage.getItem("refreshToken") || localStorage.getItem("BeGO_refreshToken"));
 }
 
 export async function renovarSesionConRefresh() {
@@ -119,19 +153,13 @@ export async function renovarSesionConRefresh() {
     return false;
   }
 
-  localStorage.setItem("token", data.accessToken);
-  if (data.refreshToken) {
-    localStorage.setItem("refreshToken", data.refreshToken);
-  }
-  if (data.user?.rol) {
-    localStorage.setItem("rol", data.user.rol);
-  }
+  guardarSesion(data);
 
   return true;
 }
 
 export async function asegurarSesionParaHuella() {
-  if (tokenGuardado()) return true;
+  if (tokenGuardado() && usuarioGuardado()) return true;
   return renovarSesionConRefresh();
 }
 

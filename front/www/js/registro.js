@@ -1,5 +1,5 @@
 import { getServerUrl } from "./conexion.js";
-import { ofrecerActivacionHuella } from "./modules/huellas/huellas.service.js";
+import { ofrecerActivacionHuella } from "./modules/huellas/huellas.service.js?v=20260601-huella-user";
 
 document.addEventListener("DOMContentLoaded", () => {
 

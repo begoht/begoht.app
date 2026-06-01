@@ -4,7 +4,7 @@ import {
   huellaActivada,
   registrarHuellaLocal,
   asegurarSesionParaHuella
-} from "./huellas.service.js";
+} from "./huellas.service.js?v=20260601-huella-user";
 
 document.addEventListener("DOMContentLoaded", async () => {
   const btnHuella = document.getElementById("btnHuella");

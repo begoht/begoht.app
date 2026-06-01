@@ -3,7 +3,7 @@ import { safeImport } from "../features/shared/import.js";
 import { initModo } from "../../modo.js";
 import { initWalletUI } from "../../wallet.js";
 import { initLogout } from "../../logout.js";
-import { initHeader } from "../../components/header.init.js?v=20260531-header-avatar-fix";
+import { initHeader } from "../../components/header.init.js?v=20260601-huella-user";
 import { getMap } from "../../map/map.singleton.js";
 import { restoreViajeUI } from "./app.restore.js";
 import { viajeState } from "../../viaje/viaje.state.js";

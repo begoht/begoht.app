@@ -1,8 +1,12 @@
 function getStoredUser() {
   try {
-    return JSON.parse(localStorage.getItem("BeGO_user") || "null");
+    return (
+      JSON.parse(localStorage.getItem("BeGO_user") || "null") ||
+      JSON.parse(localStorage.getItem("usuario") || "null") ||
+      JSON.parse(localStorage.getItem("user") || "null")
+    );
   } catch (error) {
-    console.warn("No se pudo leer BeGO_user:", error);
+    console.warn("No se pudo leer usuario guardado:", error);
     return null;
   }
 }
