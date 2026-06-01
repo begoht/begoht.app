@@ -1,8 +1,19 @@
 /*************************************************
- * 💰 MODAL CONFIRMAR VIAJE (PREMIUM)
+ * MODAL CONFIRMAR VIAJE (PREMIUM)
  *************************************************/
-export function mostrarModalPrecio({ precio, distanciaKm, metodoPago, onConfirm, onCancel }) {
+export function mostrarModalPrecio({ precio, distanciaKm, metodoPago, tipo = "viaje", paquete = null, onConfirm, onCancel }) {
     cerrarModalPrecio();
+
+    const esEnvio = tipo === "envio";
+    const peso = Number(paquete?.pesoKg || 0);
+    const paqueteHtml = esEnvio && paquete ? `
+            <div style="margin:12px 0; padding:12px; border-radius:14px; background:rgba(14,165,233,0.1); border:1px solid rgba(56,189,248,0.18); color:#e0f2fe; font-size:13px; line-height:1.45;">
+                <strong style="display:block; color:#7dd3fc; margin-bottom:4px;">Envio de paquete</strong>
+                Peso: ${Number.isFinite(peso) ? peso.toFixed(1) : "0.0"} kg<br>
+                ${paquete.descripcion ? `Detalle: ${paquete.descripcion}<br>` : ""}
+                <span style="color:#94a3b8;">El codigo de 4 digitos se genera al confirmar.</span>
+            </div>
+    ` : "";
 
     const modal = document.createElement("div");
     modal.id = "modalPrecio";
@@ -30,12 +41,14 @@ export function mostrarModalPrecio({ precio, distanciaKm, metodoPago, onConfirm,
             animation: scaleIn 0.25s ease;
             font-family: system-ui;
         ">
-            <h3 style="margin-bottom:10px;">Confirmar viaje</h3>
+            <h3 style="margin-bottom:10px;">Confirmar ${esEnvio ? "envio" : "viaje"}</h3>
 
             <div style="margin:10px 0; font-size:14px; color:#94a3b8;">
-                📏 ${distanciaKm} km<br>
-                💳 ${metodoPago.toUpperCase()}
+                Distancia: ${distanciaKm} km<br>
+                Pago: ${String(metodoPago || "").toUpperCase()}
             </div>
+
+            ${paqueteHtml}
 
             <div style="
                 font-size:28px;
@@ -69,7 +82,7 @@ export function mostrarModalPrecio({ precio, distanciaKm, metodoPago, onConfirm,
                     font-weight:bold;
                     cursor:pointer;
                 ">
-                    Confirmar
+                    ${esEnvio ? "Confirmar envio" : "Confirmar"}
                 </button>
             </div>
         </div>

@@ -10,6 +10,8 @@ export const handleBuscando = (data = {}) => {
     activo: true,
     buscando: true,
     asignado: false,
+    tipoServicio: data.tipo || viajeState.tipoServicio || "viaje",
+    paquete: data.paquete || viajeState.paquete || null,
     precioConfirmado: true
   });
 

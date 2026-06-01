@@ -4,6 +4,40 @@ const { pointInCity, resolveCityForPoints } = require("../../../../config/cities
 const viajeRepo = require("../repositories/viaje.repository");
 const Viaje = require("../../../../models/Viaje");
 
+const MAX_PESO_ENVIO_KG = 5;
+
+function generarCodigoEntrega() {
+  return String(Math.floor(1000 + Math.random() * 9000));
+}
+
+function normalizarTipo(tipo) {
+  return tipo === "envio" ? "envio" : "viaje";
+}
+
+function validarPaquete(tipo, paquete = {}) {
+  if (tipo !== "envio") return null;
+
+  const pesoKg = Number(paquete.pesoKg);
+
+  if (!Number.isFinite(pesoKg) || pesoKg <= 0) {
+    const err = new Error("PESO_ENVIO_REQUERIDO");
+    err.type = "paquete";
+    throw err;
+  }
+
+  if (pesoKg > MAX_PESO_ENVIO_KG) {
+    const err = new Error("PESO_ENVIO_MAXIMO");
+    err.type = "paquete";
+    throw err;
+  }
+
+  return {
+    pesoKg: Number(pesoKg.toFixed(2)),
+    descripcion: String(paquete.descripcion || "Paquete").trim().slice(0, 160),
+    instrucciones: String(paquete.instrucciones || "").trim().slice(0, 220)
+  };
+}
+
 module.exports = {
 
   async obtenerViajeActivo(pasajeroId) {
@@ -13,8 +47,16 @@ module.exports = {
   /*************************************************
    * 🧠 COTIZAR (Cálculo puro, sin guardar)
    *************************************************/
-  async cotizar(socket, { origen, destino, metodoPago, city }) {
+  async cotizar(socket, { origen, destino, metodoPago, city, tipo, paquete }) {
     const pasajeroId = socket.user.id || socket.user._id;
+    const tipoServicio = normalizarTipo(tipo);
+    const paqueteNormalizado = validarPaquete(tipoServicio, paquete);
+
+    if (tipoServicio === "envio" && (!destino?.lat || !destino?.lng)) {
+      const err = new Error("DESTINO_ENVIO_REQUERIDO");
+      err.type = "paquete";
+      throw err;
+    }
 
     // Validar si ya tiene un viaje antes de dejarlo cotizar
     const viajeBloqueante = await Viaje.findOne({
@@ -63,7 +105,9 @@ module.exports = {
       duracionMin,
       precio,
       metodoPago,
-      ciudad: cityConfig.id
+      ciudad: cityConfig.id,
+      tipo: tipoServicio,
+      paquete: paqueteNormalizado
     };
   },
 
@@ -84,6 +128,13 @@ module.exports = {
       pasajero: pasajeroId,
       pasajeroSocket: socket.id,
       metodoPago: cotizacion.metodoPago,
+      tipo: cotizacion.tipo || "viaje",
+      paquete: cotizacion.tipo === "envio"
+        ? {
+            ...(cotizacion.paquete || {}),
+            codigoEntrega: generarCodigoEntrega()
+          }
+        : null,
       estadoPago: "pendiente",
       estado: "buscando",
       createdAt: new Date()

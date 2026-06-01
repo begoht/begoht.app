@@ -53,6 +53,8 @@ export async function restoreViajeUI() {
       duracionMin: data.duracionMin ?? null,
       metodoPago: data.metodoPago ?? null,
       estadoPago: data.estadoPago ?? null,
+      tipoServicio: data.tipoServicio || data.tipo || "viaje",
+      paquete: data.paquete || null,
       origen: data.origen || null,
       destino: data.destino || null,
       proximoDestino: data.proximoDestino || null,

@@ -35,6 +35,8 @@ module.exports = async function replayViaje(socket) {
         precio: viaje.precio,
         distanciaKm: viaje.distanciaKm,
         metodoPago: viaje.metodoPago,
+        tipo: viaje.tipo || "viaje",
+        paquete: prepararPaquetePasajero(viaje),
         origen: viaje.origen?.direccion,
         destino: viaje.destino?.direccion,
         estado: "buscando",
@@ -43,6 +45,8 @@ module.exports = async function replayViaje(socket) {
 
       socket.emit("viaje-buscando", {
         viajeId,
+        tipo: viaje.tipo || "viaje",
+        paquete: prepararPaquetePasajero(viaje),
         mensaje: "Buscando al motorista mas cercano..."
       });
 
@@ -72,6 +76,8 @@ module.exports = async function replayViaje(socket) {
       duracionMin: viaje.duracionMin,
       metodoPago: viaje.metodoPago,
       estadoPago: viaje.estadoPago,
+      tipo: viaje.tipo || "viaje",
+      paquete: prepararPaquetePasajero(viaje),
       rutaGeometria: viaje.rutaGeometria || null,
       isReplay: true
     };
@@ -89,6 +95,8 @@ module.exports = async function replayViaje(socket) {
         origen: viaje.origen,
         destino: viaje.destino,
         proximoDestino,
+        tipo: viaje.tipo || "viaje",
+        paquete: prepararPaquetePasajero(viaje),
         timestamp: Date.now(),
         isReplay: true
       });
@@ -116,7 +124,14 @@ module.exports = async function replayViaje(socket) {
       motorista,
       origen: viaje.origen,
       destino: viaje.destino,
-      proximoDestino
+      proximoDestino,
+      precio: viaje.precio,
+      distanciaKm: viaje.distanciaKm,
+      duracionMin: viaje.duracionMin,
+      metodoPago: viaje.metodoPago,
+      estadoPago: viaje.estadoPago,
+      tipo: viaje.tipo || "viaje",
+      paquete: prepararPaquetePasajero(viaje)
     });
 
     console.log(`Replay: estado ${viaje.estado} recuperado para ${pasajeroId}`);
@@ -145,6 +160,18 @@ async function obtenerUltimaPosicion(motoristaId) {
   const lng = Number(data?.lng);
 
   return Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : null;
+}
+
+function prepararPaquetePasajero(viaje) {
+  if ((viaje.tipo || "viaje") !== "envio" || !viaje.paquete) return null;
+
+  return {
+    pesoKg: viaje.paquete.pesoKg,
+    descripcion: viaje.paquete.descripcion || "",
+    instrucciones: viaje.paquete.instrucciones || "",
+    codigoEntrega: viaje.paquete.codigoEntrega || null,
+    codigoEntregaConfirmadoAt: viaje.paquete.codigoEntregaConfirmadoAt || null
+  };
 }
 
 function prepararMotorista(motoristaDoc, posicion) {

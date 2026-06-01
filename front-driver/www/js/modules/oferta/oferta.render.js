@@ -102,7 +102,8 @@ export async function renderOferta(viaje, opts = {}) {
     }
 
     if (UI.metodo) {
-      UI.metodo.textContent = (viaje.metodoPago || "Efectivo").toUpperCase();
+      const metodo = (viaje.metodoPago || "Efectivo").toUpperCase();
+      UI.metodo.textContent = viaje.tipo === "envio" ? `ENVIO - ${metodo}` : metodo;
     }
 
     if (UI.origenNombre) {
@@ -112,6 +113,8 @@ export async function renderOferta(viaje, opts = {}) {
     if (UI.destinoNombre) {
       UI.destinoNombre.textContent = viaje.destino?.direccion || "Buscando destino...";
     }
+
+    renderPaqueteOferta(viaje);
 
     /*************************************************
      * 🎨 MOSTRAR UI
@@ -183,4 +186,33 @@ export async function renderOferta(viaje, opts = {}) {
     } catch (error) {
       console.error("❌ Error en renderOferta:", error);
     }
+}
+
+function renderPaqueteOferta(viaje) {
+  const body = document.querySelector(".oferta-body");
+  if (!body) return;
+
+  const existente = document.getElementById("ofertaPaqueteInfo");
+  if (viaje.tipo !== "envio" || !viaje.paquete) {
+    existente?.remove();
+    return;
+  }
+
+  const html = `
+    <small>ENVIO DE PAQUETE</small>
+    <strong>${Number(viaje.paquete.pesoKg || 0).toFixed(1)} kg</strong>
+    <span>${viaje.paquete.descripcion || "Paquete"}</span>
+    ${viaje.paquete.instrucciones ? `<em>${viaje.paquete.instrucciones}</em>` : ""}
+  `;
+
+  if (existente) {
+    existente.innerHTML = html;
+    return;
+  }
+
+  const card = document.createElement("div");
+  card.id = "ofertaPaqueteInfo";
+  card.className = "oferta-paquete-info";
+  card.innerHTML = html;
+  body.insertBefore(card, body.querySelector(".rutas-box"));
 }

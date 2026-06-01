@@ -96,6 +96,8 @@ async function enviarWave({
                 origen: viajeActual.origen,
                 destino: viajeActual.destino,
                 precio: viajeActual.precio,
+                tipo: viajeActual.tipo || "viaje",
+                paquete: prepararPaqueteMotorista(viajeActual),
                 isReserva: enViaje,
                 expira
             };
@@ -160,3 +162,14 @@ async function enviarWave({
 }
 
 module.exports = { enviarWave };
+
+function prepararPaqueteMotorista(viaje) {
+    if ((viaje.tipo || "viaje") !== "envio" || !viaje.paquete) return null;
+
+    return {
+        pesoKg: viaje.paquete.pesoKg,
+        descripcion: viaje.paquete.descripcion || "",
+        instrucciones: viaje.paquete.instrucciones || "",
+        codigoEntregaRequerido: true
+    };
+}

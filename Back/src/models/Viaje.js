@@ -26,6 +26,17 @@ const TrayectoriaPointSchema = new mongoose.Schema(
   { _id: false }
 );
 
+const PaqueteSchema = new mongoose.Schema(
+  {
+    pesoKg: { type: Number, min: 0, max: 5, default: null },
+    descripcion: { type: String, trim: true, maxlength: 160, default: "" },
+    instrucciones: { type: String, trim: true, maxlength: 220, default: "" },
+    codigoEntrega: { type: String, trim: true, maxlength: 4, default: null },
+    codigoEntregaConfirmadoAt: { type: Date, default: null },
+  },
+  { _id: false }
+);
+
 const ViajeSchema = new mongoose.Schema(
   {
     pasajero: {
@@ -57,6 +68,18 @@ const ViajeSchema = new mongoose.Schema(
 
     destino: {
       type: UbicacionSchema,
+      default: null,
+    },
+
+    tipo: {
+      type: String,
+      enum: ["viaje", "envio"],
+      default: "viaje",
+      index: true,
+    },
+
+    paquete: {
+      type: PaqueteSchema,
       default: null,
     },
 

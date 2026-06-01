@@ -241,6 +241,8 @@ async function liberarMotorista(motoristaId) {
 }
 
 function crearPayloadFinalizado({ viaje, viajeId, neto }) {
+  const esEnvio = (viaje.tipo || "viaje") === "envio";
+
   return {
     viajeId,
     total: viaje.precio,
@@ -258,13 +260,39 @@ function crearPayloadFinalizado({ viaje, viajeId, neto }) {
       pagoMotorista: neto,
       paBeGOrista: neto,
       metodoPago: viaje.metodoPago,
+      tipo: viaje.tipo || "viaje",
+      paquete: esEnvio && viaje.paquete ? {
+        pesoKg: viaje.paquete.pesoKg,
+        descripcion: viaje.paquete.descripcion || "",
+        instrucciones: viaje.paquete.instrucciones || "",
+        codigoEntregaConfirmadoAt: viaje.paquete.codigoEntregaConfirmadoAt || null
+      } : null,
       finViajeAt: viaje.finViajeAt,
       createdAt: viaje.createdAt
     }
   };
 }
 
-module.exports = async function finalizarViaje({ io, socket, viajeId, motoristaId }) {
+function normalizarCodigoEntrega(codigoEntrega) {
+  return String(codigoEntrega || "").replace(/\D/g, "").slice(0, 4);
+}
+
+function validarCodigoEntrega(viaje, codigoEntrega) {
+  if ((viaje.tipo || "viaje") !== "envio") return;
+
+  const codigo = normalizarCodigoEntrega(codigoEntrega);
+  const codigoEsperado = String(viaje.paquete?.codigoEntrega || "");
+
+  if (codigo.length !== 4 || codigo !== codigoEsperado) {
+    const err = new Error("Codigo de entrega incorrecto. Pide al pasajero el codigo de 4 digitos.");
+    err.code = "CODIGO_ENTREGA_INVALIDO";
+    throw err;
+  }
+
+  viaje.paquete.codigoEntregaConfirmadoAt = new Date();
+}
+
+module.exports = async function finalizarViaje({ io, socket, viajeId, motoristaId, codigoEntrega }) {
   const lockId = await acquireLock(viajeId);
   if (!lockId) return;
 
@@ -281,6 +309,8 @@ module.exports = async function finalizarViaje({ io, socket, viajeId, motoristaI
     if (!viaje || viaje.finalizacionProcesada || viaje.estado !== "en_curso") {
       throw new Error("El viaje ya fue procesado o no es valido para finalizar");
     }
+
+    validarCodigoEntrega(viaje, codigoEntrega);
 
     const trayectoriaRedis = await obtenerTrayectoriaReal(viajeId);
     const ultimaPosicion = await obtenerUltimaPosicionMotorista(motoristaId);

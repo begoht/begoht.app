@@ -8,6 +8,7 @@ import { viajeState } from "../viaje/viaje.state.js";
 import { setMapa } from "../map/map.motorista.js";
 import { cityConfig } from "../map/config/index.js";
 import { initSavedDestinations } from "../map/map.saved-destinations.js";
+import { initEnvioPaquete } from "./envio.paquete.js";
 
 /***********************
  * 🧠 CONTROL GLOBAL SPA
@@ -88,6 +89,7 @@ export function initPasajero(map) {
     initGeo(map);
     initSeleccionDestino(map);
     initSavedDestinations(map);
+    initEnvioPaquete();
 
     /***********************
      * 🎛️ UI (ANTI DUPLICADOS HARD)

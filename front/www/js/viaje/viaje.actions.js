@@ -25,7 +25,9 @@ export function pedirViaje() {
     origen: viajeState.origen,
     destino: viajeState.destino,
     metodoPago: viajeState.metodoPago || "efectivo",
-    city: cityConfig.id
+    city: cityConfig.id,
+    tipo: viajeState.tipoServicio || "viaje",
+    paquete: viajeState.tipoServicio === "envio" ? viajeState.paquete : null
   };
 
   Object.assign(viajeState, {

@@ -18,6 +18,8 @@ module.exports = async ({
             duracionMin: viaje.duracionMin,
             metodoPago: viaje.metodoPago,
             estadoPago: viaje.estadoPago,
+            tipo: viaje.tipo || "viaje",
+            paquete: prepararPaquetePasajero(viaje),
             motorista: {
                 id: motoristaId,
                 nombre: data.nombre || "Conductor",
@@ -29,3 +31,14 @@ module.exports = async ({
         }
     );
 };
+
+function prepararPaquetePasajero(viaje) {
+    if ((viaje.tipo || "viaje") !== "envio" || !viaje.paquete) return null;
+
+    return {
+        pesoKg: viaje.paquete.pesoKg,
+        descripcion: viaje.paquete.descripcion || "",
+        instrucciones: viaje.paquete.instrucciones || "",
+        codigoEntrega: viaje.paquete.codigoEntrega || null
+    };
+}

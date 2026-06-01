@@ -113,6 +113,13 @@ module.exports = async function confirmarViaje(socket, io, data) {
         pasajeroId: viaje.pasajero.toString(),
         precio: viaje.precio,
         metodoPago: viaje.metodoPago,
+        tipo: viaje.tipo || "viaje",
+        paquete: viaje.paquete ? JSON.stringify({
+          pesoKg: viaje.paquete.pesoKg,
+          descripcion: viaje.paquete.descripcion || "",
+          instrucciones: viaje.paquete.instrucciones || "",
+          codigoEntregaRequerido: viaje.tipo === "envio"
+        }) : "",
         ciudad: viaje.ciudad || "jacmel",
         origen: JSON.stringify(viaje.origen),
         destino: JSON.stringify(viaje.destino),
@@ -155,6 +162,13 @@ module.exports = async function confirmarViaje(socket, io, data) {
 
     socket.emit("viaje-buscando", {
       viajeId,
+      tipo: viaje.tipo || "viaje",
+      paquete: viaje.paquete ? {
+        pesoKg: viaje.paquete.pesoKg,
+        descripcion: viaje.paquete.descripcion || "",
+        instrucciones: viaje.paquete.instrucciones || "",
+        codigoEntrega: viaje.tipo === "envio" ? viaje.paquete.codigoEntrega : null
+      } : null,
       mensaje: "Buscando al motorista más cercano..."
     });
 
@@ -180,6 +194,14 @@ module.exports = async function confirmarViaje(socket, io, data) {
     if (error.message === "SALDO_INSUFICIENTE") {
       return socket.emit("viaje-error", {
         mensaje: "Saldo insuficiente en tu billetera 💳"
+      });
+    }
+
+    if (error?.type === "paquete") {
+      return socket.emit("viaje-error", {
+        mensaje: error.message === "PESO_ENVIO_MAXIMO"
+          ? "El envio de paquete permite maximo 5 kg."
+          : "Completa los datos del paquete para continuar."
       });
     }
 

@@ -25,14 +25,13 @@ module.exports = (io, socket) => {
                     `viaje:snapshot:${snapshot.viajeActualId}`
                 );
 
-                socket.emit(
-                    "sync-viaje",
-                    snapViaje
-                        ? JSON.parse(snapViaje)
-                        : await Viaje.findById(
-                              snapshot.viajeActualId
-                          ).lean()
-                );
+                const viaje = snapViaje
+                    ? JSON.parse(snapViaje)
+                    : await Viaje.findById(
+                          snapshot.viajeActualId
+                      ).lean();
+
+                socket.emit("sync-viaje", sanitizarViajeMotorista(viaje));
             }
 
             if (
@@ -48,3 +47,19 @@ module.exports = (io, socket) => {
         }
     };
 };
+
+function sanitizarViajeMotorista(viaje) {
+    if (!viaje || (viaje.tipo || "viaje") !== "envio" || !viaje.paquete) {
+        return viaje;
+    }
+
+    return {
+        ...viaje,
+        paquete: {
+            pesoKg: viaje.paquete.pesoKg,
+            descripcion: viaje.paquete.descripcion || "",
+            instrucciones: viaje.paquete.instrucciones || "",
+            codigoEntregaRequerido: true
+        }
+    };
+}

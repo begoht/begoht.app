@@ -43,6 +43,8 @@ export const handleSync = (data) => {
     motorista: data.motorista || null,
     origen: data.origen || null,
     destino: data.destino || null,
+    tipoServicio: data.tipo || "viaje",
+    paquete: data.paquete || null,
     proximoDestino: data.proximoDestino || null,
     precioConfirmado: true
   });
@@ -93,6 +95,8 @@ export const handleSync = (data) => {
         origen: data.origen,
         destino: data.destino,
         motorista: data.motorista,
+        tipoServicio: data.tipo || "viaje",
+        paquete: data.paquete || null,
         proximoDestino: data.proximoDestino || null
       })
     );

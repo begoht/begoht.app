@@ -48,6 +48,8 @@ export function initViajeRecovery(socket) {
         
         console.log(`♻️ Sync: [${viajeId}] | Estado: ${estado}`);
         
+        viajesActivos.set(viajeId, { ...(viajesActivos.get(viajeId) || {}), ...data });
+
         if (tipo === "reserva") {
             setViajeReservadoId(viajeId);
         } else if (tipo === "principal" || !getViajeEnCursoId()) {

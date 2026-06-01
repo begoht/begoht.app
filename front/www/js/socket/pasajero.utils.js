@@ -24,6 +24,8 @@ export function guardarSesionViaje(estadoStr) {
       duracionMin: viajeState.duracionMin,
       metodoPago: viajeState.metodoPago,
       estadoPago: viajeState.estadoPago,
+      tipoServicio: viajeState.tipoServicio || "viaje",
+      paquete: viajeState.paquete || null,
       precioConfirmado: viajeState.precioConfirmado,
       origen: viajeState.origen,
       destino: viajeState.destino,
@@ -46,12 +48,14 @@ export function limpiarSesionViaje() {
     viajeId: null, motorista: null, precioConfirmado: false,
     precio: null, distanciaKm: null, duracionMin: null,
     metodoPago: null, estadoPago: null,
+    tipoServicio: "viaje", paquete: null,
     metodoPagosaldoBloqueado: false, destino: null, estado: null,
     finalizado: false, cancelado: false, expirado: false,
     proximoDestino: null
   });
 
   resetETA();
+  document.getElementById("deliveryCodeCard")?.remove();
   localStorage.removeItem("viajeActivo");
   sessionStorage.removeItem("viajeActivo");
 }
@@ -103,6 +107,8 @@ export function actualizarUIDriver(motoristaInfo, estado, viajeInfo = {}) {
     origen: viajeState.origen,
     destino: viajeState.destino,
     viajeId: viajeState.viajeId,
+    tipoServicio: viajeState.tipoServicio || "viaje",
+    paquete: viajeState.paquete || null,
     ...viajeInfo
   };
 
@@ -156,13 +162,15 @@ export function actualizarUIDriver(motoristaInfo, estado, viajeInfo = {}) {
   setText("driverNombre", nombreCompleto);
   setText("driverTelefono", motoristaInfo.telefono || "—");
   setText("driverRating", motoristaInfo.calificacion || "5.0");
-  setText("driverTripId", viaje.viajeId ? `Viaje ${String(viaje.viajeId).slice(-6).toUpperCase()}` : "Viaje activo");
+  const esEnvio = viaje.tipo === "envio" || viaje.tipoServicio === "envio";
+  setText("driverTripId", viaje.viajeId ? `${esEnvio ? "Envio" : "Viaje"} ${String(viaje.viajeId).slice(-6).toUpperCase()}` : `${esEnvio ? "Envio" : "Viaje"} activo`);
   setText("driverPrecio", formatMoney(viaje.precio));
   setText("driverPago", formatPago());
   setText("driverDistancia", formatKm(viaje.distanciaKm));
   setText("driverEtaText", formatEta());
   setText("driverOrigen", truncar(viaje.origen?.direccion || viaje.origen?.address || "Origen confirmado", 54));
   setText("driverDestino", truncar(viaje.destino?.direccion || viaje.destino?.address || "Destino confirmado", 54));
+  renderCodigoEntrega(viaje);
 
   // Sanitización de la estructura del nodo vehiculo ante fallas en cascada del backend
   const vehiculo = (motoristaInfo.vehiculo && typeof motoristaInfo.vehiculo === "object") 
@@ -339,4 +347,35 @@ export function mostrarModalFinalizado(total) {
       modal.remove();
     }
   });
+}
+
+function renderCodigoEntrega(viaje) {
+  const strip = document.querySelector(".driver-service-strip");
+  if (!strip) return;
+
+  const existente = document.getElementById("deliveryCodeCard");
+  const esEnvio = viaje.tipo === "envio" || viaje.tipoServicio === "envio";
+  const codigo = String(viaje.paquete?.codigoEntrega || "").replace(/\D/g, "").slice(0, 4);
+
+  if (!esEnvio || !codigo) {
+    existente?.remove();
+    return;
+  }
+
+  const html = `
+    <small>Codigo de entrega</small>
+    <strong>${codigo}</strong>
+    <span>Comparte este codigo solo cuando recibas el paquete.</span>
+  `;
+
+  if (existente) {
+    existente.innerHTML = html;
+    return;
+  }
+
+  const card = document.createElement("div");
+  card.id = "deliveryCodeCard";
+  card.className = "delivery-code-card";
+  card.innerHTML = html;
+  strip.insertAdjacentElement("afterend", card);
 }

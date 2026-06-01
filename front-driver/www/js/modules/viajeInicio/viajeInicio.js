@@ -77,6 +77,11 @@ export function initViajeInicio(socket, detenerSimulacionETA) {
         if (!viajeIdActual || idRecibido !== viajeIdActual) return;
         
         console.log("🚀 Trayecto iniciado");
+        viajesActivos.set(viajeIdActual, {
+            ...(viajesActivos.get(viajeIdActual) || {}),
+            ...data,
+            estado: "en_curso"
+        });
         setEstadoViaje("en_curso");
         reconstruirUIDesdeEstado();
         

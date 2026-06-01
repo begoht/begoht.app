@@ -1,5 +1,5 @@
 import { borrarRuta } from "../map.js";
-import { 
+import {
     getEstadoViaje,
     getViajeReservadoId,
     setViajeEnCurso,
@@ -18,12 +18,11 @@ export function reconstruirUIDesdeEstado() {
     const estadoBox = document.getElementById("estadoViaje");
     const panel = document.getElementById("panelViajeControl");
 
-    // 🔥 SI NO HAY ESTADO → OCULTAR TODO COMPLETAMENTE
     if (!estado) {
         if (btnIniciar) btnIniciar.style.display = "none";
         if (btnFinalizar) btnFinalizar.style.display = "none";
         if (panel) panel.style.display = "none";
-        if (estadoBox) estadoBox.innerText = "🟢 Esperando viajes";
+        if (estadoBox) estadoBox.innerText = "Esperando viajes";
         return;
     }
 
@@ -31,31 +30,25 @@ export function reconstruirUIDesdeEstado() {
     panel && (panel.style.display = "block");
 
     switch (estado) {
-
         case "reservado":
-            estadoBox && (estadoBox.innerText = "📌 Tienes un viaje en cola");
+            estadoBox && (estadoBox.innerText = "Tienes un viaje en cola");
             if (btnIniciar) btnIniciar.style.display = "none";
             if (btnFinalizar) btnFinalizar.style.display = "none";
             break;
 
-            case "ofertando":
-                // Mostrar caja de estado informativa
-                if (estadoBox) estadoBox.innerText = "📋 Tienes una oferta pendiente...";
-                if (panel) panel.style.display = "block";
-                
-                // Ocultar botones de acción de viaje activo
-                if (btnIniciar) btnIniciar.style.display = "none";
-                if (btnFinalizar) btnFinalizar.style.display = "none";
-                
-                // Aquí podrías forzar la apertura del modal de oferta si no está abierto
-                break;
+        case "ofertando":
+            if (estadoBox) estadoBox.innerText = "Tienes una oferta pendiente...";
+            if (panel) panel.style.display = "block";
+            if (btnIniciar) btnIniciar.style.display = "none";
+            if (btnFinalizar) btnFinalizar.style.display = "none";
+            break;
 
         case "asignado":
-            estadoBox && (estadoBox.innerText = "🟡 En camino al pasajero");
+            estadoBox && (estadoBox.innerText = "En camino al pasajero");
             if (btnIniciar) {
                 btnIniciar.style.display = "block";
                 btnIniciar.disabled = false;
-                btnIniciar.innerText = "📍 AVISAR LLEGADA";
+                btnIniciar.innerText = "AVISAR LLEGADA";
                 btnIniciar.classList.remove("btn-success");
                 btnIniciar.classList.add("btn-warning");
             }
@@ -63,27 +56,33 @@ export function reconstruirUIDesdeEstado() {
             break;
 
         case "llego":
-            estadoBox && (estadoBox.innerText = "🟢 Esperando pasajero...");
+            estadoBox && (estadoBox.innerText = "Esperando pasajero...");
             if (btnIniciar) {
                 btnIniciar.style.display = "block";
                 btnIniciar.disabled = false;
-                btnIniciar.innerText = "🚀 INICIAR TRAYECTO";
+                btnIniciar.innerText = "INICIAR TRAYECTO";
                 btnIniciar.classList.remove("btn-warning");
                 btnIniciar.classList.add("btn-success");
             }
             if (btnFinalizar) btnFinalizar.style.display = "none";
             break;
 
-        case "en_curso":
-            estadoBox && (estadoBox.innerText = "🚀 Viaje en curso al destino");
+        case "en_curso": {
+            const viajeActual = Array.from(viajesActivos.values()).find(viaje => viaje?.estado === "en_curso") || null;
+            const esEnvio = viajeActual?.tipo === "envio";
+            estadoBox && (estadoBox.innerText = esEnvio ? "Entrega en curso - pide el codigo" : "Viaje en curso al destino");
             if (btnIniciar) btnIniciar.style.display = "none";
-            if (btnFinalizar) btnFinalizar.style.display = "block";
+            if (btnFinalizar) {
+                btnFinalizar.style.display = "block";
+                btnFinalizar.innerText = esEnvio ? "CONFIRMAR ENTREGA" : "FINALIZAR VIAJE";
+            }
             break;
+        }
     }
 }
 
 export function limpiarViajeMain(ui = {}) {
-    console.log("🧼 Limpiando UI de viaje COMPLETO");
+    console.log("Limpiando UI de viaje COMPLETO");
 
     if (typeof borrarRuta === "function") borrarRuta();
 
@@ -91,7 +90,7 @@ export function limpiarViajeMain(ui = {}) {
     setEstadoViaje(null);
     setLlegadaLock(false);
 
-    viajesActivos.clear(); // 🔥 limpieza fuerte
+    viajesActivos.clear();
     setViajeReservadoId(null);
 
     clearTimeout(llegadaRetryTimeout);
@@ -100,7 +99,7 @@ export function limpiarViajeMain(ui = {}) {
     import("../oferta/oferta.render.js").then(mod => {
         mod.limpiarOferta();
     }).catch(err => {
-        console.warn("⚠️ No se pudo limpiar oferta:", err);
+        console.warn("No se pudo limpiar oferta:", err);
     });
 
     if (ui.btnIniciar) ui.btnIniciar.style.display = "none";
@@ -111,6 +110,6 @@ export function limpiarViajeMain(ui = {}) {
     }
 
     if (ui.estadoBox) {
-        ui.estadoBox.innerText = "🟢 Esperando viajes";
+        ui.estadoBox.innerText = "Esperando viajes";
     }
 }

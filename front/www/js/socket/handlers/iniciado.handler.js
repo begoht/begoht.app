@@ -33,6 +33,8 @@ export const handleIniciado = (data = {}) => {
     llego: false,
     origen: data.origen || viajeState.origen,
     destino: data.destino || viajeState.destino,
+    tipoServicio: data.tipo || viajeState.tipoServicio || "viaje",
+    paquete: data.paquete || viajeState.paquete || null,
     proximoDestino: data.proximoDestino || data.destino || viajeState.destino || null
   });
 

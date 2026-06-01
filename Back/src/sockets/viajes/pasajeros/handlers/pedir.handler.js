@@ -22,6 +22,8 @@ module.exports = async function pedirViaje(socket, io, data) {
       distanciaKm: cotizacion.distanciaKm,
       duracionMin: cotizacion.duracionMin,
       metodoPago,
+      tipo: cotizacion.tipo,
+      paquete: cotizacion.paquete,
       origen: cotizacion.origen.direccion,
       destino: cotizacion.destino?.direccion,
       ciudad: cotizacion.ciudad,
@@ -38,6 +40,14 @@ module.exports = async function pedirViaje(socket, io, data) {
     if (err.type === "city") {
       return socket.emit("viaje-error", {
         mensaje: "Estamos preparando BeGO para mas ciudades. Por ahora puedes pedir viajes dentro de Jacmel."
+      });
+    }
+
+    if (err.type === "paquete") {
+      return socket.emit("viaje-error", {
+        mensaje: err.message === "PESO_ENVIO_MAXIMO"
+          ? "El envio de paquete permite maximo 5 kg."
+          : "Completa los datos del paquete para continuar."
       });
     }
 

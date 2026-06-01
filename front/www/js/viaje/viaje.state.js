@@ -16,6 +16,8 @@ export const viajeState = {
   metodoPago: null,
   estadoPago: null,
   metodoPagosaldoBloqueado: false,
+  tipoServicio: "viaje",
+  paquete: null,
 
   // 📍 ubicación
   origen: null,

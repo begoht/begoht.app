@@ -1,13 +1,10 @@
-import { 
-    viajesActivos, 
-    getViajeEnCursoId, 
-    setViajeEnCurso 
-} from "./viajeControl/viajeEstado.js"; 
+import {
+    viajesActivos,
+    getViajeEnCursoId,
+    setViajeEnCurso
+} from "./viajeControl/viajeEstado.js";
 
 import { limpiarViajeMain } from "./viajeControl/viajeUI.js";
-
-import { initViajeControl } from "./viajeControl/viajeControl.js";
-
 import { borrarRuta } from "./map.js";
 
 const viajesFinalizadosProcesados = new Set();
@@ -18,50 +15,58 @@ export function initViajeFinalizar(socket) {
   const estadoBox = document.getElementById("estadoViaje");
   const panelViajeControl = document.getElementById("panelViajeControl");
 
-  // --- 1. GESTIÓN DEL CLICK EN FINALIZAR ---
   document.addEventListener("click", (e) => {
     const target = e.target.closest("#btnFinalizar");
     if (!target || target.disabled) return;
 
     const viajeId = getViajeEnCursoId();
     if (!viajeId) {
-        console.warn("⚠️ No hay un ID de viaje activo para finalizar");
+        console.warn("No hay un ID de viaje activo para finalizar");
         return;
     }
 
-    if (!confirm("¿Deseas finalizar el viaje actual y cobrar?")) return;
+    const viajeActual = viajesActivos.get(viajeId) || {};
+    const esEnvio = viajeActual.tipo === "envio";
+    let codigoEntrega = null;
 
-    // Bloqueo visual
-    target.disabled = true; 
+    if (esEnvio) {
+        codigoEntrega = window.prompt("Codigo de entrega de 4 digitos");
+        codigoEntrega = String(codigoEntrega || "").replace(/\D/g, "").slice(0, 4);
+        if (!/^\d{4}$/.test(codigoEntrega)) {
+            alert("Ingresa el codigo de entrega de 4 digitos.");
+            return;
+        }
+    } else if (!confirm("Deseas finalizar el viaje actual y cobrar?")) {
+        return;
+    }
+
+    target.disabled = true;
     target.textContent = "Procesando...";
-    
-    // FAIL-SAFE: Si en 8 segundos el servidor no responde, desbloquear botón
+
     const timerGuard = setTimeout(() => {
         if (target.textContent === "Procesando...") {
             target.disabled = false;
-            target.textContent = "FINALIZAR VIAJE";
-            console.error("❌ Tiempo de espera agotado al finalizar viaje.");
+            target.textContent = esEnvio ? "CONFIRMAR ENTREGA" : "FINALIZAR VIAJE";
+            console.error("Tiempo de espera agotado al finalizar viaje.");
         }
     }, 8000);
 
-    console.log("🏁 Enviando finalizar-viaje para:", viajeId);
-    socket.emit("finalizar-viaje", { 
-        viajeId: viajeId,
-        motoristaId: socket.user?._id || socket.user?.id 
+    console.log("Enviando finalizar-viaje para:", viajeId);
+    socket.emit("finalizar-viaje", {
+        viajeId,
+        codigoEntrega,
+        motoristaId: socket.user?._id || socket.user?.id
     });
-    
-    // Guardamos el timer en el botón por si necesitamos limpiarlo
+
     target.dataset.timerId = timerGuard;
   });
-  
-  // --- 2. ESCUCHAR CONFIRMACIÓN DE FINALIZACIÓN ---
+
   socket.on("viaje-finalizado", (data) => {
     const idFinalizado = data.viajeId || data.id;
     if (idFinalizado && viajesFinalizadosProcesados.has(idFinalizado)) return;
     if (idFinalizado) viajesFinalizadosProcesados.add(idFinalizado);
-    console.log("🏁 Confirmación de fin de viaje recibida:", idFinalizado);
+    console.log("Confirmacion de fin de viaje recibida:", idFinalizado);
 
-    // Limpiar el timer de seguridad si existe
     const btn = document.getElementById("btnFinalizar");
     if (btn && btn.dataset.timerId) {
         clearTimeout(parseInt(btn.dataset.timerId));
@@ -69,10 +74,10 @@ export function initViajeFinalizar(socket) {
         btn.disabled = false;
     }
 
-    // Notificación de cobro
     if (typeof Toastify !== "undefined") {
-        Toastify({ 
-            text: `✅ VIAJE FINALIZADO\n💰 Cobrar: ${data.total || 0} G`, 
+        const esEnvio = data?.viaje?.tipo === "envio";
+        Toastify({
+            text: `${esEnvio ? "Entrega finalizada" : "Viaje finalizado"}\nCobrar: ${data.total || 0} G`,
             duration: 5000,
             gravity: "top",
             position: "center",
@@ -80,20 +85,17 @@ export function initViajeFinalizar(socket) {
         }).showToast();
     }
 
-    // ELIMINAR de la lista de activos
     viajesActivos.delete(idFinalizado);
 
-    // Si el viaje que terminó es el que estaba en curso, limpiar la variable
     if (getViajeEnCursoId() === idFinalizado) {
         setViajeEnCurso(null);
     }
 
-    // Limpieza de UI
-    limpiarViajeMain({ 
-        btnIniciar, 
-        btnFinalizar, 
-        estadoBox, 
-        panelControl: panelViajeControl 
+    limpiarViajeMain({
+        btnIniciar,
+        btnFinalizar,
+        estadoBox,
+        panelControl: panelViajeControl
     });
 
     if (typeof borrarRuta === "function") borrarRuta();
@@ -101,13 +103,14 @@ export function initViajeFinalizar(socket) {
     window.dispatchEvent(new CustomEvent("driver:trip-finalized", { detail: data }));
   });
 
-  // --- 3. MANEJO DE ERRORES DEL SERVIDOR ---
   socket.on("error-finalizar", (err) => {
     alert("Error: " + (err.msg || "No se pudo finalizar el viaje"));
     const btn = document.getElementById("btnFinalizar");
     if (btn) {
+        const viajeId = getViajeEnCursoId();
+        const esEnvio = viajeId && viajesActivos.get(viajeId)?.tipo === "envio";
         btn.disabled = false;
-        btn.textContent = "FINALIZAR VIAJE";
+        btn.textContent = esEnvio ? "CONFIRMAR ENTREGA" : "FINALIZAR VIAJE";
         if (btn.dataset.timerId) clearTimeout(parseInt(btn.dataset.timerId));
     }
   });

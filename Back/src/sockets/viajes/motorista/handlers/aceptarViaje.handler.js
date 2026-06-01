@@ -60,7 +60,7 @@ module.exports = (io, socket) => {
                 socket.join(`viaje:${viajeId}`);
 
                 socket.emit("viaje-confirmado-motorista", {
-                    viaje: result.viaje
+                    viaje: prepararViajeMotorista(result.viaje)
                 });
 
                 io.to(`pasajero:${result.viaje.pasajero}`).emit(
@@ -75,6 +75,8 @@ module.exports = (io, socket) => {
                         duracionMin: result.viaje.duracionMin,
                         metodoPago: result.viaje.metodoPago,
                         estadoPago: result.viaje.estadoPago,
+                        tipo: result.viaje.tipo || "viaje",
+                        paquete: prepararPaquetePasajero(result.viaje),
                         motorista: motoristaInfo,
                         timestamp: Date.now()
                     }
@@ -83,7 +85,7 @@ module.exports = (io, socket) => {
                 emitirTrackInicialPasajero(io, result.viaje, motoristaInfo, "asignado");
             } else {
                 socket.emit("viaje-siguiente-confirmado", {
-                    viaje: result.viaje
+                    viaje: prepararViajeMotorista(result.viaje)
                 });
 
                 io.to(`pasajero:${result.viaje.pasajero}`).emit(
@@ -98,6 +100,8 @@ module.exports = (io, socket) => {
                         duracionMin: result.viaje.duracionMin,
                         metodoPago: result.viaje.metodoPago,
                         estadoPago: result.viaje.estadoPago,
+                        tipo: result.viaje.tipo || "viaje",
+                        paquete: prepararPaquetePasajero(result.viaje),
                         motorista: motoristaInfo,
                         proximoDestino: result.proximoDestino || null,
                         timestamp: Date.now(),
@@ -122,6 +126,36 @@ module.exports = (io, socket) => {
         }
     };
 };
+
+function prepararPaqueteMotorista(viaje) {
+    if ((viaje.tipo || "viaje") !== "envio" || !viaje.paquete) return null;
+
+    return {
+        pesoKg: viaje.paquete.pesoKg,
+        descripcion: viaje.paquete.descripcion || "",
+        instrucciones: viaje.paquete.instrucciones || "",
+        codigoEntregaRequerido: true
+    };
+}
+
+function prepararPaquetePasajero(viaje) {
+    if ((viaje.tipo || "viaje") !== "envio" || !viaje.paquete) return null;
+
+    return {
+        pesoKg: viaje.paquete.pesoKg,
+        descripcion: viaje.paquete.descripcion || "",
+        instrucciones: viaje.paquete.instrucciones || "",
+        codigoEntrega: viaje.paquete.codigoEntrega || null
+    };
+}
+
+function prepararViajeMotorista(viaje) {
+    const raw = typeof viaje.toObject === "function" ? viaje.toObject() : { ...viaje };
+    return {
+        ...raw,
+        paquete: prepararPaqueteMotorista(viaje)
+    };
+}
 
 function emitirTrackInicialPasajero(io, viaje, motoristaInfo, estado, proximoDestinoReserva = null) {
     if (

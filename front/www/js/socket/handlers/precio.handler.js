@@ -6,20 +6,26 @@ import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js";
 import { cityConfig } from "../../map/config/index.js";
 
 // ✅ Agregamos 'rutaGeometria' desestructurada del backend
-export const handlePrecio = ({ viajeId, precio, distanciaKm, metodoPago, rutaGeometria }, socket) => {
+export const handlePrecio = ({ viajeId, precio, distanciaKm, metodoPago, rutaGeometria, tipo, paquete }, socket) => {
   
   // Guardamos los datos base y cacheamos la geometría de la ruta si el backend la envió
   Object.assign(viajeState, { 
     viajeId, 
     precio, 
     distanciaKm, 
+    tipoServicio: tipo || viajeState.tipoServicio || "viaje",
+    paquete: paquete || viajeState.paquete || null,
     precioConfirmado: false,
     // ✅ Guardamos la geometría en el state global para consumirla después sin lag
     rutaDestinoCache: rutaGeometria || null 
   });
 
   mostrarModalPrecio({
-    precio, distanciaKm, metodoPago,
+    precio,
+    distanciaKm,
+    metodoPago,
+    tipo: viajeState.tipoServicio,
+    paquete: viajeState.paquete,
     onConfirm: () => {
       Object.assign(viajeState, { 
         precioConfirmado: true, 
@@ -38,7 +44,9 @@ export const handlePrecio = ({ viajeId, precio, distanciaKm, metodoPago, rutaGeo
         origen: viajeState.origen,
         destino: viajeState.destino,
         metodoPago: metodoPago,
-        city: cityConfig.id
+        city: cityConfig.id,
+        tipo: viajeState.tipoServicio || "viaje",
+        paquete: viajeState.tipoServicio === "envio" ? viajeState.paquete : null
       });
     },
     onCancel: () => {
