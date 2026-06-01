@@ -5,6 +5,8 @@ const Wallet = require("../models/Wallet");
 const User = require("../models/User");
 const auth = require("../middleware/authHttp");
 const WalletService = require("../services/wallet.service");
+const { PLATFORM_ALIAS } = require("../config/constants");
+const { ensurePlatformAccount } = require("../services/platformAccount.service");
 
 const router = express.Router();
 const TRANSFER_MAX = Number(process.env.WALLET_TRANSFER_MAX || 1000000);
@@ -41,6 +43,10 @@ router.get("/buscar-alias/:alias", auth, async (req, res) => {
     const { alias } = req.params;
 
     const aliasNormalizado = normalizeAlias(alias);
+
+    if (aliasNormalizado === PLATFORM_ALIAS) {
+      await ensurePlatformAccount();
+    }
     
     const usuario = await User.findOne({ alias: aliasNormalizado })
     .select("nombre apellido foto alias")
@@ -216,6 +222,10 @@ router.post("/enviar", auth, async (req, res) => {
     // ================================
     const aliasNormalizado = normalizeAlias(aliasDestino);
 
+    if (aliasNormalizado === PLATFORM_ALIAS) {
+      await ensurePlatformAccount(session);
+    }
+
     const usuarioDestino = await User.findOne({
       alias: aliasNormalizado,
     }).session(session);
@@ -226,6 +236,33 @@ router.post("/enviar", auth, async (req, res) => {
 
     if (usuarioDestino._id.toString() === userId) {
       throw new Error("No puedes enviarte dinero a ti mismo");
+    }
+
+    if (aliasNormalizado === PLATFORM_ALIAS) {
+      await pagarComisionPendiente({
+        userId,
+        usuario,
+        usuarioDestino,
+        monto: MONTO,
+        transferRef,
+        idempotencyKey,
+        req,
+        session
+      });
+
+      await session.commitTransaction();
+
+      setTimeout(() => {
+        if (global.emitWalletUpdate) {
+          global.emitWalletUpdate(userId);
+          global.emitWalletUpdate(usuarioDestino._id.toString());
+        }
+      }, 300);
+
+      return res.json({
+        ok: true,
+        msg: "Comision pagada a BeGO correctamente",
+      });
     }
 
     // ================================
@@ -347,6 +384,80 @@ router.post("/enviar", auth, async (req, res) => {
     session.endSession();
   }
 });
+
+async function pagarComisionPendiente({
+  userId,
+  usuario,
+  usuarioDestino,
+  monto,
+  transferRef,
+  idempotencyKey,
+  req,
+  session
+}) {
+  const origenQuery = {
+    userId,
+    $expr: {
+      $and: [
+        { $lt: ["$saldo", 0] },
+        { $gte: [{ $abs: "$saldo" }, monto] }
+      ]
+    }
+  };
+
+  if (idempotencyKey) {
+    origenQuery.movimientos = { $not: { $elemMatch: { ref: transferRef } } };
+  }
+
+  const walletOrigen = await Wallet.findOneAndUpdate(
+    origenQuery,
+    {
+      $inc: { saldo: monto },
+      $push: {
+        movimientos: {
+          tipo: "pago_comision_enviada",
+          monto,
+          descripcion: `Pago de comision a @${usuarioDestino.alias}`,
+          ref: transferRef,
+          metadata: getClientFingerprint(req),
+          fecha: new Date(),
+        },
+      },
+    },
+    { new: true, session }
+  );
+
+  if (!walletOrigen) {
+    if (idempotencyKey) {
+      const yaProcesada = await Wallet.exists({
+        userId,
+        movimientos: { $elemMatch: { ref: transferRef, tipo: "pago_comision_enviada" } },
+      }).session(session);
+
+      if (yaProcesada) return;
+    }
+
+    throw new Error("No tienes esa comision pendiente o el monto supera la deuda");
+  }
+
+  await Wallet.findOneAndUpdate(
+    { userId: usuarioDestino._id },
+    {
+      $inc: { saldo: monto },
+      $push: {
+        movimientos: {
+          tipo: "comision_transferida",
+          monto,
+          descripcion: `Comision recibida de @${usuario.alias}`,
+          ref: transferRef,
+          metadata: getClientFingerprint(req),
+          fecha: new Date(),
+        },
+      },
+    },
+    { upsert: true, new: true, session }
+  );
+}
 
 
 const rateLimit = require("express-rate-limit");

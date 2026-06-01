@@ -1071,6 +1071,7 @@
         <div class="kpi-grid">
           <article class="kpi-card"><div class="kpi-top"><span>Comision</span><i class="fa-solid fa-scale-balanced"></i></div><strong id="mCommission">0 HTG</strong><span class="trend">Plataforma</span></article>
           <article class="kpi-card"><div class="kpi-top"><span>Wallet admin</span><i class="fa-solid fa-building-shield"></i></div><strong id="mPlatformWallet">0 HTG</strong><span class="trend">Comisiones recibidas</span></article>
+          <article class="kpi-card"><div class="kpi-top"><span>Por cobrar</span><i class="fa-solid fa-file-invoice-dollar"></i></div><strong id="mDebt">0 HTG</strong><span class="trend">Efectivo motoristas</span></article>
           <article class="kpi-card"><div class="kpi-top"><span>Motoristas</span><i class="fa-solid fa-money-bill-transfer"></i></div><strong id="mDriverPay">0 HTG</strong><span class="trend">Pago calculado</span></article>
           <article class="kpi-card"><div class="kpi-top"><span>Wallets</span><i class="fa-solid fa-vault"></i></div><strong id="mWallets">0 HTG</strong><span class="trend">Saldo total</span></article>
           <article class="kpi-card"><div class="kpi-top"><span>Retenido</span><i class="fa-solid fa-shield"></i></div><strong id="mHeld">0 HTG</strong><span class="trend">Escrow/retiros</span></article>
@@ -1080,7 +1081,7 @@
           <div class="panel-head">
             <div>
               <h2>Wallet BeGO</h2>
-              <p class="muted">Cuenta interna donde entran automaticamente las comisiones de cada viaje.</p>
+              <p class="muted">Cuenta interna @bego. Los pagos digitales entran automatico; efectivo queda por cobrar hasta que el motorista transfiera.</p>
             </div>
             <span class="status activo" id="mPlatformHeld">0 HTG retenido</span>
           </div>
@@ -1315,6 +1316,7 @@
       setText("mCommission", money(metricas.totalComision));
       setText("mPlatformWallet", money(metricas.walletPlataforma));
       setText("mPlatformHeld", `${money(metricas.walletPlataformaRetenido)} retenido`);
+      setText("mDebt", money(metricas.deudaComisiones));
       setText("mDriverPay", money(metricas.totalMotoristas));
       setText("mWallets", money(metricas.saldoWallets));
       setText("mHeld", money(metricas.saldoRetenido));

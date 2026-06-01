@@ -5,12 +5,14 @@ const User = require("../models/User");
 const Viaje = require("../models/Viaje");
 const authAdmin = require("../middleware/authAdmin");
 const { PLATFORM_WALLET_ID } = require("../config/constants");
+const { ensurePlatformAccount } = require("../services/platformAccount.service");
 
 const router = express.Router();
 const PLATAFORMA_ID = new mongoose.Types.ObjectId(PLATFORM_WALLET_ID);
 
 router.get("/comisiones", authAdmin, async (req, res) => {
   try {
+    await ensurePlatformAccount();
     const wallet = await Wallet.findOne({ userId: PLATAFORMA_ID });
 
     if (!wallet) {
@@ -23,7 +25,9 @@ router.get("/comisiones", authAdmin, async (req, res) => {
       });
     }
 
-    const movimientos = wallet.movimientos.filter((m) => m.tipo === "comision");
+    const movimientos = wallet.movimientos.filter((m) =>
+      ["comision", "comision_viaje", "comision_transferida"].includes(m.tipo)
+    );
     const hoyInicio = new Date();
     hoyInicio.setHours(0, 0, 0, 0);
 
@@ -67,6 +71,8 @@ router.get("/comisiones", authAdmin, async (req, res) => {
 
 router.get("/resumen", authAdmin, async (req, res) => {
   try {
+    await ensurePlatformAccount();
+
     const inicioHoy = new Date();
     inicioHoy.setHours(0, 0, 0, 0);
 
