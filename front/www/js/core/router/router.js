@@ -1,8 +1,8 @@
 import { routes } from "./router.routes.js";
-import { renderLayout } from "./router.render.js?v=20260601-huella-user";
+import { renderLayout } from "./router.render.js?v=20260601-saved-destinations";
 import { runCleanup, setCleanup } from "./router.cleanup.js";
 import { afterRender, pushURL, actualizarLinksActivos } from "./router.utils.js";
-import { runPageInit } from "../app/app.lifecycle.js?v=20260601-huella-user";
+import { runPageInit } from "../app/app.lifecycle.js?v=20260601-saved-destinations";
 import { AppState } from "../state.js";
 import { stopGeo } from "../../map/map.geo.js";
 

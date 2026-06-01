@@ -229,3 +229,219 @@
 .route-home .center-btn {
   display: flex;
 }
+
+.destinos-fab,
+.destinos-panel {
+  display: none;
+}
+
+.route-home .destinos-fab {
+  position: fixed;
+  right: 20px;
+  top: calc(var(--header-height, 76px) + env(safe-area-inset-top) + 38px);
+  z-index: 80;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background:
+    radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.3), transparent 16%),
+    linear-gradient(180deg, #ff8b1a 0%, #ff6a00 62%, #d94d00 100%);
+  box-shadow:
+    0 16px 30px rgba(0, 0, 0, 0.5),
+    0 0 0 7px rgba(255, 122, 0, 0.08),
+    inset 0 1px 1px rgba(255, 255, 255, 0.18);
+}
+
+.route-home .destinos-fab:active {
+  transform: scale(0.94);
+}
+
+.route-home .destinos-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+  display: grid;
+  align-items: end;
+  padding: 16px 14px calc(var(--footer-height, 76px) + env(safe-area-inset-bottom) + 16px);
+  background: rgba(2, 6, 23, 0.38);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.route-home .destinos-panel.hidden {
+  display: none !important;
+}
+
+.destinos-card {
+  width: min(100%, 560px);
+  margin: 0 auto;
+  padding: 14px;
+  border-radius: 24px;
+  color: var(--text-main);
+  background:
+    radial-gradient(circle at 14% 0%, rgba(255, 122, 0, 0.12), transparent 34%),
+    linear-gradient(180deg, rgba(31, 31, 35, 0.98), rgba(12, 13, 17, 0.98));
+  border: 1px solid rgba(255, 255, 255, 0.055);
+  box-shadow:
+    0 24px 48px rgba(0, 0, 0, 0.62),
+    inset 0 1px 1px rgba(255, 255, 255, 0.08),
+    inset 0 -12px 20px rgba(0, 0, 0, 0.42);
+}
+
+.destinos-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.destinos-head span,
+.destinos-msg,
+.destino-item small {
+  color: var(--muted);
+  font-size: 0.73rem;
+  font-weight: 750;
+}
+
+.destinos-head span {
+  display: block;
+  text-transform: uppercase;
+}
+
+.destinos-head strong {
+  display: block;
+  margin-top: 2px;
+  color: #f8fafc;
+  font-size: 1.15rem;
+  font-weight: 900;
+}
+
+.destinos-icon-btn,
+.destino-delete {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  border: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #d5d7dc;
+  background:
+    radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.13), transparent 18%),
+    linear-gradient(180deg, rgba(25, 27, 33, 0.98), rgba(10, 11, 15, 0.98));
+  box-shadow:
+    0 10px 22px rgba(0, 0, 0, 0.34),
+    inset 0 1px 1px rgba(255, 255, 255, 0.08),
+    inset 0 -7px 12px rgba(0, 0, 0, 0.34);
+}
+
+.destinos-list {
+  display: grid;
+  gap: 10px;
+}
+
+.destinos-empty {
+  min-height: 76px;
+  padding: 14px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--muted);
+  background: rgba(2, 6, 23, 0.72);
+  border: 1px dashed rgba(148, 163, 184, 0.2);
+}
+
+.destinos-empty i {
+  color: var(--orange);
+}
+
+.destino-item {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.destino-select {
+  min-width: 0;
+  flex: 1 1 auto;
+  min-height: 68px;
+  padding: 12px;
+  border: 0;
+  border-radius: 18px;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  column-gap: 10px;
+  align-items: center;
+  text-align: left;
+  color: var(--text-main);
+  background: var(--bg-card);
+  box-shadow:
+    6px 6px 12px rgba(0, 0, 0, 0.58),
+    -3px -3px 10px rgba(255, 255, 255, 0.02);
+}
+
+.destino-select i {
+  grid-row: 1 / span 2;
+  color: var(--secondary);
+  font-size: 18px;
+}
+
+.destino-select span,
+.destino-item small {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.destino-select span {
+  color: #f8fafc;
+  font-size: 0.9rem;
+  font-weight: 850;
+}
+
+.destino-delete {
+  align-self: center;
+  color: #fca5a5;
+}
+
+.destinos-save {
+  width: 100%;
+  min-height: 52px;
+  margin-top: 12px;
+  border: 0;
+  border-radius: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #fff;
+  font-weight: 850;
+  background:
+    radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.24), transparent 16%),
+    linear-gradient(180deg, #ff8b1a 0%, #ff6a00 62%, #d94d00 100%);
+  box-shadow:
+    0 14px 26px rgba(255, 106, 0, 0.22),
+    inset 0 1px 1px rgba(255, 255, 255, 0.18);
+}
+
+.destinos-msg {
+  min-height: 18px;
+  margin: 9px 4px 0;
+  text-align: center;
+}
+
+.destinos-msg.ok {
+  color: #86efac;
+}
+
+.destinos-msg.error {
+  color: #fca5a5;
+}

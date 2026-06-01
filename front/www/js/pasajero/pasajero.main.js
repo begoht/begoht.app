@@ -7,6 +7,7 @@ import { initPasajeroSocket } from "../socket/pasajero.socket.js";
 import { viajeState } from "../viaje/viaje.state.js";
 import { setMapa } from "../map/map.motorista.js";
 import { cityConfig } from "../map/config/index.js";
+import { initSavedDestinations } from "../map/map.saved-destinations.js";
 
 /***********************
  * 🧠 CONTROL GLOBAL SPA
@@ -86,6 +87,7 @@ export function initPasajero(map) {
      ***********************/
     initGeo(map);
     initSeleccionDestino(map);
+    initSavedDestinations(map);
 
     /***********************
      * 🎛️ UI (ANTI DUPLICADOS HARD)
