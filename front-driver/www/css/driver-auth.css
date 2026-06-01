@@ -457,3 +457,130 @@ body {
     padding-inline: 16px;
   }
 }
+
+/* App premium skin: matches BeGO dark background and footer material. */
+body {
+  background:
+    radial-gradient(circle at 50% -8%, rgba(255, 122, 0, 0.18), transparent 28%),
+    radial-gradient(circle at 8% 18%, rgba(37, 99, 235, 0.2), transparent 30%),
+    radial-gradient(circle at 92% 70%, rgba(34, 197, 94, 0.12), transparent 28%),
+    #020616;
+  color: #e5e7eb;
+}
+
+.driver-auth-shell {
+  background:
+    linear-gradient(180deg, rgba(15, 23, 42, 0.9), rgba(2, 6, 23, 0.96));
+  border-color: rgba(148, 163, 184, 0.16);
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.62),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.driver-auth-brand {
+  background:
+    radial-gradient(circle at 42% 0%, rgba(255, 122, 0, 0.2), transparent 31%),
+    linear-gradient(160deg, rgba(15, 23, 42, 0.98), rgba(2, 6, 23, 0.98));
+  border-right: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.brand-mark,
+.driver-auth-metrics div {
+  background:
+    linear-gradient(180deg, rgba(31, 41, 55, 0.78), rgba(15, 23, 42, 0.86));
+  border-color: rgba(148, 163, 184, 0.16);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.driver-auth-panel {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(56, 189, 248, 0.12), transparent 26%),
+    rgba(2, 6, 23, 0.72);
+}
+
+.driver-auth-head h2,
+.form-row label,
+.driver-note strong,
+.download-title,
+.social-title {
+  color: #e5e7eb;
+}
+
+.driver-auth-copy p,
+.driver-note,
+.link,
+.download-title,
+.social-title {
+  color: #94a3b8;
+}
+
+.status-pill {
+  background: rgba(34, 197, 94, 0.1);
+  border-color: rgba(34, 197, 94, 0.24);
+  color: #86efac;
+}
+
+.driver-note {
+  background: rgba(15, 23, 42, 0.84);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+}
+
+.form-row input {
+  background: rgba(15, 23, 42, 0.86);
+  border-color: rgba(148, 163, 184, 0.16);
+  color: #e5e7eb;
+}
+
+.form-row input:focus {
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.14);
+  background: rgba(15, 23, 42, 0.96);
+}
+
+.btn,
+.download-link {
+  background:
+    radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.28), transparent 16%),
+    linear-gradient(180deg, #ff8b1a 0%, #ff6a00 62%, #d94d00 100%);
+  border: 1px solid rgba(255, 122, 0, 0.34);
+  color: #ffffff;
+  box-shadow:
+    0 14px 28px rgba(255, 106, 0, 0.22),
+    inset 0 2px 2px rgba(255, 255, 255, 0.18),
+    inset 0 -9px 14px rgba(139, 45, 0, 0.22);
+}
+
+.btn-huella,
+.social-link {
+  background:
+    linear-gradient(180deg, rgba(31, 31, 35, 0.98), rgba(12, 13, 17, 0.98));
+  border-color: rgba(148, 163, 184, 0.14);
+  color: #d5d7dc;
+  box-shadow:
+    0 12px 24px rgba(0, 0, 0, 0.36),
+    inset 0 8px 18px rgba(255, 255, 255, 0.035);
+}
+
+.download-link.driver {
+  background:
+    linear-gradient(180deg, rgba(37, 99, 235, 0.95), rgba(15, 23, 42, 0.98));
+  border-color: rgba(56, 189, 248, 0.24);
+}
+
+.social-link span,
+.download-link span {
+  background: rgba(255, 122, 0, 0.16);
+  color: #ffb36b;
+}
+
+.driver-msg.error {
+  background: rgba(198, 40, 40, 0.14);
+  border-color: rgba(248, 113, 113, 0.28);
+  color: #fecaca;
+}
+
+.driver-msg.ok {
+  background: rgba(34, 197, 94, 0.12);
+  border-color: rgba(34, 197, 94, 0.28);
+  color: #bbf7d0;
+}
