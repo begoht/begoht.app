@@ -236,7 +236,7 @@ export function actualizarUIDriver(motoristaInfo, estado, viajeInfo = {}) {
  * Inyecta y controla el ciclo de vida del modal de finalización y feedback del viaje
  * @param {number|string} total Monto total calculado del servicio
  */
-export function mostrarModalFinalizado(total) {
+function mostrarModalFinalizadoLegacy(total) {
   // Asegurar remoción de instancias previas para evitar duplicados en el DOM
   document.getElementById("modalFinalizado")?.remove();
 
@@ -343,6 +343,331 @@ export function mostrarModalFinalizado(total) {
       console.error("❌ Error persistiendo histórico de viajes:", err);
     } finally {
       // Garantizamos que el limpiador general corra y destruya el modal independientemente de fallas en el localStorage
+      manejarCancelacionOLimpieza(true);
+      modal.remove();
+    }
+  });
+}
+
+export function mostrarModalFinalizado(total) {
+  document.getElementById("modalFinalizado")?.remove();
+
+  const motorista = viajeState.motorista || {};
+  const modal = document.createElement("div");
+  modal.id = "modalFinalizado";
+
+  const esEnvio = viajeState.tipoServicio === "envio" || viajeState.tipo === "envio";
+  const titulo = esEnvio ? "Entrega completada" : "Viaje completado";
+  const subtitulo = esEnvio
+    ? "Tu paquete fue entregado correctamente."
+    : "Gracias por viajar con BeGO.";
+  const totalTexto = Number.isFinite(Number(total))
+    ? `${Math.round(Number(total)).toLocaleString("es-PY")} G`
+    : `${total || 0} G`;
+
+  const formatearUbicacion = (ubicacion) => {
+    if (ubicacion?.direccion) return ubicacion.direccion;
+    if (ubicacion?.lat && ubicacion?.lng) return `${ubicacion.lat.toFixed(5)}, ${ubicacion.lng.toFixed(5)}`;
+    return "--";
+  };
+
+  const escapeHtml = (value) => String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+
+  const origen = escapeHtml(formatearUbicacion(viajeState.origen));
+  const destino = escapeHtml(formatearUbicacion(viajeState.destino));
+  const conductor = escapeHtml(
+    `${motorista.nombre || ""} ${motorista.apellido || ""}`.trim() || "Motorista BeGO"
+  );
+
+  modal.innerHTML = `
+  <div class="finalizado-overlay">
+    <div class="finalizado-card" role="dialog" aria-modal="true" aria-labelledby="finalizadoTitulo">
+      <div class="finalizado-hero">
+        <div class="finalizado-check"><i class="fa-solid fa-check"></i></div>
+        <small>${esEnvio ? "Envio BeGO" : "BeGO Ride"}</small>
+        <h2 id="finalizadoTitulo">${titulo}</h2>
+        <p>${subtitulo}</p>
+      </div>
+
+      <div class="finalizado-total">
+        <span>Total pagado</span>
+        <strong>${totalTexto}</strong>
+      </div>
+
+      <div class="finalizado-resumen">
+        <div>
+          <span>Origen</span>
+          <strong>${origen}</strong>
+        </div>
+        <div>
+          <span>Destino</span>
+          <strong>${destino}</strong>
+        </div>
+        <div>
+          <span>${esEnvio ? "Entregado por" : "Conductor"}</span>
+          <strong>${conductor}</strong>
+        </div>
+      </div>
+
+      <div class="finalizado-rating">
+        <p>Califica la experiencia</p>
+        <div id="ratingStars" class="finalizado-stars" aria-label="Calificacion">★★★★★</div>
+      </div>
+
+      <textarea id="feedbackViaje" class="finalizado-feedback" placeholder="Dejar comentario (opcional)"></textarea>
+
+      <div class="finalizado-social">
+        <span>Siguenos para promociones y novedades</span>
+        <div>
+          <a href="https://www.facebook.com/search/top?q=bego%20haiti" target="_blank" rel="noopener" aria-label="Facebook BeGO Haiti">
+            <i class="fa-brands fa-facebook-f"></i>
+          </a>
+          <a href="https://www.instagram.com/bego.haiti" target="_blank" rel="noopener" aria-label="Instagram BeGO Haiti">
+            <i class="fa-brands fa-instagram"></i>
+          </a>
+          <a href="https://www.tiktok.com/@bego.ht" target="_blank" rel="noopener" aria-label="TikTok BeGO">
+            <i class="fa-brands fa-tiktok"></i>
+          </a>
+        </div>
+      </div>
+
+      <button id="cerrarModalViaje" class="finalizado-btn">Listo</button>
+    </div>
+  </div>
+  <style>
+    .finalizado-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: grid;
+      place-items: center;
+      padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+      background: rgba(2, 6, 23, 0.72);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      animation: finalizadoFade 0.24s ease;
+    }
+    .finalizado-card {
+      width: min(100%, 390px);
+      max-height: calc(100vh - 32px);
+      overflow: auto;
+      color: #f8fafc;
+      border-radius: 26px;
+      padding: 18px;
+      background:
+        radial-gradient(circle at 50% -12%, rgba(34, 197, 94, 0.22), transparent 34%),
+        linear-gradient(180deg, rgba(24, 31, 43, 0.98), rgba(7, 10, 16, 0.99));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow:
+        0 28px 70px rgba(0, 0, 0, 0.58),
+        inset 0 1px 1px rgba(255, 255, 255, 0.08);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      animation: finalizadoScale 0.24s ease;
+    }
+    .finalizado-hero {
+      text-align: center;
+      padding: 8px 8px 14px;
+    }
+    .finalizado-check {
+      width: 62px;
+      height: 62px;
+      margin: 0 auto 10px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #04130b;
+      background: linear-gradient(180deg, #86efac, #22c55e);
+      box-shadow: 0 16px 32px rgba(34, 197, 94, 0.26);
+      font-size: 1.6rem;
+    }
+    .finalizado-hero small,
+    .finalizado-resumen span,
+    .finalizado-total span,
+    .finalizado-social span {
+      color: #94a3b8;
+      font-size: 0.74rem;
+      font-weight: 850;
+      text-transform: uppercase;
+    }
+    .finalizado-hero h2 {
+      margin: 4px 0;
+      font-size: 1.45rem;
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+    .finalizado-hero p {
+      margin: 0;
+      color: #cbd5e1;
+      font-size: 0.92rem;
+      line-height: 1.35;
+    }
+    .finalizado-total {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.2);
+    }
+    .finalizado-total strong {
+      color: #86efac;
+      font-size: 1.25rem;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+    .finalizado-resumen {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(2, 6, 23, 0.58);
+      border: 1px solid rgba(148, 163, 184, 0.1);
+    }
+    .finalizado-resumen div {
+      display: grid;
+      gap: 4px;
+    }
+    .finalizado-resumen strong {
+      min-width: 0;
+      color: #f8fafc;
+      font-size: 0.9rem;
+      line-height: 1.3;
+      word-break: break-word;
+    }
+    .finalizado-rating {
+      margin-top: 14px;
+      text-align: center;
+    }
+    .finalizado-rating p {
+      margin: 0 0 8px;
+      color: #e2e8f0;
+      font-size: 0.88rem;
+      font-weight: 800;
+    }
+    .finalizado-stars {
+      display: inline-flex;
+      min-height: 40px;
+      align-items: center;
+      color: #facc15;
+      font-size: 1.75rem;
+      letter-spacing: 0;
+      cursor: pointer;
+      user-select: none;
+    }
+    .finalizado-feedback {
+      width: 100%;
+      min-height: 68px;
+      margin-top: 12px;
+      padding: 13px 14px;
+      box-sizing: border-box;
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      border-radius: 16px;
+      outline: 0;
+      resize: none;
+      color: #fff;
+      background: rgba(15, 23, 42, 0.78);
+      font: inherit;
+      font-size: 0.9rem;
+    }
+    .finalizado-social {
+      margin-top: 12px;
+      padding: 13px;
+      border-radius: 18px;
+      background: rgba(15, 23, 42, 0.72);
+      border: 1px solid rgba(148, 163, 184, 0.1);
+      text-align: center;
+    }
+    .finalizado-social div {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .finalizado-social a {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      text-decoration: none;
+      background:
+        radial-gradient(circle at 34% 26%, rgba(255, 255, 255, 0.22), transparent 18%),
+        linear-gradient(180deg, #1f2937, #0f172a);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.28);
+    }
+    .finalizado-btn {
+      width: 100%;
+      min-height: 52px;
+      margin-top: 14px;
+      border: 0;
+      border-radius: 17px;
+      color: #03130a;
+      background: linear-gradient(180deg, #86efac, #22c55e);
+      font: inherit;
+      font-weight: 950;
+      cursor: pointer;
+      box-shadow: 0 14px 26px rgba(34, 197, 94, 0.2);
+    }
+    .finalizado-btn:active {
+      transform: scale(0.98);
+    }
+    @keyframes finalizadoFade { from { opacity: 0 } to { opacity: 1 } }
+    @keyframes finalizadoScale { from { transform: scale(0.94); opacity: 0 } to { transform: scale(1); opacity: 1 } }
+  </style>
+  `;
+
+  document.body.appendChild(modal);
+
+  let rating = 5;
+  const starsEl = modal.querySelector("#ratingStars");
+
+  if (starsEl) {
+    starsEl.addEventListener("click", (e) => {
+      const rect = starsEl.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const index = Math.ceil((x / rect.width) * 5);
+      rating = Math.max(1, Math.min(5, index));
+      starsEl.textContent = "★".repeat(rating) + "☆".repeat(5 - rating);
+    });
+  }
+
+  modal.querySelector("#cerrarModalViaje")?.addEventListener("click", () => {
+    try {
+      const feedback = modal.querySelector("#feedbackViaje")?.value?.trim() || "";
+      const viajes = JSON.parse(localStorage.getItem("viajes") || "[]");
+
+      viajes.unshift({
+        estado: "completado",
+        origen: viajeState.origen,
+        destino: viajeState.destino,
+        fecha: new Date().toLocaleString(),
+        motorista: {
+          id: motorista.id,
+          nombre: motorista.nombre,
+          apellido: motorista.apellido,
+          foto: motorista.foto
+        },
+        precio: total,
+        tipoServicio: viajeState.tipoServicio || "viaje",
+        rating,
+        feedback
+      });
+
+      if (viajes.length > 50) viajes.pop();
+      localStorage.setItem("viajes", JSON.stringify(viajes));
+    } catch (err) {
+      console.error("Error persistiendo historico de viajes:", err);
+    } finally {
       manejarCancelacionOLimpieza(true);
       modal.remove();
     }
