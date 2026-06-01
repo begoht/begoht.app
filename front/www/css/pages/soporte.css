@@ -1,0 +1,6 @@
+.css-soporte .soporte-hero {
+  background:
+    radial-gradient(circle at 90% 12%, rgba(56, 189, 248, 0.2), transparent 28%),
+    radial-gradient(circle at 0% 100%, rgba(255, 122, 0, 0.13), transparent 32%),
+    linear-gradient(150deg, rgba(15, 23, 42, 0.98), rgba(2, 6, 23, 0.96));
+}

@@ -10,7 +10,7 @@ export function initSeguridad() {
   const boxViaje = document.getElementById("viajeActivoBox");
   const infoViaje = document.getElementById("infoViaje");
 
-  const viajeActivo = JSON.parse(localStorage.getItem("viajeActivo"));
+  const viajeActivo = safeJson(localStorage.getItem("viajeActivo"));
 
   /* =========================
      MOSTRAR VIAJE ACTIVO
@@ -41,7 +41,7 @@ export function initSeguridad() {
       return;
     }
 
-    const link = `https://BeGO.app/track/${viajeActivo.id}`;
+    const link = `https://bego.com.ht/track/${viajeActivo.viajeId || viajeActivo.id}`;
 
     try {
       if (navigator.share) {
@@ -105,7 +105,7 @@ export function initSeguridad() {
      CONTACTO DE CONFIANZA
   ========================= */
   function llamarContacto() {
-    const contacto = JSON.parse(localStorage.getItem("contactoEmergencia"));
+    const contacto = safeJson(localStorage.getItem("contactoEmergencia"));
 
     if (!contacto) {
       alert("No tenés contacto de emergencia configurado");
@@ -150,4 +150,12 @@ export function initSeguridad() {
   });
 
   cargarViajeActivo();
+}
+
+function safeJson(value) {
+  try {
+    return value ? JSON.parse(value) : null;
+  } catch {
+    return null;
+  }
 }

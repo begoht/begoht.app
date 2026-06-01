@@ -1,70 +1,82 @@
 export function renderAyuda() {
   return `
   <div class="css-ayuda">
-
     <main class="ayuda-container">
+      <section class="support-hero ayuda-hero">
+        <div>
+          <span class="support-kicker">Centro BeGO</span>
+          <h1>Ayuda</h1>
+          <p>Resuelve dudas de viaje, pagos, cuenta y seguridad desde un solo lugar.</p>
+        </div>
+        <a class="support-hero-action ripple" href="#/soporte" data-link aria-label="Abrir asistencia">
+          <i class="fa-solid fa-headset"></i>
+        </a>
+      </section>
 
-  <div class="busqueda-ayuda">
-    <input type="text" id="busquedaAyuda" placeholder="¿En qué podemos ayudarte?">
-    <i class="fa-solid fa-magnifying-glass"></i>
-  </div>
+      <label class="support-search" for="busquedaAyuda">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="search" id="busquedaAyuda" placeholder="Buscar ayuda">
+      </label>
 
-  <section class="ayuda-grid">
+      <section class="support-quick-grid" aria-label="Accesos de ayuda">
+        <a class="support-action-card featured ripple" href="#/soporte" data-link>
+          <i class="fa-solid fa-comments"></i>
+          <span>Asistencia en vivo</span>
+          <p>Habla con soporte BeGO.</p>
+        </a>
 
-    <button href="#/soporte" data-link>
-      <i class="fa-solid fa-headset"></i>
-      <span>Hablar con soporte</span>
-    </button>
+        <a class="support-action-card ripple" href="#/actividad" data-link>
+          <i class="fa-solid fa-route"></i>
+          <span>Mis viajes</span>
+          <p>Revisa historial y estados.</p>
+        </a>
 
-    <button href="#/actividad" data-link>
-      <i class="fa-solid fa-route"></i>
-      <span>Mi viaje</span>
-    </button>
+        <a class="support-action-card ripple" href="#/seguridad" data-link>
+          <i class="fa-solid fa-shield-halved"></i>
+          <span>Seguridad</span>
+          <p>Herramientas para viajar protegido.</p>
+        </a>
 
-    <button href="#/seguridad" data-link>
-      <i class="fa-solid fa-shield-halved"></i>
-      <span>Seguridad</span>
-    </button>
+        <a class="support-action-card ripple" href="#/wallet" data-link>
+          <i class="fa-solid fa-wallet"></i>
+          <span>Pagos</span>
+          <p>Wallet, recargas y saldos.</p>
+        </a>
+      </section>
 
-    <button>
-      <i class="fa-solid fa-credit-card"></i>
-      <span>Pagos y billetera</span>
-    </button>
+      <section class="support-panel">
+        <div class="support-section-title">
+          <span>Preguntas frecuentes</span>
+          <small>Respuesta rápida</small>
+        </div>
 
-    <button>
-      <i class="fa-solid fa-user"></i>
-      <span>Cuenta</span>
-    </button>
+        <div class="support-faq-list">
+          <details class="support-faq-item">
+            <summary>
+              <span>¿Cómo cancelo un viaje?</span>
+              <i class="fa-solid fa-chevron-down"></i>
+            </summary>
+            <p>Desde la pantalla del viaje puedes tocar Cancelar antes de que el viaje avance a una etapa no cancelable.</p>
+          </details>
 
-    <button>
-      <i class="fa-solid fa-motorcycle"></i>
-      <span>Motoristas</span>
-    </button>
+          <details class="support-faq-item">
+            <summary>
+              <span>¿Qué hago si el motorista no llega?</span>
+              <i class="fa-solid fa-chevron-down"></i>
+            </summary>
+            <p>Entra a Seguridad o Asistencia para reportarlo, compartir tu viaje o pedir ayuda al equipo BeGO.</p>
+          </details>
 
-  </section>
-
-  <section class="faq">
-    <h3>Preguntas frecuentes</h3>
-
-    <div class="faq-item">
-      <button class="faq-btn">¿Cómo cancelo un viaje?</button>
-      <div class="faq-content">Desde la pantalla del viaje podés tocar "Cancelar".</div>
-    </div>
-
-    <div class="faq-item">
-      <button class="faq-btn">¿Qué hago si el motorista no llega?</button>
-      <div class="faq-content">Podés reportarlo o pedir otro motorista.</div>
-    </div>
-
-    <div class="faq-item">
-      <button class="faq-btn">¿Cómo recargo mi billetera?</button>
-      <div class="faq-content">Entrá a Wallet BeGO y elegí un método de pago.</div>
-    </div>
-
-  </section>
-
-</main>
-
+          <details class="support-faq-item">
+            <summary>
+              <span>¿Dónde veo mis pagos?</span>
+              <i class="fa-solid fa-chevron-down"></i>
+            </summary>
+            <p>Abre Wallet para consultar saldo, movimientos, recargas y comprobantes disponibles.</p>
+          </details>
+        </div>
+      </section>
+    </main>
   </div>
   `;
 }
