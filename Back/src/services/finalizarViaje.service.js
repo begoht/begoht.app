@@ -221,7 +221,7 @@ async function liquidarWallet({ viaje, motoristaId, neto, comision, session }) {
       Wallet.updateOne(
         { userId: plataformaId },
         {
-          $setOnInsert: { userId: plataformaId, saldo: 0, saldoBloqueado: 0 },
+          $setOnInsert: { userId: plataformaId, saldoBloqueado: 0 },
           $inc: { saldo: comision },
           $push: {
             movimientos: {
