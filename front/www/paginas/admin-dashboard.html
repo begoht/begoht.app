@@ -2,71 +2,132 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>BeGO Admin</title>
+  <title>BeGO Admin Command Center</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
       color-scheme: light;
-      --ink: #17202a;
-      --muted: #687385;
-      --line: #dfe5ec;
+      --bg: #eef2f6;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: #dce4ee;
       --panel: #ffffff;
-      --soft: #f5f7fa;
-      --brand: #0f766e;
-      --brand-2: #2563eb;
-      --danger: #dc2626;
+      --panel-2: #f8fafc;
+      --dark: #07111f;
+      --dark-2: #111827;
+      --brand: #ff6a00;
+      --brand-2: #0ea5e9;
+      --ok: #16a34a;
       --warn: #b45309;
-      --ok: #15803d;
-      --shadow: 0 16px 42px rgba(20, 30, 45, 0.08);
+      --danger: #dc2626;
+      --violet: #7c3aed;
+      --shadow: 0 18px 48px rgba(15, 23, 42, 0.10);
+      --soft-shadow: 0 10px 28px rgba(15, 23, 42, 0.07);
+      --radius: 8px;
     }
 
     * { box-sizing: border-box; }
+
+    html,
     body {
+      min-height: 100%;
       margin: 0;
       font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #eef2f6;
+      background:
+        linear-gradient(180deg, #f8fafc 0%, var(--bg) 48%, #e2e8f0 100%);
       color: var(--ink);
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
     }
 
     .admin-shell {
       min-height: 100vh;
       display: grid;
-      grid-template-columns: 260px minmax(0, 1fr);
+      grid-template-columns: 292px minmax(0, 1fr);
     }
 
     .sidebar {
-      background: #111827;
-      color: #fff;
-      padding: 22px 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
       position: sticky;
       top: 0;
       height: 100vh;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      color: #f8fafc;
+      background:
+        radial-gradient(circle at 80% 0%, rgba(255, 106, 0, 0.22), transparent 28%),
+        linear-gradient(180deg, #08111f 0%, #111827 100%);
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     .brand {
+      min-height: 60px;
       display: flex;
       align-items: center;
       gap: 12px;
-      min-height: 48px;
+      padding: 8px;
     }
 
-    .brand-icon {
-      width: 42px;
-      height: 42px;
-      border-radius: 8px;
+    .brand-mark {
+      width: 46px;
+      height: 46px;
       display: grid;
       place-items: center;
-      background: #0f766e;
+      border-radius: var(--radius);
+      background:
+        radial-gradient(circle at 32% 24%, rgba(255, 255, 255, 0.28), transparent 20%),
+        linear-gradient(180deg, #ff8b1a, #ff6a00);
+      box-shadow: 0 16px 34px rgba(255, 106, 0, 0.28);
+      font-weight: 900;
     }
 
-    .brand strong { display: block; font-size: 18px; }
-    .brand span { color: #aab3c2; font-size: 12px; }
+    .brand strong,
+    .brand span {
+      display: block;
+    }
+
+    .brand strong {
+      font-size: 1.05rem;
+      letter-spacing: 0;
+    }
+
+    .brand span {
+      margin-top: 2px;
+      color: #94a3b8;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .admin-pulse {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .admin-pulse strong {
+      font-size: 0.92rem;
+    }
+
+    .admin-pulse span {
+      color: #cbd5e1;
+      font-size: 0.76rem;
+      line-height: 1.35;
+    }
 
     .nav {
       display: grid;
@@ -74,168 +135,388 @@
     }
 
     .nav button {
-      appearance: none;
-      border: 0;
-      border-radius: 8px;
-      padding: 12px 14px;
-      color: #cdd5e1;
-      background: transparent;
-      text-align: left;
-      display: flex;
+      min-height: 44px;
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr) auto;
       align-items: center;
       gap: 10px;
-      cursor: pointer;
-      font-weight: 700;
+      border: 0;
+      border-radius: var(--radius);
+      padding: 0 12px;
+      color: #cbd5e1;
+      background: transparent;
+      text-align: left;
+      font-weight: 850;
+    }
+
+    .nav button i:first-child {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: var(--radius);
+      color: #94a3b8;
+      background: rgba(255, 255, 255, 0.06);
     }
 
     .nav button.active,
     .nav button:hover {
-      background: rgba(255,255,255,0.09);
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.11);
+    }
+
+    .nav button.active i:first-child {
       color: #fff;
+      background: rgba(255, 106, 0, 0.82);
+    }
+
+    .nav small {
+      min-width: 22px;
+      height: 22px;
+      display: inline-grid;
+      place-items: center;
+      border-radius: 999px;
+      color: #0f172a;
+      background: #f8fafc;
+      font-size: 0.68rem;
+      font-weight: 900;
     }
 
     .sidebar-foot {
       margin-top: auto;
-      border-top: 1px solid rgba(255,255,255,0.12);
-      padding-top: 16px;
-      color: #aab3c2;
-      font-size: 12px;
-      line-height: 1.5;
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      color: #cbd5e1;
+      font-size: 0.78rem;
+      line-height: 1.45;
+    }
+
+    .sidebar-foot a {
+      color: #ffcc8a;
+      text-decoration: none;
+      font-weight: 900;
     }
 
     .main {
-      padding: 24px;
+      min-width: 0;
+      padding: 22px;
       display: grid;
-      gap: 18px;
+      gap: 16px;
     }
 
     .topbar {
-      min-height: 72px;
+      min-height: 86px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 16px 18px;
+      padding: 18px;
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.86);
+      border: 1px solid rgba(220, 228, 238, 0.9);
       box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
     }
 
-    h1, h2, h3, p { margin: 0; }
-    h1 { font-size: 24px; letter-spacing: 0; }
-    h2 { font-size: 16px; }
-    h3 { font-size: 14px; }
-    .muted { color: var(--muted); font-size: 13px; }
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: clamp(1.35rem, 2.6vw, 2.15rem);
+      letter-spacing: 0;
+      line-height: 1.05;
+    }
+
+    h2 {
+      font-size: 1rem;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      font-size: 0.88rem;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.4;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 26px;
+      padding: 0 10px;
+      margin-bottom: 8px;
+      border-radius: 999px;
+      color: #9a3412;
+      background: #ffedd5;
+      border: 1px solid #fed7aa;
+      font-size: 0.72rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
 
     .toolbar {
       display: flex;
       align-items: center;
+      justify-content: flex-end;
       gap: 10px;
       flex-wrap: wrap;
     }
 
-    .input, .select {
-      border: 1px solid var(--line);
+    .search-box {
+      min-width: min(360px, 100%);
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 12px;
+      border-radius: var(--radius);
       background: #fff;
-      min-height: 38px;
-      border-radius: 8px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+    }
+
+    .search-box input {
+      min-width: 0;
+      width: 100%;
+      border: 0;
+      outline: 0;
+      color: var(--ink);
+      background: transparent;
+      font-weight: 700;
+    }
+
+    .select,
+    .input {
+      min-height: 40px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
       padding: 0 12px;
       color: var(--ink);
-      font-weight: 600;
-      outline: none;
+      background: #fff;
+      outline: 0;
+      font-weight: 800;
     }
 
     .btn {
-      border: 0;
-      min-height: 38px;
-      border-radius: 8px;
-      padding: 0 12px;
+      min-height: 40px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
+      border: 0;
+      border-radius: var(--radius);
+      padding: 0 12px;
       color: #fff;
-      background: #17202a;
-      cursor: pointer;
-      font-weight: 800;
+      background: var(--dark-2);
+      font-weight: 900;
+      text-decoration: none;
+      white-space: nowrap;
     }
 
-    .btn.secondary { background: #e7edf4; color: var(--ink); }
+    .btn.primary {
+      background: linear-gradient(180deg, #ff8b1a, #ff6a00);
+      box-shadow: 0 12px 26px rgba(255, 106, 0, 0.24);
+    }
+
+    .btn.secondary {
+      color: var(--ink);
+      background: #e7edf4;
+    }
+
+    .btn.good { background: var(--ok); }
     .btn.danger { background: var(--danger); }
-    .btn.good { background: var(--brand); }
-    .btn.small { min-height: 32px; font-size: 12px; padding: 0 10px; }
+    .btn.warn { background: var(--warn); }
+    .btn.blue { background: #2563eb; }
+    .btn.small {
+      min-height: 32px;
+      padding: 0 10px;
+      font-size: 0.76rem;
+    }
 
     .section {
       display: none;
-      gap: 18px;
+      gap: 16px;
     }
 
-    .section.active { display: grid; }
-
-    .metrics {
+    .section.active {
       display: grid;
-      grid-template-columns: repeat(4, minmax(170px, 1fr));
-      gap: 14px;
     }
 
-    .metric,
-    .panel {
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .kpi-card,
+    .panel,
+    .command-card,
+    .mini-card {
+      border-radius: var(--radius);
       background: var(--panel);
       border: 1px solid var(--line);
-      border-radius: 8px;
-      box-shadow: var(--shadow);
+      box-shadow: var(--soft-shadow);
     }
 
-    .metric {
-      padding: 16px;
+    .kpi-card {
+      min-height: 130px;
       display: grid;
-      gap: 10px;
+      align-content: space-between;
+      gap: 12px;
+      padding: 15px;
     }
 
-    .metric-top {
+    .kpi-top {
       display: flex;
+      align-items: flex-start;
       justify-content: space-between;
-      align-items: center;
+      gap: 10px;
       color: var(--muted);
-      font-size: 12px;
-      font-weight: 800;
+      font-size: 0.72rem;
+      font-weight: 900;
       text-transform: uppercase;
     }
 
-    .metric i {
-      width: 34px;
-      height: 34px;
+    .kpi-top i,
+    .mini-icon {
+      width: 36px;
+      height: 36px;
       display: grid;
       place-items: center;
-      border-radius: 8px;
-      background: #eaf5f4;
-      color: var(--brand);
+      border-radius: var(--radius);
+      color: #fff;
+      background: linear-gradient(180deg, #111827, #0f172a);
+      flex: 0 0 auto;
     }
 
-    .metric strong {
-      font-size: 24px;
+    .kpi-card strong {
+      display: block;
+      color: var(--ink);
+      font-size: clamp(1.35rem, 2.5vw, 2rem);
       line-height: 1;
       letter-spacing: 0;
+      overflow-wrap: anywhere;
     }
 
-    .grid-2 {
+    .kpi-card .trend {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 800;
+    }
+
+    .layout-2 {
       display: grid;
-      grid-template-columns: minmax(0, 1.25fr) minmax(360px, 0.75fr);
-      gap: 18px;
+      grid-template-columns: minmax(0, 1.25fr) minmax(340px, 0.75fr);
+      gap: 16px;
+    }
+
+    .layout-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .panel {
+      min-width: 0;
+      overflow: hidden;
     }
 
     .panel-head {
-      padding: 16px;
-      border-bottom: 1px solid var(--line);
+      min-height: 64px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
+      padding: 15px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #ffffff, #fbfdff);
     }
 
-    .panel-body { padding: 16px; }
-    .chart-box { height: 250px; }
+    .panel-body {
+      padding: 15px;
+    }
+
+    .chart-box {
+      height: 285px;
+    }
+
+    .command-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .command-card {
+      min-height: 118px;
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+      color: var(--ink);
+      text-align: left;
+    }
+
+    .command-card i {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: var(--radius);
+      color: #fff;
+      background: linear-gradient(180deg, #0ea5e9, #2563eb);
+    }
+
+    .command-card strong {
+      font-size: 0.9rem;
+    }
+
+    .command-card span {
+      color: var(--muted);
+      font-size: 0.75rem;
+      line-height: 1.35;
+    }
+
+    .mini-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .mini-card {
+      min-height: 72px;
+      display: grid;
+      grid-template-columns: 40px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+    }
+
+    .mini-card strong,
+    .mini-card span {
+      display: block;
+      overflow-wrap: anywhere;
+    }
+
+    .mini-card strong {
+      font-size: 0.86rem;
+    }
+
+    .mini-card span {
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 0.74rem;
+    }
 
     .table-wrap {
       width: 100%;
@@ -244,52 +525,108 @@
 
     table {
       width: 100%;
+      min-width: 900px;
       border-collapse: collapse;
-      min-width: 760px;
     }
 
-    th, td {
+    th,
+    td {
       padding: 12px 14px;
       border-bottom: 1px solid var(--line);
       text-align: left;
       vertical-align: middle;
-      font-size: 13px;
+      font-size: 0.82rem;
     }
 
     th {
       color: var(--muted);
-      font-size: 11px;
+      background: #f8fafc;
+      font-size: 0.68rem;
+      font-weight: 900;
       text-transform: uppercase;
       letter-spacing: 0;
-      background: #f9fbfd;
     }
 
-    tr:last-child td { border-bottom: 0; }
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .row-main {
+      display: block;
+      color: var(--ink);
+      font-weight: 900;
+      overflow-wrap: anywhere;
+    }
+
+    .row-sub {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 0.74rem;
+      overflow-wrap: anywhere;
+    }
 
     .status {
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      min-height: 25px;
       border-radius: 999px;
-      padding: 5px 9px;
-      font-size: 11px;
-      font-weight: 800;
-      background: #edf2f7;
+      padding: 0 9px;
       color: #475569;
+      background: #edf2f7;
+      font-size: 0.68rem;
+      font-weight: 900;
+      white-space: nowrap;
+      text-transform: capitalize;
+    }
+
+    .status.finalizado,
+    .status.pagado,
+    .status.activo,
+    .status.online,
+    .status.verificado {
+      color: #166534;
+      background: #dcfce7;
+    }
+
+    .status.buscando,
+    .status.asignado,
+    .status.en_curso,
+    .status.llego,
+    .status.reservado,
+    .status.pendiente,
+    .status.preaprobado {
+      color: #1d4ed8;
+      background: #dbeafe;
+    }
+
+    .status.cancelado,
+    .status.bloqueado,
+    .status.rechazado,
+    .status.fallido,
+    .status.offline {
+      color: #b91c1c;
+      background: #fee2e2;
+    }
+
+    .status.deuda,
+    .status.efectivo,
+    .status.en_progreso {
+      color: #9a3412;
+      background: #ffedd5;
+    }
+
+    .money {
+      font-weight: 900;
       white-space: nowrap;
     }
 
-    .status.finalizado, .status.pagado, .status.activo { background: #dcfce7; color: var(--ok); }
-    .status.en_curso, .status.asignado, .status.buscando { background: #dbeafe; color: var(--brand-2); }
-    .status.cancelado, .status.bloqueado { background: #fee2e2; color: var(--danger); }
-    .status.deuda { background: #ffedd5; color: var(--warn); }
-
-    .money { font-weight: 800; white-space: nowrap; }
     .money.good { color: var(--ok); }
     .money.bad { color: var(--danger); }
     .money.warn { color: var(--warn); }
 
-    .split-actions {
+    .actions {
       display: flex;
       align-items: center;
       gap: 6px;
@@ -297,46 +634,214 @@
     }
 
     .empty {
-      min-height: 130px;
+      min-height: 140px;
       display: grid;
       place-items: center;
       color: var(--muted);
-      font-weight: 700;
+      font-weight: 850;
+      text-align: center;
     }
 
     .toast {
       position: fixed;
       right: 18px;
       bottom: 18px;
-      background: #111827;
-      color: #fff;
-      padding: 12px 14px;
-      border-radius: 8px;
-      box-shadow: var(--shadow);
+      z-index: 20;
+      max-width: 360px;
       display: none;
-      z-index: 10;
-      max-width: 340px;
+      padding: 12px 14px;
+      border-radius: var(--radius);
+      color: #fff;
+      background: #111827;
+      box-shadow: var(--shadow);
+      font-weight: 800;
     }
 
-    .toast.show { display: block; }
+    .toast.show {
+      display: block;
+    }
 
-    @media (max-width: 1100px) {
-      .admin-shell { grid-template-columns: 1fr; }
-      .sidebar {
-        height: auto;
-        position: static;
+    @media (max-width: 1180px) {
+      .admin-shell {
+        grid-template-columns: 1fr;
       }
-      .nav { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-      .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .grid-2 { grid-template-columns: 1fr; }
+
+      .sidebar {
+        position: static;
+        height: auto;
+      }
+
+      .nav {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .sidebar-foot {
+        margin-top: 0;
+      }
+
+      .layout-2,
+      .layout-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .command-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
 
-    @media (max-width: 700px) {
-      .main { padding: 14px; }
-      .topbar { align-items: flex-start; flex-direction: column; }
-      .nav { grid-template-columns: 1fr 1fr; }
-      .metrics { grid-template-columns: 1fr; }
-      h1 { font-size: 21px; }
+    @media (max-width: 760px) {
+      .main {
+        padding: 12px;
+        gap: 12px;
+      }
+
+      .sidebar {
+        padding: 14px 12px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 15px;
+      }
+
+      .toolbar,
+      .search-box {
+        width: 100%;
+      }
+
+      .toolbar .btn,
+      .toolbar .select {
+        flex: 1 1 150px;
+      }
+
+      .nav {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .nav button {
+        min-height: 42px;
+        grid-template-columns: 26px minmax(0, 1fr);
+      }
+
+      .nav small {
+        display: none;
+      }
+
+      .kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .kpi-card {
+        min-height: 118px;
+        padding: 12px;
+      }
+
+      .kpi-top i {
+        width: 32px;
+        height: 32px;
+      }
+
+      .command-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .command-card {
+        min-height: 112px;
+        padding: 11px;
+      }
+
+      .command-card i {
+        width: 34px;
+        height: 34px;
+      }
+
+      .panel-head {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      table,
+      thead,
+      tbody,
+      tr,
+      th,
+      td {
+        display: block;
+        width: 100%;
+      }
+
+      table {
+        min-width: 0;
+      }
+
+      thead {
+        display: none;
+      }
+
+      tbody {
+        display: grid;
+        gap: 10px;
+        padding: 10px;
+      }
+
+      tr {
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: #fff;
+        box-shadow: var(--soft-shadow);
+        overflow: hidden;
+      }
+
+      td {
+        display: grid;
+        grid-template-columns: 108px minmax(0, 1fr);
+        gap: 10px;
+        padding: 10px 12px;
+        border-bottom: 1px solid #edf2f7;
+      }
+
+      td:last-child {
+        border-bottom: 0;
+      }
+
+      td::before {
+        content: attr(data-label);
+        color: var(--muted);
+        font-size: 0.68rem;
+        font-weight: 900;
+        text-transform: uppercase;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .main {
+        padding-inline: 10px;
+      }
+
+      .kpi-grid,
+      .command-grid {
+        gap: 8px;
+      }
+
+      .kpi-card,
+      .command-card {
+        padding: 10px;
+      }
+
+      .kpi-card strong {
+        font-size: 1.15rem;
+      }
+
+      .command-card span {
+        font-size: 0.7rem;
+      }
+
+      td {
+        grid-template-columns: 92px minmax(0, 1fr);
+      }
     }
   </style>
 </head>
@@ -344,68 +849,115 @@
   <div class="admin-shell">
     <aside class="sidebar">
       <div class="brand">
-        <div class="brand-icon"><i class="fa-solid fa-shield-halved"></i></div>
+        <div class="brand-mark"><i class="fa-solid fa-shield-halved"></i></div>
         <div>
-          <strong>BeGO Admin</strong>
-          <span>Centro operativo</span>
+          <strong>BeGO Command</strong>
+          <span>Control total pasajero + motorista</span>
         </div>
       </div>
 
-      <nav class="nav" aria-label="Secciones">
-        <button class="active" type="button" data-section-target="overview"><i class="fa-solid fa-chart-simple"></i>Resumen</button>
-        <button type="button" data-section-target="trips"><i class="fa-solid fa-route"></i>Viajes</button>
-        <button type="button" data-section-target="wallets"><i class="fa-solid fa-wallet"></i>Wallets</button>
-        <button type="button" data-section-target="users"><i class="fa-solid fa-users-gear"></i>Usuarios</button>
+      <section class="admin-pulse">
+        <strong id="adminName">Admin</strong>
+        <span id="lastSync">Sin sincronizar</span>
+      </section>
+
+      <nav class="nav" aria-label="Secciones admin">
+        <button class="active" type="button" data-section-target="overview"><i class="fa-solid fa-gauge-high"></i><span>Centro</span><small id="navOverview">0</small></button>
+        <button type="button" data-section-target="users"><i class="fa-solid fa-users-gear"></i><span>Usuarios</span><small id="navUsers">0</small></button>
+        <button type="button" data-section-target="trips"><i class="fa-solid fa-route"></i><span>Viajes</span><small id="navTrips">0</small></button>
+        <button type="button" data-section-target="packages"><i class="fa-solid fa-box"></i><span>Paquetes</span><small id="navPackages">0</small></button>
+        <button type="button" data-section-target="finance"><i class="fa-solid fa-building-columns"></i><span>Finanzas</span><small id="navFinance">0</small></button>
+        <button type="button" data-section-target="credits"><i class="fa-solid fa-hand-holding-dollar"></i><span>Creditos</span><small id="navCredits">0</small></button>
+        <button type="button" data-section-target="ops"><i class="fa-solid fa-satellite-dish"></i><span>Operaciones</span><small id="navOps">0</small></button>
+        <button type="button" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i><span>Salir</span></button>
       </nav>
 
       <div class="sidebar-foot">
-        <strong id="adminName">Admin</strong><br />
-        <span id="lastSync">Sin sincronizar</span>
+        <span>Accesos de produccion</span>
+        <a href="/admin/queues" target="_blank" rel="noopener">Colas BullMQ</a>
+        <a href="../Admin-html/admin-soporte.html">Soporte en vivo</a>
       </div>
     </aside>
 
     <main class="main">
       <header class="topbar">
         <div>
-          <h1>Operacion del sistema</h1>
-          <p class="muted">Viajes, pagos, deuda de comisiones y usuarios en tiempo real operativo.</p>
+          <span class="eyebrow"><i class="fa-solid fa-crown"></i> Admin premium</span>
+          <h1>Centro de control BeGO</h1>
+          <p class="muted">Supervisa pasajeros, motoristas, reservas, envios, creditos, wallets y retiros desde una sola consola.</p>
         </div>
         <div class="toolbar">
-          <input class="input" id="globalSearch" type="search" placeholder="Buscar nombre, telefono o viaje" />
-          <button class="btn good" id="refreshBtn" type="button"><i class="fa-solid fa-rotate"></i>Actualizar</button>
+          <label class="search-box" for="globalSearch">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input id="globalSearch" type="search" placeholder="Buscar nombre, telefono, viaje, ciudad" />
+          </label>
+          <select class="select" id="tripStatusFilter" aria-label="Filtro de viajes">
+            <option value="todos">Todos</option>
+            <option value="buscando">Buscando</option>
+            <option value="reservado">Reservado</option>
+            <option value="asignado">Asignado</option>
+            <option value="llego">Llego</option>
+            <option value="en_curso">En curso</option>
+            <option value="finalizado">Finalizado</option>
+            <option value="cancelado">Cancelado</option>
+          </select>
+          <button class="btn primary" id="refreshBtn" type="button"><i class="fa-solid fa-rotate"></i>Actualizar</button>
         </div>
       </header>
 
       <section class="section active" id="section-overview">
-        <div class="metrics">
-          <article class="metric">
-            <div class="metric-top"><span>Viajes hoy</span><i class="fa-solid fa-motorcycle"></i></div>
+        <div class="kpi-grid">
+          <article class="kpi-card">
+            <div class="kpi-top"><span>Usuarios online</span><i class="fa-solid fa-signal"></i></div>
+            <strong id="mOnline">0</strong>
+            <span class="trend"><i class="fa-solid fa-circle-check"></i> Apps activas</span>
+          </article>
+          <article class="kpi-card">
+            <div class="kpi-top"><span>Viajes hoy</span><i class="fa-solid fa-motorcycle"></i></div>
             <strong id="mTripsToday">0</strong>
-            <span class="muted">Solicitudes creadas</span>
+            <span class="trend"><i class="fa-solid fa-clock"></i> Solicitudes creadas</span>
           </article>
-          <article class="metric">
-            <div class="metric-top"><span>Cobrado</span><i class="fa-solid fa-sack-dollar"></i></div>
-            <strong id="mCharged">0 G</strong>
-            <span class="muted">Viajes finalizados</span>
+          <article class="kpi-card">
+            <div class="kpi-top"><span>Ingresos</span><i class="fa-solid fa-sack-dollar"></i></div>
+            <strong id="mCharged">0 HTG</strong>
+            <span class="trend"><i class="fa-solid fa-arrow-trend-up"></i> Viajes finalizados</span>
           </article>
-          <article class="metric">
-            <div class="metric-top"><span>Comision</span><i class="fa-solid fa-scale-balanced"></i></div>
-            <strong id="mCommission">0 G</strong>
-            <span class="muted">Auditada por viaje</span>
-          </article>
-          <article class="metric">
-            <div class="metric-top"><span>Deuda motoristas</span><i class="fa-solid fa-file-invoice-dollar"></i></div>
-            <strong id="mDebt">0 G</strong>
-            <span class="muted">Saldo negativo por efectivo</span>
+          <article class="kpi-card">
+            <div class="kpi-top"><span>Motoristas listos</span><i class="fa-solid fa-user-check"></i></div>
+            <strong id="mDriversReady">0</strong>
+            <span class="trend"><i class="fa-solid fa-location-dot"></i> Disponibles</span>
           </article>
         </div>
 
-        <div class="grid-2">
+        <div class="command-grid">
+          <button class="command-card" type="button" data-section-jump="users">
+            <i class="fa-solid fa-id-card-clip"></i>
+            <strong>Control usuarios</strong>
+            <span>Bloquear saldo, verificar cuentas y cambiar roles.</span>
+          </button>
+          <button class="command-card" type="button" data-section-jump="trips">
+            <i class="fa-solid fa-route"></i>
+            <strong>Control viajes</strong>
+            <span>Estado, pago, reserva, ciudad y auditoria rapida.</span>
+          </button>
+          <button class="command-card" type="button" data-section-jump="finance">
+            <i class="fa-solid fa-wallet"></i>
+            <strong>Finanzas</strong>
+            <span>Wallets, retiros, saldo retenido y comisiones.</span>
+          </button>
+          <button class="command-card" type="button" data-section-jump="packages">
+            <i class="fa-solid fa-box-open"></i>
+            <strong>Envios</strong>
+            <span>Paquetes hasta 5 kg y codigo de entrega.</span>
+          </button>
+        </div>
+
+        <div class="layout-2">
           <section class="panel">
             <div class="panel-head">
               <div>
                 <h2>Tendencia 30 dias</h2>
-                <p class="muted">Viajes e ingresos diarios</p>
+                <p class="muted">Viajes, ingresos y comision del sistema.</p>
               </div>
             </div>
             <div class="panel-body chart-box">
@@ -416,8 +968,8 @@
           <section class="panel">
             <div class="panel-head">
               <div>
-                <h2>Estado de viajes</h2>
-                <p class="muted">Distribucion actual</p>
+                <h2>Estado operativo</h2>
+                <p class="muted">Distribucion actual de viajes.</p>
               </div>
             </div>
             <div class="panel-body chart-box">
@@ -430,15 +982,41 @@
           <div class="panel-head">
             <div>
               <h2>Viajes activos</h2>
-              <p class="muted">Seguimiento operativo</p>
+              <p class="muted">Lo que esta pasando ahora en pasajero y motorista.</p>
             </div>
           </div>
           <div class="table-wrap">
             <table>
               <thead>
-                <tr><th>Viaje</th><th>Estado</th><th>Pasajero</th><th>Motorista</th><th>Monto</th><th>Pago</th><th>Actualizado</th></tr>
+                <tr><th>Viaje</th><th>Tipo</th><th>Estado</th><th>Pasajero</th><th>Motorista</th><th>Monto</th><th>Pago</th><th>Ciudad</th><th>Actualizado</th></tr>
               </thead>
               <tbody id="activeTripsRows"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <section class="section" id="section-users">
+        <div class="kpi-grid">
+          <article class="kpi-card"><div class="kpi-top"><span>Pasajeros</span><i class="fa-solid fa-person"></i></div><strong id="mPassengers">0</strong><span class="trend">App pasajero</span></article>
+          <article class="kpi-card"><div class="kpi-top"><span>Motoristas</span><i class="fa-solid fa-motorcycle"></i></div><strong id="mDrivers">0</strong><span class="trend">App motorista</span></article>
+          <article class="kpi-card"><div class="kpi-top"><span>Admins</span><i class="fa-solid fa-user-shield"></i></div><strong id="mAdmins">0</strong><span class="trend">Equipo interno</span></article>
+          <article class="kpi-card"><div class="kpi-top"><span>Bloqueados</span><i class="fa-solid fa-lock"></i></div><strong id="mBlocked">0</strong><span class="trend">Control de riesgo</span></article>
+        </div>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Usuarios de ambas apps</h2>
+              <p class="muted">Roles, verificacion, bloqueo y disponibilidad.</p>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Usuario</th><th>Contacto</th><th>Rol</th><th>Estado</th><th>Verificado</th><th>Motorista</th><th>Alta</th><th>Acciones</th></tr>
+              </thead>
+              <tbody id="userRows"></tbody>
             </table>
           </div>
         </section>
@@ -448,22 +1026,14 @@
         <section class="panel">
           <div class="panel-head">
             <div>
-              <h2>Viajes recientes</h2>
-              <p class="muted">Historial operativo y financiero</p>
+              <h2>Viajes y reservas</h2>
+              <p class="muted">Historial operativo, pagos y asignaciones.</p>
             </div>
-            <select class="select" id="tripStatusFilter">
-              <option value="todos">Todos</option>
-              <option value="buscando">Buscando</option>
-              <option value="asignado">Asignado</option>
-              <option value="en_curso">En curso</option>
-              <option value="finalizado">Finalizado</option>
-              <option value="cancelado">Cancelado</option>
-            </select>
           </div>
           <div class="table-wrap">
             <table>
               <thead>
-                <tr><th>Viaje</th><th>Estado</th><th>Pasajero</th><th>Motorista</th><th>Total</th><th>Motorista</th><th>Comision</th><th>Pago</th><th>Fecha</th></tr>
+                <tr><th>Viaje</th><th>Tipo</th><th>Estado</th><th>Pasajero</th><th>Motorista</th><th>Total</th><th>Motorista</th><th>Comision</th><th>Pago</th><th>Fecha</th></tr>
               </thead>
               <tbody id="tripRows"></tbody>
             </table>
@@ -471,39 +1041,125 @@
         </section>
       </section>
 
-      <section class="section" id="section-wallets">
+      <section class="section" id="section-packages">
+        <div class="kpi-grid">
+          <article class="kpi-card"><div class="kpi-top"><span>Envios activos</span><i class="fa-solid fa-box"></i></div><strong id="mPackagesActive">0</strong><span class="trend">En movimiento</span></article>
+          <article class="kpi-card"><div class="kpi-top"><span>Limite</span><i class="fa-solid fa-weight-hanging"></i></div><strong>5 kg</strong><span class="trend">Politica BeGO</span></article>
+          <article class="kpi-card"><div class="kpi-top"><span>Codigo</span><i class="fa-solid fa-key"></i></div><strong>4</strong><span class="trend">Digitos entrega</span></article>
+          <article class="kpi-card"><div class="kpi-top"><span>Reserva</span><i class="fa-solid fa-calendar-check"></i></div><strong id="mReservations">0</strong><span class="trend">Cola motorista</span></article>
+        </div>
+
         <section class="panel">
           <div class="panel-head">
             <div>
-              <h2>Wallets</h2>
-              <p class="muted">Balances, saldo retenido y comisiones pendientes</p>
+              <h2>Envios de paquete</h2>
+              <p class="muted">Descripcion, peso y confirmacion de entrega.</p>
             </div>
           </div>
           <div class="table-wrap">
             <table>
               <thead>
-                <tr><th>Usuario</th><th>Rol</th><th>Saldo</th><th>Retenido</th><th>Estado</th><th>Ultimo movimiento</th></tr>
+                <tr><th>Envio</th><th>Estado</th><th>Pasajero</th><th>Motorista</th><th>Peso</th><th>Codigo</th><th>Confirmado</th><th>Fecha</th></tr>
               </thead>
-              <tbody id="walletRows"></tbody>
+              <tbody id="packageRows"></tbody>
             </table>
           </div>
         </section>
       </section>
 
-      <section class="section" id="section-users">
+      <section class="section" id="section-finance">
+        <div class="kpi-grid">
+          <article class="kpi-card"><div class="kpi-top"><span>Comision</span><i class="fa-solid fa-scale-balanced"></i></div><strong id="mCommission">0 HTG</strong><span class="trend">Plataforma</span></article>
+          <article class="kpi-card"><div class="kpi-top"><span>Motoristas</span><i class="fa-solid fa-money-bill-transfer"></i></div><strong id="mDriverPay">0 HTG</strong><span class="trend">Pago calculado</span></article>
+          <article class="kpi-card"><div class="kpi-top"><span>Wallets</span><i class="fa-solid fa-vault"></i></div><strong id="mWallets">0 HTG</strong><span class="trend">Saldo total</span></article>
+          <article class="kpi-card"><div class="kpi-top"><span>Retenido</span><i class="fa-solid fa-shield"></i></div><strong id="mHeld">0 HTG</strong><span class="trend">Escrow/retiros</span></article>
+        </div>
+
+        <div class="layout-2">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Wallets</h2>
+                <p class="muted">Balances y ultimo movimiento.</p>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr><th>Usuario</th><th>Rol</th><th>Saldo</th><th>Retenido</th><th>Estado</th><th>Ultimo movimiento</th></tr>
+                </thead>
+                <tbody id="walletRows"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Retiros</h2>
+                <p class="muted">Solicitudes pendientes de motoristas.</p>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr><th>Usuario</th><th>Metodo</th><th>Monto</th><th>Estado</th><th>Fecha</th><th>Accion</th></tr>
+                </thead>
+                <tbody id="withdrawRows"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="section" id="section-credits">
         <section class="panel">
           <div class="panel-head">
             <div>
-              <h2>Usuarios</h2>
-              <p class="muted">Roles, bloqueo y verificacion</p>
+              <h2>Creditos motoristas</h2>
+              <p class="muted">Motoristas con 1000+ viajes finalizados para evaluacion automatica.</p>
             </div>
           </div>
           <div class="table-wrap">
             <table>
               <thead>
-                <tr><th>Nombre</th><th>Contacto</th><th>Rol</th><th>Estado</th><th>Verificado</th><th>Alta</th><th>Acciones</th></tr>
+                <tr><th>Motorista</th><th>Viajes</th><th>Ingreso</th><th>Rating</th><th>Estado app</th><th>Ultimo viaje</th><th>Accion</th></tr>
               </thead>
-              <tbody id="userRows"></tbody>
+              <tbody id="creditRows"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <section class="section" id="section-ops">
+        <div class="layout-3">
+          <section class="panel">
+            <div class="panel-head"><div><h2>Ciudades</h2><p class="muted">Demanda por zona.</p></div></div>
+            <div class="panel-body mini-list" id="cityList"></div>
+          </section>
+          <section class="panel">
+            <div class="panel-head"><div><h2>Tipos</h2><p class="muted">Viajes vs envios.</p></div></div>
+            <div class="panel-body mini-list" id="typeList"></div>
+          </section>
+          <section class="panel">
+            <div class="panel-head"><div><h2>Pagos</h2><p class="muted">Metodos usados.</p></div></div>
+            <div class="panel-body mini-list" id="paymentList"></div>
+          </section>
+        </div>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Reservas activas</h2>
+              <p class="muted">Motoristas terminando viaje con siguiente servicio en cola.</p>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Reserva</th><th>Pasajero</th><th>Motorista</th><th>Ciudad</th><th>Pago</th><th>Creada</th></tr>
+              </thead>
+              <tbody id="reservationRows"></tbody>
             </table>
           </div>
         </section>
@@ -522,6 +1178,7 @@
       resumen: null,
       usuarios: [],
       viajes: [],
+      retiros: [],
       filtroViajes: "todos",
       search: "",
       charts: {}
@@ -541,15 +1198,18 @@
         alert("Acceso solo para administradores");
         return location.replace("../index.html");
       }
-      document.getElementById("adminName").textContent = user.nombre || user.alias || "Admin";
+      setText("adminName", user.nombre || user.alias || "Admin");
     }
 
     function bindUi() {
       document.querySelectorAll("[data-section-target]").forEach((btn) => {
         btn.addEventListener("click", () => setSection(btn.dataset.sectionTarget));
       });
-
+      document.querySelectorAll("[data-section-jump]").forEach((btn) => {
+        btn.addEventListener("click", () => setSection(btn.dataset.sectionJump));
+      });
       document.getElementById("refreshBtn").addEventListener("click", loadAll);
+      document.getElementById("logoutBtn").addEventListener("click", logout);
       document.getElementById("tripStatusFilter").addEventListener("change", (event) => {
         state.filtroViajes = event.target.value;
         loadTrips();
@@ -570,20 +1230,25 @@
     }
 
     async function loadAll() {
+      setBusy(true);
       try {
-        const [resumen, usuarios] = await Promise.all([
+        const [resumen, usuarios, retiros] = await Promise.all([
           api("/api/dashboard/resumen"),
-          api("/api/admin/usuarios")
+          api("/api/admin/usuarios"),
+          api("/api/admin/retiros").catch(() => [])
         ]);
-        state.resumen = resumen;
+        state.resumen = resumen || {};
         state.usuarios = Array.isArray(usuarios) ? usuarios : [];
-        state.viajes = resumen.ultimosViajes || [];
+        state.retiros = Array.isArray(retiros) ? retiros : [];
+        state.viajes = state.resumen.ultimosViajes || [];
         renderAll();
-        document.getElementById("lastSync").textContent = `Actualizado ${new Date().toLocaleTimeString()}`;
+        setText("lastSync", `Actualizado ${new Date().toLocaleTimeString()}`);
         showToast("Panel actualizado");
       } catch (err) {
         console.error(err);
         showToast("No se pudo cargar el panel");
+      } finally {
+        setBusy(false);
       }
     }
 
@@ -599,19 +1264,48 @@
 
     function renderAll() {
       renderMetrics();
+      renderNavCounts();
       renderCharts();
       renderActiveTrips();
-      renderTrips();
-      renderWallets();
       renderUsers();
+      renderTrips();
+      renderPackages();
+      renderWallets();
+      renderWithdraws();
+      renderCredits();
+      renderOps();
+      renderReservations();
     }
 
     function renderMetrics() {
       const metricas = state.resumen?.metricas || {};
+      const usuarios = state.resumen?.usuarios || {};
+      const blocked = state.usuarios.filter((u) => u.saldoBloqueado).length;
+
+      setText("mOnline", metricas.usuariosOnline || 0);
       setText("mTripsToday", metricas.viajesHoy || 0);
       setText("mCharged", money(metricas.totalCobrado));
+      setText("mDriversReady", metricas.motoristasDisponibles || 0);
+      setText("mPassengers", usuarios.pasajero || 0);
+      setText("mDrivers", usuarios.motorista || 0);
+      setText("mAdmins", usuarios.admin || 0);
+      setText("mBlocked", blocked);
+      setText("mPackagesActive", metricas.paquetesActivos || 0);
+      setText("mReservations", metricas.reservasActivas || 0);
       setText("mCommission", money(metricas.totalComision));
-      setText("mDebt", money(metricas.deudaComisiones));
+      setText("mDriverPay", money(metricas.totalMotoristas));
+      setText("mWallets", money(metricas.saldoWallets));
+      setText("mHeld", money(metricas.saldoRetenido));
+    }
+
+    function renderNavCounts() {
+      setText("navOverview", state.resumen?.viajesActivos?.length || 0);
+      setText("navUsers", state.usuarios.length);
+      setText("navTrips", state.viajes.length);
+      setText("navPackages", state.resumen?.paquetesRecientes?.length || 0);
+      setText("navFinance", state.retiros.filter((r) => r.estado === "pendiente").length);
+      setText("navCredits", state.resumen?.creditosMotoristas?.length || 0);
+      setText("navOps", state.resumen?.reservasActivas?.length || 0);
     }
 
     function renderCharts() {
@@ -623,8 +1317,9 @@
         data: {
           labels: tendencia.map((item) => item._id),
           datasets: [
-            { label: "Viajes", data: tendencia.map((item) => item.viajes), borderColor: "#2563eb", backgroundColor: "rgba(37,99,235,0.12)", tension: 0.35, yAxisID: "y" },
-            { label: "Ingresos", data: tendencia.map((item) => item.ingresos), borderColor: "#0f766e", backgroundColor: "rgba(15,118,110,0.12)", tension: 0.35, yAxisID: "y1" }
+            { label: "Viajes", data: tendencia.map((item) => item.viajes || 0), borderColor: "#2563eb", backgroundColor: "rgba(37,99,235,0.10)", tension: 0.35, yAxisID: "y" },
+            { label: "Ingresos", data: tendencia.map((item) => item.ingresos || 0), borderColor: "#ff6a00", backgroundColor: "rgba(255,106,0,0.12)", tension: 0.35, yAxisID: "y1" },
+            { label: "Comision", data: tendencia.map((item) => item.comision || 0), borderColor: "#16a34a", backgroundColor: "rgba(22,163,74,0.10)", tension: 0.35, yAxisID: "y1" }
           ]
         },
         options: chartOptions(true)
@@ -633,8 +1328,8 @@
       drawChart("stateChart", {
         type: "doughnut",
         data: {
-          labels: Object.keys(viajes),
-          datasets: [{ data: Object.values(viajes), backgroundColor: ["#2563eb", "#0f766e", "#b45309", "#dc2626", "#64748b", "#7c3aed"] }]
+          labels: Object.keys(viajes).map(formatType),
+          datasets: [{ data: Object.values(viajes), backgroundColor: ["#2563eb", "#ff6a00", "#16a34a", "#7c3aed", "#dc2626", "#0ea5e9", "#64748b"] }]
         },
         options: chartOptions(false)
       });
@@ -642,94 +1337,169 @@
 
     function renderActiveTrips() {
       const rows = filterRows(state.resumen?.viajesActivos || [], tripSearchText);
-      document.getElementById("activeTripsRows").innerHTML = rows.length
-        ? rows.map((trip) => tripRow(trip, false)).join("")
-        : emptyRow(7, "No hay viajes activos");
+      setRows("activeTripsRows", rows, 9, "No hay viajes activos", (trip) => tripRow(trip, { active: true }));
+    }
+
+    function renderUsers() {
+      const rows = filterRows(state.usuarios || [], userSearchText);
+      setRows("userRows", rows, 8, "No hay usuarios para mostrar", userRow);
     }
 
     function renderTrips() {
       const rows = filterRows(state.viajes || [], tripSearchText);
-      document.getElementById("tripRows").innerHTML = rows.length
-        ? rows.map((trip) => tripRow(trip, true)).join("")
-        : emptyRow(9, "No hay viajes para este filtro");
+      setRows("tripRows", rows, 10, "No hay viajes para este filtro", (trip) => tripRow(trip, { full: true }));
+    }
+
+    function renderPackages() {
+      const rows = filterRows(state.resumen?.paquetesRecientes || [], tripSearchText);
+      setRows("packageRows", rows, 8, "No hay envios para mostrar", packageRow);
     }
 
     function renderWallets() {
-      const rows = filterRows(state.resumen?.wallets || [], (wallet) => {
-        const user = wallet.userId || {};
-        return `${user.nombre || ""} ${user.telefono || ""} ${user.rol || ""}`;
-      });
-
-      document.getElementById("walletRows").innerHTML = rows.length
-        ? rows.map((wallet) => {
-          const user = wallet.userId || {};
-          const saldo = Number(wallet.saldo || 0);
-          const last = [...(wallet.movimientos || [])].sort((a, b) => new Date(b.fecha) - new Date(a.fecha))[0];
-          const status = saldo < 0 ? `<span class="status deuda">Comision pendiente</span>` : `<span class="status activo">Al dia</span>`;
-          return `
-            <tr>
-              <td><strong>${escapeHtml(user.nombre || "Usuario")}</strong><br><span class="muted">${escapeHtml(user.telefono || shortId(wallet._id) || "-")}</span></td>
-              <td>${escapeHtml(user.rol || "-")}</td>
-              <td><span class="money ${saldo < 0 ? "bad" : "good"}">${money(saldo)}</span></td>
-              <td><span class="money warn">${money(wallet.saldoBloqueado)}</span></td>
-              <td>${status}</td>
-              <td>${last ? `${escapeHtml(formatType(last.tipo))}<br><span class="muted">${formatDate(last.fecha)}</span>` : "-"}</td>
-            </tr>
-          `;
-        }).join("")
-        : emptyRow(6, "No hay wallets para mostrar");
+      const rows = filterRows(state.resumen?.wallets || [], walletSearchText);
+      setRows("walletRows", rows, 6, "No hay wallets para mostrar", walletRow);
     }
 
-    function renderUsers() {
-      const rows = filterRows(state.usuarios || [], (user) => `${user.nombre || ""} ${user.email || ""} ${user.telefono || ""} ${user.rol || ""}`);
-      document.getElementById("userRows").innerHTML = rows.length
-        ? rows.map((user) => `
-          <tr>
-            <td><strong>${escapeHtml(user.nombre || "Usuario")}</strong><br><span class="muted">${escapeHtml(user.alias || "")}</span></td>
-            <td>${escapeHtml(user.telefono || "-")}<br><span class="muted">${escapeHtml(user.email || "")}</span></td>
-            <td>${escapeHtml(user.rol || "-")}</td>
-            <td>${user.saldoBloqueado ? `<span class="status bloqueado">Bloqueado</span>` : `<span class="status activo">Activo</span>`}</td>
-            <td>${user.verificado ? "Si" : "No"}</td>
-            <td>${formatDate(user.createdAt)}</td>
-            <td>
-              <div class="split-actions">
-                <button class="btn small secondary" type="button" onclick="changeRole('${user._id}')"><i class="fa-solid fa-user-gear"></i>Rol</button>
-                <button class="btn small ${user.saldoBloqueado ? "good" : "danger"}" type="button" onclick="toggleBlock('${user._id}', ${!!user.saldoBloqueado})">
-                  <i class="fa-solid ${user.saldoBloqueado ? "fa-lock-open" : "fa-lock"}"></i>${user.saldoBloqueado ? "Desbloquear" : "Bloquear"}
-                </button>
-              </div>
-            </td>
-          </tr>
-        `).join("")
-        : emptyRow(7, "No hay usuarios para mostrar");
+    function renderWithdraws() {
+      const rows = filterRows(state.retiros || [], withdrawSearchText);
+      setRows("withdrawRows", rows, 6, "No hay retiros para mostrar", withdrawRow);
     }
 
-    function tripRow(trip, full) {
-      const passenger = trip.pasajero?.nombre || "Pasajero";
-      const driver = trip.motorista?.nombre || "-";
-      const cells = [
-        `<strong>${shortId(trip._id)}</strong><br><span class="muted">${escapeHtml(routeText(trip))}</span>`,
-        `<span class="status ${trip.estado}">${formatType(trip.estado)}</span>`,
-        escapeHtml(passenger),
-        escapeHtml(driver),
-        `<span class="money">${money(trip.precio)}</span>`
-      ];
+    function renderCredits() {
+      const rows = filterRows(state.resumen?.creditosMotoristas || [], creditSearchText);
+      setRows("creditRows", rows, 7, "No hay motoristas con 1000+ viajes todavia", creditRow);
+    }
 
-      if (full) {
-        cells.push(
-          `<span class="money good">${money(trip.pagoMotorista || trip.paBeGOrista)}</span>`,
-          `<span class="money warn">${money(trip.comision)}</span>`,
-          `<span class="status ${trip.estadoPago}">${formatType(trip.estadoPago || "-")}</span>`,
-          formatDate(trip.finViajeAt || trip.createdAt)
-        );
-      } else {
-        cells.push(
-          `<span class="status ${trip.estadoPago}">${formatType(trip.estadoPago || "-")}</span>`,
-          formatDate(trip.updatedAt || trip.createdAt)
-        );
+    function renderOps() {
+      renderMiniList("cityList", state.resumen?.operacion?.ciudades || [], (item) => ({
+        icon: "fa-location-dot",
+        title: item._id || "sin ciudad",
+        text: `${item.total || 0} viajes - ${item.activos || 0} activos`,
+        chip: item.activos || 0
+      }));
+      renderMapList("typeList", state.resumen?.operacion?.viajesPorTipo || {}, "fa-layer-group");
+      renderMapList("paymentList", state.resumen?.operacion?.pagosPorMetodo || {}, "fa-credit-card");
+    }
+
+    function renderReservations() {
+      const rows = filterRows(state.resumen?.reservasActivas || [], tripSearchText);
+      setRows("reservationRows", rows, 6, "No hay reservas activas", reservationRow);
+    }
+
+    function userRow(user) {
+      const isDriver = user.rol === "motorista";
+      return row([
+        cell("Usuario", `<span class="row-main">${escapeHtml(fullName(user))}</span><span class="row-sub">${escapeHtml(user.alias || shortId(user._id))}</span>`),
+        cell("Contacto", `${escapeHtml(user.telefono || "-")}<span class="row-sub">${escapeHtml(user.email || "")}</span>`),
+        cell("Rol", `<span class="status">${escapeHtml(user.rol || "-")}</span>`),
+        cell("Estado", user.saldoBloqueado ? `<span class="status bloqueado">Bloqueado</span>` : `<span class="status activo">Activo</span>`),
+        cell("Verificado", user.verificado ? `<span class="status verificado">Verificado</span>` : `<span class="status pendiente">Pendiente</span>`),
+        cell("Motorista", isDriver ? `${user.online ? `<span class="status online">Online</span>` : `<span class="status offline">Offline</span>`}<span class="row-sub">${user.disponible ? "Disponible" : "No disponible"} - ${Number(user.rating || 0).toFixed(1)} estrellas</span>` : "-"),
+        cell("Alta", formatDate(user.createdAt)),
+        cell("Acciones", `
+          <div class="actions">
+            <button class="btn small secondary" type="button" onclick="changeRole('${user._id}')"><i class="fa-solid fa-user-gear"></i>Rol</button>
+            <button class="btn small ${user.saldoBloqueado ? "good" : "danger"}" type="button" onclick="toggleBlock('${user._id}', ${!!user.saldoBloqueado})">${user.saldoBloqueado ? "Desbloquear" : "Bloquear"}</button>
+            <button class="btn small blue" type="button" onclick="toggleVerify('${user._id}', ${!!user.verificado})">${user.verificado ? "Quitar check" : "Verificar"}</button>
+            ${isDriver ? `<button class="btn small warn" type="button" onclick="toggleAvailability('${user._id}', ${!!user.disponible})">${user.disponible ? "Pausar" : "Activar"}</button>` : ""}
+          </div>
+        `)
+      ]);
+    }
+
+    function tripRow(trip, mode = {}) {
+      if (mode.full) {
+        return row([
+          cell("Viaje", `<span class="row-main">${shortId(trip._id)}</span><span class="row-sub">${escapeHtml(routeText(trip))}</span>`),
+          cell("Tipo", `<span class="status">${formatType(trip.tipo || "viaje")}</span>`),
+          cell("Estado", `<span class="status ${cssToken(trip.estado)}">${formatType(trip.estado)}</span>`),
+          cell("Pasajero", personCell(trip.pasajero)),
+          cell("Motorista", personCell(trip.motorista)),
+          cell("Total", `<span class="money">${money(trip.precio)}</span>`),
+          cell("Motorista", `<span class="money good">${money(trip.pagoMotorista || trip.paBeGOrista)}</span>`),
+          cell("Comision", `<span class="money warn">${money(trip.comision)}</span>`),
+          cell("Pago", `<span class="status ${cssToken(trip.estadoPago)}">${formatType(trip.estadoPago || "-")}</span>`),
+          cell("Fecha", formatDate(trip.finViajeAt || trip.createdAt))
+        ]);
       }
 
-      return `<tr>${cells.map((cell) => `<td>${cell}</td>`).join("")}</tr>`;
+      return row([
+        cell("Viaje", `<span class="row-main">${shortId(trip._id)}</span><span class="row-sub">${escapeHtml(routeText(trip))}</span>`),
+        cell("Tipo", `<span class="status">${formatType(trip.tipo || "viaje")}</span>`),
+        cell("Estado", `<span class="status ${cssToken(trip.estado)}">${formatType(trip.estado)}</span>`),
+        cell("Pasajero", personCell(trip.pasajero)),
+        cell("Motorista", personCell(trip.motorista)),
+        cell("Monto", `<span class="money">${money(trip.precio)}</span>`),
+        cell("Pago", `<span class="status ${cssToken(trip.estadoPago)}">${formatType(trip.estadoPago || "-")}</span>`),
+        cell("Ciudad", escapeHtml(trip.ciudad || "-")),
+        cell("Actualizado", formatDate(trip.updatedAt || trip.createdAt))
+      ]);
+    }
+
+    function packageRow(trip) {
+      const pkg = trip.paquete || {};
+      return row([
+        cell("Envio", `<span class="row-main">${shortId(trip._id)}</span><span class="row-sub">${escapeHtml(pkg.descripcion || routeText(trip))}</span>`),
+        cell("Estado", `<span class="status ${cssToken(trip.estado)}">${formatType(trip.estado)}</span>`),
+        cell("Pasajero", personCell(trip.pasajero)),
+        cell("Motorista", personCell(trip.motorista)),
+        cell("Peso", `${pkg.pesoKg ?? "-"} kg`),
+        cell("Codigo", `<span class="row-main">${pkg.codigoEntrega || "----"}</span>`),
+        cell("Confirmado", pkg.codigoEntregaConfirmadoAt ? `<span class="status activo">Confirmado</span>` : `<span class="status pendiente">Pendiente</span>`),
+        cell("Fecha", formatDate(trip.createdAt))
+      ]);
+    }
+
+    function walletRow(wallet) {
+      const user = wallet.userId || {};
+      const saldo = Number(wallet.saldo || 0);
+      const last = [...(wallet.movimientos || [])].sort((a, b) => new Date(b.fecha) - new Date(a.fecha))[0];
+      return row([
+        cell("Usuario", personCell(user, wallet._id)),
+        cell("Rol", escapeHtml(user.rol || "-")),
+        cell("Saldo", `<span class="money ${saldo < 0 ? "bad" : "good"}">${money(saldo)}</span>`),
+        cell("Retenido", `<span class="money warn">${money(wallet.saldoBloqueado)}</span>`),
+        cell("Estado", saldo < 0 ? `<span class="status deuda">Deuda</span>` : `<span class="status activo">Al dia</span>`),
+        cell("Movimiento", last ? `${escapeHtml(formatType(last.tipo))}<span class="row-sub">${formatDate(last.fecha)}</span>` : "-")
+      ]);
+    }
+
+    function withdrawRow(retiro) {
+      const user = retiro.userId || {};
+      const pending = retiro.estado === "pendiente";
+      return row([
+        cell("Usuario", personCell(user)),
+        cell("Metodo", `<span class="status">${escapeHtml(retiro.metodo || "-")}</span><span class="row-sub">${escapeHtml(retiro.telefono || "")}</span>`),
+        cell("Monto", `<span class="money warn">${money(retiro.monto)}</span>`),
+        cell("Estado", `<span class="status ${cssToken(retiro.estado)}">${formatType(retiro.estado)}</span>`),
+        cell("Fecha", formatDate(retiro.creado || retiro.createdAt)),
+        cell("Accion", pending ? `<button class="btn small good" type="button" onclick="payWithdraw('${retiro._id}')"><i class="fa-solid fa-check"></i>Pagar</button>` : "-")
+      ]);
+    }
+
+    function creditRow(item) {
+      const driver = item.motorista || {};
+      const montoEstimado = roundCredit((Number(item.ingresoMotorista || 0) / Math.max(1, item.viajesFinalizados || 1)) * 45);
+      return row([
+        cell("Motorista", personCell(driver, item._id)),
+        cell("Viajes", `<span class="row-main">${item.viajesFinalizados || 0}</span><span class="row-sub">Elegible desde 1000</span>`),
+        cell("Ingreso", `<span class="money good">${money(item.ingresoMotorista)}</span>`),
+        cell("Rating", `${Number(driver.rating || 0).toFixed(1)} / 5`),
+        cell("Estado app", `${driver.online ? `<span class="status online">Online</span>` : `<span class="status offline">Offline</span>`}<span class="row-sub">${driver.disponible ? "Disponible" : "Pausado"}</span>`),
+        cell("Ultimo viaje", formatDate(item.ultimoViaje)),
+        cell("Accion", `<span class="status preaprobado">Estimado ${money(montoEstimado)}</span>`)
+      ]);
+    }
+
+    function reservationRow(trip) {
+      return row([
+        cell("Reserva", `<span class="row-main">${shortId(trip._id)}</span><span class="row-sub">${escapeHtml(routeText(trip))}</span>`),
+        cell("Pasajero", personCell(trip.pasajero)),
+        cell("Motorista", personCell(trip.motorista)),
+        cell("Ciudad", escapeHtml(trip.ciudad || "-")),
+        cell("Pago", `<span class="status ${cssToken(trip.metodoPago)}">${formatType(trip.metodoPago)}</span>`),
+        cell("Creada", formatDate(trip.reservadoEn || trip.createdAt))
+      ]);
     }
 
     async function changeRole(id) {
@@ -737,11 +1507,32 @@
       if (!["pasajero", "motorista", "admin"].includes(rol)) return;
       await api(`/api/admin/usuarios/${id}/rol`, { method: "PUT", body: { rol } });
       await loadAll();
+      showToast("Rol actualizado");
     }
 
     async function toggleBlock(id, blocked) {
       await api(`/api/admin/usuarios/${id}/bloqueo`, { method: "PUT", body: { saldoBloqueado: !blocked } });
       await loadAll();
+      showToast(blocked ? "Usuario desbloqueado" : "Usuario bloqueado");
+    }
+
+    async function toggleVerify(id, verified) {
+      await api(`/api/admin/usuarios/${id}/verificacion`, { method: "PUT", body: { verificado: !verified } });
+      await loadAll();
+      showToast(verified ? "Verificacion retirada" : "Usuario verificado");
+    }
+
+    async function toggleAvailability(id, disponible) {
+      await api(`/api/admin/usuarios/${id}/disponibilidad`, { method: "PUT", body: { disponible: !disponible } });
+      await loadAll();
+      showToast(disponible ? "Motorista pausado" : "Motorista activado");
+    }
+
+    async function payWithdraw(id) {
+      if (!confirm("Marcar este retiro como pagado?")) return;
+      await api(`/api/admin/retiros/${id}/pagar`, { method: "POST" });
+      await loadAll();
+      showToast("Retiro marcado como pagado");
     }
 
     async function api(path, options = {}) {
@@ -755,17 +1546,102 @@
         },
         body: options.body ? JSON.stringify(options.body) : undefined
       });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status} ${path}`);
       return res.json();
     }
 
-    function getToken() {
-      const token = localStorage.getItem("token") || localStorage.getItem("BeGO_token");
-      return token?.startsWith("\"") ? token.slice(1, -1) : token;
+    function setRows(id, rows, cols, emptyText, mapper) {
+      const target = document.getElementById(id);
+      if (!target) return;
+      target.innerHTML = rows.length ? rows.map(mapper).join("") : emptyRow(cols, emptyText);
     }
 
-    function readUser() {
-      return safeJson(localStorage.getItem("BeGO_user")) || safeJson(localStorage.getItem("usuario")) || safeJson(localStorage.getItem("user"));
+    function renderMiniList(id, rows, mapper) {
+      const target = document.getElementById(id);
+      if (!target) return;
+      if (!rows.length) {
+        target.innerHTML = `<div class="empty">Sin datos</div>`;
+        return;
+      }
+      target.innerHTML = rows.map((rowData) => {
+        const item = mapper(rowData);
+        return `
+          <article class="mini-card">
+            <i class="mini-icon fa-solid ${item.icon}"></i>
+            <div><strong>${escapeHtml(formatType(item.title))}</strong><span>${escapeHtml(item.text)}</span></div>
+            <span class="status">${escapeHtml(item.chip)}</span>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderMapList(id, map, icon) {
+      const rows = Object.entries(map).map(([title, total]) => ({ title, total }));
+      renderMiniList(id, rows, (item) => ({
+        icon,
+        title: item.title,
+        text: `${item.total} registros`,
+        chip: item.total
+      }));
+    }
+
+    function row(cells) {
+      return `<tr>${cells.join("")}</tr>`;
+    }
+
+    function cell(label, html) {
+      return `<td data-label="${escapeHtml(label)}">${html}</td>`;
+    }
+
+    function emptyRow(cols, text) {
+      return `<tr><td colspan="${cols}" data-label=""><div class="empty">${escapeHtml(text)}</div></td></tr>`;
+    }
+
+    function filterRows(rows, picker) {
+      if (!state.search) return rows;
+      return rows.filter((row) => String(picker(row)).toLowerCase().includes(state.search));
+    }
+
+    function userSearchText(user) {
+      return `${fullName(user)} ${user.email || ""} ${user.telefono || ""} ${user.rol || ""} ${user.alias || ""}`;
+    }
+
+    function tripSearchText(trip) {
+      return `${trip._id || ""} ${trip.tipo || ""} ${trip.estado || ""} ${trip.estadoPago || ""} ${trip.metodoPago || ""} ${trip.ciudad || ""} ${trip.pasajero?.nombre || ""} ${trip.pasajero?.telefono || ""} ${trip.motorista?.nombre || ""} ${trip.motorista?.telefono || ""}`;
+    }
+
+    function walletSearchText(wallet) {
+      const user = wallet.userId || {};
+      return `${user.nombre || ""} ${user.telefono || ""} ${user.rol || ""}`;
+    }
+
+    function withdrawSearchText(retiro) {
+      const user = retiro.userId || {};
+      return `${user.nombre || ""} ${user.telefono || ""} ${retiro.telefono || ""} ${retiro.metodo || ""} ${retiro.estado || ""}`;
+    }
+
+    function creditSearchText(item) {
+      const driver = item.motorista || {};
+      return `${driver.nombre || ""} ${driver.telefono || ""} ${item.viajesFinalizados || ""}`;
+    }
+
+    function personCell(user, fallback) {
+      if (!user) return `<span class="row-main">-</span>`;
+      return `<span class="row-main">${escapeHtml(fullName(user) || "Usuario")}</span><span class="row-sub">${escapeHtml(user.telefono || shortId(fallback || user._id))}</span>`;
+    }
+
+    function fullName(user) {
+      return [user?.nombre, user?.apellido].filter(Boolean).join(" ").trim();
+    }
+
+    function routeText(trip) {
+      const origen = trip.origen?.direccion || "Origen";
+      const destino = trip.destino?.direccion || "Destino";
+      return `${shortPlace(origen)} -> ${shortPlace(destino)}`;
+    }
+
+    function shortPlace(value) {
+      return String(value || "").split(",")[0].trim() || "-";
     }
 
     function drawChart(id, config) {
@@ -779,41 +1655,24 @@
       return {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: { legend: { labels: { usePointStyle: true, boxWidth: 8 } } },
+        plugins: {
+          legend: { labels: { usePointStyle: true, boxWidth: 8, color: "#334155", font: { weight: 700 } } }
+        },
         scales: dualAxis ? {
-          y: { beginAtZero: true, grid: { color: "#edf2f7" } },
-          y1: { beginAtZero: true, position: "right", grid: { display: false } }
+          y: { beginAtZero: true, grid: { color: "#edf2f7" }, ticks: { color: "#64748b" } },
+          y1: { beginAtZero: true, position: "right", grid: { display: false }, ticks: { color: "#64748b" } }
         } : undefined
       };
     }
 
-    function filterRows(rows, picker) {
-      if (!state.search) return rows;
-      return rows.filter((row) => String(picker(row)).toLowerCase().includes(state.search));
-    }
-
-    function tripSearchText(trip) {
-      return `${trip._id || ""} ${trip.estado || ""} ${trip.estadoPago || ""} ${trip.pasajero?.nombre || ""} ${trip.motorista?.nombre || ""}`;
-    }
-
-    function routeText(trip) {
-      const origen = trip.origen?.direccion || "Origen";
-      const destino = trip.destino?.direccion || "Destino";
-      return `${origen.split(",")[0]} -> ${destino.split(",")[0]}`;
-    }
-
-    function emptyRow(cols, text) {
-      return `<tr><td colspan="${cols}"><div class="empty">${text}</div></td></tr>`;
-    }
-
-    function setText(id, value) {
-      const el = document.getElementById(id);
-      if (el) el.textContent = String(value);
-    }
-
     function money(value) {
       const n = Number(value || 0);
-      return `${n.toLocaleString(undefined, { maximumFractionDigits: 2 })} G`;
+      return `${n.toLocaleString("fr-HT", { maximumFractionDigits: 2 })} HTG`;
+    }
+
+    function roundCredit(value) {
+      const amount = Math.round(Number(value || 0) / 5000) * 5000;
+      return Math.max(0, Math.min(750000, amount));
     }
 
     function formatDate(value) {
@@ -823,6 +1682,10 @@
 
     function formatType(value) {
       return String(value || "-").replace(/_/g, " ");
+    }
+
+    function cssToken(value) {
+      return String(value || "").replace(/[^a-z0-9_-]/gi, "_");
     }
 
     function shortId(value) {
@@ -839,8 +1702,29 @@
       }[char]));
     }
 
+    function getToken() {
+      const token = localStorage.getItem("token") || localStorage.getItem("BeGO_token");
+      return token?.startsWith("\"") ? token.slice(1, -1) : token;
+    }
+
+    function readUser() {
+      return safeJson(localStorage.getItem("BeGO_user")) || safeJson(localStorage.getItem("usuario")) || safeJson(localStorage.getItem("user"));
+    }
+
     function safeJson(value) {
       try { return value ? JSON.parse(value) : null; } catch { return null; }
+    }
+
+    function setText(id, value) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = String(value);
+    }
+
+    function setBusy(isBusy) {
+      const btn = document.getElementById("refreshBtn");
+      if (!btn) return;
+      btn.disabled = isBusy;
+      btn.innerHTML = isBusy ? `<i class="fa-solid fa-spinner fa-spin"></i>Cargando` : `<i class="fa-solid fa-rotate"></i>Actualizar`;
     }
 
     function showToast(text) {
@@ -848,7 +1732,12 @@
       toast.textContent = text;
       toast.classList.add("show");
       clearTimeout(showToast.timer);
-      showToast.timer = setTimeout(() => toast.classList.remove("show"), 2200);
+      showToast.timer = setTimeout(() => toast.classList.remove("show"), 2400);
+    }
+
+    function logout() {
+      ["token", "BeGO_token", "BeGO_user", "usuario", "user"].forEach((key) => localStorage.removeItem(key));
+      location.replace("../login.html");
     }
   </script>
 </body>

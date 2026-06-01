@@ -84,6 +84,15 @@ router.get("/resumen", authAdmin, async (req, res) => {
       tendencia,
       walletStats,
       deudaComisionesAgg,
+      usuariosOnline,
+      motoristasDisponibles,
+      paquetesActivos,
+      paquetesRecientes,
+      reservasActivas,
+      creditosMotoristas,
+      viajesPorTipo,
+      pagosPorMetodo,
+      ciudades,
     ] = await Promise.all([
       User.aggregate([{ $group: { _id: "$rol", total: { $sum: 1 } } }]),
       Viaje.aggregate([{ $group: { _id: "$estado", total: { $sum: 1 } } }]),
@@ -147,6 +156,64 @@ router.get("/resumen", authAdmin, async (req, res) => {
         { $match: { saldo: { $lt: 0 } } },
         { $group: { _id: null, total: { $sum: { $abs: "$saldo" } } } },
       ]),
+      User.countDocuments({ online: true }),
+      User.countDocuments({ rol: "motorista", disponible: true }),
+      Viaje.countDocuments({ tipo: "envio", estado: { $in: ["buscando", "reservado", "asignado", "llego", "en_curso"] } }),
+      Viaje.find({ tipo: "envio" })
+        .populate("pasajero", "nombre telefono")
+        .populate("motorista", "nombre telefono")
+        .sort({ createdAt: -1 })
+        .limit(16)
+        .lean(),
+      Viaje.find({ estado: "reservado" })
+        .populate("pasajero", "nombre telefono")
+        .populate("motorista", "nombre telefono")
+        .sort({ reservadoEn: -1, updatedAt: -1 })
+        .limit(16)
+        .lean(),
+      Viaje.aggregate([
+        { $match: { estado: "finalizado", motorista: { $ne: null } } },
+        {
+          $group: {
+            _id: "$motorista",
+            viajesFinalizados: { $sum: 1 },
+            ingresoMotorista: { $sum: { $ifNull: ["$pagoMotorista", "$paBeGOrista"] } },
+            ultimoViaje: { $max: "$finViajeAt" },
+          },
+        },
+        { $match: { viajesFinalizados: { $gte: 1000 } } },
+        { $sort: { viajesFinalizados: -1 } },
+        { $limit: 12 },
+        {
+          $lookup: {
+            from: "users",
+            localField: "_id",
+            foreignField: "_id",
+            as: "motorista",
+          },
+        },
+        { $unwind: "$motorista" },
+        {
+          $project: {
+            viajesFinalizados: 1,
+            ingresoMotorista: 1,
+            ultimoViaje: 1,
+            "motorista._id": 1,
+            "motorista.nombre": 1,
+            "motorista.telefono": 1,
+            "motorista.rating": 1,
+            "motorista.online": 1,
+            "motorista.disponible": 1,
+          },
+        },
+      ]),
+      Viaje.aggregate([{ $group: { _id: "$tipo", total: { $sum: 1 } } }]),
+      Viaje.aggregate([{ $group: { _id: "$metodoPago", total: { $sum: 1 } } }]),
+      Viaje.aggregate([
+        { $group: { _id: "$ciudad", total: { $sum: 1 }, activos: { $sum: { $cond: [{ $in: ["$estado", ["buscando", "reservado", "asignado", "llego", "en_curso"]] }, 1, 0] } } } },
+        { $sort: { total: -1 } },
+        { $limit: 8 },
+      ]),
     ]);
 
     res.json({
@@ -161,12 +228,24 @@ router.get("/resumen", authAdmin, async (req, res) => {
         deudaComisiones: deudaComisionesAgg[0]?.total || 0,
         saldoWallets: walletStats[0]?.saldoWallets || 0,
         saldoRetenido: walletStats[0]?.saldoRetenido || 0,
+        usuariosOnline,
+        motoristasDisponibles,
+        paquetesActivos,
+        reservasActivas: reservasActivas.length,
+      },
+      operacion: {
+        viajesPorTipo: Object.fromEntries(viajesPorTipo.map((item) => [item._id || "sin_tipo", item.total])),
+        pagosPorMetodo: Object.fromEntries(pagosPorMetodo.map((item) => [item._id || "sin_metodo", item.total])),
+        ciudades,
       },
       tendencia,
       viajesActivos,
       ultimosViajes,
       ultimosUsuarios,
       wallets,
+      paquetesRecientes,
+      reservasActivas,
+      creditosMotoristas,
     });
   } catch (err) {
     console.error("Dashboard resumen error:", err);
