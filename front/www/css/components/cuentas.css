@@ -5,7 +5,7 @@
 .css-cuenta {
   width: min(100%, 560px);
   margin: 0 auto;
-  padding: 8px 0 calc(var(--footer-height, 76px) + env(safe-area-inset-bottom) + 24px);
+  padding: 8px 0 14px;
 }
 
 .css-cuenta .cuenta-page {

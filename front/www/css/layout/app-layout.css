@@ -7,7 +7,7 @@
   --header-h: var(--header-height, 76px);
   --footer-h: var(--footer-height, 76px);
   --app-top-space: calc(var(--header-h) + env(safe-area-inset-top) + 14px);
-  --app-bottom-space: calc(var(--footer-h) + env(safe-area-inset-bottom) + 22px);
+  --app-bottom-space: calc(var(--footer-h) + env(safe-area-inset-bottom) + 12px);
 }
 
 /* HEADER */
