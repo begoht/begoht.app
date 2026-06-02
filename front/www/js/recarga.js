@@ -25,7 +25,7 @@ export function initRecarga() {
 
   if (!form || !saldoEl || !numeroInput || !operadoraInput || !montoManualInput || !btnRecargar) return;
 
-  const sonidoExito = new Audio(new URL("../assets/sounds/bego-success.wav?v=20260602-bego-voice", import.meta.url));
+  const sonidoExito = new Audio(new URL("../assets/sounds/bego-success.wav?v=20260602-bego-clear-voice", import.meta.url));
   sonidoExito.preload = "auto";
 
   const money = (value) => `HTG ${Number(value || 0).toLocaleString("fr-HT", { maximumFractionDigits: 2 })}`;
