@@ -48,9 +48,13 @@ export function limpiarViajePasajero({ map, limpiarMapa = true, rutaLayerRef, or
     const asignado = document.getElementById("driverAsignado");
     const overlay = document.getElementById("overlayBuscando");
 
+    if (typeof window.resetDriverBubble === "function") window.resetDriverBubble();
     if (menuDriver) menuDriver.classList.add("oculto");
     if (lista) lista.classList.remove("oculto");
-    if (asignado) asignado.classList.add("oculto");
+    if (asignado) {
+      asignado.classList.add("oculto");
+      asignado.classList.remove("minimizado");
+    }
     if (overlay) overlay.style.display = "none";
 
     // ✍️ Limpiar cajas de texto de direcciones

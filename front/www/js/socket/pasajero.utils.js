@@ -88,6 +88,10 @@ export function manejarCancelacionOLimpieza(esCancelacionFuerte = false) {
 export function actualizarUIDriver(motoristaInfo, estado, viajeInfo = {}) {
   if (!motoristaInfo) return;
 
+  if (typeof initDriverMinimize === "function") {
+    initDriverMinimize();
+  }
+
   // Controladores visuales principales de la vista de conductor asignado
   document.getElementById("menuDriver")?.classList.remove("oculto");
   document.getElementById("driverLista")?.classList.add("oculto");
@@ -227,8 +231,11 @@ export function actualizarUIDriver(motoristaInfo, estado, viajeInfo = {}) {
     });
   }
 
-  if (typeof initDriverMinimize === "function") {
-    initDriverMinimize();
+  if (typeof window.syncDriverPanelVisibility === "function") {
+    window.syncDriverPanelVisibility({
+      viajeId: viaje.viajeId || viajeInfo.viajeId || viajeInfo._id || "",
+      forceOpen: viajeInfo.forceOpenDriverPanel === true
+    });
   }
 }
 

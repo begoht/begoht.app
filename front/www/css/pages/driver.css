@@ -478,6 +478,245 @@
   gap: 8px;
 }
 
+/* =========================
+   ASIGNACION PASAJERO PREMIUM
+========================= */
+.driver-body {
+  bottom: max(14px, env(safe-area-inset-bottom));
+  margin-bottom: 0;
+  width: min(430px, calc(100% - 24px));
+  max-height: min(78vh, 680px);
+  padding: 18px;
+  gap: 12px;
+  border-radius: 24px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background:
+    linear-gradient(180deg, rgba(8, 15, 32, 0.96), rgba(12, 22, 44, 0.94)),
+    linear-gradient(135deg, rgba(37, 99, 235, 0.18), rgba(14, 165, 233, 0.08));
+  border: 1px solid rgba(191, 219, 254, 0.22);
+  box-shadow: 0 22px 70px rgba(2, 6, 23, 0.42);
+}
+
+.driver-body::before,
+.driver-body::after {
+  display: none;
+}
+
+.driver-body::-webkit-scrollbar {
+  width: 0;
+}
+
+.driver-card,
+.driver-route-card,
+.driver-eta-box,
+.driver-premium-stat {
+  background: rgba(255, 255, 255, 0.075);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.driver-card {
+  padding: 12px;
+  border-radius: 16px;
+  gap: 12px;
+}
+
+.driver-avatar {
+  width: 88px;
+  height: 88px;
+  min-width: 88px;
+}
+
+.driver-avatar img {
+  border-radius: 16px;
+}
+
+.driver-badge {
+  color: #bbf7d0;
+  background: rgba(34, 197, 94, 0.16);
+  border: 1px solid rgba(74, 222, 128, 0.22);
+}
+
+.driver-right h3 {
+  font-size: 19px;
+  line-height: 1.12;
+  letter-spacing: 0;
+}
+
+.driver-text,
+.driver-rating {
+  line-height: 1.2;
+}
+
+.driver-premium-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.driver-premium-stat {
+  min-height: 62px;
+  padding: 10px;
+  border-radius: 12px;
+}
+
+.driver-premium-stat strong {
+  font-size: 15px;
+}
+
+.driver-route-card {
+  border-radius: 14px;
+  padding: 12px;
+}
+
+.driver-route-line strong {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+.driver-service-strip {
+  padding: 0 4px;
+}
+
+.driver-eta-box {
+  flex: initial;
+  padding: 12px;
+  border-radius: 14px;
+  margin-top: 0;
+}
+
+.driver-eta-box,
+.driver-acciones {
+  border-top: 0;
+}
+
+.driver-acciones {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.driver-btn {
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 8px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 800;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.driver-btn:active {
+  transform: scale(0.98);
+}
+
+.driver-btn.llamar {
+  background: linear-gradient(135deg, #2563eb, #0ea5e9);
+}
+
+.driver-btn.whatsapp {
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+}
+
+.driver-btn.perfil {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.btn-min-driver {
+  top: 12px;
+  right: 12px;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.12);
+  z-index: 2;
+}
+
+.driver-body.minimizado {
+  transform: translate(-50%, 120%) scale(0.98);
+}
+
+.driver-mini {
+  right: 14px;
+  bottom: max(92px, calc(env(safe-area-inset-bottom) + 82px));
+  max-width: min(330px, calc(100% - 28px));
+  min-height: 58px;
+  padding: 9px 13px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #2563eb, #0f172a);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.36);
+}
+
+.mini-info {
+  min-width: 0;
+}
+
+#miniNombre,
+#miniETA {
+  display: block;
+  max-width: 210px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 520px) {
+  .driver-body {
+    left: 50%;
+    bottom: max(8px, env(safe-area-inset-bottom));
+    width: calc(100% - 16px);
+    max-height: min(76vh, 640px);
+    padding: 16px 12px 14px;
+    gap: 10px;
+    border-radius: 20px 20px 14px 14px;
+  }
+
+  .driver-card {
+    padding: 10px;
+  }
+
+  .driver-avatar {
+    width: 74px;
+    height: 74px;
+    min-width: 74px;
+  }
+
+  .driver-right h3 {
+    max-width: calc(100vw - 160px);
+    font-size: 17px;
+  }
+
+  .driver-premium-grid,
+  .driver-acciones {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .driver-premium-stat {
+    min-height: 56px;
+  }
+
+  .driver-btn {
+    min-height: 46px;
+    font-size: 12px;
+  }
+
+  .driver-mini {
+    left: 12px;
+    right: 12px;
+    bottom: max(88px, calc(env(safe-area-inset-bottom) + 78px));
+  }
+}
+
 .driver-premium-stat {
   min-width: 0;
   padding: 10px 8px;
@@ -614,5 +853,96 @@
     padding: 10px 8px;
     border-radius: 8px;
     font-size: 12px;
+  }
+}
+
+/* Override final: mantiene panel y mini sincronizados en produccion. */
+.driver-body {
+  bottom: max(14px, env(safe-area-inset-bottom));
+  margin-bottom: 0;
+  width: min(430px, calc(100% - 24px));
+  max-height: min(78vh, 680px);
+  padding: 18px;
+  gap: 12px;
+  border-radius: 24px;
+  overflow-y: auto;
+}
+
+.driver-body::before,
+.driver-body::after {
+  display: none;
+}
+
+.driver-card {
+  border-radius: 16px;
+}
+
+.driver-avatar {
+  width: 88px;
+  height: 88px;
+  min-width: 88px;
+}
+
+.driver-premium-grid,
+.driver-acciones {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.driver-acciones {
+  gap: 9px;
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.driver-btn {
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 12px;
+  font-weight: 800;
+}
+
+.driver-route-line strong {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+.driver-mini {
+  bottom: max(92px, calc(env(safe-area-inset-bottom) + 82px));
+  max-width: min(330px, calc(100% - 28px));
+  min-height: 58px;
+  border-radius: 18px;
+}
+
+@media (max-width: 520px) {
+  .driver-body {
+    bottom: max(8px, env(safe-area-inset-bottom));
+    width: calc(100% - 16px);
+    max-height: min(76vh, 640px);
+    padding: 16px 12px 14px;
+    gap: 10px;
+    border-radius: 20px 20px 14px 14px;
+  }
+
+  .driver-avatar {
+    width: 74px;
+    height: 74px;
+    min-width: 74px;
+  }
+
+  .driver-premium-grid,
+  .driver-acciones {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .driver-mini {
+    left: 12px;
+    right: 12px;
+    bottom: max(88px, calc(env(safe-area-inset-bottom) + 78px));
   }
 }
