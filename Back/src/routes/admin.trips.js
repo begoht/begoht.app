@@ -158,6 +158,7 @@ async function limpiarEstadoReasignacion({ viajeId, estadoAnterior, motoristaAnt
     }
 
     if (global.io) {
+      global.io.in(`motorista:${motoristaAnterior}`).socketsLeave(`viaje:${viajeId}`);
       global.io.to(`motorista:${motoristaAnterior}`).emit("viaje:cancelado", {
         viajeId,
         motivo,

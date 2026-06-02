@@ -63,6 +63,13 @@ export function initViajeFinalizar(socket) {
 
   socket.on("viaje-finalizado", (data) => {
     const idFinalizado = data.viajeId || data.id;
+    const viajeActivo = getViajeEnCursoId();
+
+    if (!idFinalizado || idFinalizado !== viajeActivo) {
+        console.warn("Finalizacion ignorada para viaje no activo:", idFinalizado);
+        return;
+    }
+
     if (idFinalizado && viajesFinalizadosProcesados.has(idFinalizado)) return;
     if (idFinalizado) viajesFinalizadosProcesados.add(idFinalizado);
     console.log("Confirmacion de fin de viaje recibida:", idFinalizado);
