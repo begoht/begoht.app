@@ -28,6 +28,11 @@ export function initUI() {
   UI.circulo = document.querySelector(".progress-ring__circle");
   UI.miniMapaContainer = document.getElementById("miniMapaOferta");
 
+  if (UI.panel && UI.panel.parentElement !== document.body) {
+    document.body.appendChild(UI.panel);
+    UI.panel.style.zIndex = "7000";
+  }
+
   // Configuración inicial del círculo de progreso
   if (UI.circulo) {
     const radius = UI.circulo.r.baseVal.value;
@@ -38,11 +43,16 @@ export function initUI() {
 }
 
 export const mostrarPanel = () => {
-  if (UI.panel) UI.panel.classList.remove("hidden");
+  if (!UI.panel) return;
+  UI.panel.classList.remove("hidden");
+  UI.panel.removeAttribute("aria-hidden");
+  UI.panel.style.zIndex = "7000";
 };
 
 export const ocultarPanel = () => {
-  if (UI.panel) UI.panel.classList.add("hidden");
+  if (!UI.panel) return;
+  UI.panel.classList.add("hidden");
+  UI.panel.setAttribute("aria-hidden", "true");
 };
 
 export function resetBotonAceptar() {
