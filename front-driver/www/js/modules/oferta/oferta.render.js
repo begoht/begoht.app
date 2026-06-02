@@ -2,13 +2,14 @@
 
 import { 
   UI, 
+  initUI,
   mostrarPanel, 
   iniciarSonidoOfertaLoop,
   detenerSonidoOferta,
   ocultarPanel, 
   resetBotonAceptar,
   actualizarCirculoProgreso
-} from "./oferta.ui.js";
+} from "./oferta.ui.js?v=20260602-offer-ui-singleton";
 
 import { setViajeActual, ofertaState, getViajeId } from "./oferta.state.js";
 import { initMiniMapa, renderMiniRuta } from "./oferta.miniMap.js";
@@ -60,12 +61,20 @@ export function limpiarOferta({ resetViaje = true } = {}) {
  *************************************************/
 export async function renderOferta(viaje, opts = {}) {
   try {
+    if (!UI.panel) {
+      initUI();
+    }
+
     if (!isDriverOnline()) {
       ocultarPanel();
       return;
     }
 
     if (!viaje) return;
+    if (!UI.panel) {
+      console.warn("Panel de oferta no disponible en el DOM.");
+      return;
+    }
 
     const vId = getViajeId(viaje);
     if (!vId) return;

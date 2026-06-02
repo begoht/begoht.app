@@ -6,14 +6,14 @@
 import { initSocket } from "./socket.js";
 import { initMap } from "./map.js";
 import { initGPS } from "./gps.js";
-import { initOferta } from "./oferta/oferta.index.js?v=20260602-offer-force-visible";
+import { initOferta } from "./oferta/oferta.index.js?v=20260602-offer-ui-singleton";
 import { initViajeInicio } from "./viajeInicio/viajeInicio.js";
 import { initViajeFinalizar } from "./viajeFinalizar.js";
 import { initViajeControl } from "./viajeControl/viajeControl.js";
 import { initDriverChat } from "./chat/viajeChat.js";
 import { initDriverStatus } from "./driver.status.js";
 import { initDriverSpa } from "./driver.spa.js";
-import { iniciarSonidoOfertaLoop } from "./oferta/oferta.ui.js?v=20260602-offer-force-visible";
+import { iniciarSonidoOfertaLoop } from "./oferta/oferta.ui.js?v=20260602-offer-ui-singleton";
 
 document.addEventListener("DOMContentLoaded", () => {
 
