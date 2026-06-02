@@ -1,4 +1,4 @@
-.home-promos {
+#appMain .home-promos {
   display: block;
   margin: 18px 0 0;
   padding: 0;
@@ -8,9 +8,10 @@
 .home-promos-head {
   margin: 0 16px 10px;
   display: flex;
-  align-items: end;
-  justify-content: space-between;
-  gap: 12px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 2px;
 }
 
 .home-promos-head span {
@@ -23,7 +24,7 @@
 
 .home-promos-head strong {
   color: #f8fafc;
-  font-size: 1rem;
+  font-size: 1.08rem;
   font-weight: 900;
   white-space: nowrap;
 }
