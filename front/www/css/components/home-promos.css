@@ -1,0 +1,190 @@
+.home-promos {
+  margin: 0 0 18px;
+  overflow: hidden;
+}
+
+.home-promos-head {
+  margin: 0 16px 10px;
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.home-promos-head span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.home-promos-head strong {
+  color: #f8fafc;
+  font-size: 1rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.home-promos-track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(236px, 70vw);
+  gap: 10px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 16px;
+  padding: 2px 16px 14px;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
+}
+
+.home-promos-track::-webkit-scrollbar {
+  display: none;
+}
+
+.home-promo-card {
+  min-height: 146px;
+  scroll-snap-align: start;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 16px;
+  color: #f8fafc;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 18px 34px rgba(0, 0, 0, 0.38),
+    inset 0 1px 1px rgba(255, 255, 255, 0.16);
+  isolation: isolate;
+}
+
+.home-promo-card::before,
+.home-promo-card::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.home-promo-card::before {
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.16), transparent 42%);
+}
+
+.home-promo-card::after {
+  right: -30px;
+  bottom: -42px;
+  width: 118px;
+  height: 118px;
+  border-radius: 999px;
+  border: 22px solid rgba(255, 255, 255, 0.1);
+}
+
+.home-promo-card-primary {
+  background:
+    linear-gradient(135deg, rgba(37, 99, 235, 0.98), rgba(2, 6, 23, 0.98));
+}
+
+.home-promo-card-package {
+  background:
+    linear-gradient(135deg, rgba(15, 118, 110, 0.96), rgba(3, 7, 18, 0.98));
+}
+
+.home-promo-card-wallet {
+  background:
+    linear-gradient(135deg, rgba(124, 58, 237, 0.94), rgba(2, 6, 23, 0.98));
+}
+
+.home-promo-copy {
+  max-width: 92%;
+}
+
+.home-promo-kicker {
+  display: inline-flex;
+  margin-bottom: 7px;
+  color: rgba(248, 250, 252, 0.76);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.home-promo-card h2 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 1.28rem;
+  line-height: 1.04;
+  font-weight: 950;
+  letter-spacing: 0;
+}
+
+.home-promo-card p {
+  margin: 7px 0 0;
+  color: rgba(248, 250, 252, 0.76);
+  font-size: 0.78rem;
+  line-height: 1.35;
+  font-weight: 650;
+}
+
+.home-promo-badge {
+  width: fit-content;
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.home-promo-badge i {
+  font-size: 0.88rem;
+}
+
+.home-promo-badge span {
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+@media (min-width: 720px) {
+  .home-promos {
+    max-width: 720px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .home-promos-track {
+    grid-auto-columns: 504px;
+  }
+}
+
+@media (max-width: 380px) {
+  .home-promos-head {
+    margin-left: 12px;
+    margin-right: 12px;
+  }
+
+  .home-promos-track {
+    grid-auto-columns: minmax(226px, 70vw);
+    scroll-padding-inline: 12px;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .home-promo-card {
+    min-height: 138px;
+    padding: 14px;
+  }
+
+  .home-promo-card h2 {
+    font-size: 1.14rem;
+  }
+}
