@@ -1,7 +1,7 @@
 import { ofertaState, setLastDecision, getViajeId, CONFIG } from "./oferta.state.js";
-import { UI, notificar } from "./oferta.ui.js";
+import { UI, notificar } from "./oferta.ui.js?v=20260602-offer-audio-loop";
 import { getUltimaPosicion } from "../gps.js";
-import { limpiarOferta } from "./oferta.render.js";
+import { limpiarOferta } from "./oferta.render.js?v=20260602-offer-audio-loop";
 import { isDriverOnline } from "../driver.status.js";
 
 export function aceptarViaje(socket) {

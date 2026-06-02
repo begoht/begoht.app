@@ -3,7 +3,8 @@
 import { 
   UI, 
   mostrarPanel, 
-  reproducirSonido, 
+  iniciarSonidoOfertaLoop,
+  detenerSonidoOferta,
   ocultarPanel, 
   resetBotonAceptar,
   actualizarCirculoProgreso
@@ -31,6 +32,8 @@ export function limpiarOferta({ resetViaje = true } = {}) {
 
     ofertaState.aceptando = false;
     ofertaState.viajeMostradoId = null;
+
+    detenerSonidoOferta();
 
     if (resetViaje) {
       setViajeActual(null);
@@ -120,7 +123,7 @@ export async function renderOferta(viaje, opts = {}) {
      * 🎨 MOSTRAR UI
      *************************************************/
     mostrarPanel();
-    reproducirSonido();
+    iniciarSonidoOfertaLoop();
 
     /*************************************************
      * 🌍 GEOCODING (NO BLOQUEANTE)

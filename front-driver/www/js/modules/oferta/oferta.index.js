@@ -1,6 +1,6 @@
-import { initUI, UI } from "./oferta.ui.js";
-import { initSocketEventos } from "./oferta.socket.js";
-import { aceptarViaje, rechazarViaje } from "./oferta.actions.js";
+import { initUI, UI } from "./oferta.ui.js?v=20260602-offer-audio-loop";
+import { initSocketEventos } from "./oferta.socket.js?v=20260602-offer-audio-loop";
+import { aceptarViaje, rechazarViaje } from "./oferta.actions.js?v=20260602-offer-audio-loop";
 import { ofertaState, setSocketRef } from "./oferta.state.js";
 
 export function initOferta(socket) {

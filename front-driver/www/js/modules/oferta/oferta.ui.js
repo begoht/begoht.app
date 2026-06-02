@@ -69,6 +69,7 @@ export function notificar(msj, color = "#22c55e") {
 export function reproducirSonido() {
   if (!UI.sonido) return;
 
+  UI.sonido.loop = false;
   UI.sonido.pause();
   UI.sonido.currentTime = 0;
 
@@ -83,6 +84,30 @@ export function reproducirSonido() {
         console.warn("🔇 Audio bloqueado por el navegador:", err.message);
       });
   }
+}
+
+export function iniciarSonidoOfertaLoop() {
+  if (!UI.sonido) return;
+
+  UI.sonido.pause();
+  UI.sonido.currentTime = 0;
+  UI.sonido.loop = true;
+
+  const playPromise = UI.sonido.play();
+
+  if (playPromise !== undefined) {
+    playPromise.catch((err) => {
+      console.warn("Audio de oferta bloqueado por el navegador:", err.message);
+    });
+  }
+}
+
+export function detenerSonidoOferta() {
+  if (!UI.sonido) return;
+
+  UI.sonido.loop = false;
+  UI.sonido.pause();
+  UI.sonido.currentTime = 0;
 }
 
 /**
