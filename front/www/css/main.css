@@ -22,7 +22,7 @@
 @import "./components/forms.css";
 @import "./components/ripple.css";
 @import "./components/search.css";
-@import "./components/servicio.css";
+@import "./components/servicio.css?v=20260602-promo-premium";
 
 /* 6. PÁGINAS (LO MÁS ESPECÍFICO) */
 @import "./pages/driver.css";

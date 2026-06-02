@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <!-- CSS -->
   <link rel="stylesheet" href="./css/fouter/footer.css?v=20260531-header-avatar-fix">
-<link rel="stylesheet" href="./css/main.css?v=20260602-recarga-premium">
+<link rel="stylesheet" href="./css/main.css?v=20260602-promo-premium">
 <link rel="stylesheet" href="./css/busqueda/busqueda.css?v=20260601-fr">
 <link rel="stylesheet" href="./wallet/wallet.css?v=20260601-footer-space">
   <!-- LEAFLET -->
@@ -58,8 +58,8 @@
   <section class="servicios-section home-promos" aria-labelledby="homePromoTitle">
     <div class="promo-section-head">
       <div>
-        <span class="promo-kicker">Beneficios BeGO</span>
-        <h2 id="homePromoTitle">Promociones activas</h2>
+        <span class="promo-kicker">Club BeGO</span>
+        <h2 id="homePromoTitle">Promociones para hoy</h2>
       </div>
       <a class="promo-view-all" href="#/promos" data-link aria-label="Ver todas las promociones">
         <span>Ver todas</span>
@@ -67,40 +67,62 @@
       </a>
     </div>
 
-    <article class="promo-hero-card">
-      <div class="promo-badge">
-        <i class="fa-solid fa-bolt"></i>
-        <span>Activo hoy</span>
+    <article class="promo-spotlight-card">
+      <div class="promo-spotlight-main">
+        <div class="promo-badge">
+          <i class="fa-solid fa-crown"></i>
+          <span>Oferta destacada</span>
+        </div>
+        <div class="promo-hero-copy">
+          <h3>Viaja con beneficio premium</h3>
+          <p>Aplica el codigo MITAD y revisa el precio final antes de confirmar tu solicitud.</p>
+        </div>
       </div>
-      <div class="promo-hero-copy">
-        <h3>50% menos en tu proximo viaje</h3>
-        <p>Usa MITAD antes de confirmar y revisa el precio final al instante.</p>
-      </div>
-      <div class="promo-code-row" aria-label="Codigo promocional MITAD">
+
+      <div class="promo-code-panel" aria-label="Codigo promocional MITAD">
         <span>Codigo</span>
         <strong>MITAD</strong>
+        <small>Valido segun disponibilidad</small>
       </div>
-      <a class="promo-primary-action" href="#/" data-link>
-        <i class="fa-solid fa-location-arrow"></i>
-        <span>Pedir viaje</span>
-      </a>
+
+      <div class="promo-progress-card">
+        <span>Beneficio activo</span>
+        <strong>50%</strong>
+        <small>descuento sugerido</small>
+      </div>
+
+      <div class="promo-actions">
+        <a class="promo-primary-action" href="#/" data-link>
+          <i class="fa-solid fa-location-arrow"></i>
+          <span>Pedir viaje</span>
+        </a>
+        <a class="promo-secondary-action" href="#/wallet" data-link>
+          <i class="fa-solid fa-wallet"></i>
+          <span>Recargar wallet</span>
+        </a>
+      </div>
     </article>
 
     <div class="promo-grid" aria-label="Mas beneficios disponibles">
-      <a class="promo-mini-card" href="#/servicios" data-link>
+      <a class="promo-mini-card featured" href="#/servicios" data-link>
         <i class="fa-solid fa-box-open"></i>
-        <span>Envio sin costo</span>
-        <p>Primer paquete con tarifa bonificada.</p>
+        <span>Envio paquete</span>
+        <p>Promos disponibles para servicios seleccionados.</p>
       </a>
       <a class="promo-mini-card" href="#/wallet" data-link>
         <i class="fa-solid fa-wallet"></i>
-        <span>Wallet segura</span>
-        <p>Recarga y paga sin efectivo.</p>
+        <span>Wallet BeGO</span>
+        <p>Paga rapido y evita manejar efectivo.</p>
+      </a>
+      <a class="promo-mini-card" href="#/recarga" data-link>
+        <i class="fa-solid fa-mobile-screen-button"></i>
+        <span>Recarga celular</span>
+        <p>Compra saldo desde tu wallet con recibo firmado.</p>
       </a>
       <a class="promo-mini-card" href="#/soporte" data-link>
         <i class="fa-solid fa-headset"></i>
-        <span>Soporte prioritario</span>
-        <p>Ayuda rapida durante tu viaje.</p>
+        <span>Asistencia</span>
+        <p>Soporte listo para ayudarte en produccion.</p>
       </a>
     </div>
   </section>
