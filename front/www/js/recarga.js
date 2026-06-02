@@ -1,110 +1,176 @@
 import { getServerUrl } from "./conexion.js";
 
 export function initRecarga() {
-
   let montoSeleccionado = 0;
+  let saldoDisponible = 0;
   const API_URL = getServerUrl() + "/api";
 
-  let token = localStorage.getItem("token");
-  if (!token) return location.hash = "#/login";
+  let token = localStorage.getItem("token") || localStorage.getItem("BeGO_token");
+  if (!token) {
+    location.hash = "#/login";
+    return;
+  }
   if (token.startsWith('"')) token = token.slice(1, -1);
 
+  const form = document.getElementById("recargaForm");
   const saldoEl = document.getElementById("saldo");
   const numeroInput = document.getElementById("numero");
-  const operadoraSelect = document.getElementById("operadora");
+  const operadoraInput = document.getElementById("operadora");
   const montoManualInput = document.getElementById("montoManual");
   const btnRecargar = document.getElementById("recargarBtn");
   const overlay = document.getElementById("overlayProcesando");
+  const msgEl = document.getElementById("recargaMsg");
+  const summaryMonto = document.getElementById("summaryMonto");
+  const summarySaldo = document.getElementById("summarySaldo");
+
+  if (!form || !saldoEl || !numeroInput || !operadoraInput || !montoManualInput || !btnRecargar) return;
 
   const sonidoExito = new Audio(new URL("../assets/sounds/bego-success.wav", import.meta.url));
   sonidoExito.preload = "auto";
 
-  function generarFirmaBeGO() {
-    const userId = JSON.parse(atob(token.split(".")[1])).id;
-    return `GM-${userId.slice(-6)}-${Date.now()}-${Math.random().toString(36).substring(2,8)}`.toUpperCase();
+  const money = (value) => `HTG ${Number(value || 0).toLocaleString("fr-HT", { maximumFractionDigits: 2 })}`;
+
+  function setMessage(text = "", type = "") {
+    if (!msgEl) return;
+    msgEl.textContent = text;
+    msgEl.dataset.type = type;
+  }
+
+  function setLoading(isLoading) {
+    btnRecargar.disabled = isLoading;
+    btnRecargar.innerHTML = isLoading
+      ? '<i class="fa-solid fa-spinner fa-spin"></i><span>Procesando</span>'
+      : '<i class="fa-solid fa-bolt"></i><span>Recargar ahora</span>';
+    overlay?.classList.toggle("hidden", !isLoading);
+  }
+
+  function updateSummary() {
+    const saldoDespues = saldoDisponible - Number(montoSeleccionado || 0);
+    if (summaryMonto) summaryMonto.textContent = money(montoSeleccionado);
+    if (summarySaldo) {
+      summarySaldo.textContent = money(saldoDespues);
+      summarySaldo.classList.toggle("is-negative", saldoDespues < 0);
+    }
   }
 
   async function cargarWallet() {
     try {
-      const userId = JSON.parse(atob(token.split(".")[1])).id;
       const res = await fetch(`${API_URL}/wallet`, {
-        headers: { 
-          "Authorization": `Bearer ${token}`,
-          "ngrok-skip-browser-warning": "true" // Importante si usas túneles
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "ngrok-skip-browser-warning": "true"
         }
       });
       const data = await res.json();
-      saldoEl.textContent = "HTG " + data.saldo;
+      saldoDisponible = Number(data.saldo || 0);
+      saldoEl.textContent = money(saldoDisponible);
     } catch {
-      saldoEl.textContent = "HTG 0";
+      saldoDisponible = 0;
+      saldoEl.textContent = money(0);
+    } finally {
+      updateSummary();
     }
   }
 
-  cargarWallet();
-
-  document.querySelectorAll(".montos button").forEach(btn => {
+  document.querySelectorAll(".operator-card").forEach((btn) => {
     btn.addEventListener("click", () => {
-      document.querySelectorAll(".montos button").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".operator-card").forEach((item) => {
+        item.classList.remove("active");
+        item.setAttribute("aria-pressed", "false");
+      });
       btn.classList.add("active");
-      montoSeleccionado = Number(btn.dataset.monto);
-      montoManualInput.value = "";
+      btn.setAttribute("aria-pressed", "true");
+      operadoraInput.value = btn.dataset.operadora || "";
+      setMessage("");
     });
   });
 
-  montoManualInput.addEventListener("input", e => {
-    montoSeleccionado = Number(e.target.value);
-    document.querySelectorAll(".montos button").forEach(b => b.classList.remove("active"));
+  document.querySelectorAll(".montos button").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".montos button").forEach((item) => item.classList.remove("active"));
+      btn.classList.add("active");
+      montoSeleccionado = Number(btn.dataset.monto || 0);
+      montoManualInput.value = "";
+      setMessage("");
+      updateSummary();
+    });
   });
 
-  btnRecargar.addEventListener("click", async () => {
+  montoManualInput.addEventListener("input", (event) => {
+    montoSeleccionado = Number(event.target.value || 0);
+    document.querySelectorAll(".montos button").forEach((item) => item.classList.remove("active"));
+    setMessage("");
+    updateSummary();
+  });
 
-    const numero = numeroInput.value.trim();
-    const operadora = operadoraSelect.value;
-    const monto = montoSeleccionado;
+  numeroInput.addEventListener("input", () => {
+    const clean = numeroInput.value.replace(/[^\d\s+()-]/g, "");
+    if (clean !== numeroInput.value) numeroInput.value = clean;
+    setMessage("");
+  });
 
-    if (!numero || !operadora || !monto || monto <= 0) {
-      alert("Completa correctamente todos los datos");
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const numero = numeroInput.value.replace(/[^\d]/g, "");
+    const operadora = operadoraInput.value;
+    const monto = Number(montoSeleccionado || 0);
+
+    if (!/^\d{8,15}$/.test(numero)) {
+      setMessage("Ingresa un numero valido.", "error");
+      numeroInput.focus();
       return;
     }
 
-    const firma = generarFirmaBeGO();
-    overlay.classList.remove("hidden");
+    if (!operadora) {
+      setMessage("Selecciona Digicel o Natcom.", "error");
+      return;
+    }
+
+    if (!monto || monto < 10 || monto > 5000) {
+      setMessage("El monto debe estar entre HTG 10 y HTG 5,000.", "error");
+      montoManualInput.focus();
+      return;
+    }
+
+    if (saldoDisponible - monto < 0) {
+      setMessage("Saldo insuficiente en tu Wallet BeGO.", "error");
+      return;
+    }
+
+    setLoading(true);
 
     try {
       const res = await fetch(`${API_URL}/recargas`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Bearer " + token
+          Authorization: `Bearer ${token}`,
+          "ngrok-skip-browser-warning": "true"
         },
-        body: JSON.stringify({ numero, operadora, monto, firmaBeGO: firma })
+        body: JSON.stringify({ numero, operadora, monto })
       });
 
       const data = await res.json();
 
-      setTimeout(() => {
-        overlay.classList.add("hidden");
+      if (!res.ok || !data.ok) {
+        throw new Error(data.msg || "Error en recarga");
+      }
 
-        if (data.ok) {
-          sonidoExito.play();
+      saldoDisponible = Number(data.nuevoSaldo || saldoDisponible - monto);
+      saldoEl.textContent = money(saldoDisponible);
+      updateSummary();
 
-          data.recarga.firmaBeGO = firma;
-          localStorage.setItem("reciboRecarga", JSON.stringify(data.recarga));
+      await sonidoExito.play().catch(() => {});
 
-          // 🔥 SPA NAV
-          location.hash = "#/recibo-recarga";
-
-        } else {
-          alert(data.msg || "Error en recarga");
-        }
-
-      }, 1500);
-
-    } catch {
-      overlay.classList.add("hidden");
-      alert("Error de conexión");
+      localStorage.setItem("reciboRecarga", JSON.stringify(data.recarga));
+      location.hash = "#/recibo-recarga";
+    } catch (error) {
+      setMessage(error.message || "Error de conexion.", "error");
+    } finally {
+      setLoading(false);
     }
-
   });
 
+  cargarWallet();
 }

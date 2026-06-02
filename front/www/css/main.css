@@ -38,7 +38,7 @@
 @import "./pages/familia.css";
 @import "./pages/ayuda.css?v=20260601-mobile-cards";
 @import "./pages/soporte.css?v=20260601-mobile-cards";
-@import "./pages/recarga.css";
+@import "./pages/recarga.css?v=20260602-recarga-premium";
 @import "./pages/recibo.css";
 
 /* 7. 🔥 OVERRIDES GLOBALES (ESTO TE FALTA) */

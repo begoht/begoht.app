@@ -34,6 +34,25 @@ function parseMoney(value) {
   return Math.round(amount * 100) / 100;
 }
 
+function normalizarTelefono(value = "") {
+  return String(value).replace(/[^\d]/g, "");
+}
+
+function normalizarOperadora(value = "") {
+  return String(value).toLowerCase().trim();
+}
+
+function validarMontoRecarga(monto) {
+  const max = Number(process.env.RECARGA_CELULAR_MAX || 5000);
+  const min = Number(process.env.RECARGA_CELULAR_MIN || 10);
+
+  if (!monto || monto < min || monto > max) {
+    return { ok: false, msg: `Monto permitido: HTG ${min} a HTG ${max}` };
+  }
+
+  return { ok: true };
+}
+
 // ==========================================
 // 🔐 Generar Firma BeGO (única e inalterable)
 // ==========================================
@@ -52,35 +71,84 @@ function generarFirma(userId) {
 // 💳 1️⃣ RECARGA DE CELULAR (usa saldo del Wallet)
 // =================================================
 router.post("/", auth, async (req, res) => {
+  const session = await mongoose.startSession();
+
   try {
     const { numero, operadora, monto } = req.body;
+    const numeroNormalizado = normalizarTelefono(numero);
+    const operadoraNormalizada = normalizarOperadora(operadora);
     const MONTO = parseMoney(monto);
 
-    if (!numero || !operadora || !MONTO || MONTO <= 0) {
-      return res.status(400).json({ ok: false, msg: "Datos incompletos" });
+    if (!/^\d{8,15}$/.test(numeroNormalizado)) {
+      return res.status(400).json({ ok: false, msg: "Numero de celular invalido" });
     }
 
-    const wallet = await Wallet.findOne({ userId: req.user.id });
-
-    if (!wallet || wallet.saldo < MONTO) {
-      return res.status(400).json({ ok: false, msg: "Saldo insuficiente" });
+    if (!["digicel", "natcom"].includes(operadoraNormalizada)) {
+      return res.status(400).json({ ok: false, msg: "Operadora invalida" });
     }
 
-    wallet.saldo -= MONTO;
-    await wallet.save();
+    const montoValido = validarMontoRecarga(MONTO);
+    if (!montoValido.ok) {
+      return res.status(400).json({ ok: false, msg: montoValido.msg });
+    }
+
+    await session.startTransaction();
 
     const firmaBeGO = generarFirma(req.user.id);
 
-    const recarga = await Recarga.create({
-      userId: req.user.id,
-      numero,
-      operadora,
-      monto: MONTO,
-      tipo: "recarga_celular",
-      metodoPago: "wallet",
-      estado: "completada",
-      firmaBeGO
-    });
+    const wallet = await Wallet.findOneAndUpdate(
+      {
+        userId: req.user.id,
+        $expr: {
+          $gte: [
+            { $subtract: ["$saldo", { $ifNull: ["$saldoBloqueado", 0] }] },
+            MONTO
+          ]
+        }
+      },
+      {
+        $inc: { saldo: -MONTO },
+        $push: {
+          movimientos: {
+            tipo: "recarga_tel",
+            monto: -MONTO,
+            descripcion: `Recarga ${operadoraNormalizada} ${numeroNormalizado}`,
+            ref: firmaBeGO,
+            metadata: {
+              numero: numeroNormalizado,
+              operadora: operadoraNormalizada
+            },
+            fecha: new Date()
+          }
+        }
+      },
+      { new: true, session }
+    );
+
+    if (!wallet) {
+      await session.abortTransaction();
+      return res.status(400).json({ ok: false, msg: "Saldo insuficiente" });
+    }
+
+    const [recarga] = await Recarga.create(
+      [{
+        userId: req.user.id,
+        numero: numeroNormalizado,
+        operadora: operadoraNormalizada,
+        monto: MONTO,
+        tipo: "recarga_celular",
+        metodoPago: "wallet",
+        estado: "completada",
+        firmaBeGO
+      }],
+      { session }
+    );
+
+    await session.commitTransaction();
+
+    if (global.emitWalletUpdate) {
+      global.emitWalletUpdate(req.user.id);
+    }
 
     res.json({
       ok: true,
@@ -89,8 +157,13 @@ router.post("/", auth, async (req, res) => {
     });
 
   } catch (error) {
+    if (session.inTransaction()) {
+      await session.abortTransaction();
+    }
     console.error("❌ Error recarga celular:", error);
     res.status(500).json({ ok: false, msg: "Error procesando recarga" });
+  } finally {
+    session.endSession();
   }
 });
 
