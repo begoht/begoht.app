@@ -72,7 +72,7 @@ export function setDriverAvailability(nextOnline, { silent = false } = {}) {
 
   if (!online) {
     Promise.all([
-      import("./oferta/oferta.render.js?v=20260602-offer-panel-visible"),
+      import("./oferta/oferta.render.js?v=20260602-offer-force-visible"),
       import("./oferta/oferta.queue.js")
     ])
       .then(([{ limpiarOferta }, { limpiarColaOfertas }]) => {

@@ -46,13 +46,26 @@ export const mostrarPanel = () => {
   if (!UI.panel) return;
   UI.panel.classList.remove("hidden");
   UI.panel.removeAttribute("aria-hidden");
+  UI.panel.style.display = "block";
+  UI.panel.style.visibility = "visible";
+  UI.panel.style.opacity = "1";
+  UI.panel.style.pointerEvents = "auto";
+  UI.panel.style.position = "fixed";
+  UI.panel.style.left = "0";
+  UI.panel.style.right = "0";
+  UI.panel.style.bottom = "0";
+  UI.panel.style.width = "100%";
   UI.panel.style.zIndex = "7000";
+  UI.panel.style.transform = "translateY(0)";
+  console.log("Oferta visible en pantalla");
 };
 
 export const ocultarPanel = () => {
   if (!UI.panel) return;
   UI.panel.classList.add("hidden");
   UI.panel.setAttribute("aria-hidden", "true");
+  UI.panel.style.pointerEvents = "none";
+  UI.panel.style.transform = "translateY(110%)";
 };
 
 export function resetBotonAceptar() {

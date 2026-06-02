@@ -96,7 +96,7 @@ export function limpiarViajeMain(ui = {}) {
     clearTimeout(llegadaRetryTimeout);
     setLlegadaRetryTimeout(null);
 
-    import("../oferta/oferta.render.js?v=20260602-offer-panel-visible").then(mod => {
+    import("../oferta/oferta.render.js?v=20260602-offer-force-visible").then(mod => {
         mod.limpiarOferta();
     }).catch(err => {
         console.warn("No se pudo limpiar oferta:", err);

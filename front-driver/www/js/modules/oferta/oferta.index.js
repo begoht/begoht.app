@@ -1,6 +1,6 @@
-import { initUI, UI } from "./oferta.ui.js?v=20260602-offer-panel-visible";
-import { initSocketEventos } from "./oferta.socket.js?v=20260602-offer-panel-visible";
-import { aceptarViaje, rechazarViaje } from "./oferta.actions.js?v=20260602-offer-panel-visible";
+import { initUI, UI } from "./oferta.ui.js?v=20260602-offer-force-visible";
+import { initSocketEventos } from "./oferta.socket.js?v=20260602-offer-force-visible";
+import { aceptarViaje, rechazarViaje } from "./oferta.actions.js?v=20260602-offer-force-visible";
 import { ofertaState, setSocketRef } from "./oferta.state.js";
 
 export function initOferta(socket) {
