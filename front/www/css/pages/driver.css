@@ -919,6 +919,10 @@
   border-radius: 18px;
 }
 
+.driver-mini.oculto {
+  display: none !important;
+}
+
 @media (max-width: 520px) {
   .driver-body {
     bottom: max(8px, env(safe-area-inset-bottom));
