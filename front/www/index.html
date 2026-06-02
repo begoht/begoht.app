@@ -12,12 +12,132 @@
   <link rel="stylesheet" href="./css/fouter/footer.css?v=20260602-home-blue">
 <link rel="stylesheet" href="./css/main.css?v=20260602-home-promos-title">
 <link rel="stylesheet" href="./css/busqueda/busqueda.css?v=20260602-home-promos-title">
-<link rel="stylesheet" href="./wallet/wallet.css?v=20260601-footer-space">
+  <link rel="stylesheet" href="./wallet/wallet.css?v=20260601-footer-space">
   <!-- LEAFLET -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    body:not(.app-ready) {
+      overflow: hidden;
+      background: #07111f;
+    }
+
+    body:not(.app-ready) #appHeader,
+    body:not(.app-ready) #app,
+    body:not(.app-ready) #map,
+    body:not(.app-ready) #appMain,
+    body:not(.app-ready) #appFooter,
+    body:not(.app-ready) #overlayBuscando,
+    body:not(.app-ready) #menuDriver,
+    body:not(.app-ready) #driverMiniBubble,
+    body:not(.app-ready) #modalConfirmarViaje {
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+    }
+
+    .app-boot-splash {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      display: grid;
+      place-items: center;
+      padding: 28px;
+      color: #ffffff;
+      background:
+        radial-gradient(circle at 50% 16%, rgba(37, 99, 235, 0.36), transparent 34%),
+        linear-gradient(180deg, #07111f 0%, #0b1628 52%, #050b14 100%);
+      transition: opacity 0.28s ease, visibility 0.28s ease;
+    }
+
+    body.app-ready .app-boot-splash {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .app-boot-card {
+      width: min(100%, 340px);
+      min-height: 260px;
+      display: grid;
+      justify-items: center;
+      align-content: center;
+      gap: 18px;
+      text-align: center;
+    }
+
+    .app-boot-logo {
+      width: 92px;
+      height: 92px;
+      display: grid;
+      place-items: center;
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      box-shadow: 0 28px 70px rgba(2, 6, 23, 0.42);
+      overflow: hidden;
+    }
+
+    .app-boot-logo img {
+      width: 74px;
+      height: 74px;
+      object-fit: contain;
+    }
+
+    .app-boot-title {
+      display: grid;
+      gap: 6px;
+    }
+
+    .app-boot-title strong {
+      font-size: 28px;
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .app-boot-title span {
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .app-boot-loader {
+      width: 116px;
+      height: 4px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    .app-boot-loader::before {
+      content: "";
+      display: block;
+      width: 45%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #60a5fa, #22d3ee);
+      animation: appBootLoading 1.05s ease-in-out infinite;
+    }
+
+    @keyframes appBootLoading {
+      0% { transform: translateX(-120%); }
+      100% { transform: translateX(260%); }
+    }
+  </style>
 </head>
 
 <body>
+  <div id="appBootSplash" class="app-boot-splash" aria-label="BeGO">
+    <div class="app-boot-card">
+      <div class="app-boot-logo">
+        <img src="assets/logo_primcial.png" alt="BeGO" />
+      </div>
+      <div class="app-boot-title">
+        <strong>BeGO</strong>
+        <span>Verification securisee de votre session...</span>
+      </div>
+      <div class="app-boot-loader" aria-hidden="true"></div>
+    </div>
+  </div>
   
   <header id="appHeader" class="app-header">
   </header>
