@@ -988,7 +988,7 @@
           <div class="table-wrap">
             <table>
               <thead>
-                <tr><th>Viaje</th><th>Tipo</th><th>Estado</th><th>Pasajero</th><th>Motorista</th><th>Monto</th><th>Pago</th><th>Ciudad</th><th>Actualizado</th></tr>
+                <tr><th>Viaje</th><th>Tipo</th><th>Estado</th><th>Pasajero</th><th>Motorista</th><th>Monto</th><th>Pago</th><th>Ciudad</th><th>Actualizado</th><th>Accion</th></tr>
               </thead>
               <tbody id="activeTripsRows"></tbody>
             </table>
@@ -1033,7 +1033,7 @@
           <div class="table-wrap">
             <table>
               <thead>
-                <tr><th>Viaje</th><th>Tipo</th><th>Estado</th><th>Pasajero</th><th>Motorista</th><th>Total</th><th>Motorista</th><th>Comision</th><th>Pago</th><th>Fecha</th></tr>
+                <tr><th>Viaje</th><th>Tipo</th><th>Estado</th><th>Pasajero</th><th>Motorista</th><th>Total</th><th>Motorista</th><th>Comision</th><th>Pago</th><th>Fecha</th><th>Accion</th></tr>
               </thead>
               <tbody id="tripRows"></tbody>
             </table>
@@ -1177,7 +1177,7 @@
           <div class="table-wrap">
             <table>
               <thead>
-                <tr><th>Reserva</th><th>Pasajero</th><th>Motorista</th><th>Ciudad</th><th>Pago</th><th>Creada</th></tr>
+                <tr><th>Reserva</th><th>Pasajero</th><th>Motorista</th><th>Ciudad</th><th>Pago</th><th>Creada</th><th>Accion</th></tr>
               </thead>
               <tbody id="reservationRows"></tbody>
             </table>
@@ -1361,7 +1361,7 @@
 
     function renderActiveTrips() {
       const rows = filterRows(state.resumen?.viajesActivos || [], tripSearchText);
-      setRows("activeTripsRows", rows, 9, "No hay viajes activos", (trip) => tripRow(trip, { active: true }));
+      setRows("activeTripsRows", rows, 10, "No hay viajes activos", (trip) => tripRow(trip, { active: true }));
     }
 
     function renderUsers() {
@@ -1371,7 +1371,7 @@
 
     function renderTrips() {
       const rows = filterRows(state.viajes || [], tripSearchText);
-      setRows("tripRows", rows, 10, "No hay viajes para este filtro", (trip) => tripRow(trip, { full: true }));
+      setRows("tripRows", rows, 11, "No hay viajes para este filtro", (trip) => tripRow(trip, { full: true }));
     }
 
     function renderPackages() {
@@ -1412,7 +1412,7 @@
 
     function renderReservations() {
       const rows = filterRows(state.resumen?.reservasActivas || [], tripSearchText);
-      setRows("reservationRows", rows, 6, "No hay reservas activas", reservationRow);
+      setRows("reservationRows", rows, 7, "No hay reservas activas", reservationRow);
     }
 
     function userRow(user) {
@@ -1448,7 +1448,8 @@
           cell("Motorista", `<span class="money good">${money(trip.pagoMotorista || trip.paBeGOrista)}</span>`),
           cell("Comision", `<span class="money warn">${money(trip.comision)}</span>`),
           cell("Pago", `<span class="status ${cssToken(trip.estadoPago)}">${formatType(trip.estadoPago || "-")}</span>`),
-          cell("Fecha", formatDate(trip.finViajeAt || trip.createdAt))
+          cell("Fecha", formatDate(trip.finViajeAt || trip.createdAt)),
+          cell("Accion", reassignAction(trip))
         ]);
       }
 
@@ -1461,7 +1462,8 @@
         cell("Monto", `<span class="money">${money(trip.precio)}</span>`),
         cell("Pago", `<span class="status ${cssToken(trip.estadoPago)}">${formatType(trip.estadoPago || "-")}</span>`),
         cell("Ciudad", escapeHtml(trip.ciudad || "-")),
-        cell("Actualizado", formatDate(trip.updatedAt || trip.createdAt))
+        cell("Actualizado", formatDate(trip.updatedAt || trip.createdAt)),
+        cell("Accion", reassignAction(trip))
       ]);
     }
 
@@ -1538,8 +1540,18 @@
         cell("Motorista", personCell(trip.motorista)),
         cell("Ciudad", escapeHtml(trip.ciudad || "-")),
         cell("Pago", `<span class="status ${cssToken(trip.metodoPago)}">${formatType(trip.metodoPago)}</span>`),
-        cell("Creada", formatDate(trip.reservadoEn || trip.createdAt))
+        cell("Creada", formatDate(trip.reservadoEn || trip.createdAt)),
+        cell("Accion", reassignAction(trip))
       ]);
+    }
+
+    function reassignAction(trip) {
+      if (!["asignado", "llego", "reservado"].includes(trip.estado)) return "-";
+      return `
+        <button class="btn small warn" type="button" onclick="reassignTrip('${trip._id}')">
+          <i class="fa-solid fa-rotate"></i>Reasignar
+        </button>
+      `;
     }
 
     async function changeRole(id) {
@@ -1573,6 +1585,24 @@
       await api(`/api/admin/retiros/${id}/pagar`, { method: "POST" });
       await loadAll();
       showToast("Retiro marcado como pagado");
+    }
+
+    async function reassignTrip(id) {
+      const motivo = prompt("Motivo de reasignacion", "Motorista demora en llegar");
+      if (motivo === null) return;
+      if (!confirm("Reasignar este viaje a otro motorista? El motorista actual sera excluido de esta oferta.")) return;
+
+      try {
+        await api(`/api/admin/viajes/${id}/reasignar`, {
+          method: "POST",
+          body: { motivo }
+        });
+        await loadAll();
+        showToast("Viaje enviado a reasignacion");
+      } catch (err) {
+        console.error(err);
+        showToast("No se pudo reasignar el viaje");
+      }
     }
 
     async function api(path, options = {}) {

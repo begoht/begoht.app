@@ -132,9 +132,29 @@ export function initViajeControl(socket, uiElements = {}) {
 
     socket.on("viaje:cancelado", (data) => {
         const viajeActivo = getViajeEnCursoId();
-        if (!viajeActivo) return;
-        
+        const viajeReservado = getViajeReservadoId();
         const idRecibido = data?.viajeId || data?.id;
+
+        if (idRecibido && viajeReservado && idRecibido === viajeReservado) {
+            setViajeReservadoId(null);
+            console.log("Reserva en cola eliminada");
+
+            if (!viajeActivo) {
+                setEstadoViaje(null);
+                reconstruirUIDesdeEstado();
+            }
+
+            if (typeof Toastify !== "undefined") {
+                Toastify({
+                    text: data?.reasignado ? "RESERVA REASIGNADA POR BeGO" : "RESERVA CANCELADA",
+                    duration: 6000,
+                    style: { background: "linear-gradient(to right, #1d4ed8, #38bdf8)" }
+                }).showToast();
+            }
+            return;
+        }
+
+        if (!viajeActivo) return;
         if (idRecibido && idRecibido !== viajeActivo) return;
         
         console.warn("🚨 Cancelación recibida en control");
@@ -163,11 +183,6 @@ export function initViajeControl(socket, uiElements = {}) {
                 duration: 6000,
                 style: { background: "linear-gradient(to right, #ff5f6d, #ffc371)" }
             }).showToast();
-        }
-        else if (idCancelado === viajeReservado) {
-            setViajeReservadoId(null);
-            console.log("🗑️ Reserva en cola eliminada");
-            // No limpiamos el viaje actual, solo notificamos
         }
     });
 }
