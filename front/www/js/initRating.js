@@ -3,49 +3,48 @@ export function initRating(data) {
 
   const modal = document.getElementById("modalRating");
   const estrellas = document.querySelectorAll(".estrellas i");
-  const btnCalificar = document.querySelector(".detalle-acciones .btn-primario");
+  const btnCalificar = document.getElementById("btnCalificarViaje") || document.querySelector(".detalle-acciones .btn-primario");
   const btnEnviar = document.getElementById("btnEnviarRating");
   const btnCerrar = document.getElementById("cerrarRating");
-  const btnRepetir = document.querySelector(".btn-secundario");
+  const btnRepetir = document.getElementById("btnRepetirViaje") || document.querySelector(".btn-secundario");
 
   if (!modal) return;
 
-  // 🟢 ocultar si ya calificó
   if (data.rating) {
     btnCalificar?.remove();
   }
 
-  // 🟢 abrir modal
   btnCalificar?.addEventListener("click", () => {
     modal.classList.remove("hidden");
   });
 
-  // 🟢 cerrar modal
   btnCerrar?.addEventListener("click", () => {
     modal.classList.add("hidden");
   });
 
-  // 🟢 estrellas
+  modal.addEventListener("click", (event) => {
+    if (event.target === modal) modal.classList.add("hidden");
+  });
+
   estrellas.forEach((estrella) => {
     estrella.addEventListener("click", () => {
       ratingSeleccionado = Number(estrella.dataset.value);
 
-      estrellas.forEach((e) => {
-        e.classList.toggle("activa", e.dataset.value <= ratingSeleccionado);
+      estrellas.forEach((item) => {
+        item.classList.toggle("activa", Number(item.dataset.value) <= ratingSeleccionado);
       });
     });
   });
 
-  // 🟢 enviar rating
   btnEnviar?.addEventListener("click", () => {
     if (!ratingSeleccionado) {
-      alert("Selecciona una calificación");
+      alert("Selectionnez une note");
       return;
     }
 
-    const comentario = document.getElementById("comentario").value;
+    const comentario = document.getElementById("comentario")?.value || "";
 
-    console.log("⭐ Rating enviado:", {
+    console.log("Rating BeGO:", {
       viajeId: data._id,
       rating: ratingSeleccionado,
       comentario,
@@ -54,11 +53,9 @@ export function initRating(data) {
     modal.classList.add("hidden");
   });
 
-  // 🟢 repetir viaje
   btnRepetir?.addEventListener("click", () => {
-    localStorage.setItem("origen", JSON.stringify(data.origen));
-    localStorage.setItem("destino", JSON.stringify(data.destino));
-
+    if (data.origen) localStorage.setItem("origen", JSON.stringify(data.origen));
+    if (data.destino) localStorage.setItem("destino", JSON.stringify(data.destino));
     location.hash = "#/";
   });
 }

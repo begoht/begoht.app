@@ -28,7 +28,7 @@
 @import "./pages/driver.css";
 @import "./pages/servicios.css";
 @import "./pages/actividad.css";
-@import "./pages/detalle-viaje.css";
+@import "./pages/detalle-viaje.css?v=20260603-detalle-premium";
 @import "./pages/billetera.css";
 @import "./pages/pagos.css";
 @import "./pages/configuracion.css?v=20260601-mobile-cards";
