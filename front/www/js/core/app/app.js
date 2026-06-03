@@ -2,6 +2,7 @@ import { AppState } from "./app.state.js";
 import { getSocket } from "../../socket/socket.js";
 import { createMap } from "../../map/map.singleton.js";
 import { initRouter } from "../router/router.js?v=20260603-mobile-support";
+import { initLaunchCountdown } from "../../launch-countdown.js?v=20260603-launch-countdown";
 
 function mostrarAppLista() {
     document.body.classList.add("app-ready");
@@ -28,4 +29,5 @@ export function initApp() {
 
     initRouter();
     requestAnimationFrame(mostrarAppLista);
+    initLaunchCountdown();
 }

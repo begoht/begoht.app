@@ -173,6 +173,7 @@ app.use("/api/pagos", shareRoutes);
 app.use("/api/viajes", require("./routes/actividad"));
 app.use("/api/cities", require("./routes/cities"));
 app.use("/api/ruta", require("./routes/ruta"));
+app.use("/api", require("./routes/launch"));
 
 // ============================
 // 🔹 TRACK

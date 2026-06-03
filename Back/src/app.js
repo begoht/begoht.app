@@ -15,6 +15,7 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/motoristas", motoristasRoutes);
+app.use("/api", require("./routes/launch"));
 
 app.get("/", (req, res) => res.send("🚀 BeGO Backend OK"));
 

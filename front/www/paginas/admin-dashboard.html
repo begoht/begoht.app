@@ -488,6 +488,111 @@
       line-height: 1.35;
     }
 
+    .launch-admin-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+      gap: 16px;
+    }
+
+    .launch-control-card {
+      min-height: 300px;
+      display: grid;
+      align-content: space-between;
+      gap: 16px;
+      padding: 16px;
+      color: #f8fafc;
+      border-radius: var(--radius);
+      background:
+        radial-gradient(circle at 82% 8%, rgba(37, 99, 235, 0.36), transparent 32%),
+        linear-gradient(180deg, #0f172a 0%, #07111f 100%);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+    }
+
+    .launch-control-card h2,
+    .launch-control-card p {
+      margin: 0;
+    }
+
+    .launch-control-card h2 {
+      font-size: clamp(1.55rem, 3vw, 2.25rem);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .launch-control-card p {
+      color: #cbd5e1;
+      line-height: 1.45;
+      font-size: 0.92rem;
+    }
+
+    .launch-preview-count {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .launch-count-pill {
+      min-height: 72px;
+      display: grid;
+      place-items: center;
+      gap: 4px;
+      padding: 8px;
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .launch-count-pill strong {
+      font-size: 1.35rem;
+      line-height: 1;
+    }
+
+    .launch-count-pill span {
+      color: #94a3b8;
+      font-size: 0.65rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .launch-form-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .admin-field {
+      display: grid;
+      gap: 7px;
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+    }
+
+    .admin-field input,
+    .admin-field textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 11px 12px;
+      color: var(--ink);
+      background: #fff;
+      outline: 0;
+      font: inherit;
+      font-weight: 750;
+    }
+
+    .admin-field textarea {
+      min-height: 102px;
+      resize: vertical;
+      line-height: 1.42;
+    }
+
+    .launch-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
     .mini-list {
       display: grid;
       gap: 8px;
@@ -612,7 +717,8 @@
 
     .status.deuda,
     .status.efectivo,
-    .status.en_progreso {
+    .status.en_progreso,
+    .status.apagado {
       color: #9a3412;
       background: #ffedd5;
     }
@@ -680,7 +786,8 @@
       }
 
       .layout-2,
-      .layout-3 {
+      .layout-3,
+      .launch-admin-grid {
         grid-template-columns: 1fr;
       }
 
@@ -746,6 +853,10 @@
       .command-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 10px;
+      }
+
+      .launch-preview-count {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
       .command-card {
@@ -869,6 +980,7 @@
         <button type="button" data-section-target="finance"><i class="fa-solid fa-building-columns"></i><span>Finanzas</span><small id="navFinance">0</small></button>
         <button type="button" data-section-target="credits"><i class="fa-solid fa-hand-holding-dollar"></i><span>Creditos</span><small id="navCredits">0</small></button>
         <button type="button" data-section-target="ops"><i class="fa-solid fa-satellite-dish"></i><span>Operaciones</span><small id="navOps">0</small></button>
+        <button type="button" data-section-target="launch"><i class="fa-solid fa-rocket"></i><span>Lanzamiento</span><small id="navLaunch">OFF</small></button>
         <button type="button" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i><span>Salir</span></button>
       </nav>
 
@@ -949,6 +1061,11 @@
             <i class="fa-solid fa-box-open"></i>
             <strong>Envios</strong>
             <span>Paquetes hasta 5 kg y codigo de entrega.</span>
+          </button>
+          <button class="command-card" type="button" data-section-jump="launch">
+            <i class="fa-solid fa-rocket"></i>
+            <strong>Lanzamiento</strong>
+            <span>Activar o pausar el contador que ven pasajero y motorista.</span>
           </button>
         </div>
 
@@ -1184,6 +1301,60 @@
           </div>
         </section>
       </section>
+
+      <section class="section" id="section-launch">
+        <div class="launch-admin-grid">
+          <article class="launch-control-card">
+            <div>
+              <span class="eyebrow"><i class="fa-solid fa-rocket"></i> Lanzamiento BeGO</span>
+              <h2 id="launchPreviewTitle">Lancement officiel BeGO</h2>
+              <p id="launchPreviewMessage">Votre compte est pret. Le service ouvrira officiellement tres bientot.</p>
+            </div>
+
+            <div class="launch-preview-count" aria-label="Vista previa del contador">
+              <div class="launch-count-pill"><strong id="launchDays">00</strong><span>Dias</span></div>
+              <div class="launch-count-pill"><strong id="launchHours">00</strong><span>Horas</span></div>
+              <div class="launch-count-pill"><strong id="launchMinutes">00</strong><span>Min</span></div>
+              <div class="launch-count-pill"><strong id="launchSeconds">00</strong><span>Seg</span></div>
+            </div>
+
+            <div class="launch-actions">
+              <span class="status apagado" id="launchStatus">Apagado</span>
+              <span class="status" id="launchDateLabel">Sin fecha</span>
+            </div>
+          </article>
+
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Control del contador</h2>
+                <p class="muted">Al activarlo, el aviso aparece al iniciar sesion en pasajero y motorista.</p>
+              </div>
+            </div>
+            <div class="panel-body launch-form-grid">
+              <label class="admin-field" for="launchAtInput">
+                Fecha y hora del lanzamiento
+                <input id="launchAtInput" type="datetime-local">
+              </label>
+
+              <label class="admin-field" for="launchTitleInput">
+                Titulo que vera el usuario
+                <input id="launchTitleInput" type="text" maxlength="80" placeholder="Lancement officiel BeGO">
+              </label>
+
+              <label class="admin-field" for="launchMessageInput">
+                Mensaje del aviso
+                <textarea id="launchMessageInput" maxlength="220" placeholder="Votre compte est pret. Le service ouvrira officiellement tres bientot."></textarea>
+              </label>
+
+              <div class="launch-actions">
+                <button class="btn blue" id="saveLaunchBtn" type="button"><i class="fa-solid fa-floppy-disk"></i>Guardar</button>
+                <button class="btn primary" id="toggleLaunchBtn" type="button"><i class="fa-solid fa-power-off"></i>Activar contador</button>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
     </main>
   </div>
 
@@ -1199,6 +1370,7 @@
       usuarios: [],
       viajes: [],
       retiros: [],
+      launch: null,
       filtroViajes: "todos",
       search: "",
       charts: {}
@@ -1208,6 +1380,7 @@
       protectAdmin();
       bindUi();
       loadAll();
+      setInterval(() => renderLaunchTime(state.launch?.launchAt), 1000);
     });
 
     function protectAdmin() {
@@ -1230,6 +1403,8 @@
       });
       document.getElementById("refreshBtn").addEventListener("click", loadAll);
       document.getElementById("logoutBtn").addEventListener("click", logout);
+      document.getElementById("saveLaunchBtn")?.addEventListener("click", () => saveLaunch());
+      document.getElementById("toggleLaunchBtn")?.addEventListener("click", toggleLaunch);
       document.getElementById("tripStatusFilter").addEventListener("change", (event) => {
         state.filtroViajes = event.target.value;
         loadTrips();
@@ -1252,14 +1427,16 @@
     async function loadAll() {
       setBusy(true);
       try {
-        const [resumen, usuarios, retiros] = await Promise.all([
+        const [resumen, usuarios, retiros, launch] = await Promise.all([
           api("/api/dashboard/resumen"),
           api("/api/admin/usuarios"),
-          api("/api/admin/retiros").catch(() => [])
+          api("/api/admin/retiros").catch(() => []),
+          api("/api/admin/launch").catch(() => null)
         ]);
         state.resumen = resumen || {};
         state.usuarios = Array.isArray(usuarios) ? usuarios : [];
         state.retiros = Array.isArray(retiros) ? retiros : [];
+        state.launch = launch || null;
         state.viajes = state.resumen.ultimosViajes || [];
         renderAll();
         setText("lastSync", `Actualizado ${new Date().toLocaleTimeString()}`);
@@ -1296,6 +1473,7 @@
       renderCredits();
       renderOps();
       renderReservations();
+      renderLaunch();
     }
 
     function renderMetrics() {
@@ -1330,6 +1508,7 @@
       setText("navFinance", state.retiros.filter((r) => r.estado === "pendiente").length);
       setText("navCredits", state.resumen?.creditosMotoristas?.length || 0);
       setText("navOps", state.resumen?.reservasActivas?.length || 0);
+      setText("navLaunch", state.launch?.enabled ? "ON" : "OFF");
     }
 
     function renderCharts() {
@@ -1413,6 +1592,94 @@
     function renderReservations() {
       const rows = filterRows(state.resumen?.reservasActivas || [], tripSearchText);
       setRows("reservationRows", rows, 7, "No hay reservas activas", reservationRow);
+    }
+
+    function renderLaunch() {
+      const launch = state.launch || {};
+      const enabled = !!launch.enabled;
+      const launchAt = launch.launchAt || "";
+      const title = launch.title || "Lancement officiel BeGO";
+      const message = launch.message || "Votre compte est pret. Le service ouvrira officiellement tres bientot.";
+
+      setText("launchPreviewTitle", title);
+      setText("launchPreviewMessage", message);
+      setText("launchStatus", enabled ? "Activo" : "Apagado");
+      setText("launchDateLabel", launchAt ? formatDate(launchAt) : "Sin fecha");
+      setText("navLaunch", enabled ? "ON" : "OFF");
+
+      const statusEl = document.getElementById("launchStatus");
+      if (statusEl) {
+        statusEl.className = enabled ? "status activo" : "status apagado";
+      }
+
+      const toggleBtn = document.getElementById("toggleLaunchBtn");
+      if (toggleBtn) {
+        toggleBtn.className = enabled ? "btn danger" : "btn primary";
+        toggleBtn.innerHTML = enabled
+          ? `<i class="fa-solid fa-power-off"></i>Desactivar contador`
+          : `<i class="fa-solid fa-power-off"></i>Activar contador`;
+      }
+
+      syncLaunchFields(launchAt, title, message);
+      renderLaunchTime(launchAt);
+    }
+
+    function syncLaunchFields(launchAt, title, message) {
+      const active = document.activeElement;
+      const fields = ["launchAtInput", "launchTitleInput", "launchMessageInput"];
+      if (fields.includes(active?.id)) return;
+
+      const dateInput = document.getElementById("launchAtInput");
+      const titleInput = document.getElementById("launchTitleInput");
+      const messageInput = document.getElementById("launchMessageInput");
+
+      if (dateInput) dateInput.value = launchAt ? toDateTimeLocal(launchAt) : "";
+      if (titleInput) titleInput.value = title;
+      if (messageInput) messageInput.value = message;
+    }
+
+    function renderLaunchTime(launchAt) {
+      const diff = launchAt ? Math.max(0, new Date(launchAt).getTime() - Date.now()) : 0;
+      const totalSeconds = Math.floor(diff / 1000);
+      const days = Math.floor(totalSeconds / 86400);
+      const hours = Math.floor((totalSeconds % 86400) / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+
+      setText("launchDays", padTime(days));
+      setText("launchHours", padTime(hours));
+      setText("launchMinutes", padTime(minutes));
+      setText("launchSeconds", padTime(seconds));
+    }
+
+    async function saveLaunch(forceEnabled = null) {
+      const currentEnabled = !!state.launch?.enabled;
+      const enabled = typeof forceEnabled === "boolean" ? forceEnabled : currentEnabled;
+      const dateValue = document.getElementById("launchAtInput")?.value || "";
+      const launchAt = dateValue ? new Date(dateValue).toISOString() : null;
+      const title = document.getElementById("launchTitleInput")?.value || "";
+      const message = document.getElementById("launchMessageInput")?.value || "";
+
+      if (enabled && !launchAt) {
+        showToast("Primero define fecha y hora del lanzamiento");
+        return;
+      }
+
+      try {
+        state.launch = await api("/api/admin/launch", {
+          method: "PUT",
+          body: { enabled, launchAt, title, message }
+        });
+        renderLaunch();
+        showToast(enabled ? "Contador de lanzamiento activo" : "Contador guardado apagado");
+      } catch (err) {
+        console.error(err);
+        showToast("No se pudo guardar el lanzamiento");
+      }
+    }
+
+    function toggleLaunch() {
+      saveLaunch(!state.launch?.enabled);
     }
 
     function userRow(user) {
@@ -1752,6 +2019,17 @@
     function formatDate(value) {
       const date = new Date(value);
       return Number.isNaN(date.getTime()) ? "-" : date.toLocaleString();
+    }
+
+    function toDateTimeLocal(value) {
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return "";
+      const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+      return local.toISOString().slice(0, 16);
+    }
+
+    function padTime(value) {
+      return String(Math.max(0, Number(value) || 0)).padStart(2, "0");
     }
 
     function formatType(value) {
