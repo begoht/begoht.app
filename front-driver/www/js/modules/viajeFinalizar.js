@@ -8,24 +8,76 @@ import { limpiarViajeMain } from "./viajeControl/viajeUI.js";
 import { borrarRuta } from "./map.js";
 
 const viajesFinalizadosProcesados = new Set();
+const finalizacionesPendientes = new Map();
+let socketActual = null;
+let clickFinalizarInicializado = false;
+
+function normalizarId(id) {
+  return id ? String(id) : null;
+}
+
+function labelFinalizar(esEnvio) {
+  return esEnvio ? "CONFIRMAR ENTREGA" : "FINALIZAR VIAJE";
+}
+
+function limpiarTimerFinalizacion(viajeId) {
+  const id = normalizarId(viajeId);
+  if (!id) return null;
+
+  const pendiente = finalizacionesPendientes.get(id);
+  if (!pendiente) return null;
+
+  clearTimeout(pendiente.timerGuard);
+  finalizacionesPendientes.delete(id);
+
+  const btn = document.getElementById("btnFinalizar");
+  if (btn) {
+    delete btn.dataset.timerId;
+    btn.disabled = false;
+    btn.textContent = labelFinalizar(pendiente.esEnvio);
+  }
+
+  return pendiente;
+}
+
+function obtenerViajeActual(viajeId) {
+  return viajesActivos.get(viajeId) || viajesActivos.get(String(viajeId)) || {};
+}
 
 export function initViajeFinalizar(socket) {
-  const btnFinalizar = document.getElementById("btnFinalizar");
-  const btnIniciar = document.getElementById("btnIniciarViaje");
-  const estadoBox = document.getElementById("estadoViaje");
-  const panelViajeControl = document.getElementById("panelViajeControl");
+  socketActual = socket;
 
-  document.addEventListener("click", (e) => {
+  if (!clickFinalizarInicializado) {
+    document.addEventListener("click", onClickFinalizar);
+    clickFinalizarInicializado = true;
+  }
+
+  socket.off("viaje-finalizado", onViajeFinalizado);
+  socket.on("viaje-finalizado", onViajeFinalizado);
+
+  socket.off("error-finalizar", onErrorFinalizar);
+  socket.on("error-finalizar", onErrorFinalizar);
+}
+
+function onClickFinalizar(e) {
     const target = e.target.closest("#btnFinalizar");
     if (!target || target.disabled) return;
 
-    const viajeId = getViajeEnCursoId();
+    const socket = socketActual;
+    if (!socket) {
+        console.warn("Socket no disponible para finalizar viaje");
+        return;
+    }
+
+    const viajeId = normalizarId(getViajeEnCursoId());
     if (!viajeId) {
         console.warn("No hay un ID de viaje activo para finalizar");
         return;
     }
 
-    const viajeActual = viajesActivos.get(viajeId) || {};
+    if (finalizacionesPendientes.has(viajeId)) return;
+
+    const viajeActual = obtenerViajeActual(viajeId);
     const esEnvio = viajeActual.tipo === "envio";
     let codigoEntrega = null;
 
@@ -44,12 +96,21 @@ export function initViajeFinalizar(socket) {
     target.textContent = "Procesando...";
 
     const timerGuard = setTimeout(() => {
-        if (target.textContent === "Procesando...") {
-            target.disabled = false;
-            target.textContent = esEnvio ? "CONFIRMAR ENTREGA" : "FINALIZAR VIAJE";
-            console.error("Tiempo de espera agotado al finalizar viaje.");
-        }
-    }, 8000);
+        const pendiente = finalizacionesPendientes.get(viajeId);
+        if (!pendiente || pendiente.timerGuard !== timerGuard) return;
+
+        finalizacionesPendientes.delete(viajeId);
+        target.disabled = false;
+        target.textContent = labelFinalizar(esEnvio);
+        delete target.dataset.timerId;
+
+        console.warn("No se recibio confirmacion al finalizar viaje. Reintento disponible.");
+    }, 12000);
+
+    finalizacionesPendientes.set(viajeId, {
+        timerGuard,
+        esEnvio
+    });
 
     console.log("Enviando finalizar-viaje para:", viajeId);
     socket.emit("finalizar-viaje", {
@@ -58,28 +119,27 @@ export function initViajeFinalizar(socket) {
         motoristaId: socket.user?._id || socket.user?.id
     });
 
-    target.dataset.timerId = timerGuard;
-  });
+    target.dataset.timerId = String(timerGuard);
+}
 
-  socket.on("viaje-finalizado", (data) => {
-    const idFinalizado = data.viajeId || data.id;
-    const viajeActivo = getViajeEnCursoId();
+function onViajeFinalizado(data = {}) {
+    const idFinalizado = normalizarId(data.viajeId || data.id);
+    if (!idFinalizado) return;
 
-    if (!idFinalizado || idFinalizado !== viajeActivo) {
-        console.warn("Finalizacion ignorada para viaje no activo:", idFinalizado);
+    const teniaFinalizacionPendiente = !!limpiarTimerFinalizacion(idFinalizado);
+
+    if (viajesFinalizadosProcesados.has(idFinalizado)) return;
+
+    const viajeActivo = normalizarId(getViajeEnCursoId());
+    const esViajeActual = viajeActivo && idFinalizado === viajeActivo;
+    const existeLocal = viajesActivos.has(idFinalizado);
+
+    if (!teniaFinalizacionPendiente && !esViajeActual && !existeLocal) {
         return;
     }
 
-    if (idFinalizado && viajesFinalizadosProcesados.has(idFinalizado)) return;
-    if (idFinalizado) viajesFinalizadosProcesados.add(idFinalizado);
+    viajesFinalizadosProcesados.add(idFinalizado);
     console.log("Confirmacion de fin de viaje recibida:", idFinalizado);
-
-    const btn = document.getElementById("btnFinalizar");
-    if (btn && btn.dataset.timerId) {
-        clearTimeout(parseInt(btn.dataset.timerId));
-        btn.textContent = "FINALIZAR VIAJE";
-        btn.disabled = false;
-    }
 
     if (typeof Toastify !== "undefined") {
         const esEnvio = data?.viaje?.tipo === "envio";
@@ -99,26 +159,35 @@ export function initViajeFinalizar(socket) {
     }
 
     limpiarViajeMain({
-        btnIniciar,
-        btnFinalizar,
-        estadoBox,
-        panelControl: panelViajeControl
+        btnIniciar: document.getElementById("btnIniciarViaje"),
+        btnFinalizar: document.getElementById("btnFinalizar"),
+        estadoBox: document.getElementById("estadoViaje"),
+        panelControl: document.getElementById("panelViajeControl")
     });
 
     if (typeof borrarRuta === "function") borrarRuta();
 
     window.dispatchEvent(new CustomEvent("driver:trip-finalized", { detail: data }));
-  });
+}
 
-  socket.on("error-finalizar", (err) => {
+function onErrorFinalizar(err = {}) {
     alert("Error: " + (err.msg || "No se pudo finalizar el viaje"));
+
+    const id = normalizarId(err.viajeId || getViajeEnCursoId());
+    if (id) {
+        limpiarTimerFinalizacion(id);
+    } else {
+        for (const viajeId of finalizacionesPendientes.keys()) {
+            limpiarTimerFinalizacion(viajeId);
+        }
+    }
+
     const btn = document.getElementById("btnFinalizar");
     if (btn) {
-        const viajeId = getViajeEnCursoId();
-        const esEnvio = viajeId && viajesActivos.get(viajeId)?.tipo === "envio";
+        const viajeId = normalizarId(getViajeEnCursoId());
+        const esEnvio = viajeId && obtenerViajeActual(viajeId)?.tipo === "envio";
         btn.disabled = false;
-        btn.textContent = esEnvio ? "CONFIRMAR ENTREGA" : "FINALIZAR VIAJE";
-        if (btn.dataset.timerId) clearTimeout(parseInt(btn.dataset.timerId));
+        btn.textContent = labelFinalizar(esEnvio);
+        delete btn.dataset.timerId;
     }
-  });
 }

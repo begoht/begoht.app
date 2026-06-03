@@ -461,8 +461,10 @@ module.exports = async function finalizarViaje({ io, socket, viajeId, motoristaI
 
     const finalizadoPayload = crearPayloadFinalizado({ viaje, viajeId, neto });
 
-    io.to(`viaje:${viajeId}`).emit("viaje-finalizado", finalizadoPayload);
-    io.to(`motorista:${motoristaId}`).emit("viaje-finalizado", finalizadoPayload);
+    io
+      .to(`viaje:${viajeId}`)
+      .to(`motorista:${motoristaId}`)
+      .emit("viaje-finalizado", finalizadoPayload);
     io.to(`motorista:${motoristaId}`).emit("driver:actividad-actualizada", finalizadoPayload);
     enviarReciboFinalizacion(viaje, viajeId, total);
 
@@ -474,7 +476,7 @@ module.exports = async function finalizarViaje({ io, socket, viajeId, motoristaI
   } catch (err) {
     if (session.inTransaction()) await session.abortTransaction();
     console.error("ERROR CRITICO finalizarViaje:", err.message);
-    socket.emit("error-finalizar", { msg: err.message });
+    socket.emit("error-finalizar", { msg: err.message, viajeId });
   } finally {
     await session.endSession();
     await releaseLock(viajeId, lockId);
