@@ -4,6 +4,13 @@ const { motoristas } = require("../../sockets/viajes/state");
 const obtenerMotoristaInfo = require(
     "../../sockets/viajes/motorista/services/motoristaInfo.service"
 );
+const {
+    getOfferKey,
+    getOfferLockKey,
+    getOfferSetKey,
+    releaseOfferLock,
+    releaseOfferLocksForViaje
+} = require("./offerLock.service");
 /*************************************************
  * 🔍 SCAN SAFE (NO BLOCK REDIS)
  *************************************************/
@@ -38,6 +45,8 @@ async function aceptar(viajeId, motoristaId, socketId, io) {
 
     const statusKey = `viaje:status:${viajeId}`;
     const ganadorKey = `viaje:ganador:${viajeId}`;
+    const ofertaKey = getOfferKey(viajeId, motoristaId);
+    const ofertaLockKey = getOfferLockKey(motoristaId);
 
     try {
 
@@ -95,6 +104,8 @@ async function aceptar(viajeId, motoristaId, socketId, io) {
         const luaAceptar = `
             local s = redis.call('get', KEYS[1])
             local g = redis.call('get', KEYS[2])
+            local ofertaExiste = redis.call('exists', KEYS[3])
+            local ofertaLock = redis.call('get', KEYS[4])
 
             if s == 'aceptado' then
                 if g == ARGV[1] then
@@ -106,6 +117,14 @@ async function aceptar(viajeId, motoristaId, socketId, io) {
 
             if s ~= 'ofertando' then
                 return 'ESTADO_INVALIDO'
+            end
+
+            if ofertaExiste == 0 then
+                return 'OFERTA_EXPIRADA'
+            end
+
+            if ofertaLock ~= ARGV[2] then
+                return 'OFERTA_INVALIDA'
             end
 
             redis.call(
@@ -129,10 +148,13 @@ async function aceptar(viajeId, motoristaId, socketId, io) {
 
         const result = await redis.eval(
             luaAceptar,
-            2,
+            4,
             statusKey,
             ganadorKey,
-            motoristaId
+            ofertaKey,
+            ofertaLockKey,
+            motoristaId,
+            String(viajeId)
         );
 
         if (result !== "OK") {
@@ -143,6 +165,8 @@ async function aceptar(viajeId, motoristaId, socketId, io) {
                     `lock:cola:${motoristaId}`
                 );
             }
+
+            await releaseOfferLock({ viajeId, motoristaId });
 
             return {
                 success: false,
@@ -160,11 +184,13 @@ async function aceptar(viajeId, motoristaId, socketId, io) {
         if (keys.length) {
 
             const pipeline = redis.multi();
+            const motoristasOfertaIds = [];
 
             for (const key of keys) {
 
                 const motoristaOfertaId =
                     key.split(":").pop();
+                motoristasOfertaIds.push(motoristaOfertaId);
 
                 /*************************************************
                  * ❌ BORRAR OFERTA
@@ -182,22 +208,25 @@ async function aceptar(viajeId, motoristaId, socketId, io) {
                 /*************************************************
                  * 📡 CERRAR POPUP FRONT
                  *************************************************/
-                io.to(
-                    `motorista:${motoristaOfertaId}`
-                ).emit(
-                    "viaje:tomado",
-                    {
-                        viajeId,
-                        status: "tomado_por_otro"
-                    }
-                );
+                if (motoristaOfertaId !== String(motoristaId)) {
+                    io.to(
+                        `motorista:${motoristaOfertaId}`
+                    ).emit(
+                        "viaje:tomado",
+                        {
+                            viajeId,
+                            status: "tomado_por_otro"
+                        }
+                    );
+                }
             }
 
             await pipeline.exec();
+            await releaseOfferLocksForViaje(viajeId, motoristasOfertaIds);
         }
 
         await redis.del(
-            `viaje:ofertandos:${viajeId}`
+            getOfferSetKey(viajeId)
         );
 
         /*************************************************
@@ -237,6 +266,11 @@ async function aceptar(viajeId, motoristaId, socketId, io) {
                 statusKey,
                 ganadorKey
             );
+            await releaseOfferLock({ viajeId, motoristaId });
+
+            if (nuevoEstadoDB === "reservado") {
+                await redis.del(`lock:cola:${motoristaId}`);
+            }
 
             return {
                 success: false,
@@ -282,9 +316,8 @@ async function aceptar(viajeId, motoristaId, socketId, io) {
             "ofertaPendienteKey"
         );
 
-        await redis.del(
-            `viaje:oferta:pendiente:${viajeId}:${motoristaId}`
-        );
+        await redis.del(ofertaKey);
+        await releaseOfferLock({ viajeId, motoristaId });
 
         /*************************************************
          * 7. CTX (SOURCE OF TRUTH)
@@ -438,6 +471,7 @@ async function aceptar(viajeId, motoristaId, socketId, io) {
             statusKey,
             ganadorKey
         );
+        await releaseOfferLock({ viajeId, motoristaId });
 
         return {
             success: false,

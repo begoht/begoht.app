@@ -13,6 +13,11 @@ const { obtenerProximoDestinoReserva } = require("./reservaRoute.service");
 const {
     evaluarElegibilidadReserva
 } = require("../../../../services/matching_services/reservaEligibility.service");
+const {
+    getOfferKey,
+    getOfferLockKey,
+    releaseOfferLock
+} = require("../../../../services/matching_services/offerLock.service");
 
 const { motoristas } = require("../../state");
 
@@ -29,6 +34,8 @@ module.exports = async ({
 }) => {
     const statusKey = `viaje:status:${viajeId}`;
     const ganadorKey = `viaje:ganador:${viajeId}`;
+    const ofertaKey = getOfferKey(viajeId, motoristaId);
+    const ofertaLockKey = getOfferLockKey(motoristaId);
 
     try {
         let data = await redis.hgetall(`motorista:data:${motoristaId}`);
@@ -80,16 +87,21 @@ module.exports = async ({
 
         const result = await redis.eval(
             luaAceptar,
-            2,
+            4,
             statusKey,
             ganadorKey,
-            motoristaId
+            ofertaKey,
+            ofertaLockKey,
+            motoristaId,
+            String(viajeId)
         );
 
         if (result !== "OK") {
             if (nuevoEstadoDB === "reservado") {
                 await redis.del(`lock:cola:${motoristaId}`);
             }
+
+            await releaseOfferLock({ viajeId, motoristaId });
 
             return {
                 success: false,
@@ -130,6 +142,11 @@ module.exports = async ({
 
         if (!viaje) {
             await redis.del(statusKey, ganadorKey);
+            await releaseOfferLock({ viajeId, motoristaId });
+
+            if (nuevoEstadoDB === "reservado") {
+                await redis.del(`lock:cola:${motoristaId}`);
+            }
 
             return {
                 success: false,
@@ -167,9 +184,8 @@ module.exports = async ({
             "ofertaPendienteKey"
         );
 
-        await redis.del(
-            `viaje:oferta:pendiente:${viajeId}:${motoristaId}`
-        );
+        await redis.del(ofertaKey);
+        await releaseOfferLock({ viajeId, motoristaId });
 
         const proximoDestinoReserva =
             nuevoEstadoDB === "reservado"
@@ -232,6 +248,7 @@ module.exports = async ({
         console.error("❌ aceptar service:", err);
 
         await redis.del(statusKey, ganadorKey);
+        await releaseOfferLock({ viajeId, motoristaId });
 
         return {
             success: false,

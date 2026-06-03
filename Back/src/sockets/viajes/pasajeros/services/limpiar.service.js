@@ -1,5 +1,9 @@
 const { redis } = require("../../../../config/redis");
 const { matchingQueue } = require("../../../../config/queues");
+const {
+    releaseOfferLocksForViaje,
+    extractMotoristaIdFromOfferKey
+} = require("../../../../services/matching_services/offerLock.service");
 
 /**
  * 🧹 Limpia TODOS los residuos de matching/cache/jobs
@@ -76,6 +80,10 @@ async function limpiarMatching(viajeId) {
             }
 
             await pipe.exec();
+            await releaseOfferLocksForViaje(
+                viajeId,
+                [...motoristasAfectados]
+            );
 
             console.log(
                 `🧹 ${motoristasAfectados.size} motoristas limpiados`
@@ -138,6 +146,10 @@ async function limpiarMatching(viajeId) {
 
         if (ofertaKeys.length > 0) {
             await redis.del(...ofertaKeys);
+            await releaseOfferLocksForViaje(
+                viajeId,
+                ofertaKeys.map(extractMotoristaIdFromOfferKey)
+            );
 
             console.log(
                 `🧹 ${ofertaKeys.length} ofertas pendientes eliminadas`

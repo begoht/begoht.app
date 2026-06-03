@@ -2,6 +2,11 @@ require("dotenv").config();
 require("./services/email/email.service");
 
 const { redis, socketPubClient, socketSubClient } = require("./config/redis");
+const {
+  getOfferKey,
+  getOfferLockKey,
+  scanKeys,
+} = require("./services/matching_services/offerLock.service");
 const express = require("express");
 const http = require("http");
 const cors = require("cors");
@@ -469,7 +474,10 @@ if (user.rol === "motorista") {
     // 🔔 RECOVERY DE OFERTA PENDIENTE
     // ==========================================
     // Buscamos si hay alguna oferta "volando" para este motorista en Redis
-    const keysOfertas = await redis.keys(`viaje:oferta:pendiente:*:${userId}`);
+    const lockedOfertaViajeId = await redis.get(getOfferLockKey(userId));
+    const keysOfertas = lockedOfertaViajeId
+      ? [getOfferKey(lockedOfertaViajeId, userId)]
+      : await scanKeys(`viaje:oferta:pendiente:*:${userId}`, 50);
     
     if (keysOfertas.length > 0) {
       const dataOfertaRaw = await redis.get(keysOfertas[0]);

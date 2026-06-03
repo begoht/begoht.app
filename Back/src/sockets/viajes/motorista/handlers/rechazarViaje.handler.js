@@ -1,11 +1,15 @@
 const { redis } = require("../../../../config/redis");
+const {
+    getOfferKey,
+    releaseOfferLock
+} = require("../../../../services/matching_services/offerLock.service");
 
 module.exports = (io, socket) => {
     return async ({ viajeId }) => {
         if (!viajeId || !socket?.user?._id) return;
 
         const motoristaId = socket.user._id.toString();
-        const ofertaKey = `viaje:oferta:pendiente:${viajeId}:${motoristaId}`;
+        const ofertaKey = getOfferKey(viajeId, motoristaId);
 
         try {
             await redis.multi()
@@ -21,6 +25,8 @@ module.exports = (io, socket) => {
                     motoristaId
                 }))
                 .exec();
+
+            await releaseOfferLock({ viajeId, motoristaId });
 
             socket.emit("viaje:oferta-cerrada", { viajeId });
         } catch (err) {

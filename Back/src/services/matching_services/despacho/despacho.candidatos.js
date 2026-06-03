@@ -24,7 +24,7 @@ async function ordenarCandidatosPorDistancia(candidatos) {
         });
 
         // 🧠 Orden por distancia real
-        data.sort((a, b) => a.km - b.km);
+        data.sort((a, b) => (a.score - b.score) || (a.km - b.km));
 
         console.log("📊 Orden final candidatos:", data);
 

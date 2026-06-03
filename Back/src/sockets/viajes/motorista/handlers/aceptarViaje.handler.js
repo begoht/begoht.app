@@ -13,15 +13,16 @@ module.exports = (io, socket) => {
 
         const motoristaId = socket.user._id.toString();
 
-        const lockKey = `lock:socket_aceptar:${viajeId}:${motoristaId}`;
+        const lockKey = `lock:socket_aceptar:${motoristaId}`;
+        const lockValue = String(viajeId);
 
         try {
             const lock = await redis.set(
                 lockKey,
-                "1",
+                lockValue,
                 "NX",
                 "PX",
-                3000
+                5000
             );
 
             if (!lock) return;
@@ -36,6 +37,10 @@ module.exports = (io, socket) => {
             if (!result.success) {
                 if (result.error === "cola_llena") {
                     return socket.emit("cola-ocupada");
+                }
+
+                if (["OFERTA_EXPIRADA", "OFERTA_INVALIDA"].includes(result.error)) {
+                    return socket.emit("viaje:oferta-cerrada", { viajeId });
                 }
 
                 return socket.emit(
@@ -122,7 +127,18 @@ module.exports = (io, socket) => {
             console.error("❌ aceptar handler:", error);
             socket.emit("error-operacion");
         } finally {
-            await redis.del(lockKey);
+            await redis.eval(
+                `
+                    if redis.call('get', KEYS[1]) == ARGV[1] then
+                        return redis.call('del', KEYS[1])
+                    end
+
+                    return 0
+                `,
+                1,
+                lockKey,
+                lockValue
+            );
         }
     };
 };

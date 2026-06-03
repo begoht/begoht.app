@@ -5,6 +5,12 @@ const Viaje = require("../models/Viaje");
 const authAdmin = require("../middleware/authAdmin");
 const { redis } = require("../config/redis");
 const { matchingQueue } = require("../config/queues");
+const {
+  getOfferKey,
+  getOfferSetKey,
+  getOfferMotoristaIds,
+  releaseOfferLocksForViaje,
+} = require("../services/matching_services/offerLock.service");
 
 const router = express.Router();
 
@@ -105,12 +111,12 @@ router.post("/viajes/:id/reasignar", authAdmin, async (req, res) => {
 });
 
 async function limpiarEstadoReasignacion({ viajeId, estadoAnterior, motoristaAnterior, motivo }) {
-  const ofertaKeys = await redis.keys(`viaje:oferta:pendiente:${viajeId}:*`);
+  const ofertaMotoristaIds = await getOfferMotoristaIds(viajeId);
+  const releaseMotoristaIds = new Set(ofertaMotoristaIds);
   const pipe = redis.multi();
 
-  for (const key of ofertaKeys) {
-    const motoristaId = key.split(":").pop();
-    pipe.del(key);
+  for (const motoristaId of ofertaMotoristaIds) {
+    pipe.del(getOfferKey(viajeId, motoristaId));
     pipe.hdel(`motorista:data:${motoristaId}`, "ofertaPendienteKey");
     if (motoristaId !== motoristaAnterior && global.io) {
       global.io.to(`motorista:${motoristaId}`).emit("viaje:tomado", {
@@ -126,12 +132,13 @@ async function limpiarEstadoReasignacion({ viajeId, estadoAnterior, motoristaAnt
     `despacho:intentos:${viajeId}`,
     `lock:matching:${viajeId}`,
     `viaje:ofertando:${viajeId}`,
-    `viaje:ofertandos:${viajeId}`,
+    getOfferSetKey(viajeId),
     `viaje:lock:${viajeId}`,
     `viaje:ctx:${viajeId}`
   );
 
   if (motoristaAnterior) {
+    releaseMotoristaIds.add(motoristaAnterior);
     pipe.sadd(`viaje:excluidos:${viajeId}`, motoristaAnterior);
     pipe.expire(`viaje:excluidos:${viajeId}`, 1800);
     pipe.hdel(
@@ -141,7 +148,7 @@ async function limpiarEstadoReasignacion({ viajeId, estadoAnterior, motoristaAnt
       "viajeActual",
       estadoAnterior === "reservado" ? "viajeReservadoId" : "viajeActualId"
     );
-    pipe.del(`viaje:oferta:pendiente:${viajeId}:${motoristaAnterior}`);
+    pipe.del(getOfferKey(viajeId, motoristaAnterior));
 
     if (estadoAnterior === "reservado") {
       pipe.del(`lock:cola:${motoristaAnterior}`, `motorista:${motoristaAnterior}:reservado`);
@@ -168,6 +175,7 @@ async function limpiarEstadoReasignacion({ viajeId, estadoAnterior, motoristaAnt
   }
 
   await pipe.exec();
+  await releaseOfferLocksForViaje(viajeId, [...releaseMotoristaIds]);
 }
 
 module.exports = router;

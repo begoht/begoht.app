@@ -7,6 +7,7 @@ const { esperarRespuestaRedis } = require("./despacho.espera");
 const { ordenarCandidatosPorDistancia } = require("./despacho.candidatos");
 const { generarWaves } = require("./despacho.waves");
 const { enviarWave } = require("./despacho.envio");
+const { getOfferKey, releaseOfferLock } = require("../offerLock.service");
 
 const TIEMPO_OFERTA_MS = 30000;
 
@@ -117,8 +118,9 @@ async function ejecutar(viajeId, candidatos, despachoKey) {
             await Promise.all(enviados.map(async ({ motoristaId }) => {
                 if (motoristaId !== ganadorId) {
                     // 🔥 Eliminar la oferta de Redis para que no queden bloqueados
-                    await redis.del(`viaje:oferta:pendiente:${viajeId}:${motoristaId}`);
+                    await redis.del(getOfferKey(viajeId, motoristaId));
                     await redis.hdel(`motorista:data:${motoristaId}`, "ofertaPendienteKey");
+                    await releaseOfferLock({ viajeId, motoristaId });
 
                     // 📡 Emitir evento al Frontend para que cierre la pantalla de los 15s
                     global.io.to(`motorista:${motoristaId}`)
@@ -143,8 +145,9 @@ async function ejecutar(viajeId, candidatos, despachoKey) {
                 await redis.hset(`motorista:data:${motoristaId}`, "disponible", "true");
             }
 
-            await redis.del(`viaje:oferta:pendiente:${viajeId}:${motoristaId}`);
+            await redis.del(getOfferKey(viajeId, motoristaId));
             await redis.hdel(`motorista:data:${motoristaId}`, "ofertaPendienteKey");
+            await releaseOfferLock({ viajeId, motoristaId });
             await redis.sadd(`viaje:excluidos:${viajeId}`, motoristaId);
 
             global.io

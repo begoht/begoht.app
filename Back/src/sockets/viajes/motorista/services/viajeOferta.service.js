@@ -1,18 +1,23 @@
 const { redis } = require("../../../../config/redis");
+const {
+    getOfferKey,
+    getOfferSetKey,
+    getOfferMotoristaIds,
+    releaseOfferLocksForViaje
+} = require("../../../../services/matching_services/offerLock.service");
 
 module.exports = async (viajeId, exceptMotoristaId = null) => {
-    const keys = await redis.keys(
-        `viaje:oferta:pendiente:${viajeId}:*`
-    );
+    const motoristaIds = await getOfferMotoristaIds(viajeId);
 
-    if (!keys.length) return;
+    if (!motoristaIds.length) {
+        await redis.del(getOfferSetKey(viajeId));
+        return;
+    }
 
     const pipeline = redis.multi();
 
-    for (const key of keys) {
-        const motoristaId = key.split(":").pop();
-
-        pipeline.del(key);
+    for (const motoristaId of motoristaIds) {
+        pipeline.del(getOfferKey(viajeId, motoristaId));
 
         pipeline.hdel(
             `motorista:data:${motoristaId}`,
@@ -28,6 +33,7 @@ module.exports = async (viajeId, exceptMotoristaId = null) => {
     }
 
     await pipeline.exec();
+    await releaseOfferLocksForViaje(viajeId, motoristaIds);
 
-    await redis.del(`viaje:ofertandos:${viajeId}`);
+    await redis.del(getOfferSetKey(viajeId));
 };

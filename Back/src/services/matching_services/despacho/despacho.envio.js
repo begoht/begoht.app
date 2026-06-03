@@ -2,16 +2,21 @@ const { redis } = require("../../../config/redis");
 const {
     evaluarElegibilidadReserva
 } = require("../reservaEligibility.service");
+const {
+    OFFER_TTL_MS,
+    acquireOfferLock,
+    releaseOfferLock,
+    getOfferKey,
+    getOfferSetKey
+} = require("../offerLock.service");
 
 const GPS_TIMEOUT_MS = 120000;
-const TIEMPO_OFERTA_MS = 15000;
 
 async function enviarWave({
     lista,
     viajeId,
     viajeActual,
-    intentoSet,
-    expira
+    intentoSet
 }) {
 
     const status = await redis.get(`viaje:status:${viajeId}`);
@@ -95,7 +100,23 @@ async function enviarWave({
                 return;
             }
 
-            const tempKey = `viaje:oferta:pendiente:${viajeId}:${motoristaId}`;
+            const lockAcquired = await acquireOfferLock({ viajeId, motoristaId });
+            if (!lockAcquired) {
+                console.log(`Oferta omitida: motorista ${motoristaId} ya tiene oferta activa`);
+                return;
+            }
+
+            const statusDespuesLock = await redis.get(`viaje:status:${viajeId}`);
+            if (
+                statusDespuesLock?.startsWith("aceptado") ||
+                ["cancelado", "busqueda_anulada"].includes(statusDespuesLock)
+            ) {
+                await releaseOfferLock({ viajeId, motoristaId });
+                return;
+            }
+
+            const tempKey = getOfferKey(viajeId, motoristaId);
+            const expira = Date.now() + OFFER_TTL_MS;
             
             const payload = {
                 viajeId,
@@ -109,11 +130,12 @@ async function enviarWave({
                 expira
             };
             
-            await redis.set(
+            try {
+                await redis.set(
                 tempKey,
                 JSON.stringify(payload),
                 "PX",
-                TIEMPO_OFERTA_MS
+                OFFER_TTL_MS
             );
             
             await redis.hset(`motorista:data:${motoristaId}`, {
@@ -124,12 +146,12 @@ async function enviarWave({
              * 🔥 REGISTRAR MOTORISTA OFERTADO
             *************************************************/
            await redis.sadd(
-               `viaje:ofertandos:${viajeId}`,
+               getOfferSetKey(viajeId),
                motoristaId
             );
             
             await redis.expire(
-                `viaje:ofertandos:${viajeId}`,
+                getOfferSetKey(viajeId),
                 60
             );
             
@@ -137,7 +159,7 @@ async function enviarWave({
             .to(`motorista:${motoristaId}`)
             .emit("viaje:oferta", {
                 ...payload,
-                ttl: TIEMPO_OFERTA_MS
+                ttl: OFFER_TTL_MS
             });
 
             if (viajeActual.pasajero) {
@@ -155,12 +177,22 @@ async function enviarWave({
                             lat,
                             lng
                         },
-                        ttl: TIEMPO_OFERTA_MS,
+                        ttl: OFFER_TTL_MS,
                         timestamp: Date.now()
                     });
                 }
             }
-            
+            } catch (err) {
+                await redis.del(tempKey);
+                await redis.hdel(`motorista:data:${motoristaId}`, "ofertaPendienteKey");
+                await releaseOfferLock({ viajeId, motoristaId });
+
+                console.error(
+                    `Error enviando oferta ${viajeId} a ${motoristaId}:`,
+                    err.message
+                );
+            }
+
         }));
     }
         
