@@ -1,4 +1,4 @@
-import { resetRutaCache } from "../map.ruta.js";
+import { resetRutaCache } from "../map.ruta.js?v=20260603-road-heading";
 
 let lastEstado = null;
 

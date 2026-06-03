@@ -1,5 +1,5 @@
 import { viajeState } from "../../viaje/viaje.state.js";
-import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js";
+import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260603-road-heading";
 import { mostrarDestinoEnMapa } from "../../map/map.destino.js";
 import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js";
 

@@ -1,85 +1,51 @@
-import { motoIcon } from "../map.icons.js?v=20260603-transparent-icons";
-
+import { motoIcon } from "../map.icons.js?v=20260603-road-heading";
 import {
   motoristasCercanos
 } from "../state/map.motoristas.state.js";
+import {
+  setMotorcycleMarkerPose
+} from "../utils/map.motorcycle.motion.js?v=20260603-road-heading";
 
-/*************************************************
- * 🛵 RENDER MOTORISTAS
- *************************************************/
-export function renderMotoristas(
-  map,
-  drivers
-) {
-
-  if (!map) return;
-
-  if (!Array.isArray(drivers)) {
-    return;
-  }
+export function renderMotoristas(map, drivers) {
+  if (!map || !Array.isArray(drivers)) return;
 
   const driversUnicos = normalizarDrivers(drivers);
 
-  /*************************************************
-   * 🧹 ELIMINAR DESAPARECIDOS
-   *************************************************/
-  Object.keys(motoristasCercanos)
-    .forEach((id) => {
+  Object.keys(motoristasCercanos).forEach((id) => {
+    const existe = driversUnicos.find((d) => (d.id || d._id) === id);
 
-      const existe = driversUnicos.find(
-        (d) => (d.id || d._id) === id
-      );
+    if (!existe) {
+      map.removeLayer(motoristasCercanos[id]);
+      delete motoristasCercanos[id];
+    }
+  });
 
-      if (!existe) {
-
-        map.removeLayer(
-          motoristasCercanos[id]
-        );
-
-        delete motoristasCercanos[id];
-      }
-    });
-
-  /*************************************************
-   * 🔄 CREAR / UPDATE
-   *************************************************/
   driversUnicos.forEach((driver) => {
+    const id = driver.id || driver._id;
+    const { lat, lng, nombre, heading } = driver;
 
-    const id =
-      driver.id || driver._id;
+    if (!id || lat == null || lng == null) return;
 
-    const {
-      lat,
-      lng,
-      nombre
-    } = driver;
-
-    if (
-      !id ||
-      lat == null ||
-      lng == null
-    ) {
+    if (motoristasCercanos[id]) {
+      setMotorcycleMarkerPose(
+        motoristasCercanos[id],
+        map,
+        { lat, lng },
+        { heading }
+      );
       return;
     }
 
-    if (motoristasCercanos[id]) {
+    const marker = L.marker([lat, lng], {
+      icon: motoIcon
+    }).addTo(map);
 
-      motoristasCercanos[id]
-        .setLatLng([lat, lng]);
-
-    } else {
-
-      const marker =
-        L.marker([lat, lng], {
-          icon: motoIcon
-        }).addTo(map);
-
-      if (nombre) {
-        marker.bindPopup(`🛵 ${nombre}`);
-      }
-
-      motoristasCercanos[id] = marker;
+    if (nombre) {
+      marker.bindPopup(`Motorista: ${nombre}`);
     }
+
+    motoristasCercanos[id] = marker;
+    setMotorcycleMarkerPose(marker, map, { lat, lng }, { heading });
   });
 }
 
@@ -99,24 +65,14 @@ function normalizarDrivers(drivers) {
   return [...porId.values()];
 }
 
-/*************************************************
- * 🧹 LIMPIAR TODOS
- *************************************************/
-export function clearMotoristas(
-  map
-) {
-
+export function clearMotoristas(map) {
   if (!map) return;
 
-  Object.values(motoristasCercanos)
-    .forEach((marker) => {
+  Object.values(motoristasCercanos).forEach((marker) => {
+    map.removeLayer(marker);
+  });
 
-      map.removeLayer(marker);
-    });
-
-  Object.keys(motoristasCercanos)
-    .forEach((id) => {
-
-      delete motoristasCercanos[id];
-    });
+  Object.keys(motoristasCercanos).forEach((id) => {
+    delete motoristasCercanos[id];
+  });
 }

@@ -5,7 +5,7 @@ import {
   reproducirSonidoLlegada
 } from "../../pasajero/pasajero.ui.js";
 import { actualizarUIDriver } from "../pasajero.utils.js";
-import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js";
+import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260603-road-heading";
 
 export const handleLlego = (data = {}) => {
   console.log("Motorista llego:", data);

@@ -1,10 +1,10 @@
 import { viajeState } from "../../viaje/viaje.state.js";
 import { cerrarBuscandoMotorista, animarMotoristaEncontrado } from "../../pasajero/pasajero.ui.js";
 import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js";
-import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260603-transparent-icons";
+import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260603-road-heading";
 import { mostrarDestinoEnMapa } from "../../map/map.destino.js";
 import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js";
-import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js";
+import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260603-road-heading";
 
 const ORDEN_ESTADO = {
   asignado: 1,
@@ -43,7 +43,8 @@ export const handleAsignado = (data = {}) => {
 
   const motoristaInfo = {
     ...(viajeState.motorista || {}),
-    ...(data.motorista || {})
+    ...(data.motorista || {}),
+    heading: data.motorista?.heading ?? data.heading ?? viajeState.motorista?.heading ?? null
   };
 
   Object.assign(viajeState, {

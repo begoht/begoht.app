@@ -1,59 +1,52 @@
-// js/map/map.motorista.js
-
 import { viajeState } from "../viaje/viaje.state.js";
-import { motoIcon } from "./map.icons.js?v=20260603-transparent-icons";
+import { motoIcon } from "./map.icons.js?v=20260603-road-heading";
+import { getRutaActualCoords } from "./map.js?v=20260603-road-heading";
+import {
+  setMotorcycleMarkerPose
+} from "./map.motion.js?v=20260603-road-heading";
 
 let mapa;
-let followMode = true; // 🔥 cámara sigue al motorista
+let followMode = true;
 
-/*************************************************
- * 🗺️ SET MAPA
- *************************************************/
 export function setMapa(mapInstance) {
   mapa = mapInstance;
 }
 
-/*************************************************
- * 🎯 CONTROL FOLLOW MODE
- *************************************************/
 export function setFollowMode(value) {
   followMode = value;
 }
 
-/*************************************************
- * 🛵 MOTORISTA ASIGNADO
- *************************************************/
 export function mostrarMotoristaEnMapa(motorista) {
-
   if (!mapa || !motorista) return;
 
-  let lat = Number(motorista.lat);
-  let lng = Number(motorista.lng);
+  const lat = Number(motorista.lat);
+  const lng = Number(motorista.lng);
 
-  if (isNaN(lat) || isNaN(lng)) return;
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
 
   if (viajeState.motoristaMarker) {
-
-    animarMovimiento(viajeState.motoristaMarker, [lat, lng]);
-
+    animarMovimiento(viajeState.motoristaMarker, { lat, lng }, motorista.heading);
   } else {
-
     viajeState.motoristaMarker = L.marker([lat, lng], { icon: motoIcon })
       .addTo(mapa)
-      .bindPopup(`🛵 ${motorista.nombre || "Motorista"}`);
+      .bindPopup(`Motorista: ${motorista.nombre || "Motorista"}`);
 
+    setMotorcycleMarkerPose(viajeState.motoristaMarker, mapa, { lat, lng }, {
+      routeCoords: getRutaActualCoords(),
+      heading: motorista.heading,
+      maxSnapDistanceMeters: 85
+    });
   }
 
-  /******** 🎯 FOLLOW INTELIGENTE ********/
   if (followMode) {
+    const markerPos = viajeState.motoristaMarker?.getLatLng?.() || { lat, lng };
     const centro = mapa.getCenter();
-
     const lejos =
-      Math.abs(centro.lat - lat) > 0.002 ||
-      Math.abs(centro.lng - lng) > 0.002;
+      Math.abs(centro.lat - markerPos.lat) > 0.002 ||
+      Math.abs(centro.lng - markerPos.lng) > 0.002;
 
     if (lejos) {
-      mapa.setView([lat, lng], mapa.getZoom(), {
+      mapa.setView(markerPos, mapa.getZoom(), {
         animate: true,
         duration: 0.8
       });
@@ -61,90 +54,69 @@ export function mostrarMotoristaEnMapa(motorista) {
   }
 }
 
-/*************************************************
- * 🧹 ELIMINAR MOTORISTA
- *************************************************/
 export function eliminarMotoristaDelMapa() {
-
   if (!mapa) return;
 
   if (viajeState.motoristaMarker) {
     mapa.removeLayer(viajeState.motoristaMarker);
     viajeState.motoristaMarker = null;
   }
-
 }
 
-/*************************************************
- * 🛵 MOTORISTAS CERCANOS
- *************************************************/
 export let motoristasCercanos = {};
 
 export function mostrarMotoristas(drivers) {
-
   if (!mapa) return;
 
   const driversArray = Array.isArray(drivers)
     ? drivers
     : Object.values(drivers || {});
 
-  /******** LIMPIAR DESAPARECIDOS ********/
   Object.keys(motoristasCercanos).forEach((id) => {
-    if (!driversArray.find(d => (d.id || d._id) === id)) {
+    if (!driversArray.find((d) => (d.id || d._id) === id)) {
       mapa.removeLayer(motoristasCercanos[id]);
       delete motoristasCercanos[id];
     }
   });
 
-  /******** ACTUALIZAR / CREAR ********/
   driversArray.forEach((driver) => {
-
     const id = driver.id || driver._id;
+    const lat = Number(driver.lat ?? driver.location?.lat);
+    const lng = Number(driver.lng ?? driver.location?.lng);
 
-    let lat = Number(driver.lat ?? driver.location?.lat);
-    let lng = Number(driver.lng ?? driver.location?.lng);
-    const nombre = driver.nombre;
-
-    if (!id || isNaN(lat) || isNaN(lng)) return;
+    if (!id || !Number.isFinite(lat) || !Number.isFinite(lng)) return;
 
     if (motoristasCercanos[id]) {
-
-      animarMovimiento(motoristasCercanos[id], [lat, lng]);
-
-    } else {
-
-      motoristasCercanos[id] = L.marker([lat, lng], { icon: motoIcon })
-        .addTo(mapa)
-        .bindPopup(`🛵 ${nombre || "Motorista"}`);
-
+      animarMovimiento(motoristasCercanos[id], { lat, lng }, driver.heading);
+      return;
     }
 
-  });
+    motoristasCercanos[id] = L.marker([lat, lng], { icon: motoIcon })
+      .addTo(mapa)
+      .bindPopup(`Motorista: ${driver.nombre || "Motorista"}`);
 
+    setMotorcycleMarkerPose(motoristasCercanos[id], mapa, { lat, lng }, {
+      heading: driver.heading
+    });
+  });
 }
 
-/*************************************************
- * 🎬 ANIMACIÓN SUAVE PRO
- *************************************************/
-function animarMovimiento(marker, destino) {
-
+function animarMovimiento(marker, destino, heading = null) {
   if (!marker) return;
 
-  // 🔥 cancelar animación previa
   if (marker._animFrame) {
     cancelAnimationFrame(marker._animFrame);
   }
 
   const inicio = marker.getLatLng();
-
   const frames = 25;
   let i = 0;
 
-  const deltaLat = destino[0] - inicio.lat;
-  const deltaLng = destino[1] - inicio.lng;
+  const deltaLat = destino.lat - inicio.lat;
+  const deltaLng = destino.lng - inicio.lng;
 
   function ease(t) {
-    return t * (2 - t); // easeOut
+    return t * (2 - t);
   }
 
   function mover() {
@@ -152,10 +124,14 @@ function animarMovimiento(marker, destino) {
 
     const progress = ease(i / frames);
 
-    marker.setLatLng([
-      inicio.lat + deltaLat * progress,
-      inicio.lng + deltaLng * progress
-    ]);
+    setMotorcycleMarkerPose(marker, mapa, {
+      lat: inicio.lat + deltaLat * progress,
+      lng: inicio.lng + deltaLng * progress
+    }, {
+      routeCoords: getRutaActualCoords(),
+      heading,
+      maxSnapDistanceMeters: 85
+    });
 
     i++;
     marker._animFrame = requestAnimationFrame(mover);

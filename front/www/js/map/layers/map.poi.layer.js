@@ -1,4 +1,4 @@
-import { createPOIIcon } from "../map.icons.js?v=20260603-transparent-icons";
+import { createPOIIcon } from "../map.icons.js?v=20260603-road-heading";
 
 
 import { cityConfig } from "../config/index.js";

@@ -1,17 +1,16 @@
-// trackingMotorista.js
 const { redis } = require("../../../../config/redis");
 const { actualizarSnapshotMotorista } = require("../motoristaSnapshot.service");
 const calcularETA = require("../../pasajeros/services/tracking/calcularETA");
 const Viaje = require("../../../../models/Viaje");
 
-module.exports = async (io, motoristaId, { lat, lng }) => {
+module.exports = async (io, motoristaId, { lat, lng, heading = null }) => {
   try {
     const nLat = Number(lat);
     const nLng = Number(lng);
+    const nHeading = heading == null || heading === "" ? null : Number(heading);
 
-    if (isNaN(nLat) || isNaN(nLng)) return;
+    if (Number.isNaN(nLat) || Number.isNaN(nLng)) return;
 
-    // 1. OBTENER DATOS DEL MOTORISTA
     const [viajeId, estadoInterno] = await redis.hmget(
       `motorista:data:${motoristaId}`,
       "viajeActualId",
@@ -20,35 +19,44 @@ module.exports = async (io, motoristaId, { lat, lng }) => {
 
     if (!viajeId || viajeId === "null") return;
 
-    // 2. CONTEXTO DEL VIAJE (CACHE + FALLBACK DB)
     let ctx = null;
     const ctxKey = `viaje:ctx:${viajeId}`;
     const rawCtx = await redis.get(ctxKey);
 
     if (rawCtx) {
-      try { ctx = JSON.parse(rawCtx); } catch { ctx = null; }
+      try {
+        ctx = JSON.parse(rawCtx);
+      } catch {
+        ctx = null;
+      }
     }
 
-    if (!ctx || !ctx.estado || (ctx.estado === "asignado" && !ctx.origen) || (ctx.estado === "en_curso" && !ctx.destino)) {
-      const viaje = await Viaje.findById(viajeId).select("estado origen destino").lean();
+    if (
+      !ctx ||
+      !ctx.estado ||
+      (ctx.estado === "asignado" && !ctx.origen) ||
+      (ctx.estado === "en_curso" && !ctx.destino)
+    ) {
+      const viaje = await Viaje.findById(viajeId)
+        .select("estado origen destino")
+        .lean();
       if (!viaje) return;
 
       ctx = {
         estado: viaje.estado,
         origen: viaje.origen || null,
         destino: viaje.destino || null,
-        proximoDestino: viaje.estado === "asignado" ? viaje.origen : (viaje.destino || null)
+        proximoDestino:
+          viaje.estado === "asignado" ? viaje.origen : (viaje.destino || null)
       };
-      
+
       await redis.set(ctxKey, JSON.stringify(ctx), "EX", 600);
     }
 
-    // 3. DEFINIR TARGET SEGUN ESTADO
     const vaAlOrigen = ["asignado", "llego"].includes(ctx.estado) ||
       ["asignado", "llego"].includes(estadoInterno);
     const target = vaAlOrigen ? ctx.origen : ctx.destino;
 
-    // 4. ETA + DISTANCIA (Usando módulo unificado)
     const { distancia, distanciaKm, eta } = calcularETA({
       motoristaLat: nLat,
       motoristaLng: nLng,
@@ -56,19 +64,17 @@ module.exports = async (io, motoristaId, { lat, lng }) => {
       destinoLng: target?.lng
     });
 
-    // 5. REDIS PIPELINE PARA ACTUALIZACIONES DE ESTADO
     const pipeline = redis.multi();
-    
+
     if (distanciaKm != null) {
       pipeline.hset(`motorista:data:${motoristaId}`, "kmRestantes", distanciaKm);
     }
 
-    // Cooldown para DB Snapshot
     const cooldownKey = `snapshot:cooldown:${motoristaId}`;
     pipeline.set(cooldownKey, "1", "NX", "EX", 5);
 
     const pipelineResults = await pipeline.exec();
-    const locked = pipelineResults[pipelineResults.length - 1][1]; // Resultado del SET NX
+    const locked = pipelineResults[pipelineResults.length - 1][1];
 
     if (locked === "OK") {
       await actualizarSnapshotMotorista(motoristaId, {
@@ -78,12 +84,15 @@ module.exports = async (io, motoristaId, { lat, lng }) => {
       });
     }
 
-    // 6. NOTIFICACIÓN DE PROXIMIDAD
     if (ctx.estado === "en_curso") {
       const trackLock = await redis.set(`trayectoria:cooldown:${viajeId}`, "1", "NX", "EX", 5);
 
       if (trackLock === "OK") {
-        const point = JSON.stringify({ lat: nLat, lng: nLng, timestamp: new Date().toISOString() });
+        const point = JSON.stringify({
+          lat: nLat,
+          lng: nLng,
+          timestamp: new Date().toISOString()
+        });
         await redis.multi()
           .rpush(`viaje:trayectoria:${viajeId}`, point)
           .ltrim(`viaje:trayectoria:${viajeId}`, -1000, -1)
@@ -101,11 +110,11 @@ module.exports = async (io, motoristaId, { lat, lng }) => {
       }
     }
 
-    // 7. EMIT TRACKING UNIFICADO
     const payload = {
       viajeId,
       lat: nLat,
       lng: nLng,
+      heading: nHeading != null && Number.isFinite(nHeading) ? nHeading : null,
       estado: ctx.estado,
       origen: ctx.origen,
       destino: ctx.destino,
@@ -116,9 +125,13 @@ module.exports = async (io, motoristaId, { lat, lng }) => {
     };
 
     io.to(`track:${viajeId}`).emit("track:posicion", payload);
-    io.to(`viaje:${viajeId}`).emit("viaje:posicion", { lat: nLat, lng: nLng, ts: payload.timestamp });
-
+    io.to(`viaje:${viajeId}`).emit("viaje:posicion", {
+      lat: nLat,
+      lng: nLng,
+      heading: payload.heading,
+      ts: payload.timestamp
+    });
   } catch (error) {
-    console.error("❌ Error en trackingMotorista:", error);
+    console.error("Error en trackingMotorista:", error);
   }
 };

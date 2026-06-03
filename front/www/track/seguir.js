@@ -6,6 +6,7 @@ let motoristaMarker = null;
 let polylineTrayectoria = null;
 let puntosTrayectoria = [];
 let ultimoTrackKey = "";
+let ultimaMotoPos = null;
 
 init();
 
@@ -157,7 +158,7 @@ function actualizarMotorista(pos = {}) {
   if (key === ultimoTrackKey && !pos.isSnapshot) return;
   ultimoTrackKey = key;
 
-  crearOMoverMotorista(nuevaPos);
+  crearOMoverMotorista(nuevaPos, pos.heading);
   agregarPuntoTrayectoria(nuevaPos);
 
   if (pos.estado) {
@@ -169,13 +170,19 @@ function actualizarMotorista(pos = {}) {
   }
 }
 
-function crearOMoverMotorista(latLng) {
+function crearOMoverMotorista(latLng, heading = null) {
   if (!motoristaMarker) {
     motoristaMarker = L.marker(latLng, { icon: iconoMoto() }).addTo(map);
-    return;
+  } else {
+    motoristaMarker.setLatLng(latLng);
   }
 
-  motoristaMarker.setLatLng(latLng);
+  const nextPos = { lat: latLng[0], lng: latLng[1] };
+  aplicarRumbo(
+    motoristaMarker,
+    heading ?? calcularRumbo(ultimaMotoPos, nextPos)
+  );
+  ultimaMotoPos = nextPos;
 }
 
 function agregarPuntoTrayectoria(latLng) {
@@ -214,7 +221,7 @@ function normalizarPunto(punto) {
 
 function iconoMoto() {
   return L.icon({
-    iconUrl: "/assets/icons/moto-transparent.svg?v=20260603-transparent-icons",
+    iconUrl: "/assets/icons/moto-transparent.svg?v=20260603-road-heading",
     iconSize: [44, 44],
     iconAnchor: [22, 22],
     className: "moto-live-icon"
@@ -225,6 +232,36 @@ function distanciaAprox(a, b) {
   const metrosLat = (a[0] - b[0]) * 111320;
   const metrosLng = (a[1] - b[1]) * 111320 * Math.cos((a[0] * Math.PI) / 180);
   return Math.sqrt(metrosLat * metrosLat + metrosLng * metrosLng);
+}
+
+function calcularRumbo(from, to) {
+  if (!from || !to) return null;
+
+  const toRad = (value) => value * Math.PI / 180;
+  const toDeg = (value) => value * 180 / Math.PI;
+  const lat1 = toRad(from.lat);
+  const lat2 = toRad(to.lat);
+  const dLng = toRad(to.lng - from.lng);
+  const y = Math.sin(dLng) * Math.cos(lat2);
+  const x =
+    Math.cos(lat1) * Math.sin(lat2) -
+    Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng);
+
+  return (toDeg(Math.atan2(y, x)) + 360) % 360;
+}
+
+function aplicarRumbo(marker, heading) {
+  if (!marker || heading == null || !Number.isFinite(Number(heading))) return;
+
+  requestAnimationFrame(() => {
+    const element = marker.getElement?.();
+    if (!element) return;
+    const base = (element.style.transform || "")
+      .replace(/\srotate\([-0-9.]+deg\)/g, "")
+      .trim();
+    element.style.transformOrigin = "50% 50%";
+    element.style.transform = `${base} rotate(${(Number(heading) - 90).toFixed(1)}deg)`;
+  });
 }
 
 function nombreMotorista(motorista = {}) {

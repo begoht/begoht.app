@@ -3,6 +3,7 @@ const AVAILABILITY_KEY = "driver:availability";
 let socketRef = null;
 let online = localStorage.getItem(AVAILABILITY_KEY) !== "0";
 let lastPosition = null;
+let lastHeading = null;
 
 const subscribers = new Set();
 
@@ -52,6 +53,10 @@ export function updateDriverPosition(position) {
     lat: Number(position.lat),
     lng: Number(position.lng)
   };
+
+  if (position.heading != null && Number.isFinite(Number(position.heading))) {
+    lastHeading = Number(position.heading);
+  }
 }
 
 export function setDriverAvailability(nextOnline, { silent = false } = {}) {
@@ -90,6 +95,7 @@ export function publishAvailability() {
     socketRef.emit("motoristas:ubicacion", {
       lat: lastPosition.lat,
       lng: lastPosition.lng,
+      heading: lastHeading,
       disponible: online
     });
   }

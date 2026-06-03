@@ -72,6 +72,7 @@ module.exports = (io, socket) => {
           id: ids[index],
           lat: parseFloat(data.lat),
           lng: parseFloat(data.lng),
+          heading: data.heading !== "" && data.heading != null ? parseFloat(data.heading) : null,
         });
       });
 
@@ -103,9 +104,10 @@ function crearMotoristasSignature(motoristas) {
     .map((m) => ({
       id: String(m.id || ""),
       lat: Number(m.lat).toFixed(5),
-      lng: Number(m.lng).toFixed(5)
+      lng: Number(m.lng).toFixed(5),
+      heading: Number.isFinite(Number(m.heading)) ? Math.round(Number(m.heading)) : ""
     }))
     .sort((a, b) => a.id.localeCompare(b.id))
-    .map((m) => `${m.id}:${m.lat}:${m.lng}`)
+    .map((m) => `${m.id}:${m.lat}:${m.lng}:${m.heading}`)
     .join("|");
 }

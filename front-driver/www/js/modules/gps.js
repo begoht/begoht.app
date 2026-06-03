@@ -1,6 +1,9 @@
-import { map } from "./map.js";
-import { isDriverOnline, updateDriverPosition } from "./driver.status.js";
-import { motoIcon } from "./map.icons.js?v=20260603-transparent-icons";
+import { map, getRutaActualCoords } from "./map.js?v=20260603-road-heading";
+import { isDriverOnline, updateDriverPosition } from "./driver.status.js?v=20260603-road-heading";
+import { motoIcon } from "./map.icons.js?v=20260603-road-heading";
+import {
+  setMotorcycleMarkerPose
+} from "./map.motion.js?v=20260603-road-heading";
 
 let ultimaPosicion = null;
 let motoristaMarker = null;
@@ -14,16 +17,26 @@ export function initGPS(socket) {
   navigator.geolocation.watchPosition(
     (pos) => {
       const { latitude: lat, longitude: lng } = pos.coords;
+      const heading = Number.isFinite(pos.coords.heading) ? pos.coords.heading : null;
       const ahora = Date.now();
-      updateDriverPosition({ lat, lng });
+      updateDriverPosition({ lat, lng, heading });
 
       if (map) {
         if (!motoristaMarker) {
           motoristaMarker = L.marker([lat, lng], { icon: motoIcon }).addTo(map);
           map.setView([lat, lng], 16);
-        } else {
-          motoristaMarker.setLatLng([lat, lng]);
         }
+
+        setMotorcycleMarkerPose(
+          motoristaMarker,
+          map,
+          { lat, lng },
+          {
+            routeCoords: getRutaActualCoords(),
+            heading,
+            maxSnapDistanceMeters: 85
+          }
+        );
       }
 
       const movidoSuficiente = !ultimaPosicion ||
@@ -40,7 +53,7 @@ export function initGPS(socket) {
       if ((movidoSuficiente && tiempoSuficiente) || heartbeatNecesario) {
         ultimaPosicion = { lat, lng };
         ultimaEmisionTime = ahora;
-        socket.emit("motoristas:ubicacion", { lat, lng, heartbeat: !movidoSuficiente, disponible: true });
+        socket.emit("motoristas:ubicacion", { lat, lng, heading, heartbeat: !movidoSuficiente, disponible: true });
       }
     },
     (err) => console.error("GPS error:", err),

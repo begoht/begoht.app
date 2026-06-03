@@ -54,4 +54,6 @@
 
 .bego-map-icon-moto {
   filter: drop-shadow(0 8px 10px rgba(37, 99, 235, 0.28));
+  transition: transform 220ms linear;
+  will-change: transform;
 }

@@ -4,10 +4,11 @@ const {
   obtenerReservaPorMotorista
 } = require("../services/reservaRoute.service");
 
-module.exports = async (io, motoristaId, { lat, lng }) => {
+module.exports = async (io, motoristaId, { lat, lng, heading = null }) => {
   try {
     const nLat = Number(lat);
     const nLng = Number(lng);
+    const nHeading = heading == null || heading === "" ? null : Number(heading);
 
     if (Number.isNaN(nLat) || Number.isNaN(nLng)) return;
 
@@ -28,6 +29,7 @@ module.exports = async (io, motoristaId, { lat, lng }) => {
       viajeId: reserva._id.toString(),
       lat: nLat,
       lng: nLng,
+      heading: nHeading != null && Number.isFinite(nHeading) ? nHeading : null,
       estado: "reservado",
       origen: reserva.origen || null,
       destino: reserva.destino || null,

@@ -15,7 +15,7 @@ import {
   renderRutaReserva,
   renderLineaRecta,
   limpiarRuta
-} from "./ui/map.route.renderer.js";
+} from "./ui/map.route.renderer.js?v=20260603-road-heading";
 
 let ultimaRutaCalculada = 0;
 

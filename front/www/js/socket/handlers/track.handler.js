@@ -1,7 +1,7 @@
 import { viajeState } from "../../viaje/viaje.state.js";
-import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260603-transparent-icons";
+import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260603-road-heading";
 import { mostrarDestinoEnMapa } from "../../map/map.destino.js";
-import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js";
+import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260603-road-heading";
 import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js";
 import { getMap } from "../../map/map.singleton.js";
 
@@ -50,6 +50,7 @@ export const handleTrack = (data) => {
   const {
     lat,
     lng,
+    heading,
     estado: estadoServer,
     origen,
     destino,
@@ -67,7 +68,7 @@ export const handleTrack = (data) => {
    * 1. MOTORISTA SIEMPRE
    *************************************************/
   limpiarMotoristas();
-  mostrarMotoristaEnMapa({ lat, lng });
+  mostrarMotoristaEnMapa({ lat, lng, heading });
 
   /*************************************************
    * 2. FILTRO DE ESTADO (CRÍTICO)
@@ -98,7 +99,8 @@ export const handleTrack = (data) => {
   viajeState.motorista = {
     ...viajeState.motorista,
     lat,
-    lng
+    lng,
+    heading
   };
 
   if (origen) viajeState.origen = origen;

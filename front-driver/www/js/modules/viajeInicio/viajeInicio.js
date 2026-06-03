@@ -4,11 +4,11 @@ import {
     viajesActivos 
 } from "../viajeControl/viajeEstado.js"; 
 import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js";
-import { getUltimaPosicion } from "../gps.js";
-import { dibujarRutaPremium } from "../map.js";
+import { getUltimaPosicion } from "../gps.js?v=20260603-road-heading";
+import { dibujarRutaPremium } from "../map.js?v=20260603-road-heading";
 import { UI_REFS, llegadaTimeout } from "./viajeInicioEstado.js";
-import { limpiarInterfazViaje, redibujarRutaRecovery } from "./viajeInicioUI.js";
-import { initViajeRecovery } from "./viajeRecovery.js";
+import { limpiarInterfazViaje, redibujarRutaRecovery } from "./viajeInicioUI.js?v=20260603-road-heading";
+import { initViajeRecovery } from "./viajeRecovery.js?v=20260603-road-heading";
 
 export function initViajeInicio(socket, detenerSimulacionETA) {
     if (!socket) return console.error("Socket no disponible en ViajeInicio");

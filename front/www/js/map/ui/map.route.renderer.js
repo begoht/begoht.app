@@ -2,12 +2,20 @@ let rutaActualLayer = null;
 
 let puntoIntermedioMarker = null;
 
+let rutaActualCoords = [];
+
+export function getRutaActualCoords() {
+  return rutaActualCoords.map((coord) => ({ ...coord }));
+}
+
 /*************************************************
  * 🎨 RENDER RUTA PREMIUM
  *************************************************/
 export function renderRuta(map, coords) {
 
   limpiarRuta(map);
+
+  rutaActualCoords = normalizarCoords(coords);
 
   const outline = L.polyline(coords, {
     color: "#020617",
@@ -45,6 +53,10 @@ export function renderRutaReserva(
   limpiarRuta(map);
 
   const layers = [];
+  const coordsNormalizados = [
+    ...normalizarCoords(coordsActual || []),
+    ...normalizarCoords(coordsHaciaPasajero || [])
+  ];
 
   if (coordsActual?.length) {
     layers.push(
@@ -68,6 +80,8 @@ export function renderRutaReserva(
   }
 
   if (!layers.length) return null;
+
+  rutaActualCoords = coordsNormalizados;
 
   rutaActualLayer = L.layerGroup(layers).addTo(map);
 
@@ -99,6 +113,11 @@ export function renderLineaRecta(
 ) {
 
   limpiarRuta(map);
+
+  rutaActualCoords = normalizarCoords([
+    [origen.lat, origen.lng],
+    [destino.lat, destino.lng]
+  ]);
 
   rutaActualLayer = L.polyline([
     [origen.lat, origen.lng],
@@ -150,6 +169,7 @@ export function limpiarRuta(map) {
     }
 
     rutaActualLayer = null;
+    rutaActualCoords = [];
     puntoIntermedioMarker = null;
 
   } catch (err) {
@@ -159,4 +179,14 @@ export function limpiarRuta(map) {
       err.message
     );
   }
+}
+
+function normalizarCoords(coords = []) {
+  return coords
+    .map((coord) => {
+      const lat = Number(coord?.lat ?? coord?.[0]);
+      const lng = Number(coord?.lng ?? coord?.[1]);
+      return Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : null;
+    })
+    .filter(Boolean);
 }

@@ -1,4 +1,4 @@
-import { isDriverOnline, updateDriverPosition } from "./driver.status.js";
+import { isDriverOnline, updateDriverPosition } from "./driver.status.js?v=20260603-road-heading";
 
 let socketInstance = null;
 
@@ -38,6 +38,7 @@ export function initSocket(serverUrl, token) {
     
     navigator.geolocation.getCurrentPosition(
       (pos) => {
+        const heading = Number.isFinite(pos.coords.heading) ? pos.coords.heading : null;
         updateDriverPosition({
           lat: pos.coords.latitude,
           lng: pos.coords.longitude
@@ -45,6 +46,7 @@ export function initSocket(serverUrl, token) {
         socketInstance.emit("motoristas:ubicacion", {
           lat: pos.coords.latitude,
           lng: pos.coords.longitude,
+          heading,
           disponible: isDriverOnline()
         });
       },

@@ -37,7 +37,8 @@ module.exports = async (io, motoristaId, { lat, lng, disponible = true }) => {
       return {
         id: ids[i],
         lat: parseFloat(data.lat),
-        lng: parseFloat(data.lng)
+        lng: parseFloat(data.lng),
+        heading: data.heading !== "" && data.heading != null ? parseFloat(data.heading) : null
       };
     })
     .filter(Boolean);

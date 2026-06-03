@@ -3,6 +3,7 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
 
 let markerDriver, markerOrigen, markerDestino;
 let driverPhone = "";
+let lastDriverLatLng = null;
 
 async function cargarViaje() {
     try {
@@ -28,12 +29,13 @@ async function cargarViaje() {
         }
         if (motorista.ubicacion) {
             const motoIcon = L.icon({
-                iconUrl: "/assets/icons/moto-transparent.svg?v=20260603-transparent-icons",
+                iconUrl: "/assets/icons/moto-transparent.svg?v=20260603-road-heading",
                 iconSize: [44, 44],
                 iconAnchor: [22, 22],
                 className: "bego-map-icon bego-map-icon-moto"
             });
             markerDriver = L.marker([motorista.ubicacion.lat, motorista.ubicacion.lng], { icon: motoIcon }).addTo(map);
+            lastDriverLatLng = { lat: motorista.ubicacion.lat, lng: motorista.ubicacion.lng };
             map.setView([motorista.ubicacion.lat, motorista.ubicacion.lng], 15);
         }
 
@@ -57,11 +59,12 @@ function iniciarTracking(token) {
         if (!pos?.lat || !pos?.lng) return;
 
         const latLng = [pos.lat, pos.lng];
+        const nextLatLng = { lat: pos.lat, lng: pos.lng };
         if (markerDriver) {
             markerDriver.setLatLng(latLng);
         } else {
             const motoIcon = L.icon({
-                iconUrl: "/assets/icons/moto-transparent.svg?v=20260603-transparent-icons",
+                iconUrl: "/assets/icons/moto-transparent.svg?v=20260603-road-heading",
                 iconSize: [44, 44],
                 iconAnchor: [22, 22],
                 className: "bego-map-icon bego-map-icon-moto"
@@ -69,7 +72,36 @@ function iniciarTracking(token) {
             markerDriver = L.marker(latLng, { icon: motoIcon }).addTo(map);
         }
 
+        aplicarRumbo(markerDriver, pos.heading ?? calcularRumbo(lastDriverLatLng, nextLatLng));
+        lastDriverLatLng = nextLatLng;
         map.panTo(latLng);
+    });
+}
+
+function calcularRumbo(from, to) {
+    if (!from || !to) return null;
+    const toRad = value => value * Math.PI / 180;
+    const toDeg = value => value * 180 / Math.PI;
+    const lat1 = toRad(from.lat);
+    const lat2 = toRad(to.lat);
+    const dLng = toRad(to.lng - from.lng);
+    const y = Math.sin(dLng) * Math.cos(lat2);
+    const x = Math.cos(lat1) * Math.sin(lat2) -
+        Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng);
+    return (toDeg(Math.atan2(y, x)) + 360) % 360;
+}
+
+function aplicarRumbo(marker, heading) {
+    if (!marker || heading == null || !Number.isFinite(Number(heading))) return;
+
+    requestAnimationFrame(() => {
+        const element = marker.getElement?.();
+        if (!element) return;
+        const base = (element.style.transform || "")
+            .replace(/\srotate\([-0-9.]+deg\)/g, "")
+            .trim();
+        element.style.transformOrigin = "50% 50%";
+        element.style.transform = `${base} rotate(${(Number(heading) - 90).toFixed(1)}deg)`;
     });
 }
 

@@ -351,8 +351,9 @@ io.on("connection", async (socket) => {
          * 📍 ÚLTIMA POSICIÓN DEL MOTORISTA
         *************************************************/
        
-       let lat = null;
-       let lng = null;
+          let lat = null;
+          let lng = null;
+          let heading = null;
        
        if (ctx.motoristaId) {
          
@@ -365,8 +366,11 @@ io.on("connection", async (socket) => {
             try {
               const pos = JSON.parse(posRaw);
               
-              lat = pos.lat;
-              lng = pos.lng;
+               lat = pos.lat;
+               lng = pos.lng;
+               heading = pos.heading != null && Number.isFinite(Number(pos.heading))
+                 ? Number(pos.heading)
+                 : null;
               
             } catch {}
           }
@@ -381,6 +385,7 @@ io.on("connection", async (socket) => {
             if (mData?.lat && mData?.lng) {
               lat = parseFloat(mData.lat);
               lng = parseFloat(mData.lng);
+              heading = mData.heading ? parseFloat(mData.heading) : null;
             }
           }
         }
@@ -406,6 +411,7 @@ io.on("connection", async (socket) => {
           viajeId,
           lat,
           lng,
+          heading,
           estado: ctx.estado,
           origen: ctx.origen,
           destino: ctx.destino,

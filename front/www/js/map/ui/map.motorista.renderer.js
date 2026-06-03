@@ -1,33 +1,30 @@
 import { viajeState } from "../../viaje/viaje.state.js";
+import { motoIcon } from "../map.icons.js?v=20260603-road-heading";
+import { getRutaActualCoords } from "./map.route.renderer.js?v=20260603-road-heading";
+import {
+  setMotorcycleMarkerPose
+} from "../utils/map.motorcycle.motion.js?v=20260603-road-heading";
 
-import { motoIcon } from "../map.icons.js?v=20260603-transparent-icons";
-
-/*************************************************
- * 🛵 RENDER MOTORISTA ASIGNADO
- *************************************************/
-export function renderMotorista(
-  map,
-  motorista
-) {
-
+export function renderMotorista(map, motorista) {
   if (!map || !motorista) return;
 
-  const {
-    lat,
-    lng,
-    nombre
-  } = motorista;
-
+  const { lat, lng, nombre, heading } = motorista;
   if (lat == null || lng == null) return;
 
   if (
     viajeState.motoristaMarker &&
     map.hasLayer?.(viajeState.motoristaMarker)
   ) {
-
-    viajeState.motoristaMarker
-      .setLatLng([lat, lng]);
-
+    setMotorcycleMarkerPose(
+      viajeState.motoristaMarker,
+      map,
+      { lat, lng },
+      {
+        routeCoords: getRutaActualCoords(),
+        heading,
+        maxSnapDistanceMeters: 85
+      }
+    );
   } else {
     if (viajeState.motoristaMarker) {
       try {
@@ -35,17 +32,27 @@ export function renderMotorista(
       } catch {}
     }
 
-    viajeState.motoristaMarker =
-      L.marker([lat, lng], {
-        icon: motoIcon
-      })
+    viajeState.motoristaMarker = L.marker([lat, lng], {
+      icon: motoIcon
+    })
       .addTo(map)
-      .bindPopup(
-        `🛵 ${nombre || "Motorista"}`
-      );
+      .bindPopup(`Motorista: ${nombre || "Motorista"}`);
+
+    setMotorcycleMarkerPose(
+      viajeState.motoristaMarker,
+      map,
+      { lat, lng },
+      {
+        routeCoords: getRutaActualCoords(),
+        heading,
+        maxSnapDistanceMeters: 85
+      }
+    );
   }
 
-  map.panTo([lat, lng], {
+  const markerPos = viajeState.motoristaMarker?.getLatLng?.() || { lat, lng };
+
+  map.panTo(markerPos, {
     animate: true,
     duration: 0.8
   });
@@ -53,21 +60,11 @@ export function renderMotorista(
   viajeState.motoristaMarker?.openPopup?.();
 }
 
-/*************************************************
- * ❌ ELIMINAR MOTORISTA
- *************************************************/
-export function removeMotorista(
-  map
-) {
-
+export function removeMotorista(map) {
   if (!map) return;
 
   if (viajeState.motoristaMarker) {
-
-    map.removeLayer(
-      viajeState.motoristaMarker
-    );
-
+    map.removeLayer(viajeState.motoristaMarker);
     viajeState.motoristaMarker = null;
   }
 }

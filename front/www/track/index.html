@@ -66,6 +66,16 @@
             border-top-color: #6c5ce7;
         }
 
+        .leaflet-marker-icon.moto-live-icon,
+        .moto-live-icon {
+            background: transparent !important;
+            border: 0 !important;
+            box-shadow: none !important;
+            filter: drop-shadow(0 8px 10px rgba(37, 99, 235, 0.28));
+            transition: transform 220ms linear;
+            will-change: transform;
+        }
+
         /* Labels del Mapa Estilo Cabify */
         .custom-label { background: #6c5ce7; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; border: none; }
     </style>
@@ -108,7 +118,7 @@
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
-<script src="./seguir.js"></script>
+<script src="./seguir.js?v=20260603-road-heading"></script>
 
 </body>
 </html>

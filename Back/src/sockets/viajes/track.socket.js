@@ -47,6 +47,7 @@ async function joinTracking(io, socket, token, ack) {
       viajeId,
       lat: posicion.lat ?? null,
       lng: posicion.lng ?? null,
+      heading: posicion.heading ?? null,
       estado: ctx.estado,
       origen: ctx.origen,
       destino: ctx.destino,
@@ -73,7 +74,10 @@ async function obtenerUltimaPosicion(motoristaId) {
       const pos = JSON.parse(posRaw);
       return {
         lat: Number(pos.lat),
-        lng: Number(pos.lng)
+        lng: Number(pos.lng),
+        heading: pos.heading != null && Number.isFinite(Number(pos.heading))
+          ? Number(pos.heading)
+          : null
       };
     } catch {}
   }
@@ -81,7 +85,8 @@ async function obtenerUltimaPosicion(motoristaId) {
   const data = await redis.hgetall(`motorista:data:${motoristaId}`);
   return {
     lat: data?.lat != null ? Number(data.lat) : null,
-    lng: data?.lng != null ? Number(data.lng) : null
+    lng: data?.lng != null ? Number(data.lng) : null,
+    heading: data?.heading !== "" && data?.heading != null ? Number(data.heading) : null
   };
 }
 

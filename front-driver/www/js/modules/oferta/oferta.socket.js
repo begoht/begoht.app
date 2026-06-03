@@ -2,11 +2,11 @@ import { renderOferta, limpiarOferta } from "./oferta.render.js?v=20260602-offer
 import { agregarACola } from "./oferta.queue.js";
 import { seenOfertas, ofertaState, CONFIG, getViajeId } from "./oferta.state.js";
 import { notificar, reproducirSonido } from "./oferta.ui.js?v=20260602-offer-ui-singleton";
-import { registrarViaje } from "../viajeControl/viajeControl.js";
+import { registrarViaje } from "../viajeControl/viajeControl.js?v=20260603-road-heading";
 import { setViajeEnCurso } from "../viajeControl/viajeEstado.js";
-import { dibujarRutaPremium } from "../map.js";
-import { getUltimaPosicion } from "../gps.js";
-import { isDriverOnline } from "../driver.status.js";
+import { dibujarRutaPremium } from "../map.js?v=20260603-road-heading";
+import { getUltimaPosicion } from "../gps.js?v=20260603-road-heading";
+import { isDriverOnline } from "../driver.status.js?v=20260603-road-heading";
 
 const viajesTomadosProcesados = new Set();
 
