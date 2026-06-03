@@ -7,6 +7,8 @@ let polylineTrayectoria = null;
 let puntosTrayectoria = [];
 let ultimoTrackKey = "";
 let ultimaMotoPos = null;
+let viajeActualId = null;
+let trackingCerrado = false;
 
 const GPS_HEADING_ACCEPT_DEG = 75;
 const GPS_FLIP_GUARD_DEG = 135;
@@ -19,21 +21,28 @@ async function init() {
   const token = obtenerTokenSeguro();
 
   if (!token) {
-    mostrarError("Link invalido.");
+    mostrarError("Link invalido");
     return;
   }
 
   try {
     const viaje = await obtenerViaje(token);
-
+    viajeActualId = viaje?._id || viaje?.id || null;
     puntosTrayectoria = normalizarTrayectoria(viaje.trayectoriaReal);
 
     actualizarUI(viaje);
     initMapa(viaje);
-    iniciarSocket(token);
+
+    if (esEstadoFinal(viaje.estado)) {
+      finalizarSeguimiento({ viaje }, { initial: true });
+    } else {
+      iniciarSocket(token);
+    }
+
+    setReady();
   } catch (error) {
     console.error("Error iniciando seguimiento:", error);
-    mostrarError("El viaje no esta disponible o el enlace expiro.");
+    mostrarError("El viaje no esta disponible o el enlace expiro");
   }
 }
 
@@ -68,27 +77,33 @@ function iniciarSocket(token) {
   });
 
   socket.on("connect", () => {
-    socket.emit("track:join", { token });
+    socket.emit("track:join", { token }, (ack = {}) => {
+      if (!ack.ok) {
+        mostrarError(ack.message || "El seguimiento no esta disponible");
+        return;
+      }
+
+      viajeActualId = ack.viajeId || viajeActualId;
+    });
   });
 
   socket.on("track:posicion", actualizarMotorista);
-
-  socket.on("viaje-finalizado", () => {
-    setText("tripStatus", textoEstado("finalizado"));
-  });
+  socket.on("viaje-finalizado", finalizarSeguimiento);
+  socket.on("track:cerrado", finalizarSeguimiento);
 
   socket.on("track:error", (payload = {}) => {
     console.warn("Tracking rechazado:", payload);
-    mostrarError(payload.message || "El seguimiento no esta disponible.");
+    mostrarError(payload.message || "El seguimiento no esta disponible");
   });
 }
 
-function actualizarUI(viaje) {
-  setText("originText", viaje.origen?.direccion || "Origen");
-  setText("destText", viaje.destino?.direccion || "Destino");
+function actualizarUI(viaje = {}) {
+  setText("originText", viaje.origen?.direccion || "Origen no disponible");
+  setText("destText", viaje.destino?.direccion || "Destino no disponible");
   setText("driverName", nombreMotorista(viaje.motorista));
   setText("carModel", descripcionVehiculo(viaje.motorista));
   setText("carPlate", placaMotorista(viaje.motorista));
+  actualizarEstadoVisual(viaje.estado);
 
   const driverImg = document.getElementById("driverImg");
   if (driverImg) {
@@ -99,31 +114,44 @@ function actualizarUI(viaje) {
   if (callBtn) {
     callBtn.href = viaje.motorista?.telefono ? `tel:${viaje.motorista.telefono}` : "#";
   }
-
-  setText("tripStatus", textoEstado(viaje.estado));
 }
 
-function initMapa(viaje) {
-  const origen = normalizarPunto(viaje.origen);
+function actualizarEstadoVisual(estado) {
+  const finalizado = esEstadoFinal(estado);
+  setText("tripStatus", textoEstado(estado));
+  setText("stateChipText", finalizado ? "Cerrado" : "En vivo");
+  setText("etaLabel", finalizado ? "Estado" : "Estado");
+  setText("etaValue", finalizado ? "Listo" : "Live");
+  setText("tripEyebrow", finalizado ? "Seguimiento cerrado" : "Seguimiento privado");
+}
+
+function initMapa(viaje = {}) {
+  const origen = normalizarPunto(viaje.origen) || [18.5405, -72.3348];
   const destino = normalizarPunto(viaje.destino);
 
-  if (!origen) {
-    throw new Error("Origen invalido");
-  }
-
-  map = L.map("map", { zoomControl: false }).setView(origen, 15);
+  map = L.map("map", {
+    zoomControl: false,
+    attributionControl: false,
+    dragging: true,
+    tap: true
+  }).setView(origen, 15);
 
   L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
-    attribution: "OpenStreetMap"
+    maxZoom: 19
   }).addTo(map);
 
-  L.marker(origen).addTo(map).bindTooltip("Recogida", {
-    permanent: true,
-    direction: "top",
-    className: "custom-label"
-  });
+  L.control.zoom({ position: "bottomright" }).addTo(map);
 
-  const bounds = [origen];
+  const bounds = [];
+
+  if (origen) {
+    L.marker(origen).addTo(map).bindTooltip("Origen", {
+      permanent: true,
+      direction: "top",
+      className: "custom-label"
+    });
+    bounds.push(origen);
+  }
 
   if (destino) {
     L.marker(destino).addTo(map).bindTooltip("Destino", {
@@ -131,48 +159,109 @@ function initMapa(viaje) {
       direction: "top",
       className: "custom-label"
     });
-
     bounds.push(destino);
+
     const ruta = normalizarRuta(viaje.rutaPoints, origen, destino);
-    L.polyline(ruta, { color: "#bdc3c7", weight: 4, opacity: 0.55 }).addTo(map);
+    L.polyline(ruta, {
+      color: "#0f172a",
+      weight: 7,
+      opacity: 0.18,
+      lineJoin: "round"
+    }).addTo(map);
+    L.polyline(ruta, {
+      color: "#2563eb",
+      weight: 4,
+      opacity: 0.88,
+      lineJoin: "round"
+    }).addTo(map);
   }
 
   polylineTrayectoria = L.polyline(puntosTrayectoria, {
-    color: "#6c5ce7",
-    weight: 6,
-    opacity: 0.9
+    color: "#22c55e",
+    weight: 5,
+    opacity: 0.88,
+    lineJoin: "round"
   }).addTo(map);
 
   const posMoto = normalizarPunto(viaje.motorista?.ubicacion);
-  if (posMoto) {
+  if (posMoto && !esEstadoFinal(viaje.estado)) {
     crearOMoverMotorista(posMoto);
     agregarPuntoTrayectoria(posMoto);
     bounds.push(posMoto);
   }
 
   if (bounds.length > 1) {
-    map.fitBounds(L.latLngBounds(bounds), { padding: [50, 50] });
+    map.fitBounds(L.latLngBounds(bounds), { padding: [62, 62] });
   }
 }
 
 function actualizarMotorista(pos = {}) {
+  if (trackingCerrado) return;
+
   const nuevaPos = normalizarPunto(pos);
-  if (!nuevaPos || !map) return;
+  const estado = pos.estado || pos.viaje?.estado || null;
 
-  const key = `${pos.viajeId || ""}:${pos.estado || ""}:${nuevaPos[0].toFixed(6)}:${nuevaPos[1].toFixed(6)}`;
-  if (key === ultimoTrackKey && !pos.isSnapshot) return;
-  ultimoTrackKey = key;
-
-  crearOMoverMotorista(nuevaPos, pos.heading);
-  agregarPuntoTrayectoria(nuevaPos);
-
-  if (pos.estado) {
-    setText("tripStatus", textoEstado(pos.estado));
+  if (estado) {
+    actualizarEstadoVisual(estado);
   }
 
-  if (!map.getBounds().pad(-0.25).contains(nuevaPos)) {
-    map.panTo(nuevaPos, { animate: true, duration: 0.5 });
+  if (nuevaPos && map) {
+    const key = `${pos.viajeId || ""}:${estado || ""}:${nuevaPos[0].toFixed(6)}:${nuevaPos[1].toFixed(6)}`;
+    if (key !== ultimoTrackKey || pos.isSnapshot) {
+      ultimoTrackKey = key;
+      crearOMoverMotorista(nuevaPos, pos.heading);
+      agregarPuntoTrayectoria(nuevaPos);
+
+      if (!map.getBounds().pad(-0.25).contains(nuevaPos)) {
+        map.panTo(nuevaPos, { animate: true, duration: 0.5 });
+      }
+    }
   }
+
+  if (esEstadoFinal(estado)) {
+    finalizarSeguimiento({ viajeId: pos.viajeId, viaje: pos });
+  }
+}
+
+function finalizarSeguimiento(payload = {}, { initial = false } = {}) {
+  if (trackingCerrado && !initial) return;
+
+  const viaje = payload.viaje || payload;
+  viajeActualId = payload.viajeId || viaje?._id || viaje?.id || viajeActualId;
+  trackingCerrado = true;
+
+  if (viaje?.origen || viaje?.destino || viaje?.motorista) {
+    actualizarUI({
+      ...viaje,
+      estado: "finalizado"
+    });
+  }
+
+  actualizarEstadoVisual("finalizado");
+  setText("finalTitle", "Viaje finalizado");
+  setText("finalSubtitle", "El seguimiento en vivo se cerro correctamente.");
+  document.body.classList.add("trip-ended");
+
+  if (motoristaMarker) {
+    motoristaMarker.setOpacity?.(0.72);
+  }
+
+  cerrarSocketPublico();
+  setReady();
+}
+
+function cerrarSocketPublico() {
+  if (!socket) return;
+
+  if (viajeActualId) {
+    socket.emit("track:leave", { viajeId: viajeActualId });
+  }
+
+  socket.off("track:posicion", actualizarMotorista);
+  socket.off("viaje-finalizado", finalizarSeguimiento);
+  socket.off("track:cerrado", finalizarSeguimiento);
+  socket.disconnect();
+  socket = null;
 }
 
 function crearOMoverMotorista(latLng, heading = null) {
@@ -219,13 +308,13 @@ function normalizarPunto(punto) {
   const lat = Number(Array.isArray(punto) ? punto[0] : punto.lat);
   const lng = Number(Array.isArray(punto) ? punto[1] : punto.lng);
 
-  if (Number.isNaN(lat) || Number.isNaN(lng)) return null;
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
   return [lat, lng];
 }
 
 function iconoMoto() {
   return L.icon({
-    iconUrl: "/assets/icons/moto-transparent.svg?v=20260603-road-heading-stable",
+    iconUrl: "/assets/icons/moto-transparent.svg?v=20260603-track-premium",
     iconSize: [44, 44],
     iconAnchor: [22, 22],
     className: "moto-live-icon"
@@ -337,7 +426,7 @@ function distanciaEntrePuntos(from, to) {
 }
 
 function nombreMotorista(motorista = {}) {
-  return [motorista.nombre, motorista.apellido].filter(Boolean).join(" ") || "Conductor";
+  return [motorista.nombre, motorista.apellido].filter(Boolean).join(" ") || "Motorista BeGO";
 }
 
 function descripcionVehiculo(motorista = {}) {
@@ -355,12 +444,18 @@ function textoEstado(estado) {
   const textos = {
     reservado: "Motorista reservado",
     asignado: "Moto en camino",
+    aceptado: "Moto en camino",
     llego: "El motorista llego",
     en_curso: "Viaje en curso",
-    finalizado: "Viaje finalizado"
+    finalizado: "Viaje finalizado",
+    cancelado: "Seguimiento cerrado"
   };
 
   return textos[estado] || "Seguimiento en vivo";
+}
+
+function esEstadoFinal(estado) {
+  return ["finalizado", "cancelado", "expirado"].includes(String(estado || "").toLowerCase());
 }
 
 function setText(id, text) {
@@ -368,7 +463,18 @@ function setText(id, text) {
   if (el) el.innerText = text;
 }
 
+function setReady() {
+  document.body.classList.add("ready");
+}
+
 function mostrarError(message) {
   setText("tripStatus", message);
-  alert(message);
+  setText("tripEyebrow", "Seguimiento no disponible");
+  setText("stateChipText", "Cerrado");
+  setText("etaValue", "Error");
+  setText("finalTitle", "Seguimiento no disponible");
+  setText("finalSubtitle", message);
+  document.body.classList.add("trip-ended");
+  cerrarSocketPublico();
+  setReady();
 }

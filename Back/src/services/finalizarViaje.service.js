@@ -464,7 +464,9 @@ module.exports = async function finalizarViaje({ io, socket, viajeId, motoristaI
     io
       .to(`viaje:${viajeId}`)
       .to(`motorista:${motoristaId}`)
+      .to(`track:${viajeId}`)
       .emit("viaje-finalizado", finalizadoPayload);
+    io.to(`track:${viajeId}`).emit("track:cerrado", finalizadoPayload);
     io.to(`motorista:${motoristaId}`).emit("driver:actividad-actualizada", finalizadoPayload);
     enviarReciboFinalizacion(viaje, viajeId, total);
 
