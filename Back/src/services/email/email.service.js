@@ -3,6 +3,7 @@ const EmailLog = require("../../models/EmailLog");
 const { generarPdfRecibo } = require("./pdf.service");
 
 const emailConfig = {
+  provider: String(process.env.EMAIL_PROVIDER || (process.env.RESEND_API_KEY ? "resend" : "smtp")).toLowerCase(),
   host: process.env.EMAIL_HOST || process.env.SMTP_HOST || "smtp.gmail.com",
   port: Number(process.env.EMAIL_PORT || process.env.SMTP_PORT || 465),
   secure: process.env.EMAIL_SECURE != null
@@ -10,13 +11,16 @@ const emailConfig = {
     : Number(process.env.EMAIL_PORT || process.env.SMTP_PORT || 465) === 465,
   user: process.env.EMAIL_USER || process.env.MAIL_USER,
   pass: process.env.EMAIL_PASS || process.env.MAIL_PASS,
+  resendApiKey: process.env.RESEND_API_KEY || "",
+  resendApiUrl: process.env.RESEND_API_URL || "https://api.resend.com",
   from: process.env.EMAIL_FROM || null,
 };
 
 emailConfig.from = emailConfig.from || (emailConfig.user ? `"BeGO" <${emailConfig.user}>` : "");
 
-const emailConfigured = Boolean(emailConfig.user && emailConfig.pass);
-const transporter = emailConfigured
+const resendConfigured = emailConfig.provider === "resend" && Boolean(emailConfig.resendApiKey && emailConfig.from);
+const smtpConfigured = Boolean(emailConfig.user && emailConfig.pass);
+const transporter = smtpConfigured
   ? nodemailer.createTransport({
       host: emailConfig.host,
       port: emailConfig.port,
@@ -51,12 +55,98 @@ function escapeHtml(value = "") {
     .replace(/'/g, "&#039;");
 }
 
+function activeEmailProvider() {
+  if (resendConfigured) return "resend";
+  if (transporter) return "smtp";
+  return emailConfig.provider;
+}
+
+function emailIsConfigured() {
+  return resendConfigured || Boolean(transporter);
+}
+
+function missingConfigMessage() {
+  if (emailConfig.provider === "resend") {
+    return "RESEND_API_KEY y EMAIL_FROM no estan configurados";
+  }
+  return "EMAIL_USER y EMAIL_PASS no estan configurados";
+}
+
+async function sendWithResend({ to, subject, html, attachments = [], idempotencyKey }) {
+  const response = await fetch(`${emailConfig.resendApiUrl.replace(/\/$/, "")}/emails`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${emailConfig.resendApiKey}`,
+      "Content-Type": "application/json",
+      ...(idempotencyKey ? { "Idempotency-Key": idempotencyKey } : {}),
+    },
+    body: JSON.stringify({
+      from: emailConfig.from,
+      to,
+      subject,
+      html,
+      attachments: attachments.map((attachment) => ({
+        filename: attachment.filename,
+        content: Buffer.isBuffer(attachment.content)
+          ? attachment.content.toString("base64")
+          : attachment.content,
+      })),
+    }),
+  });
+
+  const raw = await response.text();
+  let data = {};
+  try {
+    data = raw ? JSON.parse(raw) : {};
+  } catch {
+    data = { message: raw };
+  }
+
+  if (!response.ok) {
+    throw new Error(data.message || data.error || `Resend API error ${response.status}`);
+  }
+
+  return { messageId: data.id, provider: "resend", raw: data };
+}
+
+async function sendEmail({ to, subject, html, attachments = [], idempotencyKey }) {
+  if (resendConfigured) {
+    return sendWithResend({ to, subject, html, attachments, idempotencyKey });
+  }
+
+  if (transporter) {
+    const info = await transporter.sendMail({
+      from: emailConfig.from,
+      to,
+      subject,
+      html,
+      attachments,
+    });
+
+    return { messageId: info.messageId, provider: "smtp", raw: info };
+  }
+
+  throw new Error(missingConfigMessage());
+}
+
 async function verificarConexionEmail() {
+  if (resendConfigured) {
+    return {
+      ok: true,
+      configured: true,
+      provider: "resend",
+      apiUrl: emailConfig.resendApiUrl,
+      from: emailConfig.from,
+      message: "Resend API configurado. Usa /api/admin/email/test para validar envio.",
+    };
+  }
+
   if (!transporter) {
     return {
       ok: false,
       configured: false,
-      message: "EMAIL_USER y EMAIL_PASS no estan configurados",
+      provider: emailConfig.provider,
+      message: missingConfigMessage(),
     };
   }
 
@@ -65,6 +155,7 @@ async function verificarConexionEmail() {
     return {
       ok: true,
       configured: true,
+      provider: "smtp",
       host: emailConfig.host,
       port: emailConfig.port,
       secure: emailConfig.secure,
@@ -75,6 +166,7 @@ async function verificarConexionEmail() {
     return {
       ok: false,
       configured: true,
+      provider: "smtp",
       host: emailConfig.host,
       port: emailConfig.port,
       secure: emailConfig.secure,
@@ -129,13 +221,13 @@ async function enviarResumenViaje(datos) {
     return false;
   }
 
-  if (!transporter) {
+  if (!emailIsConfigured()) {
     await registrarEmail({
       viajeId,
       pasajeroId,
       email,
       estado: "error",
-      error: "EMAIL_USER y EMAIL_PASS no estan configurados",
+      error: missingConfigMessage(),
     });
     return false;
   }
@@ -151,8 +243,7 @@ async function enviarResumenViaje(datos) {
   const totalText = formatMoney(total);
 
   try {
-    const info = await transporter.sendMail({
-      from: emailConfig.from,
+    const info = await sendEmail({
       to: email,
       subject: `Votre recu BeGO - ${fechaActual}`,
       html: `
@@ -194,6 +285,7 @@ async function enviarResumenViaje(datos) {
           contentType: "application/pdf",
         },
       ],
+      idempotencyKey: `receipt-${viajeId}`,
     });
 
     await registrarEmail({
@@ -221,10 +313,11 @@ async function enviarResumenViaje(datos) {
 
 async function enviarEmailPrueba(to) {
   if (!to) throw new Error("Destino requerido");
-  if (!transporter) throw new Error("EMAIL_USER y EMAIL_PASS no estan configurados");
+  if (!emailIsConfigured()) throw new Error(missingConfigMessage());
 
-  return transporter.sendMail({
-    from: emailConfig.from,
+  const providerLabel = activeEmailProvider() === "resend" ? "Resend HTTPS API" : "SMTP";
+
+  return sendEmail({
     to,
     subject: "BeGO email conectado",
     html: `
@@ -232,10 +325,11 @@ async function enviarEmailPrueba(to) {
         <h1 style="margin:0 0 8px;font-size:28px;">BeGO</h1>
         <p style="color:#cbd5e1;line-height:1.5;">El correo de produccion esta conectado correctamente.</p>
         <div style="margin-top:24px;padding:16px;border:1px solid rgba(96,165,250,.35);border-radius:14px;background:rgba(37,99,235,.16);">
-          <strong>Estado:</strong> SMTP activo
+          <strong>Estado:</strong> ${providerLabel} activo
         </div>
       </div>
     `,
+    idempotencyKey: `test-${Date.now()}`,
   });
 }
 
