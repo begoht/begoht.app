@@ -61,9 +61,9 @@ function hydrateUser() {
     safeJson(localStorage.getItem("user")) ||
     {};
 
-  const nombre = [user.nombre, user.apellido].filter(Boolean).join(" ").trim() || "Invitado";
+  const nombre = [user.nombre, user.apellido].filter(Boolean).join(" ").trim() || "Invite";
   const iniciales = `${user.nombre?.[0] || "B"}${user.apellido?.[0] || ""}`.toUpperCase();
-  const phoneOrEmail = user.telefono || user.email || "Cuenta BeGO protegida";
+  const phoneOrEmail = user.telefono || user.email || "Compte BeGO protege";
 
   const nameEl = document.getElementById("configUserName");
   const metaEl = document.getElementById("configUserMeta");

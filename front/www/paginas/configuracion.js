@@ -1,14 +1,14 @@
 export function renderConfiguracion() {
   return `
   <div class="css-config">
-    <main class="config-main">
+    <section class="config-main">
       <section class="config-hero">
         <div>
-          <span class="config-kicker">Centro de control</span>
-          <h1>Configuración</h1>
-          <p>Ajusta tu cuenta, seguridad, privacidad y experiencia de uso en BeGO.</p>
+          <span class="config-kicker">Centre de controle</span>
+          <h1>Configuration</h1>
+          <p>Gerez votre compte, la securite, la confidentialite et l'experience BeGO.</p>
         </div>
-        <a class="config-hero-icon ripple" href="#/cuenta" data-link aria-label="Abrir cuenta">
+        <a class="config-hero-icon ripple" href="#/cuenta" data-link aria-label="Ouvrir le compte">
           <i class="fa-solid fa-user-shield"></i>
         </a>
       </section>
@@ -16,11 +16,11 @@ export function renderConfiguracion() {
       <section class="config-profile-card">
         <div class="config-avatar" id="configAvatar">B</div>
         <div>
-          <span>Perfil activo</span>
-          <strong id="configUserName">Invitado</strong>
-          <p id="configUserMeta">Cuenta BeGO protegida</p>
+          <span>Profil actif</span>
+          <strong id="configUserName">Invite</strong>
+          <p id="configUserMeta">Compte BeGO protege</p>
         </div>
-        <a href="#/cuenta" data-link class="config-edit ripple" aria-label="Editar perfil">
+        <a href="#/cuenta" data-link class="config-edit ripple" aria-label="Modifier le profil">
           <i class="fa-solid fa-pen"></i>
         </a>
       </section>
@@ -28,15 +28,15 @@ export function renderConfiguracion() {
       <section class="config-grid">
         <article class="config-panel">
           <div class="config-section-title">
-            <span>Cuenta</span>
-            <small>Identidad</small>
+            <span>Compte</span>
+            <small>Identite</small>
           </div>
 
           <a class="config-row ripple" href="#/cuenta" data-link>
             <i class="fa-solid fa-user"></i>
             <div>
-              <span>Editar perfil</span>
-              <p>Nombre, foto y datos personales.</p>
+              <span>Modifier le profil</span>
+              <p>Nom, photo et informations personnelles.</p>
             </div>
             <i class="fa-solid fa-chevron-right"></i>
           </a>
@@ -44,8 +44,8 @@ export function renderConfiguracion() {
           <button class="config-row ripple" type="button">
             <i class="fa-solid fa-phone"></i>
             <div>
-              <span>Cambiar número</span>
-              <p>Actualiza tu teléfono de contacto.</p>
+              <span>Changer le numero</span>
+              <p>Actualisez votre telephone de contact.</p>
             </div>
             <i class="fa-solid fa-chevron-right"></i>
           </button>
@@ -53,8 +53,8 @@ export function renderConfiguracion() {
           <button class="config-row ripple" type="button">
             <i class="fa-solid fa-lock"></i>
             <div>
-              <span>Cambiar contraseña</span>
-              <p>Refuerza el acceso a tu cuenta.</p>
+              <span>Changer le mot de passe</span>
+              <p>Renforcez l'acces a votre compte.</p>
             </div>
             <i class="fa-solid fa-chevron-right"></i>
           </button>
@@ -62,15 +62,15 @@ export function renderConfiguracion() {
 
         <article class="config-panel">
           <div class="config-section-title">
-            <span>Experiencia</span>
+            <span>Experience</span>
             <small>App</small>
           </div>
 
           <label class="config-toggle-row" for="darkMode">
             <i class="fa-solid fa-moon"></i>
             <div>
-              <span>Modo oscuro</span>
-              <p>Apariencia premium nocturna.</p>
+              <span>Mode sombre</span>
+              <p>Interface nocturne BeGO.</p>
             </div>
             <span class="config-switch">
               <input type="checkbox" id="darkMode">
@@ -81,8 +81,8 @@ export function renderConfiguracion() {
           <label class="config-toggle-row" for="simpleMode">
             <i class="fa-solid fa-eye"></i>
             <div>
-              <span>Modo simple</span>
-              <p>Interfaz más directa y liviana.</p>
+              <span>Mode simple</span>
+              <p>Affichage plus direct et leger.</p>
             </div>
             <span class="config-switch">
               <input type="checkbox" id="simpleMode">
@@ -93,8 +93,8 @@ export function renderConfiguracion() {
           <label class="config-toggle-row" for="notificationsMode">
             <i class="fa-solid fa-bell"></i>
             <div>
-              <span>Notificaciones</span>
-              <p>Alertas de viaje, pagos y seguridad.</p>
+              <span>Notifications</span>
+              <p>Alertes de course, paiement et securite.</p>
             </div>
             <span class="config-switch">
               <input type="checkbox" id="notificationsMode" checked>
@@ -106,15 +106,15 @@ export function renderConfiguracion() {
 
       <section class="config-panel">
         <div class="config-section-title">
-          <span>Seguridad y privacidad</span>
-          <small>Protección</small>
+          <span>Securite et confidentialite</span>
+          <small>Protection</small>
         </div>
 
         <a class="config-row ripple" href="#/seguridad" data-link>
           <i class="fa-solid fa-shield-halved"></i>
           <div>
-            <span>Centro de seguridad</span>
-            <p>Compartir viaje, SOS y reportes.</p>
+            <span>Centre de securite</span>
+            <p>Partage de course, SOS et signalements.</p>
           </div>
           <i class="fa-solid fa-chevron-right"></i>
         </a>
@@ -122,8 +122,8 @@ export function renderConfiguracion() {
         <button class="config-row ripple" type="button">
           <i class="fa-solid fa-location-dot"></i>
           <div>
-            <span>Compartir ubicación</span>
-            <p>Permisos de GPS para viajes precisos.</p>
+            <span>Partager la position</span>
+            <p>Autorisations GPS pour des courses precises.</p>
           </div>
           <i class="fa-solid fa-chevron-right"></i>
         </button>
@@ -131,8 +131,8 @@ export function renderConfiguracion() {
         <a class="config-row ripple" href="#/soporte" data-link>
           <i class="fa-solid fa-headset"></i>
           <div>
-            <span>Asistencia</span>
-            <p>Soporte para cuenta, pagos o seguridad.</p>
+            <span>Assistance</span>
+            <p>Aide pour compte, paiements ou securite.</p>
           </div>
           <i class="fa-solid fa-chevron-right"></i>
         </a>
@@ -140,9 +140,9 @@ export function renderConfiguracion() {
 
       <button id="logoutBtn" class="config-logout ripple" type="button">
         <i class="fa-solid fa-right-from-bracket"></i>
-        <span>Cerrar sesión</span>
+        <span>Se deconnecter</span>
       </button>
-    </main>
+    </section>
   </div>
   `;
 }

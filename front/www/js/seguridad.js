@@ -1,43 +1,29 @@
 import { getServerUrl } from "./conexion.js";
 
-/*************************************************
- * CENTRO DE SEGURIDAD – SPA READY
- *************************************************/
-
 export function initSeguridad() {
-  console.log("🛡️ Init Seguridad");
-
   const boxViaje = document.getElementById("viajeActivoBox");
   const infoViaje = document.getElementById("infoViaje");
-
   const viajeActivo = safeJson(localStorage.getItem("viajeActivo"));
 
-  /* =========================
-     MOSTRAR VIAJE ACTIVO
-  ========================= */
   function cargarViajeActivo() {
     if (!viajeActivo || viajeActivo.estado !== "en_curso") {
-      console.warn("❌ No hay viaje activo");
       if (boxViaje) boxViaje.style.display = "none";
       return;
     }
 
     if (boxViaje && infoViaje) {
-      boxViaje.style.display = "flex";
-      infoViaje.textContent = `
-        ${viajeActivo.motorista?.nombre || "—"} •
-        ${viajeActivo.motorista?.moto || "—"} •
-        ${viajeActivo.motorista?.placa || "—"}
-      `;
+      boxViaje.style.display = "grid";
+      const motorista = viajeActivo.motorista || {};
+      const nombre = motorista.nombre || "Conducteur";
+      const moto = motorista.moto || motorista.vehiculo?.modelo || "Moto";
+      const placa = motorista.placa || motorista.vehiculo?.placa || "--";
+      infoViaje.textContent = `${nombre} - ${moto} - ${placa}`;
     }
   }
 
-  /* =========================
-     COMPARTIR VIAJE
-  ========================= */
   async function compartirViaje() {
     if (!viajeActivo) {
-      alert("No hay viaje activo");
+      alert("Aucune course active");
       return;
     }
 
@@ -46,25 +32,22 @@ export function initSeguridad() {
     try {
       if (navigator.share) {
         await navigator.share({
-          title: "Mi viaje BeGO",
-          text: "Seguime en tiempo real",
-          url: link
+          title: "Ma course BeGO",
+          text: "Suivez ma course en direct",
+          url: link,
         });
       } else {
         await navigator.clipboard.writeText(link);
-        alert("📋 Link copiado:\n" + link);
+        alert(`Lien copie:\n${link}`);
       }
     } catch (err) {
-      console.error("❌ Error compartir:", err);
+      console.error("Erreur partage:", err);
     }
   }
 
-  /* =========================
-     SOS / EMERGENCIA
-  ========================= */
   async function llamarEmergencia() {
     if (!viajeActivo) {
-      alert("No hay viaje activo");
+      alert("Aucune course active");
       return;
     }
 
@@ -73,79 +56,55 @@ export function initSeguridad() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({
           viajeId: viajeActivo.id,
           tipo: "SOS_PASAJERO",
-          timestamp: Date.now()
-        })
+          timestamp: Date.now(),
+        }),
       });
     } catch (err) {
       console.error("SOS error:", err);
     }
 
-    alert("🚨 Emergencia enviada. BeGO está monitoreando tu viaje.");
+    alert("Urgence envoyee. BeGO surveille votre course.");
   }
 
-  /* =========================
-     REPORTAR INCIDENTE
-  ========================= */
   function reportarIncidente() {
     if (!viajeActivo) {
-      alert("No hay viaje activo");
+      alert("Aucune course active");
       return;
     }
 
     localStorage.setItem("reporteViaje", viajeActivo.id);
-    location.hash = "#/reporte"; // SPA FIX
+    location.hash = "#/reporte";
   }
 
-  /* =========================
-     CONTACTO DE CONFIANZA
-  ========================= */
   function llamarContacto() {
     const contacto = safeJson(localStorage.getItem("contactoEmergencia"));
 
     if (!contacto) {
-      alert("No tenés contacto de emergencia configurado");
+      alert("Aucun contact d'urgence configure");
       return;
     }
 
     window.location.href = `tel:${contacto.telefono}`;
   }
 
-  /* =========================
-     GEO (opcional)
-  ========================= */
-  function obtenerUbicacionActual() {
-    if (!navigator.geolocation) return;
-
-    navigator.geolocation.getCurrentPosition(
-      pos => {
-        console.log("📍 Ubicación:", pos.coords.latitude, pos.coords.longitude);
-      },
-      err => console.warn("GPS error:", err),
-      { enableHighAccuracy: true }
-    );
-  }
-
-  /* =========================
-     EVENTS (SPA SAFE)
-  ========================= */
-  document.querySelectorAll("[data-action='compartir']").forEach(el => {
+  document.querySelectorAll("[data-action='compartir']").forEach((el) => {
     el.onclick = compartirViaje;
   });
 
-  document.querySelectorAll("[data-action='sos']").forEach(el => {
+  document.querySelectorAll("[data-action='sos']").forEach((el) => {
     el.onclick = llamarEmergencia;
   });
 
-  document.querySelectorAll("[data-action='contacto']").forEach(el => {
+  document.querySelectorAll("[data-action='contacto']").forEach((el) => {
     el.onclick = llamarContacto;
   });
 
-  document.querySelectorAll("[data-action='reportar']").forEach(el => {
+  document.querySelectorAll("[data-action='reportar']").forEach((el) => {
     el.onclick = reportarIncidente;
   });
 

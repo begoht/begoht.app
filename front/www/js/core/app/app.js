@@ -1,7 +1,7 @@
 import { AppState } from "./app.state.js";
 import { getSocket } from "../../socket/socket.js";
 import { createMap } from "../../map/map.singleton.js";
-import { initRouter } from "../router/router.js?v=20260603-detalle-premium";
+import { initRouter } from "../router/router.js?v=20260603-mobile-support";
 
 function mostrarAppLista() {
     document.body.classList.add("app-ready");

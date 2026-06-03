@@ -1,82 +1,82 @@
 export function renderAyuda() {
   return `
   <div class="css-ayuda">
-    <main class="ayuda-container">
+    <section class="ayuda-container">
       <section class="support-hero ayuda-hero">
         <div>
-          <span class="support-kicker">Centro BeGO</span>
-          <h1>Ayuda</h1>
-          <p>Resuelve dudas de viaje, pagos, cuenta y seguridad desde un solo lugar.</p>
+          <span class="support-kicker">Centre BeGO</span>
+          <h1>Aide</h1>
+          <p>Trouvez rapidement de l'aide pour vos courses, paiements, compte et securite.</p>
         </div>
-        <a class="support-hero-action ripple" href="#/soporte" data-link aria-label="Abrir asistencia">
+        <a class="support-hero-action ripple" href="#/soporte" data-link aria-label="Ouvrir l'assistance">
           <i class="fa-solid fa-headset"></i>
         </a>
       </section>
 
       <label class="support-search" for="busquedaAyuda">
         <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="search" id="busquedaAyuda" placeholder="Buscar ayuda">
+        <input type="search" id="busquedaAyuda" placeholder="Rechercher une aide">
       </label>
 
-      <section class="support-quick-grid" aria-label="Accesos de ayuda">
+      <section class="support-quick-grid" aria-label="Acces rapides">
         <a class="support-action-card featured ripple" href="#/soporte" data-link>
           <i class="fa-solid fa-comments"></i>
-          <span>Asistencia en vivo</span>
-          <p>Habla con soporte BeGO.</p>
+          <span>Assistance en direct</span>
+          <p>Parlez avec l'equipe BeGO.</p>
         </a>
 
         <a class="support-action-card ripple" href="#/actividad" data-link>
           <i class="fa-solid fa-route"></i>
-          <span>Mis viajes</span>
-          <p>Revisa historial y estados.</p>
+          <span>Mes courses</span>
+          <p>Historique et etats.</p>
         </a>
 
         <a class="support-action-card ripple" href="#/seguridad" data-link>
           <i class="fa-solid fa-shield-halved"></i>
-          <span>Seguridad</span>
-          <p>Herramientas para viajar protegido.</p>
+          <span>Securite</span>
+          <p>Outils pour voyager protege.</p>
         </a>
 
         <a class="support-action-card ripple" href="#/wallet" data-link>
           <i class="fa-solid fa-wallet"></i>
-          <span>Pagos</span>
-          <p>Wallet, recargas y saldos.</p>
+          <span>Paiements</span>
+          <p>Wallet, recharges et solde.</p>
         </a>
       </section>
 
       <section class="support-panel">
         <div class="support-section-title">
-          <span>Preguntas frecuentes</span>
-          <small>Respuesta rápida</small>
+          <span>Questions frequentes</span>
+          <small>Reponse rapide</small>
         </div>
 
         <div class="support-faq-list">
           <details class="support-faq-item">
             <summary>
-              <span>¿Cómo cancelo un viaje?</span>
+              <span>Comment annuler une course?</span>
               <i class="fa-solid fa-chevron-down"></i>
             </summary>
-            <p>Desde la pantalla del viaje puedes tocar Cancelar antes de que el viaje avance a una etapa no cancelable.</p>
+            <p>Depuis l'ecran de la course, touchez Annuler avant que la course passe a une etape non annulable.</p>
           </details>
 
           <details class="support-faq-item">
             <summary>
-              <span>¿Qué hago si el motorista no llega?</span>
+              <span>Que faire si le conducteur n'arrive pas?</span>
               <i class="fa-solid fa-chevron-down"></i>
             </summary>
-            <p>Entra a Seguridad o Asistencia para reportarlo, compartir tu viaje o pedir ayuda al equipo BeGO.</p>
+            <p>Ouvrez Securite ou Assistance pour signaler le probleme, partager votre course ou demander de l'aide.</p>
           </details>
 
           <details class="support-faq-item">
             <summary>
-              <span>¿Dónde veo mis pagos?</span>
+              <span>Ou voir mes paiements?</span>
               <i class="fa-solid fa-chevron-down"></i>
             </summary>
-            <p>Abre Wallet para consultar saldo, movimientos, recargas y comprobantes disponibles.</p>
+            <p>Ouvrez Wallet pour consulter le solde, les mouvements, les recharges et les recus disponibles.</p>
           </details>
         </div>
       </section>
-    </main>
+    </section>
   </div>
   `;
 }
