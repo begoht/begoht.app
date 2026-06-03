@@ -3,16 +3,16 @@
  *************************************************/
 
 // Asegúrate de que estos archivos existan en estas rutas exactas
-import { initSocket } from "./socket.js?v=20260603-road-heading";
-import { initMap } from "./map.js?v=20260603-road-heading";
-import { initGPS } from "./gps.js?v=20260603-road-heading";
-import { initOferta } from "./oferta/oferta.index.js?v=20260603-road-heading";
-import { initViajeInicio } from "./viajeInicio/viajeInicio.js?v=20260603-road-heading";
-import { initViajeFinalizar } from "./viajeFinalizar.js?v=20260603-road-heading";
-import { initViajeControl } from "./viajeControl/viajeControl.js?v=20260603-road-heading";
+import { initSocket } from "./socket.js?v=20260603-road-heading-stable";
+import { initMap } from "./map.js?v=20260603-road-heading-stable";
+import { initGPS } from "./gps.js?v=20260603-road-heading-stable";
+import { initOferta } from "./oferta/oferta.index.js?v=20260603-road-heading-stable";
+import { initViajeInicio } from "./viajeInicio/viajeInicio.js?v=20260603-road-heading-stable";
+import { initViajeFinalizar } from "./viajeFinalizar.js?v=20260603-road-heading-stable";
+import { initViajeControl } from "./viajeControl/viajeControl.js?v=20260603-road-heading-stable";
 import { initDriverChat } from "./chat/viajeChat.js";
-import { initDriverStatus } from "./driver.status.js?v=20260603-road-heading";
-import { initDriverSpa } from "./driver.spa.js?v=20260603-road-heading";
+import { initDriverStatus } from "./driver.status.js?v=20260603-road-heading-stable";
+import { initDriverSpa } from "./driver.spa.js?v=20260603-road-heading-stable";
 import { iniciarSonidoOfertaLoop } from "./oferta/oferta.ui.js?v=20260602-offer-ui-singleton";
 import { initLaunchCountdown } from "./launch-countdown.js?v=20260603-launch-gate";
 

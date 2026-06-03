@@ -1,9 +1,9 @@
 import { viajeState } from "../../viaje/viaje.state.js";
-import { motoIcon } from "../map.icons.js?v=20260603-road-heading";
-import { getRutaActualCoords } from "./map.route.renderer.js?v=20260603-road-heading";
+import { motoIcon } from "../map.icons.js?v=20260603-road-heading-stable";
+import { getRutaActualCoords } from "./map.route.renderer.js?v=20260603-road-heading-stable";
 import {
   setMotorcycleMarkerPose
-} from "../utils/map.motorcycle.motion.js?v=20260603-road-heading";
+} from "../utils/map.motorcycle.motion.js?v=20260603-road-heading-stable";
 
 export function renderMotorista(map, motorista) {
   if (!map || !motorista) return;

@@ -1,7 +1,7 @@
 import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js";
-import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260603-road-heading";
+import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260603-road-heading-stable";
 import { getMap } from "../../map/map.singleton.js";
-import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260603-road-heading";
+import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260603-road-heading-stable";
 import { viajeState } from "../../viaje/viaje.state.js";
 import { actualizarUIDriver } from "../../socket/pasajero.utils.js";
 

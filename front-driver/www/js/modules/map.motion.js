@@ -1,6 +1,9 @@
 const DEFAULT_ICON_HEADING_DEG = 90;
 const DEFAULT_MAX_SNAP_METERS = 70;
 const MIN_HEADING_MOVE_METERS = 2;
+const GPS_HEADING_ACCEPT_DEG = 75;
+const GPS_FLIP_GUARD_DEG = 135;
+const HEADING_SMOOTHING = 0.58;
 
 export function normalizeLatLng(input) {
   if (!input) return null;
@@ -34,6 +37,14 @@ export function bearingDeg(from, to) {
   return (toDeg(Math.atan2(y, x)) + 360) % 360;
 }
 
+export function normalizeHeading(value) {
+  const heading = Number(value);
+
+  if (!Number.isFinite(heading) || heading < 0) return null;
+
+  return ((heading % 360) + 360) % 360;
+}
+
 export function distanceMeters(a, b) {
   const start = normalizeLatLng(a);
   const end = normalizeLatLng(b);
@@ -65,16 +76,17 @@ export function resolveMotorcyclePose(map, rawLatLng, {
   const snapped = snapToRoute(map, raw, routeCoords, maxSnapDistanceMeters);
   const latLng = snapped?.latLng || raw;
   const previous = normalizeLatLng(previousLatLng);
-  const hasGpsHeading = heading != null && Number.isFinite(Number(heading));
-  const gpsHeading = hasGpsHeading ? Number(heading) : null;
-  const computedHeading =
-    gpsHeading != null && gpsHeading >= 0
-      ? gpsHeading
-      : bearingDeg(previous, latLng) ?? snapped?.heading ?? null;
+  const headingSelection = selectHeading({
+    gpsHeading: heading,
+    movementHeading: bearingDeg(previous, latLng),
+    routeHeading: snapped?.heading,
+    snapped: !!snapped
+  });
 
   return {
     latLng,
-    heading: computedHeading,
+    heading: headingSelection.heading,
+    headingSource: headingSelection.source,
     snapped: !!snapped
   };
 }
@@ -90,30 +102,95 @@ export function setMotorcycleMarkerPose(marker, map, rawLatLng, options = {}) {
   if (!pose) return null;
 
   marker.setLatLng([pose.latLng.lat, pose.latLng.lng]);
-  applyMotorcycleHeading(marker, pose.heading);
+  applyMotorcycleHeading(marker, pose.heading, {
+    source: pose.headingSource
+  });
 
   return pose;
 }
 
-export function applyMotorcycleHeading(marker, heading) {
-  const numericHeading = Number(heading);
+export function applyMotorcycleHeading(marker, heading, { source = null } = {}) {
+  const numericHeading = normalizeHeading(heading);
 
-  if (!marker || !Number.isFinite(numericHeading)) return;
+  if (!marker || numericHeading == null) return;
 
-  marker._begoHeading = numericHeading;
+  const stableHeading = stabilizeHeading(marker, numericHeading, source);
+  marker._begoHeading = stableHeading;
+  marker._begoHeadingSource = source;
 
   requestAnimationFrame(() => {
     const element = marker.getElement?.();
     if (!element) return;
 
     const baseTransform = (element.style.transform || "")
-      .replace(/\srotate\([-0-9.]+deg\)/g, "")
+      .replace(/(?:\s+)?rotate\([-0-9.]+deg\)/g, "")
       .trim();
-    const rotation = numericHeading - DEFAULT_ICON_HEADING_DEG;
+    const rotation = stableHeading - DEFAULT_ICON_HEADING_DEG;
 
     element.style.transformOrigin = "50% 50%";
     element.style.transform = `${baseTransform} rotate(${rotation.toFixed(1)}deg)`;
   });
+}
+
+function selectHeading({ gpsHeading, movementHeading, routeHeading, snapped }) {
+  const gps = normalizeHeading(gpsHeading);
+  const movement = normalizeHeading(movementHeading);
+  const route = normalizeHeading(routeHeading);
+
+  if (snapped && route != null) {
+    return {
+      heading: route,
+      source: "route"
+    };
+  }
+
+  if (movement != null) {
+    if (gps != null && angleDiff(gps, movement) <= GPS_HEADING_ACCEPT_DEG) {
+      return {
+        heading: gps,
+        source: "gps"
+      };
+    }
+
+    return {
+      heading: movement,
+      source: "movement"
+    };
+  }
+
+  if (route != null) {
+    return {
+      heading: route,
+      source: "route"
+    };
+  }
+
+  return {
+    heading: gps,
+    source: gps == null ? null : "gps"
+  };
+}
+
+function stabilizeHeading(marker, nextHeading, source) {
+  const previous = normalizeHeading(marker?._begoHeading);
+
+  if (previous == null) return nextHeading;
+
+  const delta = shortestHeadingDelta(previous, nextHeading);
+
+  if (source === "gps" && Math.abs(delta) > GPS_FLIP_GUARD_DEG) {
+    return previous;
+  }
+
+  return normalizeHeading(previous + delta * HEADING_SMOOTHING);
+}
+
+function shortestHeadingDelta(from, to) {
+  return ((to - from + 540) % 360) - 180;
+}
+
+function angleDiff(a, b) {
+  return Math.abs(shortestHeadingDelta(a, b));
 }
 
 function snapToRoute(map, rawLatLng, routeCoords, maxDistanceMeters) {

@@ -1,4 +1,4 @@
-import { isDriverOnline, updateDriverPosition } from "./driver.status.js?v=20260603-road-heading";
+import { isDriverOnline, updateDriverPosition } from "./driver.status.js?v=20260603-road-heading-stable";
 
 let socketInstance = null;
 

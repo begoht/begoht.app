@@ -1,9 +1,9 @@
 import { viajeState } from "../viaje/viaje.state.js";
-import { motoIcon } from "./map.icons.js?v=20260603-road-heading";
-import { getRutaActualCoords } from "./map.js?v=20260603-road-heading";
+import { motoIcon } from "./map.icons.js?v=20260603-road-heading-stable";
+import { getRutaActualCoords } from "./map.js?v=20260603-road-heading-stable";
 import {
   setMotorcycleMarkerPose
-} from "./map.motion.js?v=20260603-road-heading";
+} from "./map.motion.js?v=20260603-road-heading-stable";
 
 let mapa;
 let followMode = true;

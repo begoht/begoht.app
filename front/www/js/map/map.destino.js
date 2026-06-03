@@ -2,11 +2,11 @@
 
 import { viajeState } from "../viaje/viaje.state.js";
 
-import { dibujarRuta } from "./map.ruta.js?v=20260603-road-heading";
+import { dibujarRuta } from "./map.ruta.js?v=20260603-road-heading-stable";
 
 import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js";
 
-import { destinoIcon } from "./map.icons.js?v=20260603-road-heading";
+import { destinoIcon } from "./map.icons.js?v=20260603-road-heading-stable";
 
 import { reverseGeocode } from "./services/map.reverse.js";
 

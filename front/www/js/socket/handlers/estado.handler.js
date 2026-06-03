@@ -2,7 +2,7 @@ import { viajeState } from "../../viaje/viaje.state.js";
 import { handleAsignado } from "./asignado.handler.js";
 import { handleIniciado } from "./iniciado.handler.js";
 import { handleLlego } from "./llego.handler.js";
-import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260603-road-heading";
+import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260603-road-heading-stable";
 
 export const handleEstado = (data) => {
   if (!data || !data.estado) return;

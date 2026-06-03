@@ -2,7 +2,7 @@ import {
   dibujarRuta,
   dibujarRutaReserva,
   limpiarRutas
-} from "../map.ruta.js?v=20260603-road-heading";
+} from "../map.ruta.js?v=20260603-road-heading-stable";
 
 import {
   mismaPosicion,

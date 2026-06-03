@@ -1,7 +1,7 @@
 import { viajeState } from "../../viaje/viaje.state.js";
-import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260603-road-heading";
+import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260603-road-heading-stable";
 import { mostrarDestinoEnMapa } from "../../map/map.destino.js";
-import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260603-road-heading";
+import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260603-road-heading-stable";
 import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js";
 import { getMap } from "../../map/map.singleton.js";
 

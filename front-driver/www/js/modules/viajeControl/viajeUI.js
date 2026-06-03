@@ -1,4 +1,4 @@
-import { borrarRuta } from "../map.js?v=20260603-road-heading";
+import { borrarRuta } from "../map.js?v=20260603-road-heading-stable";
 import {
     getEstadoViaje,
     getViajeReservadoId,

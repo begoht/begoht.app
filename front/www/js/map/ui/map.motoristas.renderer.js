@@ -1,10 +1,10 @@
-import { motoIcon } from "../map.icons.js?v=20260603-road-heading";
+import { motoIcon } from "../map.icons.js?v=20260603-road-heading-stable";
 import {
   motoristasCercanos
 } from "../state/map.motoristas.state.js";
 import {
   setMotorcycleMarkerPose
-} from "../utils/map.motorcycle.motion.js?v=20260603-road-heading";
+} from "../utils/map.motorcycle.motion.js?v=20260603-road-heading-stable";
 
 export function renderMotoristas(map, drivers) {
   if (!map || !Array.isArray(drivers)) return;

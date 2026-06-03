@@ -1,4 +1,4 @@
-import { getDriverAvailability, onDriverAvailabilityChange } from "./driver.status.js?v=20260603-road-heading";
+import { getDriverAvailability, onDriverAvailabilityChange } from "./driver.status.js?v=20260603-road-heading-stable";
 
 let pageView = null;
 let homeView = null;

@@ -1,6 +1,6 @@
 import { ofertaState, setLastDecision, getViajeId, CONFIG } from "./oferta.state.js";
 import { UI, notificar } from "./oferta.ui.js?v=20260602-offer-ui-singleton";
-import { getUltimaPosicion } from "../gps.js?v=20260603-road-heading";
+import { getUltimaPosicion } from "../gps.js?v=20260603-road-heading-stable";
 import { limpiarOferta } from "./oferta.render.js?v=20260602-offer-ui-singleton";
 import { isDriverOnline } from "../driver.status.js";
 

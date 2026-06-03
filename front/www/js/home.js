@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
  *************************************************/
 function crearMotoristas(lat, lng) {
   const iconMoto = L.icon({
-    iconUrl: "/assets/icons/moto-transparent.svg?v=20260603-road-heading",
+    iconUrl: "/assets/icons/moto-transparent.svg?v=20260603-road-heading-stable",
     iconSize: [38, 38],
     iconAnchor: [19, 19],
     className: "motorista-icon",
