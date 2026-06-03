@@ -1,53 +1,59 @@
 import { getServerUrl } from "./conexion.js";
 
-let initialized = false;
+let gatePromise = null;
 let countdownTimer = null;
+let statusPollTimer = null;
 
 const STYLE_ID = "begoLaunchCountdownStyle";
 const ROOT_ID = "begoLaunchCountdown";
 
-export async function initLaunchCountdown() {
-  if (initialized) return;
-  initialized = true;
+export function initLaunchCountdown() {
+  if (gatePromise) return gatePromise;
+  gatePromise = loadLaunchGate();
+  return gatePromise;
+}
 
+async function loadLaunchGate() {
   try {
-    const res = await fetch(`${getServerUrl()}/api/launch`, {
-      headers: { "ngrok-skip-browser-warning": "true" },
-    });
-    if (!res.ok) return;
+    const data = await fetchLaunchStatus();
+    if (!shouldBlock(data)) return false;
 
-    const data = await res.json();
-    if (!shouldShow(data)) return;
-
-    renderCountdown(data);
+    return renderCountdown(data);
   } catch (err) {
     console.warn("Launch countdown unavailable:", err?.message || err);
+    return false;
   }
 }
 
-function shouldShow(data) {
+async function fetchLaunchStatus() {
+  const res = await fetch(`${getServerUrl()}/api/launch`, {
+    headers: { "ngrok-skip-browser-warning": "true" },
+  });
+  if (!res.ok) return null;
+  return res.json();
+}
+
+function shouldBlock(data) {
   if (!data?.enabled || !data.launchAt) return false;
-  const key = `bego_launch_seen_${data.launchAt}`;
-  if (getSessionFlag(key) === "1") return false;
-  return true;
+  const target = new Date(data.launchAt).getTime();
+  return Number.isFinite(target) && target > Date.now();
 }
 
 function renderCountdown(data) {
   injectStyles();
   document.getElementById(ROOT_ID)?.remove();
+  document.documentElement.classList.add("launch-countdown-locked");
+  document.body?.classList.add("launch-countdown-locked");
 
   const root = document.createElement("section");
   root.id = ROOT_ID;
   root.className = "launch-countdown-shell";
   root.setAttribute("role", "dialog");
+  root.setAttribute("aria-modal", "true");
   root.setAttribute("aria-label", "Lancement BeGO");
   root.innerHTML = `
-    <div class="launch-countdown-backdrop" data-launch-close></div>
+    <div class="launch-countdown-backdrop"></div>
     <article class="launch-countdown-card">
-      <button class="launch-close" type="button" aria-label="Fermer" data-launch-close>
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-
       <div class="launch-orbit" aria-hidden="true">
         <span></span>
         <i class="fa-solid fa-location-dot"></i>
@@ -71,19 +77,56 @@ function renderCountdown(data) {
         <span data-launch-date></span>
       </div>
 
-      <button class="launch-primary" type="button" data-launch-close>
-        Continuer dans BeGO
-      </button>
+      <div class="launch-lock-note">
+        <i class="fa-solid fa-lock"></i>
+        <span>Acces automatique a l'ouverture officielle.</span>
+      </div>
     </article>
   `;
 
   document.body.appendChild(root);
-  root.querySelectorAll("[data-launch-close]").forEach((item) => {
-    item.addEventListener("click", () => closeCountdown(root, data.launchAt));
-  });
 
-  updateCountdown(root, data.launchAt);
-  countdownTimer = window.setInterval(() => updateCountdown(root, data.launchAt), 1000);
+  return new Promise((resolve) => {
+    let finished = false;
+
+    const finish = () => {
+      if (finished) return;
+      finished = true;
+      window.clearInterval(countdownTimer);
+      window.clearInterval(statusPollTimer);
+      countdownTimer = null;
+      statusPollTimer = null;
+      root.classList.add("is-closing");
+      document.documentElement.classList.remove("launch-countdown-locked");
+      document.body?.classList.remove("launch-countdown-locked");
+      window.setTimeout(() => {
+        root.remove();
+        resolve(true);
+      }, 220);
+    };
+
+    const tick = () => {
+      const remainingMs = updateCountdown(root, data.launchAt);
+      if (remainingMs <= 0) finish();
+    };
+
+    const syncStatus = async () => {
+      try {
+        const latest = await fetchLaunchStatus();
+        if (!shouldBlock(latest)) {
+          finish();
+          return;
+        }
+
+        data.launchAt = latest.launchAt;
+        updateLaunchCopy(root, latest);
+      } catch {}
+    };
+
+    tick();
+    if (!countdownTimer) countdownTimer = window.setInterval(tick, 1000);
+    statusPollTimer = window.setInterval(syncStatus, 15000);
+  });
 }
 
 function timeBox(key, label) {
@@ -121,12 +164,7 @@ function updateCountdown(root, launchAt) {
     });
   }
 
-  if (diff <= 0) {
-    const title = root.querySelector(".launch-copy h2");
-    const message = root.querySelector(".launch-copy p");
-    if (title) title.textContent = "BeGO est lance";
-    if (message) message.textContent = "Merci d'etre pret avec nous. Vous pouvez continuer dans BeGO.";
-  }
+  return diff;
 }
 
 function setValue(root, key, value) {
@@ -134,25 +172,11 @@ function setValue(root, key, value) {
   if (el) el.textContent = String(value).padStart(2, "0");
 }
 
-function closeCountdown(root, launchAt) {
-  setSessionFlag(`bego_launch_seen_${launchAt}`, "1");
-  root.classList.add("is-closing");
-  window.clearInterval(countdownTimer);
-  window.setTimeout(() => root.remove(), 180);
-}
-
-function getSessionFlag(key) {
-  try {
-    return sessionStorage.getItem(key);
-  } catch {
-    return null;
-  }
-}
-
-function setSessionFlag(key, value) {
-  try {
-    sessionStorage.setItem(key, value);
-  } catch {}
+function updateLaunchCopy(root, data) {
+  const title = root.querySelector(".launch-copy h2");
+  const message = root.querySelector(".launch-copy p");
+  if (title) title.textContent = data.title || "Lancement officiel BeGO";
+  if (message) message.textContent = data.message || "Votre compte est pret pour le lancement.";
 }
 
 function injectStyles() {
@@ -161,10 +185,17 @@ function injectStyles() {
   const style = document.createElement("style");
   style.id = STYLE_ID;
   style.textContent = `
+    html.launch-countdown-locked,
+    body.launch-countdown-locked {
+      overflow: hidden;
+      overscroll-behavior: none;
+      touch-action: none;
+    }
+
     .launch-countdown-shell {
       position: fixed;
       inset: 0;
-      z-index: 99990;
+      z-index: 100010;
       display: grid;
       place-items: center;
       padding: 18px;
@@ -173,14 +204,14 @@ function injectStyles() {
 
     .launch-countdown-shell.is-closing {
       opacity: 0;
-      transition: opacity 0.18s ease;
+      transition: opacity 0.2s ease;
     }
 
     .launch-countdown-backdrop {
       position: absolute;
       inset: 0;
-      background: rgba(2, 6, 23, 0.68);
-      backdrop-filter: blur(14px);
+      background: rgba(2, 6, 23, 0.76);
+      backdrop-filter: blur(16px);
     }
 
     .launch-countdown-card {
@@ -196,20 +227,6 @@ function injectStyles() {
         linear-gradient(180deg, #0f172a 0%, #07111f 100%);
       border: 1px solid rgba(148, 163, 184, 0.2);
       box-shadow: 0 26px 70px rgba(2, 6, 23, 0.48);
-    }
-
-    .launch-close {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      width: 38px;
-      height: 38px;
-      display: grid;
-      place-items: center;
-      border: 0;
-      border-radius: 8px;
-      color: #cbd5e1;
-      background: rgba(255, 255, 255, 0.08);
     }
 
     .launch-orbit {
@@ -235,7 +252,6 @@ function injectStyles() {
     .launch-copy {
       display: grid;
       gap: 7px;
-      padding-right: 34px;
       min-width: 0;
     }
 
@@ -293,28 +309,28 @@ function injectStyles() {
       text-transform: uppercase;
     }
 
-    .launch-date-line {
+    .launch-date-line,
+    .launch-lock-note {
       min-height: 44px;
       display: flex;
       align-items: center;
       gap: 10px;
       padding: 10px 12px;
       border-radius: 8px;
-      color: #dbeafe;
-      background: rgba(37, 99, 235, 0.12);
       font-size: 0.86rem;
       font-weight: 850;
       overflow-wrap: anywhere;
     }
 
-    .launch-primary {
-      min-height: 48px;
-      border: 0;
-      border-radius: 8px;
-      color: #ffffff;
-      background: linear-gradient(180deg, #38bdf8, #2563eb);
-      font-weight: 950;
-      box-shadow: 0 16px 32px rgba(37, 99, 235, 0.25);
+    .launch-date-line {
+      color: #dbeafe;
+      background: rgba(37, 99, 235, 0.12);
+    }
+
+    .launch-lock-note {
+      color: #bae6fd;
+      background: rgba(14, 165, 233, 0.11);
+      border: 1px solid rgba(56, 189, 248, 0.16);
     }
 
     @keyframes launchPulse {

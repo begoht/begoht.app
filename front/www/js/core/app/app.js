@@ -2,7 +2,7 @@ import { AppState } from "./app.state.js";
 import { getSocket } from "../../socket/socket.js";
 import { createMap } from "../../map/map.singleton.js";
 import { initRouter } from "../router/router.js?v=20260603-mobile-support";
-import { initLaunchCountdown } from "../../launch-countdown.js?v=20260603-launch-countdown";
+import { initLaunchCountdown } from "../../launch-countdown.js?v=20260603-launch-gate";
 
 function mostrarAppLista() {
     document.body.classList.add("app-ready");
@@ -11,8 +11,10 @@ function mostrarAppLista() {
     }, 320);
 }
 
-export function initApp() {
+export async function initApp() {
     console.log("🚀 App iniciada");
+
+    await initLaunchCountdown();
 
     AppState.socket = getSocket();
     if (!AppState.socket) return;
@@ -29,5 +31,4 @@ export function initApp() {
 
     initRouter();
     requestAnimationFrame(mostrarAppLista);
-    initLaunchCountdown();
 }

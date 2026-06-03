@@ -14,9 +14,9 @@ import { initDriverChat } from "./chat/viajeChat.js";
 import { initDriverStatus } from "./driver.status.js";
 import { initDriverSpa } from "./driver.spa.js";
 import { iniciarSonidoOfertaLoop } from "./oferta/oferta.ui.js?v=20260602-offer-ui-singleton";
-import { initLaunchCountdown } from "./launch-countdown.js?v=20260603-launch-countdown";
+import { initLaunchCountdown } from "./launch-countdown.js?v=20260603-launch-gate";
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
 
     const bootStatus = document.getElementById("driverBootStatus");
 
@@ -24,10 +24,17 @@ document.addEventListener("DOMContentLoaded", () => {
         if (bootStatus) bootStatus.textContent = message;
     }
 
+    let revealPromise = null;
+
     function mostrarAppConectada() {
-        document.documentElement.classList.remove("driver-booting");
-        document.documentElement.classList.add("driver-ready");
-        initLaunchCountdown();
+        if (revealPromise) return revealPromise;
+
+        revealPromise = (async () => {
+            document.documentElement.classList.remove("driver-booting");
+            document.documentElement.classList.add("driver-ready");
+        })();
+
+        return revealPromise;
     }
 
     /*************************************************
@@ -56,6 +63,8 @@ document.addEventListener("DOMContentLoaded", () => {
         : window.location.origin;
 
     console.log("🌐 Conectando Socket a:", serverUrl);
+    setBootStatus("Verificando lanzamiento...");
+    await initLaunchCountdown();
     setBootStatus("Conectando con el servidor...");
 
     /*************************************************
