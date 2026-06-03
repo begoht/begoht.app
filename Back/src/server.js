@@ -162,6 +162,7 @@ app.use("/api/wallet", require("./routes/wallet"));
 app.use("/api/dashboard", require("./routes/dashboard"));
 app.use("/api/admin", require("./routes/admin.users"));
 app.use("/api/admin", require("./routes/admin.trips"));
+app.use("/api/admin", require("./routes/admin.email"));
 app.use("/api/admin", require("./routes/adminRetiros"));
 app.use("/api/recargas", require("./routes/recargas"));
 app.use("/api/pagos", require("./routes/pagos"));

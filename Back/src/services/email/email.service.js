@@ -1,156 +1,239 @@
 const nodemailer = require("nodemailer");
 const EmailLog = require("../../models/EmailLog");
-const { generarPdfRecibo } = require("./pdf.service"); 
+const { generarPdfRecibo } = require("./pdf.service");
 
-// Configuración para Gmail
-const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: true, 
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS 
-    }
-});
-
-/**
- * 🔍 VERIFICACIÓN DE CONEXIÓN
- */
-transporter.verify((error) => {
-    if (error) {
-        console.log("❌ Error de configuración de Email:", error.message);
-    } else {
-        console.log("✅ Servidor de correos BeGO listo");
-    }
-});
-
-/**
- * Envía el resumen de viaje con estilo inspirado en BeGO App + Adjunto PDF
- */
-const enviarResumenViaje = async (datos) => {
-    const { 
-        email, nombrePasajero, viajeId, pasajeroId, 
-        distanciaKm, tiempo, total, origen, destino, 
-        nombreConductor, metodoPago 
-    } = datos;
-
-    if (!email) {
-        console.log("⚠️ Intento de envío fallido: Falta el email.");
-        return false;
-    }
-
-    const fechaActual = new Date().toLocaleDateString('es-AR');
-    const horaActual = new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
-
-    try {
-        // --- 1. GENERAR EL PDF USANDO EL SERVICIO SEPARADO ---
-        const pdfBuffer = await generarPdfRecibo(datos);
-
-        // --- 2. CONFIGURAR EL CORREO ---
-        const mailOptions = {
-            from: `"BeGO Support" <${process.env.EMAIL_USER}>`,
-            to: email,
-            subject: `Gracias por usar BeGO, ${nombrePasajero}`,
-            html: `
-            <div style="background-color: #0f172a; color: #ffffff; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: auto; padding: 0; border: 1px solid #1e293b; border-radius: 20px; overflow: hidden;">
-                <div style="background-color: #020617; padding: 40px 40px 20px 40px; border-bottom: 1px solid #2563eb;">
-                    <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 800; letter-spacing: 1px;">BeGO</h1>
-                </div>
-                
-                <div style="padding: 40px;">
-                    <p style="font-size: 13px; color: #94a3b8; margin-bottom: 10px;">${fechaActual}, ${horaActual}</p>
-                    <h2 style="font-size: 32px; line-height: 38px; margin: 0 0 20px 0; font-weight: bold; color: #ffffff;">Gracias por viajar, ${nombrePasajero}</h2>
-                    <p style="font-size: 15px; color: #e5e7eb; margin-bottom: 40px;">Esperamos que hayas disfrutado tu viaje en BeGO. Adjuntamos tu recibo oficial en este correo.</p>
-
-                    <div style="border-top: 1px solid #1e293b; margin-bottom: 30px;"></div>
-
-                    <table width="100%" style="margin-bottom: 30px; background: rgba(37, 99, 235, 0.1); padding: 20px; border-radius: 15px;">
-                        <tr>
-                            <td style="font-size: 20px; font-weight: bold; color: #94a3b8;">Total</td>
-                            <td style="font-size: 28px; font-weight: bold; text-align: right; color: #38bdf8;">${total} HTG</td>
-                        </tr>
-                    </table>
-
-                    <h3 style="font-size: 18px; font-weight: bold; margin-bottom: 15px; color: #ffffff;">Detalles del Pago</h3>
-                    <table width="100%" style="margin-bottom: 30px;">
-                        <tr>
-                            <td style="font-size: 14px; color: #e5e7eb;">
-                                <strong>${metodoPago || 'Efectivo'}</strong><br>
-                                <span style="color: #94a3b8; font-size: 12px;">Completado el ${fechaActual}</span>
-                            </td>
-                            <td style="text-align: right; font-size: 14px; color: #ffffff; vertical-align: top;">${total} HTG</td>
-                        </tr>
-                    </table>
-
-                    <div style="border-top: 1px solid #1e293b; margin-bottom: 30px;"></div>
-
-                    <h3 style="font-size: 18px; font-weight: bold; margin-bottom: 20px; color: #ffffff;">Resumen de Ruta</h3>
-                    <div style="margin-bottom: 30px;">
-                        <p style="margin: 0; font-size: 15px; font-weight: bold; color: #38bdf8;">Essential 🛵</p>
-                        <p style="margin: 4px 0 20px 0; color: #94a3b8; font-size: 13px;">${distanciaKm} km | ${tiempo} min</p>
-                        
-                        <div style="border-left: 2px solid #2563eb; padding-left: 20px; margin-left: 5px;">
-                            <p style="font-size: 13px; margin: 0 0 15px 0;">
-                                <strong style="color: #ffffff;">Origen:</strong><br>
-                                <span style="color: #94a3b8;">${origen || 'No especificado'}</span>
-                            </p>
-                            <p style="font-size: 13px; margin: 0;">
-                                <strong style="color: #ffffff;">Destino:</strong><br>
-                                <span style="color: #94a3b8;">${destino || 'No especificado'}</span>
-                            </p>
-                        </div>
-                    </div>
-
-                    <div style="background-color: #020617; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 20px; border: 1px solid #1e293b;">
-                        <p style="margin: 0; font-size: 14px; color: #e5e7eb;">Viajaste con <strong>${nombreConductor || 'Socio BeGO'}</strong></p>
-                    </div>
-                </div>
-
-                <div style="background-color: #020617; padding: 40px; border-top: 1px solid #1e293b; text-align: left;">
-                    <p style="font-size: 11px; color: #94a3b8; line-height: 18px;">
-                        BeGO Argentina<br>
-                        Córdoba, Argentina<br>
-                        ID de Viaje: ${viajeId}
-                    </p>
-                </div>
-            </div>
-            `,
-            attachments: [
-                {
-                    filename: `Recibo_BeGO_${viajeId}.pdf`,
-                    content: pdfBuffer,
-                    contentType: 'application/pdf'
-                }
-            ]
-        };
-
-        // --- 3. ENVIAR Y LOGUEAR ---
-        const info = await transporter.sendMail(mailOptions);
-
-        await EmailLog.create({
-            viajeId, pasajeroId, email,
-            mensajeId: info.messageId,
-            estado: 'enviado',
-            fecha: new Date()
-        });
-
-        console.log(`📧 Email y PDF enviados con éxito a: ${email}`);
-        return true;
-
-    } catch (error) {
-        console.error("❌ Error en email.service:", error.message);
-        try {
-            await EmailLog.create({
-                viajeId, pasajeroId, email,
-                estado: 'error',
-                error: error.message,
-                fecha: new Date()
-            });
-        } catch (logError) {
-            console.error("Error guardando el log de error:", logError.message);
-        }
-        return false;
-    }
+const emailConfig = {
+  host: process.env.EMAIL_HOST || process.env.SMTP_HOST || "smtp.gmail.com",
+  port: Number(process.env.EMAIL_PORT || process.env.SMTP_PORT || 465),
+  secure: process.env.EMAIL_SECURE != null
+    ? String(process.env.EMAIL_SECURE).toLowerCase() !== "false"
+    : Number(process.env.EMAIL_PORT || process.env.SMTP_PORT || 465) === 465,
+  user: process.env.EMAIL_USER || process.env.MAIL_USER,
+  pass: process.env.EMAIL_PASS || process.env.MAIL_PASS,
+  from: process.env.EMAIL_FROM || null,
 };
 
-module.exports = { enviarResumenViaje };
+emailConfig.from = emailConfig.from || (emailConfig.user ? `"BeGO" <${emailConfig.user}>` : "");
+
+const emailConfigured = Boolean(emailConfig.user && emailConfig.pass);
+const transporter = emailConfigured
+  ? nodemailer.createTransport({
+      host: emailConfig.host,
+      port: emailConfig.port,
+      secure: emailConfig.secure,
+      auth: {
+        user: emailConfig.user,
+        pass: emailConfig.pass,
+      },
+    })
+  : null;
+
+function maskEmail(email = "") {
+  const [name, domain] = String(email).split("@");
+  if (!name || !domain) return "";
+  return `${name.slice(0, 2)}***@${domain}`;
+}
+
+function formatMoney(value) {
+  const amount = Number(value || 0);
+  return `${Math.round(amount).toLocaleString("fr-HT")} HTG`;
+}
+
+function escapeHtml(value = "") {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+async function verificarConexionEmail() {
+  if (!transporter) {
+    return {
+      ok: false,
+      configured: false,
+      message: "EMAIL_USER y EMAIL_PASS no estan configurados",
+    };
+  }
+
+  try {
+    await transporter.verify();
+    return {
+      ok: true,
+      configured: true,
+      host: emailConfig.host,
+      port: emailConfig.port,
+      secure: emailConfig.secure,
+      user: maskEmail(emailConfig.user),
+      from: emailConfig.from,
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      configured: true,
+      host: emailConfig.host,
+      port: emailConfig.port,
+      secure: emailConfig.secure,
+      user: maskEmail(emailConfig.user),
+      message: error.message,
+    };
+  }
+}
+
+verificarConexionEmail().then((status) => {
+  if (status.ok) {
+    console.log("Servidor de correos BeGO listo");
+  } else {
+    console.log("Email BeGO no conectado:", status.message);
+  }
+});
+
+async function registrarEmail({ viajeId, pasajeroId, email, estado, mensajeId, error, tipo = "resumen_viaje" }) {
+  try {
+    await EmailLog.create({
+      viajeId,
+      pasajeroId,
+      email,
+      tipo,
+      estado,
+      mensajeId,
+      error,
+      fecha: new Date(),
+    });
+  } catch (logError) {
+    console.error("Error guardando log de email:", logError.message);
+  }
+}
+
+async function enviarResumenViaje(datos) {
+  const {
+    email,
+    nombrePasajero,
+    viajeId,
+    pasajeroId,
+    distanciaKm,
+    tiempo,
+    total,
+    origen,
+    destino,
+    nombreConductor,
+    metodoPago,
+  } = datos;
+
+  if (!email) {
+    console.log("Email de recibo omitido: pasajero sin correo.");
+    return false;
+  }
+
+  if (!transporter) {
+    await registrarEmail({
+      viajeId,
+      pasajeroId,
+      email,
+      estado: "error",
+      error: "EMAIL_USER y EMAIL_PASS no estan configurados",
+    });
+    return false;
+  }
+
+  const fechaActual = new Date().toLocaleDateString("fr-HT");
+  const horaActual = new Date().toLocaleTimeString("fr-HT", { hour: "2-digit", minute: "2-digit" });
+  const pdfBuffer = await generarPdfRecibo(datos);
+
+  const safeName = escapeHtml(nombrePasajero || "passager");
+  const safeDriver = escapeHtml(nombreConductor || "Socio BeGO");
+  const safeOrigen = escapeHtml(origen || "No especificado");
+  const safeDestino = escapeHtml(destino || "No especificado");
+  const totalText = formatMoney(total);
+
+  try {
+    const info = await transporter.sendMail({
+      from: emailConfig.from,
+      to: email,
+      subject: `Votre recu BeGO - ${fechaActual}`,
+      html: `
+        <div style="background:#07111f;color:#ffffff;font-family:Arial,sans-serif;max-width:620px;margin:auto;border-radius:22px;overflow:hidden;border:1px solid #1e3a8a;">
+          <div style="padding:34px 34px 20px;background:#020617;border-bottom:1px solid #2563eb;">
+            <h1 style="margin:0;font-size:30px;letter-spacing:0;">BeGO</h1>
+            <p style="margin:8px 0 0;color:#93c5fd;">Recu de trajet</p>
+          </div>
+          <div style="padding:34px;">
+            <p style="margin:0 0 10px;color:#94a3b8;font-size:13px;">${fechaActual}, ${horaActual}</p>
+            <h2 style="margin:0 0 14px;font-size:28px;line-height:1.15;">Merci, ${safeName}</h2>
+            <p style="margin:0 0 28px;color:#cbd5e1;line-height:1.5;">Votre trajet BeGO est termine. Votre recu officiel est joint en PDF.</p>
+            <div style="padding:18px;border-radius:16px;background:rgba(37,99,235,.16);border:1px solid rgba(96,165,250,.32);margin-bottom:24px;">
+              <div style="font-size:13px;color:#93c5fd;">Total</div>
+              <div style="font-size:30px;font-weight:800;">${totalText}</div>
+            </div>
+            <table width="100%" style="border-collapse:collapse;color:#e5e7eb;">
+              <tr><td style="padding:8px 0;color:#94a3b8;">Paiement</td><td style="padding:8px 0;text-align:right;">${escapeHtml(metodoPago || "Efectivo")}</td></tr>
+              <tr><td style="padding:8px 0;color:#94a3b8;">Distance</td><td style="padding:8px 0;text-align:right;">${escapeHtml(distanciaKm || "0")} km</td></tr>
+              <tr><td style="padding:8px 0;color:#94a3b8;">Temps</td><td style="padding:8px 0;text-align:right;">${escapeHtml(tiempo || "0")} min</td></tr>
+              <tr><td style="padding:8px 0;color:#94a3b8;">Conducteur</td><td style="padding:8px 0;text-align:right;">${safeDriver}</td></tr>
+            </table>
+            <div style="margin-top:24px;padding:18px;border-radius:16px;background:#020617;border:1px solid #1e293b;">
+              <p style="margin:0 0 12px;color:#93c5fd;font-size:12px;font-weight:700;">DEPART</p>
+              <p style="margin:0 0 18px;color:#e5e7eb;">${safeOrigen}</p>
+              <p style="margin:0 0 12px;color:#93c5fd;font-size:12px;font-weight:700;">DESTINATION</p>
+              <p style="margin:0;color:#e5e7eb;">${safeDestino}</p>
+            </div>
+          </div>
+          <div style="padding:24px 34px;background:#020617;color:#64748b;font-size:12px;line-height:1.5;">
+            BeGO Haiti<br>ID voyage: ${escapeHtml(viajeId)}
+          </div>
+        </div>
+      `,
+      attachments: [
+        {
+          filename: `Recu_BeGO_${viajeId}.pdf`,
+          content: pdfBuffer,
+          contentType: "application/pdf",
+        },
+      ],
+    });
+
+    await registrarEmail({
+      viajeId,
+      pasajeroId,
+      email,
+      estado: "enviado",
+      mensajeId: info.messageId,
+    });
+
+    console.log(`Email de recibo enviado a: ${email}`);
+    return true;
+  } catch (error) {
+    console.error("Error enviando email BeGO:", error.message);
+    await registrarEmail({
+      viajeId,
+      pasajeroId,
+      email,
+      estado: "error",
+      error: error.message,
+    });
+    return false;
+  }
+}
+
+async function enviarEmailPrueba(to) {
+  if (!to) throw new Error("Destino requerido");
+  if (!transporter) throw new Error("EMAIL_USER y EMAIL_PASS no estan configurados");
+
+  return transporter.sendMail({
+    from: emailConfig.from,
+    to,
+    subject: "BeGO email conectado",
+    html: `
+      <div style="background:#07111f;color:#fff;font-family:Arial,sans-serif;max-width:560px;margin:auto;padding:32px;border-radius:18px;">
+        <h1 style="margin:0 0 8px;font-size:28px;">BeGO</h1>
+        <p style="color:#cbd5e1;line-height:1.5;">El correo de produccion esta conectado correctamente.</p>
+        <div style="margin-top:24px;padding:16px;border:1px solid rgba(96,165,250,.35);border-radius:14px;background:rgba(37,99,235,.16);">
+          <strong>Estado:</strong> SMTP activo
+        </div>
+      </div>
+    `,
+  });
+}
+
+module.exports = { enviarResumenViaje, enviarEmailPrueba, verificarConexionEmail };

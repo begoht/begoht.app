@@ -7,6 +7,7 @@ const { actualizarSnapshotMotorista } = require("../sockets/viajes/motorista/mot
 const { calcularDistanciaMetros } = require("../utils/geo");
 const { PLATFORM_ALIAS } = require("../config/constants");
 const { ensurePlatformAccount } = require("./platformAccount.service");
+const { enviarResumenViaje } = require("./email/email.service");
 const crypto = require("crypto");
 
 const LOCK_TTL = 30000;
@@ -323,6 +324,47 @@ function validarCodigoEntrega(viaje, codigoEntrega) {
   viaje.paquete.codigoEntregaConfirmadoAt = new Date();
 }
 
+function nombreCompleto(user) {
+  return `${user?.nombre || ""} ${user?.apellido || ""}`.trim();
+}
+
+function direccionTexto(ubicacion) {
+  if (!ubicacion) return "";
+  return ubicacion.direccion || ubicacion.address || `${ubicacion.lat || ""}, ${ubicacion.lng || ""}`.trim();
+}
+
+function minutosViaje(viaje) {
+  const inicio = viaje.inicioViajeAt ? new Date(viaje.inicioViajeAt).getTime() : null;
+  const fin = viaje.finViajeAt ? new Date(viaje.finViajeAt).getTime() : Date.now();
+  if (inicio && Number.isFinite(inicio) && Number.isFinite(fin) && fin > inicio) {
+    return Math.max(1, Math.round((fin - inicio) / 60000));
+  }
+  return Math.max(0, Math.round(Number(viaje.duracionMin || 0)));
+}
+
+function enviarReciboFinalizacion(viaje, viajeId, total) {
+  const email = viaje.pasajero?.email;
+  if (!email) return;
+
+  enviarResumenViaje({
+    email,
+    nombrePasajero: nombreCompleto(viaje.pasajero) || "Pasajero",
+    viajeId,
+    pasajeroId: viaje.pasajero?._id,
+    distanciaKm: Number(viaje.distanciaRealMetros || 0) > 0
+      ? (Number(viaje.distanciaRealMetros) / 1000).toFixed(2)
+      : Number(viaje.distanciaKm || 0).toFixed(2),
+    tiempo: minutosViaje(viaje),
+    total: viaje.precio || total,
+    origen: direccionTexto(viaje.origen),
+    destino: direccionTexto(viaje.destino),
+    nombreConductor: nombreCompleto(viaje.motorista) || "Socio BeGO",
+    metodoPago: viaje.metodoPago
+  }).catch((error) => {
+    console.error("No se pudo enviar recibo por email:", error.message);
+  });
+}
+
 module.exports = async function finalizarViaje({ io, socket, viajeId, motoristaId, codigoEntrega }) {
   const lockId = await acquireLock(viajeId);
   if (!lockId) return;
@@ -335,7 +377,10 @@ module.exports = async function finalizarViaje({ io, socket, viajeId, motoristaI
     const viaje = await Viaje.findOne({
       _id: viajeId,
       motorista: motoristaId
-    }).populate("pasajero").session(session);
+    })
+      .populate("pasajero", "nombre apellido email telefono")
+      .populate("motorista", "nombre apellido telefono")
+      .session(session);
 
     if (!viaje || viaje.finalizacionProcesada || viaje.estado !== "en_curso") {
       throw new Error("El viaje ya fue procesado o no es valido para finalizar");
@@ -419,6 +464,7 @@ module.exports = async function finalizarViaje({ io, socket, viajeId, motoristaI
     io.to(`viaje:${viajeId}`).emit("viaje-finalizado", finalizadoPayload);
     io.to(`motorista:${motoristaId}`).emit("viaje-finalizado", finalizadoPayload);
     io.to(`motorista:${motoristaId}`).emit("driver:actividad-actualizada", finalizadoPayload);
+    enviarReciboFinalizacion(viaje, viajeId, total);
 
     if (tieneSiguiente) {
       await activarSiguienteViaje(io, socket, motoristaId);
