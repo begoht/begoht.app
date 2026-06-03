@@ -18,13 +18,15 @@ export function renderMotoristas(
     return;
   }
 
+  const driversUnicos = normalizarDrivers(drivers);
+
   /*************************************************
    * 🧹 ELIMINAR DESAPARECIDOS
    *************************************************/
   Object.keys(motoristasCercanos)
     .forEach((id) => {
 
-      const existe = drivers.find(
+      const existe = driversUnicos.find(
         (d) => (d.id || d._id) === id
       );
 
@@ -41,7 +43,7 @@ export function renderMotoristas(
   /*************************************************
    * 🔄 CREAR / UPDATE
    *************************************************/
-  drivers.forEach((driver) => {
+  driversUnicos.forEach((driver) => {
 
     const id =
       driver.id || driver._id;
@@ -79,6 +81,22 @@ export function renderMotoristas(
       motoristasCercanos[id] = marker;
     }
   });
+}
+
+function normalizarDrivers(drivers) {
+  const porId = new Map();
+
+  drivers.forEach((driver) => {
+    const id = driver?.id || driver?._id;
+    if (!id) return;
+
+    porId.set(String(id), {
+      ...driver,
+      id: String(id)
+    });
+  });
+
+  return [...porId.values()];
 }
 
 /*************************************************

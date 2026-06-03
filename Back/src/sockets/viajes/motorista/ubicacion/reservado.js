@@ -38,8 +38,10 @@ module.exports = async (io, motoristaId, { lat, lng }) => {
       timestamp: Date.now()
     };
 
-    io.to(`track:${payload.viajeId}`).emit("track:posicion", payload);
-    io.to(`pasajero:${reserva.pasajero.toString()}`).emit("track:posicion", payload);
+    io
+      .to(`track:${payload.viajeId}`)
+      .to(`pasajero:${reserva.pasajero.toString()}`)
+      .emit("track:posicion", payload);
   } catch (error) {
     console.error("Error en tracking de reserva:", error);
   }

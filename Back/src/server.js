@@ -266,6 +266,14 @@ io.on("connection", async (socket) => {
       // ============================
       
       const viajeId = room.split(":")[1];
+      const joinedRecently =
+        socket.rooms.has(room) &&
+        socket.data?.trackSnapshotAt?.[viajeId] &&
+        Date.now() - socket.data.trackSnapshotAt[viajeId] < 2500;
+
+      if (joinedRecently) {
+        return;
+      }
         
         /*************************************************
          * 🔥 CTX ROBUSTO
@@ -409,12 +417,28 @@ io.on("connection", async (socket) => {
           : ctx.proximoDestino || null
         });
         
+        socket.data.trackSnapshotAt = socket.data.trackSnapshotAt || {};
+        socket.data.trackSnapshotAt[viajeId] = Date.now();
+
         console.log(`🚀 Sync consistente enviado a ${socket.id}`);
       
       
     } catch (err) {
       console.error("❌ Error en join-room:", err);
     }
+  });
+
+  socket.on("track:leave", ({ viajeId } = {}) => {
+    if (!viajeId) return;
+
+    const room = `track:${viajeId}`;
+    socket.leave(room);
+
+    if (socket.data?.trackSnapshotAt) {
+      delete socket.data.trackSnapshotAt[viajeId];
+    }
+
+    console.log(`📴 ${socket.id} left ${room}`);
   });
 
 // ============================

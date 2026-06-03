@@ -15,7 +15,7 @@ import {
 import {
   renderMotoristas,
   clearMotoristas
-} from "./ui/map.motoristas.renderer.js";
+} from "./ui/map.motoristas.renderer.js?v=20260603-location-dedupe";
 
 /*************************************************
  * 🗺️ SET MAPA

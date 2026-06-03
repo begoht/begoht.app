@@ -1,5 +1,5 @@
 import { viajeState } from "../../viaje/viaje.state.js";
-import { mostrarMotoristaEnMapa } from "../../map/map.motorista.js";
+import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260603-location-dedupe";
 import { mostrarDestinoEnMapa } from "../../map/map.destino.js";
 import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js";
 import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js";
@@ -66,6 +66,7 @@ export const handleTrack = (data) => {
   /*************************************************
    * 1. MOTORISTA SIEMPRE
    *************************************************/
+  limpiarMotoristas();
   mostrarMotoristaEnMapa({ lat, lng });
 
   /*************************************************

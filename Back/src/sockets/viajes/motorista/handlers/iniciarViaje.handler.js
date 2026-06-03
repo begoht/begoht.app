@@ -125,8 +125,10 @@ module.exports = (io, socket) => {
                     timestamp: Date.now()
                 };
 
-                io.to(`track:${viajeId}`).emit("track:posicion", trackPayload);
-                io.to(`pasajero:${viaje.pasajero}`).emit("track:posicion", trackPayload);
+                io
+                    .to(`track:${viajeId}`)
+                    .to(`pasajero:${viaje.pasajero}`)
+                    .emit("track:posicion", trackPayload);
             }
         } catch (error) {
             console.error("❌ iniciar:", error);

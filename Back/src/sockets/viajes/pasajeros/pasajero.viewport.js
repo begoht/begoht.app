@@ -3,6 +3,8 @@ const { redis } = require("../../../config/redis");
 module.exports = (io, socket) => {
 
   let lastViewportTime = 0;
+  let lastMotoristasSignature = "";
+  let lastMotoristasEmitTime = 0;
 
   socket.on("viewport-motoristas", async (viewport) => {
 
@@ -73,6 +75,19 @@ module.exports = (io, socket) => {
         });
       });
 
+      const signature = crearMotoristasSignature(motoristas);
+      const emitNow = Date.now();
+
+      if (
+        signature === lastMotoristasSignature &&
+        emitNow - lastMotoristasEmitTime < 5000
+      ) {
+        return;
+      }
+
+      lastMotoristasSignature = signature;
+      lastMotoristasEmitTime = emitNow;
+
       socket.emit("motoristas:ubicacion", motoristas);
 
     } catch (error) {
@@ -82,3 +97,15 @@ module.exports = (io, socket) => {
   });
 
 };
+
+function crearMotoristasSignature(motoristas) {
+  return (motoristas || [])
+    .map((m) => ({
+      id: String(m.id || ""),
+      lat: Number(m.lat).toFixed(5),
+      lng: Number(m.lng).toFixed(5)
+    }))
+    .sort((a, b) => a.id.localeCompare(b.id))
+    .map((m) => `${m.id}:${m.lat}:${m.lng}`)
+    .join("|");
+}

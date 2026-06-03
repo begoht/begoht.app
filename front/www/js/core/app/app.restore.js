@@ -1,5 +1,5 @@
 import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js";
-import { mostrarMotoristaEnMapa } from "../../map/map.motorista.js";
+import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260603-location-dedupe";
 import { getMap } from "../../map/map.singleton.js";
 import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js";
 import { viajeState } from "../../viaje/viaje.state.js";
@@ -105,6 +105,7 @@ export async function restoreViajeUI() {
       driverAsignado?.classList.remove("oculto");
 
       if (data.motorista) {
+        limpiarMotoristas();
         mostrarMotoristaEnMapa(data.motorista);
         actualizarUIDriver(data.motorista, data.estado, data);
       }

@@ -3,8 +3,8 @@ import { viajeState } from "../viaje/viaje.state.js";
 
 import { handleMotoristas } from "./handlers/motoristas.handler.js";
 import { handlePrecio } from "./handlers/precio.handler.js";
-import { handleAsignado } from "./handlers/asignado.handler.js";
-import { handleTrack } from "./handlers/track.handler.js";
+import { handleAsignado } from "./handlers/asignado.handler.js?v=20260603-location-dedupe";
+import { handleTrack } from "./handlers/track.handler.js?v=20260603-location-dedupe";
 import { handleLlego } from "./handlers/llego.handler.js";
 import { handleIniciado } from "./handlers/iniciado.handler.js";
 import { handleFinalizado } from "./handlers/finalizado.handler.js";
@@ -13,7 +13,7 @@ import { handleError } from "./handlers/error.handler.js";
 import { handleNoMotorista } from "./handlers/noMotorista.handler.js";
 import { handleCancelado } from "./handlers/cancelado.handler.js";
 import { handleExpirado } from "./handlers/expirado.handler.js";
-import { handleSync } from "./handlers/sync.handler.js";
+import { handleSync } from "./handlers/sync.handler.js?v=20260603-location-dedupe";
 import { handleEstado } from "./handlers/estado.handler.js";
 import { handleMotoristaCandidato } from "./handlers/candidato.handler.js";
 import { handleBuscando } from "./handlers/buscando.handler.js";
@@ -98,8 +98,9 @@ function esEventoDuplicado(eventName, data = {}) {
   const estado = data?.estado || "";
   const lat = data?.lat != null ? Number(data.lat).toFixed(6) : "";
   const lng = data?.lng != null ? Number(data.lng).toFixed(6) : "";
+  const listaSignature = Array.isArray(data) ? crearListaMotoristasSignature(data) : "";
   const source = data?.isReplay ? "replay" : data?.isSnapshot ? "snapshot" : "live";
-  const key = `${eventName}:${viajeId}:${estado}:${lat}:${lng}:${source}`;
+  const key = `${eventName}:${viajeId}:${estado}:${lat}:${lng}:${listaSignature}:${source}`;
   const now = Date.now();
   const last = eventosRecientes.get(key) || 0;
   const ventanaMs = eventName === "track:posicion" ? 900 : 1500;
@@ -120,6 +121,18 @@ function esEventoDuplicado(eventName, data = {}) {
   }
 
   return false;
+}
+
+function crearListaMotoristasSignature(motoristas) {
+  return motoristas
+    .map((m) => ({
+      id: String(m?.id || m?._id || ""),
+      lat: Number(m?.lat).toFixed(5),
+      lng: Number(m?.lng).toFixed(5)
+    }))
+    .sort((a, b) => a.id.localeCompare(b.id))
+    .map((m) => `${m.id}:${m.lat}:${m.lng}`)
+    .join("|");
 }
 
 export function destroyPasajeroSocket() {
