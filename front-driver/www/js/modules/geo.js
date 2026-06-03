@@ -1,6 +1,7 @@
 // js/geo
 
 import { viajeState } from "../../..js/viaje/viaje.state.js";
+import { motoIcon } from "./map.icons.js?v=20260603-transparent-icons";
 
 let mapa; // referencia al mapa Leaflet
 
@@ -37,15 +38,10 @@ export function mostrarMotoristaEnMapa(motorista) {
   }
 
   // 🛵 icono motorista
-  const iconoMotorista = L.icon({
-    iconUrl: "/img/motorista.png",
-    iconSize: [40, 40],
-    iconAnchor: [20, 40],
-  });
 
   // 📍 crear marker
   viajeState.motoristaMarker = L.marker([lat, lng], {
-    icon: iconoMotorista,
+    icon: motoIcon,
   })
     .addTo(mapa)
     .bindPopup(`🛵 ${nombre || "Motorista"}`)

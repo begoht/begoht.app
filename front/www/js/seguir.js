@@ -27,7 +27,12 @@ async function cargarViaje() {
             markerDestino = L.marker([viaje.destino.lat, viaje.destino.lng]).addTo(map).bindPopup("Destino");
         }
         if (motorista.ubicacion) {
-            const motoIcon = L.icon({ iconUrl: "/assets/logo_moto.jpg", iconSize: [40, 40] });
+            const motoIcon = L.icon({
+                iconUrl: "/assets/icons/moto-transparent.svg?v=20260603-transparent-icons",
+                iconSize: [44, 44],
+                iconAnchor: [22, 22],
+                className: "bego-map-icon bego-map-icon-moto"
+            });
             markerDriver = L.marker([motorista.ubicacion.lat, motorista.ubicacion.lng], { icon: motoIcon }).addTo(map);
             map.setView([motorista.ubicacion.lat, motorista.ubicacion.lng], 15);
         }
@@ -55,7 +60,12 @@ function iniciarTracking(token) {
         if (markerDriver) {
             markerDriver.setLatLng(latLng);
         } else {
-            const motoIcon = L.icon({ iconUrl: "/assets/logo_moto.jpg", iconSize: [40, 40] });
+            const motoIcon = L.icon({
+                iconUrl: "/assets/icons/moto-transparent.svg?v=20260603-transparent-icons",
+                iconSize: [44, 44],
+                iconAnchor: [22, 22],
+                className: "bego-map-icon bego-map-icon-moto"
+            });
             markerDriver = L.marker(latLng, { icon: motoIcon }).addTo(map);
         }
 

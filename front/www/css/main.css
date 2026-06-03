@@ -43,3 +43,15 @@
 
 /* 7. 🔥 OVERRIDES GLOBALES (ESTO TE FALTA) */
 @import "./base/theme.css";
+
+.leaflet-marker-icon.bego-map-icon,
+.bego-map-icon {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  filter: drop-shadow(0 8px 10px rgba(15, 23, 42, 0.22));
+}
+
+.bego-map-icon-moto {
+  filter: drop-shadow(0 8px 10px rgba(37, 99, 235, 0.28));
+}

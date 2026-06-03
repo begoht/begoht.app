@@ -42,8 +42,9 @@ document.addEventListener("DOMContentLoaded", () => {
  *************************************************/
 function crearMotoristas(lat, lng) {
   const iconMoto = L.icon({
-    iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
-    iconSize: [32, 32],
+    iconUrl: "/assets/icons/moto-transparent.svg?v=20260603-transparent-icons",
+    iconSize: [38, 38],
+    iconAnchor: [19, 19],
     className: "motorista-icon",
   });
 

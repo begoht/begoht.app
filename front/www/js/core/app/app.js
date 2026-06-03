@@ -1,7 +1,7 @@
 import { AppState } from "./app.state.js";
 import { getSocket } from "../../socket/socket.js";
 import { createMap } from "../../map/map.singleton.js";
-import { initRouter } from "../router/router.js?v=20260603-location-dedupe";
+import { initRouter } from "../router/router.js?v=20260603-transparent-icons";
 import { initLaunchCountdown } from "../../launch-countdown.js?v=20260603-launch-gate";
 
 function mostrarAppLista() {

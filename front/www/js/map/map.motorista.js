@@ -10,12 +10,12 @@ import {
 import {
   renderMotorista,
   removeMotorista
-} from "./ui/map.motorista.renderer.js";
+} from "./ui/map.motorista.renderer.js?v=20260603-transparent-icons";
 
 import {
   renderMotoristas,
   clearMotoristas
-} from "./ui/map.motoristas.renderer.js?v=20260603-location-dedupe";
+} from "./ui/map.motoristas.renderer.js?v=20260603-transparent-icons";
 
 /*************************************************
  * 🗺️ SET MAPA

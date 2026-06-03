@@ -31,6 +31,14 @@ body {
   overflow-x: hidden;
 }
 
+.leaflet-marker-icon.bego-map-icon,
+.bego-map-icon {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  filter: drop-shadow(0 8px 10px rgba(37, 99, 235, 0.28));
+}
+
 /* =========================================
    📱 NAVEGACIÓN (SIDEBAR & MENU)
    ========================================= */

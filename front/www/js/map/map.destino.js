@@ -6,7 +6,7 @@ import { dibujarRuta } from "./map.ruta.js";
 
 import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js";
 
-import { destinoIcon } from "./map.icons.js";
+import { destinoIcon } from "./map.icons.js?v=20260603-transparent-icons";
 
 import { reverseGeocode } from "./services/map.reverse.js";
 

@@ -1,7 +1,7 @@
 // js/map/map.motorista.js
 
 import { viajeState } from "../viaje/viaje.state.js";
-import { motoIcon } from "./map.icons.js";
+import { motoIcon } from "./map.icons.js?v=20260603-transparent-icons";
 
 let mapa;
 let followMode = true; // 🔥 cámara sigue al motorista

@@ -1,6 +1,6 @@
 import { viajeState } from "../../viaje/viaje.state.js";
 import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js";
-import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260603-location-dedupe";
+import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260603-transparent-icons";
 import { mostrarDestinoEnMapa } from "../../map/map.destino.js";
 import { limpiarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js";
 import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js";

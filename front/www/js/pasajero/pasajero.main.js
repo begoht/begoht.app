@@ -1,11 +1,11 @@
-import { initGeo } from "../map/map.geo.js";
-import { initSeleccionDestino } from "../map/map.destino.js"; 
+import { initGeo } from "../map/map.geo.js?v=20260603-transparent-icons";
+import { initSeleccionDestino } from "../map/map.destino.js?v=20260603-transparent-icons";
 import { actualizarBotonViaje } from "../pasajero/pasajero.ui.js";
 import { initToggleMenuDriver, seleccionarPago } from "./pasajero.ui.js"; 
 import { getSocket } from "../socket/socket.js";
-import { initPasajeroSocket } from "../socket/pasajero.socket.js?v=20260603-location-dedupe";
+import { initPasajeroSocket } from "../socket/pasajero.socket.js?v=20260603-transparent-icons";
 import { viajeState } from "../viaje/viaje.state.js";
-import { setMapa } from "../map/map.motorista.js?v=20260603-location-dedupe";
+import { setMapa } from "../map/map.motorista.js?v=20260603-transparent-icons";
 import { cityConfig } from "../map/config/index.js";
 import { initSavedDestinations } from "../map/map.saved-destinations.js";
 import { initEnvioPaquete } from "./envio.paquete.js";

@@ -1,5 +1,6 @@
 import { map } from "./map.js";
 import { isDriverOnline, updateDriverPosition } from "./driver.status.js";
+import { motoIcon } from "./map.icons.js?v=20260603-transparent-icons";
 
 let ultimaPosicion = null;
 let motoristaMarker = null;
@@ -10,12 +11,6 @@ const HEARTBEAT_MS = 25000;
 const DISTANCIA_MINIMA_METROS = 0.00002;
 
 export function initGPS(socket) {
-  const motoIcon = L.icon({
-    iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
-    iconSize: [40, 40],
-    iconAnchor: [20, 40],
-  });
-
   navigator.geolocation.watchPosition(
     (pos) => {
       const { latitude: lat, longitude: lng } = pos.coords;

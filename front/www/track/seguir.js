@@ -214,9 +214,9 @@ function normalizarPunto(punto) {
 
 function iconoMoto() {
   return L.icon({
-    iconUrl: "/assets/logo_moto.jpg",
-    iconSize: [40, 40],
-    iconAnchor: [20, 20],
+    iconUrl: "/assets/icons/moto-transparent.svg?v=20260603-transparent-icons",
+    iconSize: [44, 44],
+    iconAnchor: [22, 22],
     className: "moto-live-icon"
   });
 }

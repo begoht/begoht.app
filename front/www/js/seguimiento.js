@@ -11,9 +11,10 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 // ICONO MOTORISTA
 // ===============================
 const motoIcon = L.icon({
-  iconUrl: "https://cdn-icons-png.flaticon.com/512/2972/2972185.png",
-  iconSize: [40, 40],
-  iconAnchor: [20, 20],
+  iconUrl: "/assets/icons/moto-transparent.svg?v=20260603-transparent-icons",
+  iconSize: [44, 44],
+  iconAnchor: [22, 22],
+  className: "bego-map-icon bego-map-icon-moto",
 });
 
 // ===============================

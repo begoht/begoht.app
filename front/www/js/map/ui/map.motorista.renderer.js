@@ -1,6 +1,6 @@
 import { viajeState } from "../../viaje/viaje.state.js";
 
-import { motoIcon } from "../map.icons.js";
+import { motoIcon } from "../map.icons.js?v=20260603-transparent-icons";
 
 /*************************************************
  * 🛵 RENDER MOTORISTA ASIGNADO
