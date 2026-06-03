@@ -25,6 +25,9 @@ const transporter = emailConfigured
         user: emailConfig.user,
         pass: emailConfig.pass,
       },
+      connectionTimeout: Number(process.env.EMAIL_CONNECTION_TIMEOUT || 15000),
+      greetingTimeout: Number(process.env.EMAIL_GREETING_TIMEOUT || 15000),
+      socketTimeout: Number(process.env.EMAIL_SOCKET_TIMEOUT || 20000),
     })
   : null;
 
