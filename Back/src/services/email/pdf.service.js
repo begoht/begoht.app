@@ -1,11 +1,5 @@
 const PDFDocument = require("pdfkit");
 
-const SOCIAL_LINKS = [
-  { label: "Facebook", value: "BeGO Haiti", url: "facebook.com/search/top?q=bego%20haiti" },
-  { label: "Instagram", value: "@bego.haiti", url: "instagram.com/bego.haiti" },
-  { label: "TikTok", value: "@bego.ht", url: "tiktok.com/@bego.ht" },
-];
-
 function money(value) {
   return `${Math.round(Number(value || 0)).toLocaleString("fr-HT")} HTG`;
 }
@@ -80,8 +74,8 @@ function generarPdfRecibo(datos) {
 
     doc.rect(0, 0, pageWidth, pageHeight).fill("#f6f8fb");
 
-    drawCard(doc, 28, 28, pageWidth - 56, 154, "#07111f", "#07111f", 24);
-    doc.rect(28, 150, pageWidth - 56, 32).fill("#2563eb");
+    drawCard(doc, 28, 28, pageWidth - 56, 140, "#07111f", "#07111f", 24);
+    doc.rect(28, 140, pageWidth - 56, 28).fill("#2563eb");
     doc
       .font("Helvetica-Bold")
       .fontSize(31)
@@ -89,12 +83,12 @@ function generarPdfRecibo(datos) {
       .text("BeGO", margin, 58, { width: 180 });
     doc
       .font("Helvetica")
-      .fontSize(10)
+      .fontSize(11)
       .fillColor("#93c5fd")
       .text("Recu officiel de course", margin, 96, { characterSpacing: 0.5 });
     doc
       .font("Helvetica")
-      .fontSize(8)
+      .fontSize(9)
       .fillColor("#cbd5e1")
       .text("Merci d'avoir choisi une course BeGO.", margin, 116, { width: 240 });
 
@@ -110,61 +104,66 @@ function generarPdfRecibo(datos) {
       .fillColor("#ffffff")
       .text(shortId(tripId), pageWidth - margin - 170, 116, { width: 170, align: "right" });
 
-    drawCard(doc, margin, 210, contentWidth, 112, "#ffffff", "#e5edf8", 20);
-    doc.font("Helvetica").fontSize(9).fillColor("#64748b").text("Montant paye", margin + 22, 236);
-    doc.font("Helvetica-Bold").fontSize(31).fillColor("#0f172a").text(money(datos.total), margin + 22, 254);
-    doc.font("Helvetica").fontSize(9).fillColor("#64748b").text(`${fechaTexto}  ${horaTexto}`, margin + 22, 292);
-    drawLabelValue(doc, "Paiement", paymentLabel(datos.metodoPago), pageWidth - margin - 150, 239, 128, {
+    drawCard(doc, margin, 192, contentWidth, 126, "#ffffff", "#e5edf8", 20);
+    doc.font("Helvetica").fontSize(10).fillColor("#64748b").text("Montant paye", margin + 22, 220);
+    doc.font("Helvetica-Bold").fontSize(34).fillColor("#0f172a").text(money(datos.total), margin + 22, 240);
+    doc.font("Helvetica").fontSize(10).fillColor("#64748b").text(`${fechaTexto}  ${horaTexto}`, margin + 22, 286);
+    drawLabelValue(doc, "Paiement", paymentLabel(datos.metodoPago), pageWidth - margin - 160, 224, 138, {
+      bold: true,
+      valueSize: 14,
+      valueColor: "#2563eb",
+    });
+
+    drawCard(doc, margin, 342, contentWidth, 176, "#ffffff", "#e5edf8", 18);
+    doc.font("Helvetica-Bold").fontSize(14).fillColor("#0f172a").text("Details du service", margin + 22, 366);
+    drawLabelValue(doc, "Passager", text(datos.nombrePasajero, "Passager"), margin + 22, 398, 220, {
+      bold: true,
+      valueSize: 12,
+    });
+    drawLabelValue(doc, "Conducteur", text(datos.nombreConductor, "Socio BeGO"), margin + 270, 398, 220, {
+      bold: true,
+      valueSize: 12,
+    });
+    drawLabelValue(doc, "Distance", `${text(datos.distanciaKm, "0")} km`, margin + 22, 456, 220, {
+      bold: true,
+      valueSize: 13,
+      valueColor: "#2563eb",
+    });
+    drawLabelValue(doc, "Duree", `${text(datos.tiempo, "0")} min`, margin + 270, 456, 220, {
       bold: true,
       valueSize: 13,
       valueColor: "#2563eb",
     });
 
-    drawCard(doc, margin, 348, contentWidth, 118, "#ffffff", "#e5edf8", 18);
-    doc.font("Helvetica-Bold").fontSize(13).fillColor("#0f172a").text("Details du service", margin + 22, 372);
-    drawLabelValue(doc, "Passager", text(datos.nombrePasajero, "Passager"), margin + 22, 404, 145, { bold: true });
-    drawLabelValue(doc, "Conducteur", text(datos.nombreConductor, "Socio BeGO"), margin + 190, 404, 145, { bold: true });
-    drawLabelValue(doc, "Distance", `${text(datos.distanciaKm, "0")} km`, margin + 358, 404, 74, { bold: true });
-    drawLabelValue(doc, "Duree", `${text(datos.tiempo, "0")} min`, margin + 442, 404, 68, { bold: true });
-
-    drawCard(doc, margin, 492, contentWidth, 154, "#ffffff", "#e5edf8", 18);
-    doc.font("Helvetica-Bold").fontSize(13).fillColor("#0f172a").text("Itineraire", margin + 22, 516);
+    drawCard(doc, margin, 542, contentWidth, 130, "#ffffff", "#e5edf8", 18);
+    doc.font("Helvetica-Bold").fontSize(14).fillColor("#0f172a").text("Itineraire", margin + 22, 564);
     doc.save();
-    doc.circle(margin + 31, 560, 5).fill("#2563eb");
-    doc.moveTo(margin + 31, 568).lineTo(margin + 31, 597).lineWidth(1.5).strokeColor("#bfdbfe").stroke();
-    doc.circle(margin + 31, 606, 5).fill("#0f172a");
+    doc.circle(margin + 31, 600, 5).fill("#2563eb");
+    doc.moveTo(margin + 31, 608).lineTo(margin + 31, 633).lineWidth(1.5).strokeColor("#bfdbfe").stroke();
+    doc.circle(margin + 31, 642, 5).fill("#0f172a");
     doc.restore();
-    drawLabelValue(doc, "Depart", text(datos.origen), margin + 54, 548, contentWidth - 78, { height: 34 });
-    drawLabelValue(doc, "Destination", text(datos.destino), margin + 54, 594, contentWidth - 78, { height: 34 });
+    drawLabelValue(doc, "Depart", text(datos.origen), margin + 54, 588, contentWidth - 78, {
+      height: 30,
+      valueSize: 10.5,
+    });
+    drawLabelValue(doc, "Destination", text(datos.destino), margin + 54, 630, contentWidth - 78, {
+      height: 30,
+      valueSize: 10.5,
+    });
 
-    drawCard(doc, margin, 672, contentWidth, 86, "#eef5ff", "#dbeafe", 18);
+    drawCard(doc, margin, 698, contentWidth, 64, "#eef5ff", "#dbeafe", 18);
     doc
       .font("Helvetica-Bold")
       .fontSize(12)
       .fillColor("#0f172a")
-      .text("Suivez BeGO Haiti", margin + 22, 694);
+      .text("Suivez BeGO Haiti", margin + 22, 718);
     doc
       .font("Helvetica")
-      .fontSize(9)
+      .fontSize(8.5)
       .fillColor("#475569")
-      .text("Offres, securite et nouveautes disponibles sur nos reseaux officiels.", margin + 22, 714, {
-        width: 240,
+      .text("Facebook: BeGO Haiti   Instagram: @bego.haiti   TikTok: @bego.ht", margin + 22, 738, {
+        width: contentWidth - 44,
       });
-
-    SOCIAL_LINKS.forEach((item, index) => {
-      const x = margin + 310 + index * 66;
-      doc.save();
-      doc.roundedRect(x, 699, 54, 36, 10).fill("#ffffff");
-      doc.font("Helvetica-Bold").fontSize(7).fillColor("#2563eb").text(item.label, x + 5, 706, {
-        width: 44,
-        align: "center",
-      });
-      doc.font("Helvetica").fontSize(6.5).fillColor("#0f172a").text(item.value, x + 5, 719, {
-        width: 44,
-        align: "center",
-      });
-      doc.restore();
-    });
 
     doc
       .font("Helvetica")
