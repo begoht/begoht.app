@@ -18,6 +18,24 @@ const emailConfig = {
 
 emailConfig.from = emailConfig.from || (emailConfig.user ? `"BeGO" <${emailConfig.user}>` : "");
 
+const SOCIAL_LINKS = [
+  {
+    label: "Facebook",
+    handle: "BeGO Haiti",
+    url: "https://www.facebook.com/search/top?q=bego%20haiti",
+  },
+  {
+    label: "Instagram",
+    handle: "@bego.haiti",
+    url: "https://www.instagram.com/bego.haiti",
+  },
+  {
+    label: "TikTok",
+    handle: "@bego.ht",
+    url: "https://www.tiktok.com/@bego.ht",
+  },
+];
+
 const resendConfigured = emailConfig.provider === "resend" && Boolean(emailConfig.resendApiKey && emailConfig.from);
 const smtpConfigured = Boolean(emailConfig.user && emailConfig.pass);
 const transporter = smtpConfigured
@@ -46,6 +64,17 @@ function formatMoney(value) {
   return `${Math.round(amount).toLocaleString("fr-HT")} HTG`;
 }
 
+function paymentLabel(value) {
+  const method = String(value || "").toLowerCase();
+  const labels = {
+    efectivo: "Especes",
+    wallet: "Wallet BeGO",
+    moncash: "MonCash",
+    natcash: "NatCash",
+  };
+  return labels[method] || String(value || "Especes");
+}
+
 function escapeHtml(value = "") {
   return String(value)
     .replace(/&/g, "&amp;")
@@ -53,6 +82,15 @@ function escapeHtml(value = "") {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+function renderSocialLinks() {
+  return SOCIAL_LINKS.map((item) => `
+    <a href="${item.url}" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none;background:#ffffff;border:1px solid #dbeafe;border-radius:14px;padding:12px 14px;margin:4px;color:#0f172a;min-width:116px;">
+      <span style="display:block;color:#2563eb;font-size:11px;font-weight:800;letter-spacing:.02em;text-transform:uppercase;">${escapeHtml(item.label)}</span>
+      <span style="display:block;margin-top:3px;color:#334155;font-size:13px;font-weight:700;">${escapeHtml(item.handle)}</span>
+    </a>
+  `).join("");
 }
 
 function activeEmailProvider() {
@@ -240,41 +278,85 @@ async function enviarResumenViaje(datos) {
   const safeDriver = escapeHtml(nombreConductor || "Socio BeGO");
   const safeOrigen = escapeHtml(origen || "No especificado");
   const safeDestino = escapeHtml(destino || "No especificado");
+  const safePayment = escapeHtml(paymentLabel(metodoPago));
+  const safeDistance = escapeHtml(distanciaKm || "0");
+  const safeDuration = escapeHtml(tiempo || "0");
+  const safeTripId = escapeHtml(viajeId);
   const totalText = formatMoney(total);
 
   try {
     const info = await sendEmail({
       to: email,
-      subject: `Votre recu BeGO - ${fechaActual}`,
+      subject: `Votre recu BeGO est pret - ${fechaActual}`,
       html: `
-        <div style="background:#07111f;color:#ffffff;font-family:Arial,sans-serif;max-width:620px;margin:auto;border-radius:22px;overflow:hidden;border:1px solid #1e3a8a;">
-          <div style="padding:34px 34px 20px;background:#020617;border-bottom:1px solid #2563eb;">
-            <h1 style="margin:0;font-size:30px;letter-spacing:0;">BeGO</h1>
-            <p style="margin:8px 0 0;color:#93c5fd;">Recu de trajet</p>
-          </div>
-          <div style="padding:34px;">
-            <p style="margin:0 0 10px;color:#94a3b8;font-size:13px;">${fechaActual}, ${horaActual}</p>
-            <h2 style="margin:0 0 14px;font-size:28px;line-height:1.15;">Merci, ${safeName}</h2>
-            <p style="margin:0 0 28px;color:#cbd5e1;line-height:1.5;">Votre trajet BeGO est termine. Votre recu officiel est joint en PDF.</p>
-            <div style="padding:18px;border-radius:16px;background:rgba(37,99,235,.16);border:1px solid rgba(96,165,250,.32);margin-bottom:24px;">
-              <div style="font-size:13px;color:#93c5fd;">Total</div>
-              <div style="font-size:30px;font-weight:800;">${totalText}</div>
+        <div style="display:none;max-height:0;overflow:hidden;color:transparent;">Votre course BeGO est terminee. Le recu officiel est joint en PDF.</div>
+        <div style="background:#f5f7fb;margin:0;padding:28px 12px;font-family:Arial,Helvetica,sans-serif;color:#0f172a;">
+          <div style="max-width:680px;margin:0 auto;background:#ffffff;border-radius:28px;overflow:hidden;border:1px solid #dbeafe;box-shadow:0 18px 45px rgba(15,23,42,.10);">
+            <div style="background:#07111f;padding:34px 34px 30px;border-bottom:6px solid #2563eb;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+                <tr>
+                  <td style="vertical-align:top;">
+                    <div style="font-size:34px;line-height:1;font-weight:900;color:#ffffff;letter-spacing:0;">BeGO</div>
+                    <div style="margin-top:10px;color:#93c5fd;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;">Recu officiel de course</div>
+                    <div style="margin-top:16px;color:#cbd5e1;font-size:14px;line-height:1.5;">Merci d'avoir choisi BeGO. Votre recu PDF est joint a cet email.</div>
+                  </td>
+                  <td width="150" style="vertical-align:top;text-align:right;">
+                    <span style="display:inline-block;background:#eff6ff;color:#2563eb;border-radius:999px;padding:9px 13px;font-size:11px;font-weight:900;text-transform:uppercase;">Course terminee</span>
+                    <div style="margin-top:22px;color:#94a3b8;font-size:11px;text-transform:uppercase;">ID voyage</div>
+                    <div style="margin-top:4px;color:#ffffff;font-size:12px;font-weight:800;word-break:break-all;">${safeTripId}</div>
+                  </td>
+                </tr>
+              </table>
             </div>
-            <table width="100%" style="border-collapse:collapse;color:#e5e7eb;">
-              <tr><td style="padding:8px 0;color:#94a3b8;">Paiement</td><td style="padding:8px 0;text-align:right;">${escapeHtml(metodoPago || "Efectivo")}</td></tr>
-              <tr><td style="padding:8px 0;color:#94a3b8;">Distance</td><td style="padding:8px 0;text-align:right;">${escapeHtml(distanciaKm || "0")} km</td></tr>
-              <tr><td style="padding:8px 0;color:#94a3b8;">Temps</td><td style="padding:8px 0;text-align:right;">${escapeHtml(tiempo || "0")} min</td></tr>
-              <tr><td style="padding:8px 0;color:#94a3b8;">Conducteur</td><td style="padding:8px 0;text-align:right;">${safeDriver}</td></tr>
-            </table>
-            <div style="margin-top:24px;padding:18px;border-radius:16px;background:#020617;border:1px solid #1e293b;">
-              <p style="margin:0 0 12px;color:#93c5fd;font-size:12px;font-weight:700;">DEPART</p>
-              <p style="margin:0 0 18px;color:#e5e7eb;">${safeOrigen}</p>
-              <p style="margin:0 0 12px;color:#93c5fd;font-size:12px;font-weight:700;">DESTINATION</p>
-              <p style="margin:0;color:#e5e7eb;">${safeDestino}</p>
+
+            <div style="padding:34px;">
+              <p style="margin:0 0 8px;color:#64748b;font-size:13px;">${fechaActual}, ${horaActual}</p>
+              <h1 style="margin:0 0 18px;font-size:30px;line-height:1.12;color:#0f172a;">Merci, ${safeName}</h1>
+
+              <div style="background:#eef5ff;border:1px solid #bfdbfe;border-radius:22px;padding:22px;margin:0 0 24px;">
+                <div style="color:#2563eb;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;">Montant paye</div>
+                <div style="margin-top:8px;color:#0f172a;font-size:36px;line-height:1;font-weight:900;">${totalText}</div>
+                <div style="margin-top:10px;color:#475569;font-size:13px;">Paiement confirme par BeGO.</div>
+              </div>
+
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin:0 0 22px;">
+                <tr>
+                  <td style="padding:14px 12px;border-bottom:1px solid #e2e8f0;color:#64748b;font-size:13px;">Paiement</td>
+                  <td style="padding:14px 12px;border-bottom:1px solid #e2e8f0;color:#0f172a;font-size:14px;font-weight:800;text-align:right;">${safePayment}</td>
+                </tr>
+                <tr>
+                  <td style="padding:14px 12px;border-bottom:1px solid #e2e8f0;color:#64748b;font-size:13px;">Distance</td>
+                  <td style="padding:14px 12px;border-bottom:1px solid #e2e8f0;color:#0f172a;font-size:14px;font-weight:800;text-align:right;">${safeDistance} km</td>
+                </tr>
+                <tr>
+                  <td style="padding:14px 12px;border-bottom:1px solid #e2e8f0;color:#64748b;font-size:13px;">Duree</td>
+                  <td style="padding:14px 12px;border-bottom:1px solid #e2e8f0;color:#0f172a;font-size:14px;font-weight:800;text-align:right;">${safeDuration} min</td>
+                </tr>
+                <tr>
+                  <td style="padding:14px 12px;color:#64748b;font-size:13px;">Conducteur</td>
+                  <td style="padding:14px 12px;color:#0f172a;font-size:14px;font-weight:800;text-align:right;">${safeDriver}</td>
+                </tr>
+              </table>
+
+              <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:20px;padding:20px;margin-bottom:24px;">
+                <div style="color:#2563eb;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;">Depart</div>
+                <div style="margin-top:7px;color:#0f172a;font-size:14px;line-height:1.5;font-weight:700;">${safeOrigen}</div>
+                <div style="height:1px;background:#e2e8f0;margin:16px 0;"></div>
+                <div style="color:#2563eb;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;">Destination</div>
+                <div style="margin-top:7px;color:#0f172a;font-size:14px;line-height:1.5;font-weight:700;">${safeDestino}</div>
+              </div>
+
+              <div style="background:#07111f;border-radius:22px;padding:24px;color:#ffffff;">
+                <div style="font-size:18px;font-weight:900;margin-bottom:8px;">Suivez BeGO Haiti</div>
+                <div style="color:#cbd5e1;font-size:13px;line-height:1.5;margin-bottom:16px;">Promotions, securite, assistance et nouveautes sont partages sur nos reseaux officiels.</div>
+                <div style="text-align:center;">${renderSocialLinks()}</div>
+              </div>
             </div>
-          </div>
-          <div style="padding:24px 34px;background:#020617;color:#64748b;font-size:12px;line-height:1.5;">
-            BeGO Haiti<br>ID voyage: ${escapeHtml(viajeId)}
+
+            <div style="background:#f8fafc;border-top:1px solid #e2e8f0;padding:22px 34px;text-align:center;color:#64748b;font-size:12px;line-height:1.5;">
+              BeGO Haiti<br>
+              Recu genere automatiquement par la plateforme. Conservez le PDF joint pour votre suivi.
+            </div>
           </div>
         </div>
       `,
