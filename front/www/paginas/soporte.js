@@ -30,7 +30,7 @@ export function renderSoporte() {
       </section>
 
       <section class="support-quick-grid" aria-label="Canaux d'assistance">
-        <a class="support-action-card featured ripple" href="paginas/soporte-chat.html">
+        <a class="support-action-card featured ripple" href="paginas/soporte-chat.html?v=20260604-live-support">
           <i class="fa-solid fa-comments"></i>
           <span>Chat en direct</span>
           <p>Parler avec l'equipe.</p>

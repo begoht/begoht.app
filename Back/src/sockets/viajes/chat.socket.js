@@ -4,8 +4,6 @@ const Viaje = require("../../models/Viaje");
 const ESTADOS_CHAT = new Set(["asignado", "llego", "en_curso"]);
 const MAX_TEXTO = 500;
 
-const chatsMemoria = new Map();
-
 function getUserId(socket) {
   return socket.user?._id?.toString() || socket.user?.id?.toString();
 }
@@ -35,56 +33,53 @@ async function obtenerViajeAutorizado(socket, viajeId) {
   const pasajeroId = viaje.pasajero?.toString();
   const motoristaId = viaje.motorista?.toString();
 
-  const participa =
-    userId === pasajeroId || userId === motoristaId;
-
-  return participa ? viaje : null;
+  return userId === pasajeroId || userId === motoristaId ? viaje : null;
 }
 
-function serializarMensaje(mensaje) {
+function crearMensaje({ socket, viaje, viajeId, texto, clientId }) {
+  const userId = getUserId(socket);
+  const senderRole =
+    userId === viaje.motorista?.toString()
+      ? "motorista"
+      : "pasajero";
+
   return {
-    id: mensaje.id,
-    viajeId: mensaje.viajeId,
-    senderId: mensaje.senderId,
-    senderRole: mensaje.senderRole,
-    senderName: mensaje.senderName || "",
-    texto: mensaje.texto,
-    clientId: mensaje.clientId || null,
-    createdAt: mensaje.createdAt || new Date(),
+    id:
+      clientId ||
+      `${Date.now()}-${Math.random()
+        .toString(36)
+        .slice(2, 10)}`,
+    viajeId: String(viajeId),
+    senderId: userId,
+    senderRole,
+    senderName:
+      socket.user?.nombre ||
+      socket.user?.name ||
+      senderRole,
+    texto,
+    clientId: clientId || null,
+    createdAt: new Date(),
   };
 }
 
-function emitirMensaje(io, viaje, mensaje) {
+function emitirAParticipantes(io, viaje, eventName, payload) {
   const pasajeroId = viaje.pasajero?.toString();
   const motoristaId = viaje.motorista?.toString();
 
-  io.to(`viaje-chat:${mensaje.viajeId}`)
+  io.to(`viaje-chat:${payload.viajeId}`)
     .to(`pasajero:${pasajeroId}`)
     .to(`motorista:${motoristaId}`)
-    .emit("viaje:chat:mensaje", mensaje);
+    .emit(eventName, payload);
 }
 
-function obtenerHistorial(viajeId) {
-  if (!chatsMemoria.has(viajeId)) {
-    chatsMemoria.set(viajeId, []);
-  }
+function cerrarChatViaje(io, viajeId) {
+  if (!io || !viajeId) return;
 
-  return chatsMemoria.get(viajeId);
-}
+  io.to(`viaje-chat:${viajeId}`).emit("viaje:chat:closed", {
+    viajeId,
+  });
 
-function guardarMensajeMemoria(viajeId, mensaje) {
-  const historial = obtenerHistorial(viajeId);
-
-  historial.push(mensaje);
-
-  // máximo 100 mensajes en RAM
-  if (historial.length > 100) {
-    historial.shift();
-  }
-}
-
-function limpiarChatViaje(viajeId) {
-  chatsMemoria.delete(String(viajeId));
+  io.in(`viaje-chat:${viajeId}`).socketsLeave(`viaje-chat:${viajeId}`);
 }
 
 module.exports = function initViajeChat(io, socket) {
@@ -104,14 +99,13 @@ module.exports = function initViajeChat(io, socket) {
 
       socket.join(`viaje-chat:${viajeId}`);
 
-      const historial = obtenerHistorial(String(viajeId));
-
       socket.emit("viaje:chat:history", {
         viajeId,
-        mensajes: historial.map(serializarMensaje),
+        mensajes: [],
+        ephemeral: true,
       });
     } catch (err) {
-      console.error("❌ Error join chat viaje:", err);
+      console.error("Error join chat viaje:", err);
 
       socket.emit("viaje:chat:error", {
         viajeId,
@@ -123,58 +117,54 @@ module.exports = function initViajeChat(io, socket) {
   socket.on("viaje:chat:send", async ({ viajeId, texto, clientId } = {}) => {
     try {
       const viaje = await obtenerViajeAutorizado(socket, viajeId);
-
       const mensajeLimpio = limpiarTexto(texto);
 
       if (!viaje || !mensajeLimpio) {
         return socket.emit("viaje:chat:error", {
           viajeId,
+          clientId,
           mensaje: "Mensaje no enviado",
         });
       }
 
-      const userId = getUserId(socket);
+      const payload = crearMensaje({
+        socket,
+        viaje,
+        viajeId,
+        texto: mensajeLimpio,
+        clientId,
+      });
 
+      emitirAParticipantes(io, viaje, "viaje:chat:mensaje", payload);
+    } catch (err) {
+      console.error("Error enviando chat viaje:", err);
+
+      socket.emit("viaje:chat:error", {
+        viajeId,
+        clientId,
+        mensaje: "No se pudo enviar el mensaje",
+      });
+    }
+  });
+
+  socket.on("viaje:chat:typing", async ({ viajeId, isTyping } = {}) => {
+    try {
+      const viaje = await obtenerViajeAutorizado(socket, viajeId);
+      if (!viaje) return;
+
+      const userId = getUserId(socket);
       const senderRole =
         userId === viaje.motorista?.toString()
           ? "motorista"
           : "pasajero";
 
-      const payload = {
-        id:
-          clientId ||
-          `${Date.now()}-${Math.random()
-            .toString(36)
-            .slice(2, 10)}`,
-
+      emitirAParticipantes(io, viaje, "viaje:chat:typing", {
         viajeId: String(viajeId),
-
-        senderId: userId,
-
         senderRole,
-
-        senderName:
-          socket.user?.nombre ||
-          socket.user?.name ||
-          senderRole,
-
-        texto: mensajeLimpio,
-
-        clientId: clientId || null,
-
-        createdAt: new Date(),
-      };
-
-      guardarMensajeMemoria(String(viajeId), payload);
-
-      emitirMensaje(io, viaje, payload);
-    } catch (err) {
-      console.error("❌ Error enviando chat viaje:", err);
-
-      socket.emit("viaje:chat:error", {
-        viajeId,
-        mensaje: "No se pudo enviar el mensaje",
+        isTyping: Boolean(isTyping),
       });
+    } catch (err) {
+      console.error("Error typing chat viaje:", err);
     }
   });
 
@@ -184,32 +174,13 @@ module.exports = function initViajeChat(io, socket) {
     }
   });
 
-  // 🔥 LIMPIAR CHAT CUANDO TERMINA VIAJE
-  const limpiarEventos = [
-    "viaje-finalizado",
-    "viaje:cancelado",
-    "viaje-expirado",
-  ];
-
-  limpiarEventos.forEach((evento) => {
+  ["viaje-finalizado", "viaje:cancelado", "viaje-expirado"].forEach((evento) => {
     socket.on(evento, ({ viajeId } = {}) => {
-      if (!viajeId) return;
-
-      limpiarChatViaje(String(viajeId));
-
-      io.to(`viaje-chat:${viajeId}`).emit(
-        "viaje:chat:closed",
-        {
-          viajeId,
-        }
-      );
-
-      io.in(`viaje-chat:${viajeId}`).socketsLeave(
-        `viaje-chat:${viajeId}`
-      );
+      cerrarChatViaje(io, viajeId);
     });
   });
 };
 
-// export opcional para limpiar desde otros módulos
-module.exports.limpiarChatViaje = limpiarChatViaje;
+module.exports.limpiarChatViaje = function limpiarChatViaje(viajeId) {
+  cerrarChatViaje(global.io, viajeId);
+};

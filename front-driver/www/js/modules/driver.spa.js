@@ -1,4 +1,5 @@
 import { getDriverAvailability, onDriverAvailabilityChange } from "./driver.status.js?v=20260603-road-heading-stable";
+import { initDriverSupportChat } from "./support/supportChat.js?v=20260604-live-support";
 
 let pageView = null;
 let homeView = null;
@@ -90,6 +91,7 @@ function initDriverPage(route) {
   if (route === "/ganancias") loadDriverEarnings();
   if (route === "/creditos") loadDriverCredits();
   if (route === "/cuenta") hydrateDriverAccount();
+  if (route === "/soporte") initDriverSupportChat();
 }
 
 function renderHome() {
@@ -274,11 +276,44 @@ function renderAjustes() {
 }
 
 function renderSoporte() {
-  return pageShell("Soporte", "Ayuda para tu operacion", `
-    <section class="driver-list">
-      ${listItem("Chat con soporte", "Reporta problemas de pago, viaje o pasajero.", "fa-headset", "#/soporte")}
-      ${listItem("Emergencia", "Acceso rapido durante un viaje activo.", "fa-life-ring", "#/soporte")}
-      ${listItem("Guias", "Buenas practicas para viajes premium.", "fa-book-open", "#/actividad")}
+  return pageShell("Assistance", "Support en direct", `
+    <section class="driver-support-live">
+      <header class="driver-support-head">
+        <div class="driver-support-agent">
+          <i class="fa-solid fa-headset"></i>
+          <div>
+            <span>Assistance BeGO</span>
+            <small id="driverSupportStatus">Connexion...</small>
+          </div>
+        </div>
+        <div class="driver-support-pill" id="driverSupportLivePill">Live</div>
+      </header>
+
+      <div class="driver-support-body" id="driverSupportChatBody">
+        <div class="driver-support-empty">
+          <i class="fa-solid fa-comments"></i>
+          <span>Chat en direct</span>
+          <p>Les messages ne sont pas sauvegardes. Gardez cette page ouverte pendant l'assistance.</p>
+        </div>
+      </div>
+
+      <div class="driver-support-quick">
+        <button type="button" data-driver-support-reply="J'ai un probleme avec un paiement.">Paiement</button>
+        <button type="button" data-driver-support-reply="J'ai besoin d'aide avec une course.">Course</button>
+        <button type="button" data-driver-support-reply="Je veux parler a un agent.">Agent</button>
+      </div>
+
+      <div class="driver-support-typing hidden" id="driverSupportTyping">
+        <span></span><span></span><span></span>
+        <small>L'assistance ecrit...</small>
+      </div>
+
+      <form class="driver-support-form" id="driverSupportForm">
+        <input id="driverSupportInput" type="text" maxlength="1000" autocomplete="off" placeholder="Ecrire un message">
+        <button id="driverSupportSend" type="submit" aria-label="Envoyer">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </form>
     </section>
   `);
 }

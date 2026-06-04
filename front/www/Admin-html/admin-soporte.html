@@ -1,58 +1,135 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Soporte Profesional | BeGO</title>
-
-  <link rel="stylesheet" href="../css/index.css">
-  <link rel="stylesheet" href="../css/admin.css">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Support Live | BeGO Admin</title>
+  <link rel="stylesheet" href="../css/admin.css?v=20260604-live-support">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body>
-
-<header class="admin-header">
-  <h1>Admin Soporte BeGO</h1>
-  <div class="admin-stats">
-    <span>Total conectados: <b id="totalConectados">0</b></span>
-    <span>Total mensajes: <b id="totalMensajes">0</b></span>
-    <span id="alertas">Alertas enviadas: 0</span>
-  </div>
-</header>
-
-<main class="admin-container">
-
-  <!-- PANEL USUARIOS -->
-  <aside class="panel-usuarios">
-    <h2>Usuarios en soporte</h2>
-    <input type="text" id="searchUsuarios" placeholder="Buscar usuario…">
-    <ul id="listaUsuarios"></ul>
-    <button id="alertaUsuarios" class="ripple"><i class="fa-solid fa-bell"></i> Enviar alerta a todos</button>
-    <button id="limpiarChat" class="ripple"><i class="fa-solid fa-trash"></i> Limpiar chat</button>
-    <button id="logoutBtn" class="ripple"><i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión</button>
-  </aside>
-
-  <!-- PANEL CHAT -->
-  <section class="panel-chat">
-    <div id="chatBody" class="chat-body"></div>
-    <div class="input-chat">
-      <input type="hidden" id="userIdSeleccionado">
-      <input type="text" id="mensaje" placeholder="Escribir mensaje...">
-      <button id="sendBtn"><i class="fa-solid fa-paper-plane"></i> Enviar</button>
+<body class="support-admin-body">
+  <header class="support-admin-header">
+    <div>
+      <span class="support-admin-kicker">BeGO Operations</span>
+      <h1>Support en direct</h1>
+      <p>Conversations live uniquement. Aucun historique serveur n'est conserve.</p>
     </div>
-  </section>
 
-  <!-- PANEL ESTADÍSTICAS -->
-  <aside class="panel-estadisticas">
-    <h2>Estadísticas</h2>
-    <canvas id="chartMensajes" height="200"></canvas>
-  </aside>
+    <section class="support-admin-metrics" aria-label="Indicateurs support">
+      <div>
+        <span id="totalConectados">0</span>
+        <small>Connectes</small>
+      </div>
+      <div>
+        <span id="totalMensajes">0</span>
+        <small>Messages session</small>
+      </div>
+      <div>
+        <span id="alertas">0</span>
+        <small>Alertes</small>
+      </div>
+    </section>
+  </header>
 
-</main>
+  <main class="support-admin-layout">
+    <aside class="support-queue-panel">
+      <div class="support-panel-title">
+        <div>
+          <span>File active</span>
+          <small>Utilisateurs en ligne</small>
+        </div>
+        <button id="refreshUsuarios" type="button" aria-label="Actualiser">
+          <i class="fa-solid fa-rotate"></i>
+        </button>
+      </div>
 
-<script src="../js/Admin-js/admin-soporte.js"></script>
+      <label class="support-search-admin" for="searchUsuarios">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="search" id="searchUsuarios" placeholder="Rechercher">
+      </label>
+
+      <ul id="listaUsuarios" class="support-user-list"></ul>
+
+      <div class="support-admin-actions">
+        <button id="alertaUsuarios" type="button">
+          <i class="fa-solid fa-bell"></i>
+          Alerte live
+        </button>
+        <button id="logoutBtn" type="button">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          Sortir
+        </button>
+      </div>
+    </aside>
+
+    <section class="support-chat-panel">
+      <header class="support-chat-admin-head">
+        <div class="support-selected-avatar" id="selectedAvatar">
+          <i class="fa-solid fa-headset"></i>
+        </div>
+        <div>
+          <span id="selectedUserName">Selectionnez un utilisateur</span>
+          <small id="selectedUserMeta">Aucun chat actif</small>
+        </div>
+      </header>
+
+      <div id="chatBody" class="support-admin-chat-body">
+        <div class="support-empty-state">
+          <i class="fa-solid fa-comments"></i>
+          <span>Support live</span>
+          <p>Choisissez un utilisateur connecte pour commencer. Les messages restent seulement dans cette session.</p>
+        </div>
+      </div>
+
+      <div id="adminTyping" class="support-admin-typing hidden">
+        <span></span><span></span><span></span>
+        <small>L'utilisateur ecrit...</small>
+      </div>
+
+      <div class="support-admin-quick">
+        <button type="button" data-reply="Bonjour, je suis avec vous.">Accueil</button>
+        <button type="button" data-reply="Pouvez-vous m'envoyer plus de details?">Details</button>
+        <button type="button" data-reply="Je verifie votre dossier maintenant.">Verification</button>
+      </div>
+
+      <form class="support-admin-composer" id="adminChatForm">
+        <input type="hidden" id="userIdSeleccionado">
+        <input type="text" id="mensaje" maxlength="1000" autocomplete="off" placeholder="Ecrire une reponse" disabled>
+        <button id="sendBtn" type="submit" disabled>
+          <i class="fa-solid fa-paper-plane"></i>
+          Envoyer
+        </button>
+      </form>
+    </section>
+
+    <aside class="support-context-panel">
+      <div class="support-panel-title">
+        <div>
+          <span>Contexte</span>
+          <small>Session courante</small>
+        </div>
+      </div>
+
+      <div class="support-context-card">
+        <span>Mode</span>
+        <strong>Ephemere</strong>
+        <p>Aucun message n'est enregistre dans Mongo, Redis ou fichier.</p>
+      </div>
+
+      <div class="support-context-card">
+        <span>Utilisateur</span>
+        <strong id="contextUserName">-</strong>
+        <p id="contextUserRole">Selectionnez une conversation.</p>
+      </div>
+
+      <button id="limpiarChat" class="support-clear-view" type="button">
+        <i class="fa-solid fa-broom"></i>
+        Nettoyer la vue
+      </button>
+    </aside>
+  </main>
+
+  <script src="../js/Admin-js/admin-soporte.js?v=20260604-live-support"></script>
 </body>
 </html>

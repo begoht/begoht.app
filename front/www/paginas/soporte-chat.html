@@ -1,29 +1,62 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Chat Soporte | BeGO</title>
-
-  <link rel="stylesheet" href="../css/chat-soporte.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Chat Assistance | BeGO</title>
+  <link rel="stylesheet" href="../css/chat-soporte.css?v=20260604-live-support">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
+  <main class="support-chat-shell" aria-label="Chat assistance BeGO">
+    <header class="support-chat-header">
+      <button class="support-icon-btn" id="supportBackBtn" type="button" aria-label="Retour">
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
 
-<header class="chat-header">
-  <i class="fa-solid fa-headset"></i>
-  <span>Soporte BeGO</span>
-</header>
+      <div class="support-agent">
+        <div class="support-agent-avatar">
+          <i class="fa-solid fa-headset"></i>
+        </div>
+        <div>
+          <span>Assistance BeGO</span>
+          <small id="supportStatus">Connexion...</small>
+        </div>
+      </div>
 
-<main class="chat-body" id="chatBody"></main>
+      <div class="support-live-pill" id="supportLivePill">
+        <span></span>
+        Live
+      </div>
+    </header>
 
-<footer class="chat-input">
-  <input id="mensajeInput" type="text" placeholder="Escribí tu mensaje…">
-  <button id="enviarBtn"><i class="fa-solid fa-paper-plane"></i></button>
-</footer>
+    <section class="support-chat-body" id="chatBody" aria-live="polite">
+      <div class="support-system-card">
+        <span>Chat en direct</span>
+        <p>Les messages ne sont pas sauvegardes. Gardez cette fenetre ouverte pendant l'assistance.</p>
+      </div>
+    </section>
 
-<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
-<script type="module" src="../js/chat-soporte.js"></script>
+    <section class="support-quick-replies" aria-label="Reponses rapides">
+      <button type="button" data-quick-reply="J'ai besoin d'aide avec une course.">Course</button>
+      <button type="button" data-quick-reply="J'ai un probleme de paiement.">Paiement</button>
+      <button type="button" data-quick-reply="Je veux parler a un agent.">Agent</button>
+    </section>
 
+    <div class="support-typing hidden" id="supportTyping">
+      <span></span><span></span><span></span>
+      <small>L'assistance ecrit...</small>
+    </div>
 
+    <form class="support-chat-input" id="supportChatForm">
+      <input id="mensajeInput" type="text" maxlength="1000" autocomplete="off" placeholder="Ecrire un message">
+      <button id="enviarBtn" type="submit" aria-label="Envoyer">
+        <i class="fa-solid fa-paper-plane"></i>
+      </button>
+    </form>
+  </main>
+
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script type="module" src="../js/chat-soporte.js?v=20260604-live-support"></script>
 </body>
 </html>
