@@ -6,6 +6,8 @@ const Viaje = require("../../../../models/Viaje");
 const Wallet = require("../../../../models/Wallet");
 
 const MAX_PESO_ENVIO_KG = 5;
+const METODOS_PAGO_ACTIVOS = new Set(["efectivo", "wallet"]);
+const METODOS_PAGO_PROXIMOS = new Set(["moncash", "natcash"]);
 
 function generarCodigoEntrega() {
   return String(Math.floor(1000 + Math.random() * 9000));
@@ -13,6 +15,26 @@ function generarCodigoEntrega() {
 
 function normalizarTipo(tipo) {
   return tipo === "envio" ? "envio" : "viaje";
+}
+
+function validarMetodoPagoDisponible(metodoPago) {
+  const metodo = String(metodoPago || "").toLowerCase();
+
+  if (METODOS_PAGO_PROXIMOS.has(metodo)) {
+    const err = new Error("PAGO_NO_DISPONIBLE");
+    err.type = "pago_no_disponible";
+    err.metodoPago = metodo;
+    throw err;
+  }
+
+  if (!METODOS_PAGO_ACTIVOS.has(metodo)) {
+    const err = new Error("METODO_PAGO_INVALIDO");
+    err.type = "pago_invalido";
+    err.metodoPago = metodo;
+    throw err;
+  }
+
+  return metodo;
 }
 
 function validarPaquete(tipo, paquete = {}) {
@@ -70,6 +92,7 @@ module.exports = {
   async cotizar(socket, { origen, destino, metodoPago, city, tipo, paquete }) {
     const pasajeroId = socket.user.id || socket.user._id;
     const tipoServicio = normalizarTipo(tipo);
+    const metodoPagoNormalizado = validarMetodoPagoDisponible(metodoPago);
     const paqueteNormalizado = validarPaquete(tipoServicio, paquete);
 
     if (tipoServicio === "envio" && (!destino?.lat || !destino?.lng)) {
@@ -110,7 +133,7 @@ module.exports = {
       duracionMin = Math.max(1, Math.round((distanciaKm / 24) * 60));
     }
 
-    const walletInfo = metodoPago === "wallet"
+    const walletInfo = metodoPagoNormalizado === "wallet"
       ? await validarSaldoWallet(pasajeroId, precio)
       : null;
 
@@ -128,7 +151,7 @@ module.exports = {
       distanciaKm,
       duracionMin,
       precio,
-      metodoPago,
+      metodoPago: metodoPagoNormalizado,
       wallet: walletInfo,
       ciudad: cityConfig.id,
       tipo: tipoServicio,

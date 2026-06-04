@@ -1,4 +1,10 @@
 function pagar(metodo) {
+  if (["moncash", "natcash"].includes(metodo)) {
+    const nombre = metodo === "moncash" ? "MonCash" : "NatCash";
+    alert(`${nombre} no esta disponible por ahora.`);
+    return;
+  }
+
   const monto = Number(prompt("Monto a pagar"));
   if (!monto || monto <= 0) return;
 

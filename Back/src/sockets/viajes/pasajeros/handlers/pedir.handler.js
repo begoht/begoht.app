@@ -21,7 +21,7 @@ module.exports = async function pedirViaje(socket, io, data) {
       precio: cotizacion.precio,
       distanciaKm: cotizacion.distanciaKm,
       duracionMin: cotizacion.duracionMin,
-      metodoPago,
+      metodoPago: cotizacion.metodoPago,
       wallet: cotizacion.wallet || null,
       tipo: cotizacion.tipo,
       paquete: cotizacion.paquete,
@@ -49,6 +49,20 @@ module.exports = async function pedirViaje(socket, io, data) {
         mensaje: err.message === "PESO_ENVIO_MAXIMO"
           ? "El envio de paquete permite maximo 5 kg."
           : "Completa los datos del paquete para continuar."
+      });
+    }
+
+    if (err.type === "pago_no_disponible") {
+      return socket.emit("viaje-error", {
+        code: "PAGO_NO_DISPONIBLE",
+        metodoPago: err.metodoPago,
+        mensaje: "Ce mode de paiement n'est pas disponible pour le moment."
+      });
+    }
+
+    if (err.type === "pago_invalido") {
+      return socket.emit("viaje-error", {
+        mensaje: "Metodo de pago invalido"
       });
     }
 

@@ -1,26 +1,21 @@
 // js/pasajero/pasajero.ui.js
 import { viajeState } from "../viaje/viaje.state.js";
-import {pedirViaje, cancelarViaje } from "../viaje/viaje.actions.js";
-import { getSocket } from "../socket/socket.js";
-
-// 🔘 BOTÓN
 import { actualizarBotonViaje } from "./ui/boton/botonViaje.ui.js";
+import { mostrarPagoNoDisponible } from "./ui/modales/pagoNoDisponible.ui.js?v=20260604-payments-disabled";
+
 export { actualizarBotonViaje };
 
-// 🚖 OVERLAY / BUSQUEDA
-export { 
-  mostrarBuscandoMotorista, 
+export {
+  mostrarBuscandoMotorista,
   cerrarBuscandoMotorista,
   actualizarMotoristaCandidato
 } from "./ui/overlays/buscandoMotorista.ui.js";
 
-// 💳 MODALES
 export { mostrarModalConfirmacion } from "./ui/modales/modalConfirmacion.ui.js";
 export { mostrarModalPrecio } from "./ui/modales/modalPrecio.ui.js";
 export { mostrarModalConfirmarCancelacion } from "./ui/modales/modalCancelacion.ui.js";
 
-// 🔔 NOTIFICACIONES
-export { 
+export {
   mostrarNotificacionLlegada,
   actualizarEstadoLlegada,
   mostrarNotificacionProximidad,
@@ -28,10 +23,10 @@ export {
   reproducirSonidoLlegada
 } from "./ui/notificaciones/llegada.ui.js";
 
-// 🍔 MENU
 export { initToggleMenuDriver } from "./ui/menu/menu.ui.js";
 
-// 🧠 ACCIONES LOCALES
+const METODOS_PAGO_NO_DISPONIBLES = new Set(["moncash", "natcash"]);
+
 export function animarMotoristaEncontrado() {
   const box = document.getElementById("boxBusqueda");
   if (!box) return;
@@ -51,22 +46,22 @@ export function animarMotoristaEncontrado() {
   box.style.opacity = "1";
 }
 
-/*************************************************
- * 🛠️ GESTIÓN DE PAGO
- *************************************************/
 export function seleccionarPago(metodo, elemento) {
-    console.log("💳 Método de pago seleccionado:", metodo);
-    
-    viajeState.metodoPago = metodo;
+  const metodoNormalizado = String(metodo || "").toLowerCase();
 
-    document.querySelectorAll('.btn-pago').forEach(btn => {
-        btn.classList.remove('activo');
-    });
-    
-    if (elemento) {
-        elemento.classList.add('activo');
-    }
+  if (METODOS_PAGO_NO_DISPONIBLES.has(metodoNormalizado)) {
+    console.log("Metodo de pago no disponible:", metodoNormalizado);
+    mostrarPagoNoDisponible({ metodo: metodoNormalizado });
+    return;
+  }
 
-    // Actualizamos el botón para que se ponga verde si ya hay origen/destino
-    actualizarBotonViaje();
+  console.log("Metodo de pago seleccionado:", metodoNormalizado);
+  viajeState.metodoPago = metodoNormalizado;
+
+  document.querySelectorAll(".btn-pago").forEach((btn) => {
+    btn.classList.remove("activo");
+  });
+
+  elemento?.classList.add("activo");
+  actualizarBotonViaje();
 }

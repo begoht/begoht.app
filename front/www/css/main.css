@@ -57,3 +57,30 @@
   transition: transform 220ms linear;
   will-change: transform;
 }
+
+.btn-pago.btn-pago-indisponible {
+  opacity: 0.62;
+  cursor: pointer;
+  border: 1px dashed rgba(148, 163, 184, 0.22);
+}
+
+.btn-pago.btn-pago-indisponible::before {
+  content: "Bientot";
+  position: absolute;
+  top: 5px;
+  right: 7px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  color: #bfdbfe;
+  background: rgba(37, 99, 235, 0.18);
+  border: 1px solid rgba(96, 165, 250, 0.22);
+  font-size: 0.62rem;
+  line-height: 1.2;
+  font-weight: 900;
+}
+
+.btn-pago.btn-pago-indisponible:hover,
+.btn-pago.btn-pago-indisponible:focus-visible {
+  opacity: 0.78;
+  border-color: rgba(96, 165, 250, 0.36);
+}

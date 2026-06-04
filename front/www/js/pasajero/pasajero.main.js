@@ -1,9 +1,9 @@
 import { initGeo } from "../map/map.geo.js?v=20260604-jacmel-gps";
 import { initSeleccionDestino } from "../map/map.destino.js?v=20260604-jacmel-gps";
-import { actualizarBotonViaje } from "../pasajero/pasajero.ui.js";
-import { initToggleMenuDriver, seleccionarPago } from "./pasajero.ui.js"; 
+import { actualizarBotonViaje } from "../pasajero/pasajero.ui.js?v=20260604-payments-disabled";
+import { initToggleMenuDriver, seleccionarPago } from "./pasajero.ui.js?v=20260604-payments-disabled";
 import { getSocket } from "../socket/socket.js";
-import { initPasajeroSocket } from "../socket/pasajero.socket.js?v=20260604-wallet-balance";
+import { initPasajeroSocket } from "../socket/pasajero.socket.js?v=20260604-payments-disabled";
 import { viajeState } from "../viaje/viaje.state.js";
 import { setMapa } from "../map/map.motorista.js?v=20260604-jacmel-gps";
 import { cityConfig } from "../map/config/index.js";

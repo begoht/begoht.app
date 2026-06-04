@@ -6,31 +6,38 @@ const { matchingQueue } = require("../../../../config/queues");
 const { redis } = require("../../../../config/redis");
 
 module.exports = async function confirmarViaje(socket, io, data) {
-
   const userId = socket.user.id;
+  const metodoPago = String(data?.metodoPago || "").toLowerCase();
 
   if (!data?.origen?.lat || !data?.origen?.lng) {
-    return socket.emit("error", { mensaje: "Origen inválido" });
+    return socket.emit("error", { mensaje: "Origen invalido" });
   }
 
-  if (!["efectivo", "wallet", "moncash", "natcash"].includes(data.metodoPago)) {
-    return socket.emit("error", { mensaje: "Método de pago inválido" });
+  if (!["efectivo", "wallet", "moncash", "natcash"].includes(metodoPago)) {
+    return socket.emit("error", { mensaje: "Metodo de pago invalido" });
   }
+
+  if (["moncash", "natcash"].includes(metodoPago)) {
+    return socket.emit("viaje-error", {
+      code: "PAGO_NO_DISPONIBLE",
+      metodoPago,
+      mensaje: "Ce mode de paiement n'est pas disponible pour le moment."
+    });
+  }
+
+  data.metodoPago = metodoPago;
 
   const idemKey = `confirmar:${userId}`;
   const idem = await redis.set(idemKey, "1", "NX", "PX", 10000);
 
   if (!idem) {
-    return socket.emit("info", { mensaje: "Confirmación en proceso..." });
+    return socket.emit("info", { mensaje: "Confirmacion en proceso..." });
   }
 
   let session;
   let transactionCommitted = false;
 
   try {
-    /*************************************************
-     * 🧾 TRANSACTION START
-     *************************************************/
     session = await mongoose.startSession();
     session.startTransaction();
 
@@ -41,7 +48,6 @@ module.exports = async function confirmarViaje(socket, io, data) {
     }
 
     const cotizacion = await viajeService.cotizar(socket, data);
-
     const viaje = await viajeService.crearDesdeCotizacion(socket, cotizacion, session);
 
     const { actualizarSnapshotPasajero } = require("../services/snapshotPasajero.service");
@@ -55,11 +61,7 @@ module.exports = async function confirmarViaje(socket, io, data) {
       destinoLng: data.destino?.lng,
     });
 
-    /*************************************************
-     * 💰 WALLET
-     *************************************************/
     if (viaje.metodoPago === "wallet") {
-
       const wallet = await Wallet.findOneAndUpdate(
         {
           userId: viaje.pasajero,
@@ -103,18 +105,12 @@ module.exports = async function confirmarViaje(socket, io, data) {
       io.to(`user:${viaje.pasajero}`).emit("wallet:update", wallet);
     }
 
-    /*************************************************
-     * 🧾 COMMIT
-     *************************************************/
     await session.commitTransaction();
     transactionCommitted = true;
     session.endSession();
 
     const viajeId = viaje._id.toString();
 
-    /*************************************************
-     * 🧠 REDIS STATE
-     *************************************************/
     await redis.multi()
       .set(`viaje:status:${viajeId}`, "buscando", "EX", 300)
       .hset(`viaje:data:${viajeId}`, {
@@ -140,7 +136,7 @@ module.exports = async function confirmarViaje(socket, io, data) {
       }))
       .exec();
 
-    console.log("🚀 Encolando matching inicial");
+    console.log("Encolando matching inicial");
 
     await matchingQueue.add(
       "buscar-motorista",
@@ -151,9 +147,6 @@ module.exports = async function confirmarViaje(socket, io, data) {
       }
     );
 
-    /*************************************************
-     * ⏳ EXPIRACIÓN
-     *************************************************/
     await matchingQueue.add(
       "expirar-viaje",
       { viajeId },
@@ -177,16 +170,11 @@ module.exports = async function confirmarViaje(socket, io, data) {
         instrucciones: viaje.paquete.instrucciones || "",
         codigoEntrega: viaje.tipo === "envio" ? viaje.paquete.codigoEntrega : null
       } : null,
-      mensaje: "Buscando al motorista más cercano..."
+      mensaje: "Buscando al motorista mas cercano..."
     });
 
-    console.log(`✅ Viaje ${viajeId} confirmado`);
-
+    console.log(`Viaje ${viajeId} confirmado`);
   } catch (error) {
-
-    /*************************************************
-     * ❗ SOLO ABORTAR SI NO SE HIZO COMMIT
-     *************************************************/
     if (session && !transactionCommitted) {
       await session.abortTransaction();
       session.endSession();
@@ -209,6 +197,20 @@ module.exports = async function confirmarViaje(socket, io, data) {
       });
     }
 
+    if (error?.type === "pago_no_disponible") {
+      return socket.emit("viaje-error", {
+        code: "PAGO_NO_DISPONIBLE",
+        metodoPago: error.metodoPago,
+        mensaje: "Ce mode de paiement n'est pas disponible pour le moment."
+      });
+    }
+
+    if (error?.type === "pago_invalido") {
+      return socket.emit("viaje-error", {
+        mensaje: "Metodo de pago invalido"
+      });
+    }
+
     if (error?.type === "paquete") {
       return socket.emit("viaje-error", {
         mensaje: error.message === "PESO_ENVIO_MAXIMO"
@@ -217,12 +219,11 @@ module.exports = async function confirmarViaje(socket, io, data) {
       });
     }
 
-    console.error("❌ Error en confirmarViaje:", error);
+    console.error("Error en confirmarViaje:", error);
 
     socket.emit("viaje-error", {
       mensaje: "Error interno al confirmar el viaje"
     });
-
   } finally {
     await redis.del(idemKey);
   }

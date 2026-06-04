@@ -1,5 +1,6 @@
 import { viajeState } from "../../viaje/viaje.state.js";
 import { manejarCancelacionOLimpieza } from "../pasajero.utils.js";
+import { mostrarPagoNoDisponible } from "../../pasajero/ui/modales/pagoNoDisponible.ui.js?v=20260604-payments-disabled";
 
 const ESTADOS_PROTEGIDOS = [
   "buscando",
@@ -256,11 +257,17 @@ function mostrarModalSaldoInsuficiente({ saldo = 0, requerido = 0, faltante = 0 
 }
 
 export const handleError = (data = {}) => {
-  const { mensaje, code } = data;
+  const { mensaje, code, metodoPago } = data;
 
   if (code === "SALDO_INSUFICIENTE") {
     limpiarIntentoWalletSiCorresponde();
     mostrarModalSaldoInsuficiente(data);
+    return;
+  }
+
+  if (code === "PAGO_NO_DISPONIBLE") {
+    document.getElementById("modalPrecio")?.remove();
+    mostrarPagoNoDisponible({ metodo: metodoPago || "pago" });
     return;
   }
 
