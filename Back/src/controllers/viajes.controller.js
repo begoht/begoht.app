@@ -3,8 +3,7 @@ const {
 } = require("../services/matching_services/despacho/service.despacho");
 const Wallet = require("../models/Wallet");
 const Viaje = require("../models/Viaje");
-
-const COMISION_BeGO = 0.15;
+const { getCommissionRate, calculateCommission } = require("../services/commission.service");
 
 exports.finalizarViaje = async (req, res) => {
   try {
@@ -26,7 +25,8 @@ exports.finalizarViaje = async (req, res) => {
 
     // 💰 Liquidación
     const total = viaje.precio;
-    const comision = Math.round(total * COMISION_BeGO);
+    const commissionRate = await getCommissionRate();
+    const comision = calculateCommission(total, commissionRate);
     const pagoMotorista = total - comision;
 
     walletPasajero.capturar(total, `VIAJE-${viaje._id}`);

@@ -8,6 +8,7 @@ const { calcularDistanciaMetros } = require("../utils/geo");
 const { PLATFORM_ALIAS } = require("../config/constants");
 const { ensurePlatformAccount } = require("./platformAccount.service");
 const { enviarResumenViaje } = require("./email/email.service");
+const { getCommissionRate, calculateCommission } = require("./commission.service");
 const crypto = require("crypto");
 
 const LOCK_TTL = 30000;
@@ -396,7 +397,8 @@ module.exports = async function finalizarViaje({ io, socket, viajeId, motoristaI
       ultimaPosicion
     });
     const total = Number(viaje.escrow || viaje.precio || 0);
-    const comision = Math.round(total * 0.15);
+    const commissionRate = await getCommissionRate({ session });
+    const comision = calculateCommission(total, commissionRate);
     const neto = total - comision;
 
     await liquidarWallet({ viaje, motoristaId, neto, comision, session });

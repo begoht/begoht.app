@@ -6,6 +6,7 @@ const Viaje = require("../models/Viaje");
 const authAdmin = require("../middleware/authAdmin");
 const { PLATFORM_WALLET_ID } = require("../config/constants");
 const { ensurePlatformAccount } = require("../services/platformAccount.service");
+const { ensureCommissionConfig } = require("../services/commission.service");
 
 const router = express.Router();
 const PLATAFORMA_ID = new mongoose.Types.ObjectId(PLATFORM_WALLET_ID);
@@ -101,6 +102,7 @@ router.get("/resumen", authAdmin, async (req, res) => {
       pagosPorMetodo,
       ciudades,
       plataformaWallet,
+      commissionConfig,
     ] = await Promise.all([
       User.aggregate([{ $group: { _id: "$rol", total: { $sum: 1 } } }]),
       Viaje.aggregate([{ $group: { _id: "$estado", total: { $sum: 1 } } }]),
@@ -226,6 +228,7 @@ router.get("/resumen", authAdmin, async (req, res) => {
         .select("saldo saldoBloqueado movimientos updatedAt")
         .slice("movimientos", -20)
         .lean(),
+      ensureCommissionConfig(),
     ]);
 
     const movimientosPlataforma = [...(plataformaWallet?.movimientos || [])]
@@ -267,6 +270,9 @@ router.get("/resumen", authAdmin, async (req, res) => {
         viajesPorTipo: Object.fromEntries(viajesPorTipo.map((item) => [item._id || "sin_tipo", item.total])),
         pagosPorMetodo: Object.fromEntries(pagosPorMetodo.map((item) => [item._id || "sin_metodo", item.total])),
         ciudades,
+      },
+      config: {
+        commission: commissionConfig,
       },
       tendencia,
       viajesActivos,

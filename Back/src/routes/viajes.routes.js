@@ -6,9 +6,7 @@ const Wallet = require("../models/Wallet");
 const User = require("../models/User");
 const crypto = require("crypto");
 const redis = require("../config/redis");
-
-// % Comisión BeGO
-const COMISION_BeGO = 0.15; // 15%
+const { getCommissionRate, calculateCommission } = require("../services/commission.service");
 
 /*************************************************
  * 💳 INICIAR PAGO
@@ -113,7 +111,8 @@ router.post("/finalizar", auth, async (req, res) => {
     const walletBeGO = await Wallet.findOne({ userId: BeGO._id });
 
     const total = viaje.escrow;
-    const comision = total * COMISION_BeGO;
+    const commissionRate = await getCommissionRate();
+    const comision = calculateCommission(total, commissionRate);
     const pagoMotorista = total - comision;
 
     // 🔥 Liberar escrow del pasajero

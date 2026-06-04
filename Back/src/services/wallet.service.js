@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 const Wallet = require("../models/Wallet");
 const Viaje = require("../models/Viaje");
-const { COMISION_PLATAFORMA, PLATFORM_WALLET_ID } = require("../config/constants");
+const { PLATFORM_WALLET_ID } = require("../config/constants");
+const { getCommissionRate, calculateCommission } = require("./commission.service");
 
 class WalletService {
 
@@ -88,7 +89,8 @@ class WalletService {
       const total = viaje.escrow;
       if (total <= 0) throw new Error("Escrow inválido");
 
-      const comision = total * COMISION_PLATAFORMA;
+      const commissionRate = await getCommissionRate({ session });
+      const comision = calculateCommission(total, commissionRate);
       const ganaMotorista = total - comision;
 
       // 🔐 Captura fondos del pasajero
