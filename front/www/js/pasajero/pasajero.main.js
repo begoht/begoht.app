@@ -3,7 +3,7 @@ import { initSeleccionDestino } from "../map/map.destino.js?v=20260604-jacmel-gp
 import { actualizarBotonViaje } from "../pasajero/pasajero.ui.js";
 import { initToggleMenuDriver, seleccionarPago } from "./pasajero.ui.js"; 
 import { getSocket } from "../socket/socket.js";
-import { initPasajeroSocket } from "../socket/pasajero.socket.js?v=20260604-jacmel-gps";
+import { initPasajeroSocket } from "../socket/pasajero.socket.js?v=20260604-wallet-balance";
 import { viajeState } from "../viaje/viaje.state.js";
 import { setMapa } from "../map/map.motorista.js?v=20260604-jacmel-gps";
 import { cityConfig } from "../map/config/index.js";

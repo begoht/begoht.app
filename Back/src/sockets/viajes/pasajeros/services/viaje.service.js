@@ -3,6 +3,7 @@ const { calcularDistanciaMetros } = require("../../../../utils/geo");
 const { pointInCity, resolveCityForPoints } = require("../../../../config/cities");
 const viajeRepo = require("../repositories/viaje.repository");
 const Viaje = require("../../../../models/Viaje");
+const Wallet = require("../../../../models/Wallet");
 
 const MAX_PESO_ENVIO_KG = 5;
 
@@ -36,6 +37,25 @@ function validarPaquete(tipo, paquete = {}) {
     descripcion: String(paquete.descripcion || "Paquete").trim().slice(0, 160),
     instrucciones: String(paquete.instrucciones || "").trim().slice(0, 220)
   };
+}
+
+async function validarSaldoWallet(pasajeroId, precio) {
+  const wallet = await Wallet.findOne({ userId: pasajeroId })
+    .select("saldo")
+    .lean();
+  const saldo = Number(wallet?.saldo || 0);
+  const requerido = Number(precio || 0);
+
+  if (saldo >= requerido) {
+    return { saldo, requerido, faltante: 0, suficiente: true };
+  }
+
+  const err = new Error("SALDO_INSUFICIENTE");
+  err.type = "wallet";
+  err.saldo = saldo;
+  err.requerido = requerido;
+  err.faltante = Math.max(0, requerido - saldo);
+  throw err;
 }
 
 module.exports = {
@@ -90,6 +110,10 @@ module.exports = {
       duracionMin = Math.max(1, Math.round((distanciaKm / 24) * 60));
     }
 
+    const walletInfo = metodoPago === "wallet"
+      ? await validarSaldoWallet(pasajeroId, precio)
+      : null;
+
     return {
       origen: {
         lat: origen.lat,
@@ -105,6 +129,7 @@ module.exports = {
       duracionMin,
       precio,
       metodoPago,
+      wallet: walletInfo,
       ciudad: cityConfig.id,
       tipo: tipoServicio,
       paquete: paqueteNormalizado

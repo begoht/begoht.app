@@ -2,7 +2,7 @@ import { routes } from "./router.routes.js?v=20260603-mobile-support";
 import { renderLayout } from "./router.render.js?v=20260601-finalizado-social";
 import { runCleanup, setCleanup } from "./router.cleanup.js";
 import { afterRender, pushURL, actualizarLinksActivos } from "./router.utils.js";
-import { runPageInit } from "../app/app.lifecycle.js?v=20260604-jacmel-gps";
+import { runPageInit } from "../app/app.lifecycle.js?v=20260604-wallet-balance";
 import { AppState } from "../state.js";
 import { stopGeo } from "../../map/map.geo.js";
 

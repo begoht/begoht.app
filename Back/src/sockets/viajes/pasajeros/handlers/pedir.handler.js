@@ -22,6 +22,7 @@ module.exports = async function pedirViaje(socket, io, data) {
       distanciaKm: cotizacion.distanciaKm,
       duracionMin: cotizacion.duracionMin,
       metodoPago,
+      wallet: cotizacion.wallet || null,
       tipo: cotizacion.tipo,
       paquete: cotizacion.paquete,
       origen: cotizacion.origen.direccion,
@@ -48,6 +49,16 @@ module.exports = async function pedirViaje(socket, io, data) {
         mensaje: err.message === "PESO_ENVIO_MAXIMO"
           ? "El envio de paquete permite maximo 5 kg."
           : "Completa los datos del paquete para continuar."
+      });
+    }
+
+    if (err.type === "wallet" || err.message === "SALDO_INSUFICIENTE") {
+      return socket.emit("viaje-error", {
+        code: "SALDO_INSUFICIENTE",
+        mensaje: "Saldo insuficiente en tu Wallet BeGO.",
+        saldo: err.saldo || 0,
+        requerido: err.requerido || 0,
+        faltante: err.faltante || 0
       });
     }
 

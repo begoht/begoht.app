@@ -59,7 +59,7 @@ async function initHome(initId) {
     const map = getMap();
     if (!map) return;
 
-    const { initPasajero } = await import("../../pasajero/pasajero.main.js?v=20260604-jacmel-gps");
+    const { initPasajero } = await import("../../pasajero/pasajero.main.js?v=20260604-wallet-balance");
 
     if (initId !== currentInitId) return;
 

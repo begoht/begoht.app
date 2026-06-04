@@ -84,7 +84,15 @@ module.exports = async function confirmarViaje(socket, io, data) {
       );
 
       if (!wallet) {
-        throw new Error("SALDO_INSUFICIENTE");
+        const walletActual = await Wallet.findOne({ userId: viaje.pasajero })
+          .select("saldo")
+          .session(session)
+          .lean();
+        const err = new Error("SALDO_INSUFICIENTE");
+        err.saldo = Number(walletActual?.saldo || 0);
+        err.requerido = Number(viaje.precio || 0);
+        err.faltante = Math.max(0, err.requerido - err.saldo);
+        throw err;
       }
 
       viaje.estadoPago = "saldoBloqueado";
@@ -193,7 +201,11 @@ module.exports = async function confirmarViaje(socket, io, data) {
 
     if (error.message === "SALDO_INSUFICIENTE") {
       return socket.emit("viaje-error", {
-        mensaje: "Saldo insuficiente en tu billetera 💳"
+        code: "SALDO_INSUFICIENTE",
+        mensaje: "Saldo insuficiente en tu Wallet BeGO.",
+        saldo: error.saldo || 0,
+        requerido: error.requerido || 0,
+        faltante: error.faltante || 0
       });
     }
 
