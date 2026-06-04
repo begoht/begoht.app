@@ -9,6 +9,7 @@ import { setMapa } from "../map/map.motorista.js?v=20260604-jacmel-gps";
 import { cityConfig } from "../map/config/index.js";
 import { initSavedDestinations } from "../map/map.saved-destinations.js";
 import { initEnvioPaquete } from "./envio.paquete.js";
+import { initHomeOffers } from "../promos/passenger-offers.js?v=20260604-admin-offers";
 
 /***********************
  * 🧠 CONTROL GLOBAL SPA
@@ -90,6 +91,7 @@ export function initPasajero(map) {
     initSeleccionDestino(map);
     initSavedDestinations(map);
     initEnvioPaquete();
+    initHomeOffers();
 
     /***********************
      * 🎛️ UI (ANTI DUPLICADOS HARD)

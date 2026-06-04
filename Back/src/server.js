@@ -170,6 +170,7 @@ app.use("/api/admin", require("./routes/admin.trips"));
 app.use("/api/admin", require("./routes/admin.email"));
 app.use("/api/admin", require("./routes/admin.commission"));
 app.use("/api/admin", require("./routes/adminRetiros"));
+app.use("/api", require("./routes/passenger.offers"));
 app.use("/api/recargas", require("./routes/recargas"));
 app.use("/api/pagos", require("./routes/pagos"));
 app.use("/api/webhook", require("./routes/webhook"));

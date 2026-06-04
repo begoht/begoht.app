@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Ofertas Pasajero | BeGO Admin</title>
+  <link rel="stylesheet" href="../css/admin-ofertas.css?v=20260604-admin-offers">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <main class="offers-admin-shell">
+    <aside class="offers-sidebar">
+      <a class="back-link" href="../paginas/admin-dashboard.html">
+        <i class="fa-solid fa-chevron-left"></i>
+        Dashboard
+      </a>
+
+      <div class="offers-brand">
+        <span>BeGO Admin</span>
+        <h1>Ofertas pasajero</h1>
+        <p>Publica, pausa y organiza las promociones visibles en la app pasajero.</p>
+      </div>
+
+      <button class="new-offer-btn" id="newOfferBtn" type="button">
+        <i class="fa-solid fa-plus"></i>
+        Nueva oferta
+      </button>
+
+      <label class="offer-search" for="offerSearch">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input id="offerSearch" type="search" placeholder="Buscar oferta">
+      </label>
+
+      <section class="offers-list" id="offersList" aria-live="polite"></section>
+    </aside>
+
+    <section class="offers-editor">
+      <header class="offers-topbar">
+        <div>
+          <span id="editorMode">Crear oferta</span>
+          <h2 id="editorTitle">Control de publicacion</h2>
+        </div>
+        <div class="offers-toolbar">
+          <span class="status-pill" id="selectedStatus">Borrador</span>
+          <button id="refreshOffersBtn" type="button">
+            <i class="fa-solid fa-rotate"></i>
+            Actualizar
+          </button>
+        </div>
+      </header>
+
+      <div class="offers-grid">
+        <form class="offer-form" id="offerForm">
+          <input type="hidden" id="offerId">
+
+          <div class="field-row two">
+            <label>
+              Titulo
+              <input id="offerTitle" type="text" maxlength="80" required placeholder="-25% aujourd'hui">
+            </label>
+            <label>
+              Etiqueta superior
+              <input id="offerKicker" type="text" maxlength="40" placeholder="Trajet premium">
+            </label>
+          </div>
+
+          <label>
+            Descripcion
+            <textarea id="offerDescription" maxlength="180" rows="3" placeholder="Texto corto que vera el pasajero"></textarea>
+          </label>
+
+          <div class="field-row three">
+            <label>
+              Badge
+              <input id="offerBadge" type="text" maxlength="24" placeholder="BeGO+">
+            </label>
+            <label>
+              Icono FontAwesome
+              <input id="offerIcon" type="text" maxlength="40" placeholder="fa-bolt">
+            </label>
+            <label>
+              Orden
+              <input id="offerOrder" type="number" step="1" value="100">
+            </label>
+          </div>
+
+          <div class="field-row three">
+            <label>
+              Tema
+              <select id="offerTheme">
+                <option value="primary">Azul premium</option>
+                <option value="package">Paquete</option>
+                <option value="wallet">Wallet</option>
+                <option value="gold">Dorado</option>
+                <option value="emerald">Verde</option>
+                <option value="night">Oscuro</option>
+              </select>
+            </label>
+            <label>
+              Ubicacion
+              <select id="offerPlacement">
+                <option value="both">Home y Promos</option>
+                <option value="home">Solo home</option>
+                <option value="promos">Solo Promos</option>
+              </select>
+            </label>
+            <label>
+              Ciudad
+              <select id="offerCity">
+                <option value="all">Todas</option>
+                <option value="jacmel">Jacmel</option>
+                <option value="cordoba">Cordoba test</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="field-row two">
+            <label>
+              Boton / CTA
+              <input id="offerCta" type="text" maxlength="28" placeholder="Voir">
+            </label>
+            <label>
+              Accion
+              <select id="offerAction">
+                <option value="#/promos">Ver promociones</option>
+                <option value="#/">Pedir viaje</option>
+                <option value="#/wallet">Wallet</option>
+                <option value="#/servicios">Servicios</option>
+                <option value="#/actividad">Actividad</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="field-row two">
+            <label>
+              Inicio
+              <input id="offerStartsAt" type="datetime-local">
+            </label>
+            <label>
+              Fin
+              <input id="offerEndsAt" type="datetime-local">
+            </label>
+          </div>
+
+          <div class="field-row two">
+            <label>
+              Estado
+              <select id="offerStatus">
+                <option value="draft">Borrador</option>
+                <option value="published">Publicado</option>
+                <option value="paused">Pausado</option>
+                <option value="archived">Archivado</option>
+              </select>
+            </label>
+            <div class="form-actions">
+              <button class="secondary" id="resetFormBtn" type="button">Limpiar</button>
+              <button class="primary" type="submit">Guardar</button>
+            </div>
+          </div>
+        </form>
+
+        <aside class="offer-preview-panel">
+          <div class="preview-title">
+            <span>Vista previa</span>
+            <small id="previewMeta">Home</small>
+          </div>
+
+          <article class="preview-card home-promo-card home-promo-card-primary" id="offerPreview">
+            <div class="home-promo-copy">
+              <span class="home-promo-kicker" id="previewKicker">Trajet premium</span>
+              <h2 id="previewTitle">-25% aujourd'hui</h2>
+              <p id="previewDescription">Activez votre course avec Wallet BeGO.</p>
+            </div>
+            <div class="home-promo-badge">
+              <i class="fa-solid fa-bolt" id="previewIcon"></i>
+              <span id="previewBadge">BeGO+</span>
+            </div>
+          </article>
+
+          <div class="status-actions">
+            <button type="button" data-status-action="published"><i class="fa-solid fa-eye"></i> Publicar</button>
+            <button type="button" data-status-action="paused"><i class="fa-solid fa-pause"></i> Pausar</button>
+            <button type="button" data-status-action="draft"><i class="fa-solid fa-file"></i> Borrador</button>
+            <button class="danger" type="button" data-status-action="archived"><i class="fa-solid fa-box-archive"></i> Archivar</button>
+          </div>
+
+          <div class="help-card">
+            <strong>Produccion</strong>
+            <p>Solo las ofertas en estado Publicado y dentro de fecha aparecen en la app pasajero.</p>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <script src="../js/Admin-js/admin-ofertas.js?v=20260604-admin-offers"></script>
+</body>
+</html>

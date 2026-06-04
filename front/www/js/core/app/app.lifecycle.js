@@ -59,7 +59,7 @@ async function initHome(initId) {
     const map = getMap();
     if (!map) return;
 
-    const { initPasajero } = await import("../../pasajero/pasajero.main.js?v=20260604-cordoba-map-test");
+    const { initPasajero } = await import("../../pasajero/pasajero.main.js?v=20260604-admin-offers");
 
     if (initId !== currentInitId) return;
 

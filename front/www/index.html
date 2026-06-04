@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <!-- CSS -->
   <link rel="stylesheet" href="./css/fouter/footer.css?v=20260602-home-blue">
-<link rel="stylesheet" href="./css/main.css?v=20260604-payments-disabled">
+<link rel="stylesheet" href="./css/main.css?v=20260604-admin-offers">
 <link rel="stylesheet" href="./css/busqueda/busqueda.css?v=20260602-home-promos-title">
   <link rel="stylesheet" href="./wallet/wallet.css?v=20260601-footer-space">
   <!-- LEAFLET -->
@@ -175,13 +175,13 @@
 
 
 
-  <section class="home-promos" aria-label="Promotions BeGO">
+  <section class="home-promos" id="homePromos" aria-label="Promotions BeGO">
     <div class="home-promos-head">
       <span>Avantages</span>
       <strong>Offres BeGO</strong>
     </div>
 
-    <div class="home-promos-track" aria-label="Promotions disponibles">
+    <div class="home-promos-track" id="homePromosTrack" aria-label="Promotions disponibles">
       <article class="home-promo-card home-promo-card-primary">
         <div class="home-promo-copy">
           <span class="home-promo-kicker">Trajet premium</span>
@@ -425,7 +425,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 <script type="module">
-  import { initApp } from "./js/core/app/app.js?v=20260604-live-support";
+  import { initApp } from "./js/core/app/app.js?v=20260604-admin-offers";
   initApp();
 </script>
 
