@@ -1,4 +1,4 @@
-import { pasajeroIcon } from "./map.icons.js?v=20260603-proximity-alert";
+import { pasajeroIcon } from "./map.icons.js?v=20260604-jacmel-gps";
 import { ACTIVE_CITY, cityConfig, coordsInCity, inferCityConfigFromCoords, persistDetectedCity } from "./config/index.js";
 import { viajeState } from "../viaje/viaje.state.js";
 import { reverseGeocode } from "./services/map.reverse.js";
@@ -20,6 +20,7 @@ import {
 import { animarMarker } from "./tracking/map.animation.js";
 
 let marcadorPasajero = null;
+let ubicacionButtonBound = false;
 
 function viajeProtegido() {
   return ["buscando", "asignado", "reservado", "llego", "en_curso"].includes(viajeState.estado);
@@ -34,24 +35,32 @@ function getCiudadCentro() {
   };
 }
 
-function setInputInicio(direccion) {
+function setInputInicio(direccion, { placeholder = false } = {}) {
   const input = document.getElementById("inputInicio");
 
   if (input) {
+    if (placeholder && !viajeProtegido()) {
+      input.value = "";
+      input.placeholder = direccion;
+      return;
+    }
+
     input.value = viajeProtegido() && viajeState.origen?.direccion
       ? viajeState.origen.direccion
       : direccion;
   }
 }
 
-function renderPasajeroMarker(map, lat, lng, direccion) {
+function renderPasajeroMarker(map, lat, lng, direccion, { animate = false } = {}) {
   if (!marcadorPasajero) {
     marcadorPasajero = L.marker([lat, lng], {
       icon: pasajeroIcon
     }).addTo(layerPasajero);
+  } else if (animate) {
+    animarMarker(marcadorPasajero, lat, lng);
+  } else {
+    marcadorPasajero.setLatLng([lat, lng]);
   }
-
-  marcadorPasajero.setLatLng([lat, lng]);
 
   marcadorPasajero.bindPopup(`
     <div style="font-family:system-ui;">
@@ -61,6 +70,42 @@ function renderPasajeroMarker(map, lat, lng, direccion) {
       </span>
     </div>
   `);
+}
+
+function limpiarOrigenSiLibre() {
+  if (!viajeProtegido()) {
+    viajeState.origen = null;
+  }
+}
+
+function mostrarCentroServicio(map, mensaje) {
+  const centro = viajeState.origen || getCiudadCentro();
+
+  map.setView([centro.lat, centro.lng], cityConfig.map.zoom);
+
+  if (viajeState.origen) {
+    setInputInicio(centro.direccion);
+    renderPasajeroMarker(map, centro.lat, centro.lng, centro.direccion);
+    return;
+  }
+
+  setInputInicio(
+    mensaje || `Esperando GPS real en ${cityConfig.name}`,
+    { placeholder: true }
+  );
+}
+
+function aplicarUbicacionGps(map, lat, lng, direccion, { center = false, animate = false } = {}) {
+  if (!viajeProtegido()) {
+    viajeState.origen = { lat, lng, direccion };
+  }
+
+  if (center || !marcadorPasajero) {
+    map.setView([lat, lng], 16);
+  }
+
+  setInputInicio(direccion);
+  renderPasajeroMarker(map, lat, lng, direccion, { animate });
 }
 
 function switchCityFromGpsIfNeeded(lat, lng) {
@@ -82,6 +127,67 @@ function switchCityFromGpsIfNeeded(lat, lng) {
   return false;
 }
 
+async function tomarUbicacionActual(map, { center = false, fromButton = false } = {}) {
+  const pos = await getCurrentPosition({
+    maximumAge: 0,
+    timeout: fromButton ? 18000 : 14000
+  });
+
+  const lat = Number(pos.coords.latitude);
+  const lng = Number(pos.coords.longitude);
+
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+    throw new Error("GPS invalido");
+  }
+
+  if (switchCityFromGpsIfNeeded(lat, lng)) {
+    return true;
+  }
+
+  if (!coordsInCity({ lat, lng })) {
+    limpiarOrigenSiLibre();
+    mostrarCentroServicio(map, `GPS fuera de ${cityConfig.name}. Usa tu ubicacion real en Jacmel.`);
+    return false;
+  }
+
+  let direccion = "Tu ubicacion actual";
+
+  try {
+    direccion = await reverseGeocode(lat, lng);
+  } catch (e) {
+    console.warn("reverse:", e);
+  }
+
+  aplicarUbicacionGps(map, lat, lng, direccion, { center });
+  return true;
+}
+
+function bindUbicacionButton(map) {
+  const btn = document.getElementById("btnUbicacion");
+  if (!btn || ubicacionButtonBound) return;
+
+  ubicacionButtonBound = true;
+  const label = btn.textContent || "Usar ubicacion actual";
+
+  btn.addEventListener("click", async () => {
+    btn.disabled = true;
+    btn.textContent = "Ubicando...";
+
+    try {
+      const ok = await tomarUbicacionActual(map, { center: true, fromButton: true });
+      if (!ok) {
+        setInputInicio(`Activa GPS real dentro de ${cityConfig.name}`, { placeholder: true });
+      }
+    } catch (err) {
+      console.warn("GPS manual:", err);
+      setInputInicio("No pudimos tomar tu GPS. Revisa permisos de ubicacion.", { placeholder: true });
+    } finally {
+      btn.disabled = false;
+      btn.textContent = label;
+    }
+  });
+}
+
 export async function initGeo(map) {
   if (!map || typeof map.addLayer !== "function") {
     console.error("Mapa invalido");
@@ -97,52 +203,27 @@ export async function initGeo(map) {
   layerPasajero.addTo(map);
   layerMotoristas.addTo(map);
   layerReferencias.addTo(map);
+  bindUbicacionButton(map);
 
   try {
-    const pos = await getCurrentPosition();
-    let lat = pos.coords.latitude;
-    let lng = pos.coords.longitude;
-    let direccion = "Tu ubicacion";
-
-    if (switchCityFromGpsIfNeeded(lat, lng)) return;
-
-    const gpsDentroDeCiudad = coordsInCity({ lat, lng });
-
-    if (!gpsDentroDeCiudad) {
-      const centro = getCiudadCentro();
-      lat = centro.lat;
-      lng = centro.lng;
-      direccion = centro.direccion;
-    } else {
-      try {
-        direccion = await reverseGeocode(lat, lng);
-      } catch (e) {
-        console.warn("reverse:", e);
-      }
+    const gpsOk = await tomarUbicacionActual(map, { center: true });
+    if (!gpsOk) {
+      mostrarCentroServicio(map);
     }
-
-    if (!viajeProtegido()) {
-      viajeState.origen = { lat, lng, direccion };
-    }
-
-    map.setView([lat, lng], gpsDentroDeCiudad ? 16 : cityConfig.map.zoom);
-    setInputInicio(direccion);
-    renderPasajeroMarker(map, lat, lng, direccion);
     renderPOILayer();
   } catch (err) {
     console.warn("GPS inicial:", err);
 
-    const centro = viajeState.origen || getCiudadCentro();
-    map.setView([centro.lat, centro.lng], cityConfig.map.zoom);
-    setInputInicio(centro.direccion);
-    renderPasajeroMarker(map, centro.lat, centro.lng, centro.direccion);
+    mostrarCentroServicio(map, `Esperando GPS real en ${cityConfig.name}`);
     renderPOILayer();
   }
 
   startGPSWatch(
     (pos) => {
-      const lat = pos.coords.latitude;
-      const lng = pos.coords.longitude;
+      const lat = Number(pos.coords.latitude);
+      const lng = Number(pos.coords.longitude);
+
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
 
       if (switchCityFromGpsIfNeeded(lat, lng)) return;
 
@@ -150,14 +231,8 @@ export async function initGeo(map) {
         return;
       }
 
-      if (marcadorPasajero) {
-        animarMarker(marcadorPasajero, lat, lng);
-      }
-
-      if (viajeState.origen && !viajeProtegido()) {
-        viajeState.origen.lat = lat;
-        viajeState.origen.lng = lng;
-      }
+      const direccion = viajeState.origen?.direccion || "Tu ubicacion actual";
+      aplicarUbicacionGps(map, lat, lng, direccion, { animate: true });
     },
     (err) => {
       console.error("GPS:", err);

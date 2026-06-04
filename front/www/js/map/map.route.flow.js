@@ -1,6 +1,6 @@
 export {
   processRouteFlow as actualizarRutaSegunEstado
-} from "./controllers/map.route.controller.js?v=20260603-proximity-alert";
+} from "./controllers/map.route.controller.js?v=20260604-jacmel-gps";
 
 export {
   resetRouteState as resetRutaController

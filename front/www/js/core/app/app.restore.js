@@ -1,7 +1,7 @@
 import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js";
-import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260603-proximity-alert";
+import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260604-jacmel-gps";
 import { getMap } from "../../map/map.singleton.js";
-import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260603-proximity-alert";
+import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260604-jacmel-gps";
 import { viajeState } from "../../viaje/viaje.state.js";
 import { actualizarUIDriver } from "../../socket/pasajero.utils.js";
 

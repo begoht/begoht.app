@@ -3,9 +3,9 @@ import { viajeState } from "../viaje/viaje.state.js";
 import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js";
 import { cerrarBuscandoMotorista } from "../pasajero/pasajero.ui.js";
 import { limpiarViajePasajero } from "../socket/viaje.limpieza.js";
-import { limpiarRutas } from "../map/map.ruta.js?v=20260603-proximity-alert";
+import { limpiarRutas } from "../map/map.ruta.js?v=20260604-jacmel-gps";
 import { initDriverMinimize } from "../ui/driver.minimize.js";
-import { resetRutaController } from "../map/map.route.flow.js?v=20260603-proximity-alert";
+import { resetRutaController } from "../map/map.route.flow.js?v=20260604-jacmel-gps";
 import { actualizarETA, resetETA } from "../pasajero/pasajero.eta.js";
 
 /**

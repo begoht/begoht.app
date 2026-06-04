@@ -15,7 +15,7 @@ import {
   renderRutaReserva,
   renderLineaRecta,
   limpiarRuta
-} from "./ui/map.route.renderer.js?v=20260603-proximity-alert";
+} from "./ui/map.route.renderer.js?v=20260604-jacmel-gps";
 
 let ultimaRutaCalculada = 0;
 

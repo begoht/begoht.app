@@ -1,4 +1,4 @@
-import { createPOIIcon } from "../map.icons.js?v=20260603-proximity-alert";
+import { createPOIIcon } from "../map.icons.js?v=20260604-jacmel-gps";
 
 
 import { cityConfig } from "../config/index.js";

@@ -2,6 +2,7 @@ import { cordobaConfig } from "./cordoba/index.js";
 import { haitiCityConfigs } from "./haiti/index.js";
 
 const DEFAULT_CITY_ID = "jacmel";
+const TEST_CITY_FLAG = "BEGO_TEST_CITY_ENABLED";
 
 export const CITY_CONFIGS = {
   cordoba: {
@@ -13,6 +14,24 @@ export const CITY_CONFIGS = {
   ...haitiCityConfigs
 };
 
+function persistCityPreference(cityId) {
+  const targetCity = CITY_CONFIGS[cityId];
+  if (!cityId || !targetCity) return false;
+
+  localStorage.setItem("BEGO_CITY", cityId);
+
+  if (targetCity.test) {
+    localStorage.setItem(TEST_CITY_FLAG, "1");
+  } else {
+    localStorage.removeItem(TEST_CITY_FLAG);
+    if (localStorage.getItem("CITY") !== cityId) {
+      localStorage.removeItem("CITY");
+    }
+  }
+
+  return true;
+}
+
 function getRequestedCity() {
   const params = new URLSearchParams(window.location.search);
   const cityFromUrl = params.get("city");
@@ -20,13 +39,26 @@ function getRequestedCity() {
     localStorage.getItem("BEGO_CITY") ||
     localStorage.getItem("CITY");
 
-  return cityFromUrl || cityFromStorage || DEFAULT_CITY_ID;
+  if (cityFromUrl && CITY_CONFIGS[cityFromUrl]) {
+    persistCityPreference(cityFromUrl);
+    return cityFromUrl;
+  }
+
+  const storedCity = CITY_CONFIGS[cityFromStorage];
+
+  if (storedCity?.test && localStorage.getItem(TEST_CITY_FLAG) !== "1") {
+    localStorage.removeItem("BEGO_CITY");
+    localStorage.removeItem("CITY");
+    return DEFAULT_CITY_ID;
+  }
+
+  return CITY_CONFIGS[cityFromStorage] ? cityFromStorage : DEFAULT_CITY_ID;
 }
 
 const requestedCity = getRequestedCity();
 
 export const ACTIVE_CITY =
-  CITY_CONFIGS[requestedCity]?.enabled !== false
+  CITY_CONFIGS[requestedCity] && CITY_CONFIGS[requestedCity].enabled !== false
     ? requestedCity
     : DEFAULT_CITY_ID;
 
@@ -45,8 +77,7 @@ export function inferCityConfigFromCoords(coords) {
 export function persistDetectedCity(cityId) {
   if (!cityId || !CITY_CONFIGS[cityId] || cityId === ACTIVE_CITY) return false;
 
-  localStorage.setItem("BEGO_CITY", cityId);
-  return true;
+  return persistCityPreference(cityId);
 }
 
 export function getBoundsObject(city = cityConfig) {

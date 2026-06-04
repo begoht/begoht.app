@@ -10,12 +10,12 @@ import {
 import {
   renderMotorista,
   removeMotorista
-} from "./ui/map.motorista.renderer.js?v=20260603-proximity-alert";
+} from "./ui/map.motorista.renderer.js?v=20260604-jacmel-gps";
 
 import {
   renderMotoristas,
   clearMotoristas
-} from "./ui/map.motoristas.renderer.js?v=20260603-proximity-alert";
+} from "./ui/map.motoristas.renderer.js?v=20260604-jacmel-gps";
 
 /*************************************************
  * 🗺️ SET MAPA

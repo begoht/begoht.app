@@ -1,10 +1,10 @@
-import { motoIcon } from "../map.icons.js?v=20260603-proximity-alert";
+import { motoIcon } from "../map.icons.js?v=20260604-jacmel-gps";
 import {
   motoristasCercanos
 } from "../state/map.motoristas.state.js";
 import {
   setMotorcycleMarkerPose
-} from "../utils/map.motorcycle.motion.js?v=20260603-proximity-alert";
+} from "../utils/map.motorcycle.motion.js?v=20260604-jacmel-gps";
 
 export function renderMotoristas(map, drivers) {
   if (!map || !Array.isArray(drivers)) return;

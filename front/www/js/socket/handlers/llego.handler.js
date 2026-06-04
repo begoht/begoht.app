@@ -5,7 +5,7 @@ import {
   reproducirSonidoLlegada
 } from "../../pasajero/pasajero.ui.js";
 import { actualizarUIDriver } from "../pasajero.utils.js";
-import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260603-proximity-alert";
+import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260604-jacmel-gps";
 
 export const handleLlego = (data = {}) => {
   console.log("Motorista llego:", data);

@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   homeMap = L.map("homeMap", {
     zoomControl: false,
     attributionControl: false,
-  }).setView([18.5405, -72.3348], 14);
+  }).setView([18.2343, -72.5354], 14);
 
   // MAPA OSCURO PRO
   L.tileLayer(
@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
       crearMotoristas(latitude, longitude);
     },
     () => console.warn("GPS no disponible"),
-    { enableHighAccuracy: true }
+    { enableHighAccuracy: true, maximumAge: 0, timeout: 15000 }
   );
 });
 
@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
  *************************************************/
 function crearMotoristas(lat, lng) {
   const iconMoto = L.icon({
-    iconUrl: "/assets/icons/moto-transparent.svg?v=20260603-proximity-alert",
+    iconUrl: "/assets/icons/moto-transparent.svg?v=20260604-jacmel-gps",
     iconSize: [38, 38],
     iconAnchor: [19, 19],
     className: "motorista-icon",

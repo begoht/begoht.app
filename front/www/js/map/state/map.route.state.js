@@ -1,4 +1,4 @@
-import { resetRutaCache } from "../map.ruta.js?v=20260603-proximity-alert";
+import { resetRutaCache } from "../map.ruta.js?v=20260604-jacmel-gps";
 
 let lastEstado = null;
 
