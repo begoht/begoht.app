@@ -24,6 +24,10 @@
     ["App pasajero", "App passager"],
     ["App motorista", "App chauffeur"],
     ["Redes sociales oficiales", "Reseaux sociaux officiels"],
+    ["Motorista a punto de llegar", "Chauffeur sur le point d'arriver"],
+    ["Tu motorista esta a punto de llegar", "Votre chauffeur est sur le point d'arriver"],
+    ["Preparate para salir.", "Preparez-vous a sortir."],
+    ["muy cerca", "tres proche"],
 
     ["Usar ubicaciÃ³n actual", "Utiliser ma position actuelle"],
     ["Usar ubicación actual", "Utiliser ma position actuelle"],

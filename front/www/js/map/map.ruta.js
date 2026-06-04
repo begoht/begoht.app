@@ -15,7 +15,7 @@ import {
   renderRutaReserva,
   renderLineaRecta,
   limpiarRuta
-} from "./ui/map.route.renderer.js?v=20260603-road-heading-stable";
+} from "./ui/map.route.renderer.js?v=20260603-proximity-alert";
 
 let ultimaRutaCalculada = 0;
 

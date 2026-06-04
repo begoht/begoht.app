@@ -3,6 +3,11 @@ const { actualizarSnapshotMotorista } = require("../motoristaSnapshot.service");
 const calcularETA = require("../../pasajeros/services/tracking/calcularETA");
 const Viaje = require("../../../../models/Viaje");
 
+const proximidadOrigenEnv = Number(process.env.PROXIMIDAD_ORIGEN_METROS);
+const PROXIMIDAD_ORIGEN_METROS = Number.isFinite(proximidadOrigenEnv) && proximidadOrigenEnv > 0
+  ? proximidadOrigenEnv
+  : 150;
+
 module.exports = async (io, motoristaId, { lat, lng, heading = null }) => {
   try {
     const nLat = Number(lat);
@@ -38,7 +43,7 @@ module.exports = async (io, motoristaId, { lat, lng, heading = null }) => {
       (ctx.estado === "en_curso" && !ctx.destino)
     ) {
       const viaje = await Viaje.findById(viajeId)
-        .select("estado origen destino")
+        .select("estado origen destino pasajero")
         .lean();
       if (!viaje) return;
 
@@ -46,15 +51,16 @@ module.exports = async (io, motoristaId, { lat, lng, heading = null }) => {
         estado: viaje.estado,
         origen: viaje.origen || null,
         destino: viaje.destino || null,
+        pasajeroId: viaje.pasajero?.toString() || null,
         proximoDestino:
-          viaje.estado === "asignado" ? viaje.origen : (viaje.destino || null)
+          ["asignado", "reservado"].includes(viaje.estado) ? viaje.origen : (viaje.destino || null)
       };
 
       await redis.set(ctxKey, JSON.stringify(ctx), "EX", 600);
     }
 
-    const vaAlOrigen = ["asignado", "llego"].includes(ctx.estado) ||
-      ["asignado", "llego"].includes(estadoInterno);
+    const vaAlOrigen = ["asignado", "reservado", "llego"].includes(ctx.estado) ||
+      ["asignado", "reservado", "llego"].includes(estadoInterno);
     const target = vaAlOrigen ? ctx.origen : ctx.destino;
 
     const { distancia, distanciaKm, eta } = calcularETA({
@@ -101,12 +107,48 @@ module.exports = async (io, motoristaId, { lat, lng, heading = null }) => {
       }
     }
 
-    if (distancia != null && distancia <= 300) {
+    const debeAvisarProximidad =
+      distancia != null &&
+      distancia <= PROXIMIDAD_ORIGEN_METROS &&
+      vaAlOrigen &&
+      ["asignado", "aceptado", "reservado"].includes(ctx.estado) &&
+      !["llego", "en_curso", "finalizado", "cancelado"].includes(estadoInterno || "");
+
+    if (debeAvisarProximidad) {
       const keyNotif = `notificado:proximidad:${viajeId}`;
       const yaNotificado = await redis.set(keyNotif, "1", "NX", "EX", 1800);
 
       if (yaNotificado === "OK") {
-        io.to(`viaje:${viajeId}`).emit("notificacion-proximidad", { metros: distancia });
+        const payloadProximidad = {
+          viajeId,
+          metros: Math.max(0, Math.round(distancia)),
+          eta,
+          mensaje: "Tu motorista esta a punto de llegar"
+        };
+
+        const updateResult = await Viaje.updateOne(
+          {
+            _id: viajeId,
+            notificacionProximidadEnviada: { $ne: true },
+            estado: { $in: ["asignado", "reservado"] }
+          },
+          { $set: { notificacionProximidadEnviada: true } }
+        );
+
+        if (updateResult.modifiedCount) {
+          let pasajeroId = ctx.pasajeroId || null;
+          if (!pasajeroId) {
+            const viajeAviso = await Viaje.findById(viajeId)
+              .select("pasajero")
+              .lean();
+            pasajeroId = viajeAviso?.pasajero?.toString() || null;
+          }
+
+          io.to(`viaje:${viajeId}`).emit("notificacion-proximidad", payloadProximidad);
+          if (pasajeroId) {
+            io.to(`pasajero:${pasajeroId}`).emit("notificacion-proximidad", payloadProximidad);
+          }
+        }
       }
     }
 

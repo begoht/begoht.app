@@ -1,7 +1,7 @@
 // js/viaje/viaje.limpieza.js
 import { viajeState } from "../viaje/viaje.state.js";
 import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js"; 
-import { eliminarMotoristaDelMapa } from "../map/map.motorista.js?v=20260603-road-heading-stable";
+import { eliminarMotoristaDelMapa } from "../map/map.motorista.js?v=20260603-proximity-alert";
 import { getMap } from "../map/map.singleton.js";
 import { getSocket } from "../socket/socket.js";
 import { destroyPasajeroSocket } from "./pasajero.socket.js";

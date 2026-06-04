@@ -1,6 +1,6 @@
 export {
   processRouteFlow as actualizarRutaSegunEstado
-} from "./controllers/map.route.controller.js?v=20260603-road-heading-stable";
+} from "./controllers/map.route.controller.js?v=20260603-proximity-alert";
 
 export {
   resetRouteState as resetRutaController

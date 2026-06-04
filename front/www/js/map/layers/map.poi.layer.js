@@ -1,4 +1,4 @@
-import { createPOIIcon } from "../map.icons.js?v=20260603-road-heading-stable";
+import { createPOIIcon } from "../map.icons.js?v=20260603-proximity-alert";
 
 
 import { cityConfig } from "../config/index.js";

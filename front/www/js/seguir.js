@@ -34,7 +34,7 @@ async function cargarViaje() {
         }
         if (motorista.ubicacion) {
             const motoIcon = L.icon({
-                iconUrl: "/assets/icons/moto-transparent.svg?v=20260603-road-heading-stable",
+                iconUrl: "/assets/icons/moto-transparent.svg?v=20260603-proximity-alert",
                 iconSize: [44, 44],
                 iconAnchor: [22, 22],
                 className: "bego-map-icon bego-map-icon-moto"
@@ -69,7 +69,7 @@ function iniciarTracking(token) {
             markerDriver.setLatLng(latLng);
         } else {
             const motoIcon = L.icon({
-                iconUrl: "/assets/icons/moto-transparent.svg?v=20260603-road-heading-stable",
+                iconUrl: "/assets/icons/moto-transparent.svg?v=20260603-proximity-alert",
                 iconSize: [44, 44],
                 iconAnchor: [22, 22],
                 className: "bego-map-icon bego-map-icon-moto"

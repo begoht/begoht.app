@@ -1,5 +1,5 @@
 import { viajeState } from "../../viaje/viaje.state.js";
-import { mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260603-road-heading-stable";
+import { mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260603-proximity-alert";
 import {
   mostrarBuscandoMotorista,
   actualizarMotoristaCandidato

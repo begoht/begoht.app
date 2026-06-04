@@ -78,7 +78,8 @@ module.exports = (io, socket) => {
                 origen: viaje.origen,
                 destino: viaje.destino,
                 proximoDestino: viaje.destino,
-                motoristaId
+                motoristaId,
+                pasajeroId: viaje.pasajero?.toString() || null
             });
 
             const payload = {

@@ -23,6 +23,8 @@ export { mostrarModalConfirmarCancelacion } from "./ui/modales/modalCancelacion.
 export { 
   mostrarNotificacionLlegada,
   actualizarEstadoLlegada,
+  mostrarNotificacionProximidad,
+  actualizarEstadoProximidad,
   reproducirSonidoLlegada
 } from "./ui/notificaciones/llegada.ui.js";
 

@@ -335,7 +335,8 @@ async function aceptar(viajeId, motoristaId, socketId, io) {
                     ? viaje.origen
                     : null,
 
-            motoristaId
+            motoristaId,
+            pasajeroId: viaje.pasajero?.toString() || null
         };
 
         await redis.set(

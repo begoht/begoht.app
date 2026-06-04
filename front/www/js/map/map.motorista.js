@@ -10,12 +10,12 @@ import {
 import {
   renderMotorista,
   removeMotorista
-} from "./ui/map.motorista.renderer.js?v=20260603-road-heading-stable";
+} from "./ui/map.motorista.renderer.js?v=20260603-proximity-alert";
 
 import {
   renderMotoristas,
   clearMotoristas
-} from "./ui/map.motoristas.renderer.js?v=20260603-road-heading-stable";
+} from "./ui/map.motoristas.renderer.js?v=20260603-proximity-alert";
 
 /*************************************************
  * 🗺️ SET MAPA

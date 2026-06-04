@@ -214,7 +214,8 @@ async function guardarContexto(viajeId, viaje, motoristaId, proximoDestino) {
       origen: viaje.origen || null,
       destino: viaje.destino || null,
       proximoDestino,
-      motoristaId: motoristaId || null
+      motoristaId: motoristaId || null,
+      pasajeroId: viaje.pasajero?.toString() || null
     }),
     "EX",
     600

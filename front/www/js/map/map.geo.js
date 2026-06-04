@@ -1,4 +1,4 @@
-import { pasajeroIcon } from "./map.icons.js?v=20260603-road-heading-stable";
+import { pasajeroIcon } from "./map.icons.js?v=20260603-proximity-alert";
 import { ACTIVE_CITY, cityConfig, coordsInCity, inferCityConfigFromCoords, persistDetectedCity } from "./config/index.js";
 import { viajeState } from "../viaje/viaje.state.js";
 import { reverseGeocode } from "./services/map.reverse.js";

@@ -46,7 +46,8 @@ module.exports = (io, socket) => {
                 origen: viaje.origen,
                 destino: viaje.destino,
                 proximoDestino: viaje.origen,
-                motoristaId
+                motoristaId,
+                pasajeroId: viaje.pasajero?.toString() || null
             });
 
             await actualizarSnapshotMotorista(motoristaId, {
