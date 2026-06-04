@@ -1,4 +1,5 @@
 import { getServerUrl } from "./conexion.js";
+import { cityConfig, inferCityConfigFromCoords, persistDetectedCity } from "./map/config/index.js";
 
 let gatePromise = null;
 let countdownTimer = null;
@@ -15,12 +16,50 @@ export function initLaunchCountdown() {
 
 async function loadLaunchGate() {
   try {
+    if (cityConfig?.test === true) return false;
+
     const data = await fetchLaunchStatus();
     if (!shouldBlock(data)) return false;
+    if (await shouldBypassForDetectedTestCity()) return false;
 
     return renderCountdown(data);
   } catch (err) {
     console.warn("Launch countdown unavailable:", err?.message || err);
+    return false;
+  }
+}
+
+async function shouldBypassForDetectedTestCity() {
+  if (!navigator.geolocation) return false;
+
+  try {
+    const position = await new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(
+        resolve,
+        reject,
+        {
+          enableHighAccuracy: true,
+          maximumAge: 0,
+          timeout: 5000
+        }
+      );
+    });
+
+    const detectedCity = inferCityConfigFromCoords({
+      lat: Number(position.coords.latitude),
+      lng: Number(position.coords.longitude)
+    });
+
+    if (!detectedCity?.test) return false;
+
+    const persisted = persistDetectedCity(detectedCity.id);
+    if (persisted && detectedCity.id !== cityConfig.id) {
+      window.location.reload();
+    }
+
+    return true;
+  } catch (err) {
+    console.warn("Launch test-city GPS bypass unavailable:", err?.message || err);
     return false;
   }
 }

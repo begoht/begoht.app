@@ -1,4 +1,4 @@
-import { initGeo } from "../map/map.geo.js?v=20260604-jacmel-gps";
+import { initGeo } from "../map/map.geo.js?v=20260604-cordoba-map-test";
 import { initSeleccionDestino } from "../map/map.destino.js?v=20260604-jacmel-gps";
 import { actualizarBotonViaje } from "../pasajero/pasajero.ui.js?v=20260604-payments-disabled";
 import { initToggleMenuDriver, seleccionarPago } from "./pasajero.ui.js?v=20260604-payments-disabled";

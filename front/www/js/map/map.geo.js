@@ -146,7 +146,7 @@ async function tomarUbicacionActual(map, { center = false, fromButton = false } 
 
   if (!coordsInCity({ lat, lng })) {
     limpiarOrigenSiLibre();
-    mostrarCentroServicio(map, `GPS fuera de ${cityConfig.name}. Usa tu ubicacion real en Jacmel.`);
+    mostrarCentroServicio(map, `GPS fuera de ${cityConfig.name}. Usa tu ubicacion real en ${cityConfig.name}.`);
     return false;
   }
 

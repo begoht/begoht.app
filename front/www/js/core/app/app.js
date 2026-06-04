@@ -1,8 +1,8 @@
 import { AppState } from "./app.state.js";
 import { getSocket } from "../../socket/socket.js";
 import { createMap } from "../../map/map.singleton.js";
-import { initRouter } from "../router/router.js?v=20260604-payments-disabled";
-import { initLaunchCountdown } from "../../launch-countdown.js?v=20260603-launch-gate";
+import { initRouter } from "../router/router.js?v=20260604-cordoba-map-test";
+import { initLaunchCountdown } from "../../launch-countdown.js?v=20260604-cordoba-map-test";
 
 function mostrarAppLista() {
     document.body.classList.add("app-ready");
