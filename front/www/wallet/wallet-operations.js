@@ -1,253 +1,250 @@
-/*************************************************
- * 💸 WALLET OPERATIONS - BeGO PAY
- *************************************************/
+import {
+  buscarDestinatarioWallet,
+  enviarWallet,
+  obtenerMovimientos,
+  obtenerWallet,
+} from "./wallet-service.js?v=20260605-wallet-secure";
+import { actualizarSaldo, renderHistorial } from "./wallet-ui.js?v=20260605-wallet-secure";
+import { getCurrentUser } from "./wallet-config.js?v=20260605-wallet-secure";
+import { abrirConfigPin } from "./wallet-pin.js?v=20260605-wallet-secure";
+import { setInlineError, showWalletToast } from "./wallet-feedback.js?v=20260605-wallet-secure";
 
-import { recargarWallet, obtenerWallet, obtenerMovimientos } from "./wallet-service.js";
-import { actualizarSaldo, renderHistorial } from "./wallet-ui.js";
-import { getToken, getServerUrl } from "./wallet-config.js";
-import { abrirConfigPin } from "./wallet-pin.js";
-
-function createIdempotencyKey() {
-    return crypto.randomUUID
-        ? crypto.randomUUID()
-        : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-}
-
-/*************************************************
- * ➕ RECARGA DE DINERO
- *************************************************/
+let destinatarioActual = null;
+let transferenciaEnCurso = false;
 
 export async function mostrarRecarga() {
-    location.hash = "#/recarga";
-    return;
-    const montoStr = prompt("Ingrese el monto a recargar:");
-    const monto = parseFloat(montoStr);
-
-    if (isNaN(monto) || monto <= 0) {
-        if (montoStr !== null) {
-            alert("❌ Monto inválido. Ingrese solo números mayores a 0.");
-        }
-        return;
-    }
-
-    try {
-        await recargarWallet(monto, "Recarga Manual");
-        alert("✅ Recarga exitosa");
-
-        const wallet = await obtenerWallet();
-        actualizarSaldo(wallet.saldo);
-
-        const movimientos = await obtenerMovimientos();
-        renderHistorial(movimientos);
-
-    } catch (err) {
-        alert("❌ " + err.message);
-    }
+  location.hash = "#/recarga";
 }
 
-/*************************************************
- * 💸 FLUJO DE ENVÍO (MODAL INFERIOR)
- *************************************************/
-
-// Paso 1: Abrir el menú de selección (se activa desde el action-grid)
 export async function abrirEnviar() {
-    try {
-        // Verificamos PIN por seguridad
-        const wallet = await obtenerWallet();
-        if (wallet.tienePin === false) {
-            alert("⚠️ Debes configurar un PIN antes de enviar dinero.");
-            abrirConfigPin();
-            return;
-        }
-
-        // Mostramos el modal que sube desde abajo (tipo Mercado Pago)
-        const modalSelect = document.getElementById("modalSelectSendType");
-        if (modalSelect) modalSelect.classList.add("active");
-
-    } catch (err) {
-        console.error("Error al iniciar envío:", err);
+  try {
+    const wallet = await obtenerWallet();
+    if (wallet.tienePin === false) {
+      showWalletToast("Configurez votre PIN avant d'envoyer de l'argent.", "error");
+      abrirConfigPin();
+      return;
     }
+
+    document.getElementById("modalSelectSendType")?.classList.add("active");
+  } catch (error) {
+    showWalletToast(error.message || "Wallet indisponible.", "error");
+  }
 }
 
 export function cerrarModalSend() {
-    const modal = document.getElementById("modalSelectSendType");
-    if (modal) modal.classList.remove("active");
+  document.getElementById("modalSelectSendType")?.classList.remove("active");
 }
 
 export function mostrarBusqueda(tipo) {
-    cerrarModalSend();
+  cerrarModalSend();
 
-    const modal = document.getElementById("modalBuscarDestinatario");
-    const titulo = document.getElementById("buscarTitulo");
-    const input = document.getElementById("inputBusqueda");
+  const modal = document.getElementById("modalBuscarDestinatario");
+  const titulo = document.getElementById("buscarTitulo");
+  const copy = document.getElementById("buscarCopy");
+  const input = document.getElementById("inputBusqueda");
 
-    if (!modal || !input) return;
+  if (!modal || !input) return;
 
-    input.value = "";
-    titulo.innerText = tipo === 'alias'
-        ? "Enviar con Alias, CBU o CVU"
-        : "Enviar con número de teléfono";
+  input.value = "";
+  modal.dataset.tipoBusqueda = tipo;
 
-    modal.classList.remove("hidden");
+  if (tipo === "telefono") {
+    if (titulo) titulo.textContent = "Numero de telephone";
+    if (copy) copy.textContent = "Entrez le numero exact lie au compte BeGO.";
+    input.placeholder = "ex: +509...";
+    input.inputMode = "tel";
+  } else {
+    if (titulo) titulo.textContent = "Alias BeGO";
+    if (copy) copy.textContent = "Entrez l'alias public du destinataire.";
+    input.placeholder = "ex: bego1234";
+    input.inputMode = "text";
+  }
 
-    document.getElementById("btnProcesarBusqueda")
-      ?.addEventListener("click", () => {
-        const valor = input.value.trim();
-        if (!valor) return alert("Ingresa un dato válido");
-
-        modal.classList.add("hidden");
-        ejecutarTransferencia(valor);
-    });
+  modal.classList.remove("hidden");
+  input.focus();
 }
 
 export function cerrarBusqueda() {
-    const modal = document.getElementById("modalBuscarDestinatario");
-    if (modal) modal.classList.add("hidden");
+  document.getElementById("modalBuscarDestinatario")?.classList.add("hidden");
 }
 
-/*************************************************
- * 🚀 PROCESO DE TRANSFERENCIA FINAL
- *************************************************/
+export async function procesarBusqueda() {
+  const modal = document.getElementById("modalBuscarDestinatario");
+  const input = document.getElementById("inputBusqueda");
+  const valor = input?.value.trim();
 
-async function ejecutarTransferencia(identificador) {
-    const token = getToken();
-    const aliasDestino = identificador.toLowerCase();
+  if (!valor) {
+    showWalletToast("Entrez un destinataire valide.", "error");
+    return;
+  }
 
-    try {
-        // 1. Buscamos al usuario en el servidor
-        const resAlias = await fetch(`${getServerUrl()}/api/wallet/buscar-alias/${aliasDestino}`, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
-
-        if (!resAlias.ok) {
-            const err = await resAlias.json();
-            alert("❌ " + (err.error || "Usuario no encontrado"));
-            return;
-        }
-
-        const destinatario = await resAlias.json();
-
-        // 2. Preparamos el modal de confirmación con los datos del destinatario
-        const modal = document.getElementById("modalConfirmTransfer");
-        document.getElementById("destNombre").innerText = (destinatario.nombre && destinatario.apellido) 
-            ? `${destinatario.nombre} ${destinatario.apellido}` 
-            : (destinatario.nombre || "Usuario BeGO");
-        
-        document.getElementById("destAlias").innerText = `@${destinatario.alias}`;
-        document.getElementById("destFoto").src = destinatario.foto || `https://ui-avatars.com/api/?name=${destinatario.nombre}&background=random`;
-
-        // Mostramos saldo actual en el modal
-        const saldoEl = document.getElementById("saldoWallet");
-        const saldoDisponible = parseFloat(saldoEl.dataset.real || 0);
-        document.getElementById("saldoDisponibleModal").innerText = `$${saldoDisponible.toLocaleString('es-AR')}`;
-
-        modal.classList.remove("hidden");
-
-        // 3. Acción de Confirmar Envío
-        document.getElementById("confirmTransfer").onclick = async () => {
-            const monto = parseFloat(document.getElementById("destMonto").value);
-            const pin = document.getElementById("destPin").value.trim();
-
-            if (isNaN(monto) || monto <= 0 || monto > saldoDisponible) {
-                alert("Monto inválido o saldo insuficiente");
-                return;
-            }
-            if (!/^\d{4}$/.test(pin)) {
-                alert("Por favor, ingresa tu PIN de 4 dígitos");
-                return;
-            }
-
-            // UI Feedback: Mostramos spinner
-            document.getElementById("btnText").classList.add("oculto");
-            document.getElementById("btnSpinner").classList.remove("oculto");
-
-            try {
-                const response = await fetch(`${getServerUrl()}/api/wallet/enviar`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`,
-                        "Idempotency-Key": createIdempotencyKey()
-                    },
-                    body: JSON.stringify({ aliasDestino: destinatario.alias, monto, pin })
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) throw new Error(data.error || "Error en la transacción");
-
-                alert("✅ ¡Dinero enviado con éxito!");
-                modal.classList.add("hidden");
-                document.getElementById("destMonto").value = "";
-                document.getElementById("destPin").value = "";
-
-                // Actualizamos la UI de la Wallet
-                const wallet = await obtenerWallet();
-                actualizarSaldo(wallet.saldo);
-                const movs = await obtenerMovimientos();
-                renderHistorial(movs);
-
-            } catch (e) {
-                alert("❌ " + e.message);
-            } finally {
-                // Restauramos el botón
-                document.getElementById("btnText").classList.remove("oculto");
-                document.getElementById("btnSpinner").classList.add("oculto");
-            }
-        };
-
-        document.getElementById("cancelTransfer").onclick = () => modal.classList.add("hidden");
-
-    } catch (err) {
-        alert("Error de conexión con el servidor");
-        console.error(err);
-    }
+  try {
+    const destinatario = await buscarDestinatarioWallet(valor);
+    destinatarioActual = destinatario;
+    cerrarBusqueda();
+    abrirConfirmacionTransferencia(destinatario);
+  } catch (error) {
+    showWalletToast(error.message || "Destinataire non trouve.", "error");
+    modal?.classList.remove("hidden");
+  }
 }
 
-/*************************************************
- * 🌍 EXPOSICIÓN GLOBAL
- *************************************************/
-window.abrirEnviar = abrirEnviar;
-window.mostrarRecarga = mostrarRecarga;
-window.mostrarBusqueda = mostrarBusqueda;
-window.cerrarBusqueda = cerrarBusqueda;
-window.cerrarModalSend = cerrarModalSend;
+export async function confirmarTransferencia() {
+  if (transferenciaEnCurso || !destinatarioActual) return;
 
-/*************************************************
- * 👁 TOGGLE VISIBILIDAD SALDO (BLUR MODE)
- *************************************************/
+  const montoInput = document.getElementById("destMonto");
+  const pinInput = document.getElementById("destPin");
+  const saldo = Number(document.getElementById("saldoWallet")?.dataset.real || 0);
+  const monto = Math.round(Number(montoInput?.value || 0) * 100) / 100;
+  const pin = pinInput?.value.trim() || "";
 
-document.addEventListener("DOMContentLoaded", () => {
-    const saldoEl = document.getElementById("saldoWallet");
-    const toggleBtn = document.querySelector(".toggle-visibility");
-    const icon = toggleBtn?.querySelector("i");
+  setInlineError("transferError");
 
-    if (!saldoEl || !toggleBtn) return;
+  if (!Number.isFinite(monto) || monto <= 0) {
+    setInlineError("transferError", "Montant invalide.");
+    return;
+  }
 
-    let visible = localStorage.getItem("saldoVisible") === "true";
+  if (monto > saldo) {
+    setInlineError("transferError", "Solde insuffisant.");
+    return;
+  }
 
-    function renderSaldo() {
-        const real = parseFloat(saldoEl.dataset.real || 0);
+  if (!/^\d{4}$/.test(pin)) {
+    setInlineError("transferError", "Entrez votre PIN de 4 chiffres.");
+    return;
+  }
 
-        // Siempre mostramos el número real
-        saldoEl.innerText = real.toLocaleString("es-AR");
+  setTransferBusy(true);
 
-        if (visible) {
-            saldoEl.classList.remove("blur");
-            icon.classList.remove("fa-eye-slash");
-            icon.classList.add("fa-eye");
-        } else {
-            saldoEl.classList.add("blur");
-            icon.classList.remove("fa-eye");
-            icon.classList.add("fa-eye-slash");
-        }
-    }
-
-    toggleBtn.addEventListener("click", () => {
-        visible = !visible;
-        localStorage.setItem("saldoVisible", visible);
-        renderSaldo();
+  try {
+    await enviarWallet({
+      aliasDestino: destinatarioActual.alias,
+      monto,
+      pin,
     });
 
-    renderSaldo();
-});
+    cerrarConfirmacionTransferencia();
+    showWalletToast("Transfert envoye avec succes.", "success");
+    await refrescarWallet();
+  } catch (error) {
+    setInlineError("transferError", error.message || "Transfert impossible.");
+  } finally {
+    setTransferBusy(false);
+  }
+}
+
+export function cancelarTransferencia() {
+  cerrarConfirmacionTransferencia();
+}
+
+export async function abrirMovimientos() {
+  document.getElementById("modalMovimientosWallet")?.classList.remove("hidden");
+  try {
+    const movimientos = await obtenerMovimientos();
+    renderHistorial(movimientos);
+  } catch (error) {
+    showWalletToast(error.message || "Historique indisponible.", "error");
+  }
+}
+
+export function cerrarMovimientos() {
+  document.getElementById("modalMovimientosWallet")?.classList.add("hidden");
+}
+
+export function mostrarRetiro() {
+  document.getElementById("modalRetiroWallet")?.classList.remove("hidden");
+}
+
+export function cerrarRetiro() {
+  document.getElementById("modalRetiroWallet")?.classList.add("hidden");
+}
+
+export async function copiarAlias() {
+  const user = getCurrentUser();
+  const alias = user?.alias;
+
+  if (!alias) {
+    showWalletToast("Alias non disponible.", "error");
+    return;
+  }
+
+  try {
+    await navigator.clipboard?.writeText(alias);
+    showWalletToast(`Alias copie: @${alias}`, "success");
+  } catch {
+    showWalletToast(`Votre alias: @${alias}`, "info");
+  }
+}
+
+export function abrirAyuda() {
+  location.hash = "#/soporte";
+}
+
+export async function refrescarWallet() {
+  const [wallet, movimientos] = await Promise.all([
+    obtenerWallet(),
+    obtenerMovimientos(),
+  ]);
+
+  actualizarSaldo(wallet.saldo, wallet.saldoBloqueado);
+  renderHistorial(movimientos);
+  actualizarEstadoSeguridad(wallet);
+  return wallet;
+}
+
+export function actualizarEstadoSeguridad(wallet = {}) {
+  const user = getCurrentUser();
+  const aliasLabel = document.getElementById("walletAliasLabel");
+  const pinStatus = document.getElementById("walletPinStatus");
+  const secureState = document.getElementById("walletSecureState");
+
+  if (aliasLabel) aliasLabel.textContent = user?.alias ? `@${user.alias}` : "Alias";
+  if (pinStatus) pinStatus.textContent = wallet.tienePin ? "PIN actif" : "Configurer PIN";
+  if (secureState) secureState.textContent = wallet.tienePin ? "Protegee" : "PIN requis";
+}
+
+function abrirConfirmacionTransferencia(destinatario) {
+  const modal = document.getElementById("modalConfirmTransfer");
+  const nombre = [destinatario.nombre, destinatario.apellido].filter(Boolean).join(" ") || "Utilisateur BeGO";
+  const foto = destinatario.foto || avatarUrl(nombre);
+
+  document.getElementById("destNombre").textContent = nombre;
+  document.getElementById("destAlias").textContent = `@${destinatario.alias}`;
+  document.getElementById("destFoto").src = foto;
+  document.getElementById("destMonto").value = "";
+  document.getElementById("destPin").value = "";
+  setInlineError("transferError");
+
+  const saldo = Number(document.getElementById("saldoWallet")?.dataset.real || 0);
+  document.getElementById("saldoDisponibleModal").textContent = `HTG ${saldo.toLocaleString("fr-HT", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
+
+  modal?.classList.remove("hidden");
+  document.getElementById("destMonto")?.focus();
+}
+
+function cerrarConfirmacionTransferencia() {
+  const modal = document.getElementById("modalConfirmTransfer");
+  modal?.classList.add("hidden");
+  destinatarioActual = null;
+  document.getElementById("destMonto").value = "";
+  document.getElementById("destPin").value = "";
+}
+
+function setTransferBusy(isBusy) {
+  transferenciaEnCurso = isBusy;
+  const btn = document.getElementById("confirmTransfer");
+  const text = document.getElementById("btnText");
+  const spinner = document.getElementById("btnSpinner");
+
+  if (btn) btn.disabled = isBusy;
+  text?.classList.toggle("oculto", isBusy);
+  spinner?.classList.toggle("oculto", !isBusy);
+}
+
+function avatarUrl(name) {
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=0f172a&color=ffffff`;
+}

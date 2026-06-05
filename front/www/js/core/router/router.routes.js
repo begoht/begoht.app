@@ -2,8 +2,8 @@ import { BASE } from "./router.utils.js";
 import { AppState } from "../state.js";
 import { stopGeo } from "../../map/map.geo.js";
 
-import { renderWallet } from "../../../wallet/wallet.view.js";
-import { initWallet } from "../../../wallet/wallet-init.js";
+import { renderWallet } from "../../../wallet/wallet.view.js?v=20260605-wallet-secure";
+import { initWallet } from "../../../wallet/wallet-init.js?v=20260605-wallet-secure";
 import { renderCuenta } from "../../../paginas/cuenta.js";
 import { renderConfiguracion } from "../../../paginas/configuracion.js?v=20260603-mobile-support";
 import { initConfiguracion } from "../../configuracion.js?v=20260603-mobile-support";

@@ -1,16 +1,35 @@
 const bcrypt = require("bcrypt");
 const express = require("express");
 const mongoose = require("mongoose");
+const rateLimit = require("express-rate-limit");
 const Wallet = require("../models/Wallet");
 const User = require("../models/User");
+const Viaje = require("../models/Viaje");
 const auth = require("../middleware/authHttp");
 const WalletService = require("../services/wallet.service");
 const { PLATFORM_ALIAS } = require("../config/constants");
 const { ensurePlatformAccount } = require("../services/platformAccount.service");
+const { serializeWallet, serializeMovements } = require("../services/wallet.presenter");
 
 const router = express.Router();
 const TRANSFER_MAX = Number(process.env.WALLET_TRANSFER_MAX || 1000000);
 const MANUAL_RECHARGE_MAX = Number(process.env.WALLET_MANUAL_RECHARGE_MAX || 50000);
+
+const walletWriteLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Demasiadas operaciones. Intenta otra vez en un momento." },
+});
+
+const pinLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Demasiados intentos. Intenta mas tarde." },
+});
 
 function parseMoney(value) {
   const amount = Number(value);
@@ -20,6 +39,16 @@ function parseMoney(value) {
 
 function normalizeAlias(alias = "") {
   return String(alias).toLowerCase().trim();
+}
+
+function normalizePhone(value = "") {
+  return String(value).replace(/[^\d+]/g, "").trim();
+}
+
+function isWeakPin(pin) {
+  const value = String(pin || "");
+  if (!/^\d{4}$/.test(value)) return true;
+  return ["0000", "1111", "1234", "4321", "2222", "3333", "4444", "5555", "6666", "7777", "8888", "9999"].includes(value);
 }
 
 function getClientFingerprint(req) {
@@ -43,12 +72,19 @@ router.get("/buscar-alias/:alias", auth, async (req, res) => {
     const { alias } = req.params;
 
     const aliasNormalizado = normalizeAlias(alias);
+    const telefono = normalizePhone(alias);
 
     if (aliasNormalizado === PLATFORM_ALIAS) {
       await ensurePlatformAccount();
     }
-    
-    const usuario = await User.findOne({ alias: aliasNormalizado })
+
+    const search = [{ alias: aliasNormalizado }];
+    if (telefono.length >= 6) {
+      search.push({ telefono });
+      if (!telefono.startsWith("+")) search.push({ telefono: `+${telefono}` });
+    }
+
+    const usuario = await User.findOne({ $or: search })
     .select("nombre apellido foto alias")
     .lean();
 
@@ -83,10 +119,7 @@ router.get("/", auth, async (req, res) => {
     const usuario = await User.findById(userId).select("+pinHash");
     
     // Convertimos a objeto para añadirle la propiedad virtual
-    const walletData = wallet.toObject();
-    walletData.tienePin = !!(usuario && usuario.pinHash);
-
-    res.json(walletData);
+    res.json(serializeWallet(wallet, { tienePin: !!(usuario && usuario.pinHash) }));
 
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -96,7 +129,7 @@ router.get("/", auth, async (req, res) => {
 /*************************************************
  * ➕ RECARGA
  *************************************************/
-router.post("/recarga", auth, async (req, res) => {
+router.post("/recarga", walletWriteLimiter, auth, async (req, res) => {
   try {
     const userId = req.user.id; // 🔥 viene del token
     const { monto, referencia } = req.body;
@@ -123,7 +156,7 @@ router.post("/recarga", auth, async (req, res) => {
 
     await global.emitWalletUpdate(userId);
 
-    res.json(wallet);
+    res.json(serializeWallet(wallet, { movementsLimit: 8 }));
 
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -141,6 +174,18 @@ router.post("/bloquear-viaje", auth, async (req, res) => {
       return res.status(400).json({ error: "ViajeId inválido" });
     }
 
+    const viaje = await Viaje.findOne({ _id: viajeId, pasajero: req.user.id })
+      .select("_id metodoPago")
+      .lean();
+
+    if (!viaje) {
+      return res.status(404).json({ error: "Viaje no encontrado" });
+    }
+
+    if (viaje.metodoPago !== "wallet") {
+      return res.status(400).json({ error: "Este viaje no usa Wallet BeGO" });
+    }
+
     await WalletService.bloquearViaje(viajeId);
 
     res.json({ ok: true });
@@ -150,7 +195,7 @@ router.post("/bloquear-viaje", auth, async (req, res) => {
   }
 });
 
-router.post("/enviar", auth, async (req, res) => {
+router.post("/enviar", walletWriteLimiter, auth, async (req, res) => {
   const session = await mongoose.startSession();
 
   try {
@@ -271,15 +316,7 @@ router.post("/enviar", auth, async (req, res) => {
     const origenQuery = {
       userId,
       $expr: {
-        $gte: [
-          {
-            $subtract: [
-              "$saldo",
-              { $ifNull: ["$saldoBloqueado", 0] }
-            ]
-          },
-          MONTO
-        ]
+        $gte: ["$saldo", MONTO]
       }
     };
 
@@ -460,14 +497,6 @@ async function pagarComisionPendiente({
 }
 
 
-const rateLimit = require("express-rate-limit");
-
-const pinLimiter = rateLimit({
-  windowMs: 5 * 60 * 1000,
-  max: 10,
-  message: { error: "Demasiados intentos. Intenta más tarde." }
-});
-
 router.post("/validar-pin", pinLimiter, auth, async (req, res) => {
   try {
     const { pin } = req.body;
@@ -517,11 +546,11 @@ router.post("/validar-pin", pinLimiter, auth, async (req, res) => {
   }
 });
 
-router.post("/configurar-pin", auth, async (req, res) => {
+router.post("/configurar-pin", pinLimiter, auth, async (req, res) => {
   try {
     const { pin } = req.body;
 
-    if (pin === "0000" || pin === "1234") {
+    if (isWeakPin(pin)) {
       return res.status(400).json({ error: "PIN demasiado inseguro" });
     }
 
@@ -553,11 +582,11 @@ router.post("/configurar-pin", auth, async (req, res) => {
   }
 });
 
-router.post("/cambiar-pin", auth, async (req, res) => {
+router.post("/cambiar-pin", pinLimiter, auth, async (req, res) => {
   try {
     const { pinActual, nuevoPin } = req.body;
 
-    if (!nuevoPin || nuevoPin.length !== 4 || !/^\d+$/.test(nuevoPin)) {
+    if (isWeakPin(nuevoPin)) {
       return res.status(400).json({ error: "Nuevo PIN inválido" });
     }
 
@@ -598,6 +627,14 @@ router.post("/liberar-viaje", auth, async (req, res) => {
       return res.status(400).json({ error: "ViajeId inválido" });
     }
 
+    const viaje = await Viaje.findOne({ _id: viajeId, pasajero: req.user.id })
+      .select("_id estadoPago")
+      .lean();
+
+    if (!viaje) {
+      return res.status(404).json({ error: "Viaje no encontrado" });
+    }
+
     await WalletService.cancelarViaje(
       viajeId,
       Number(penalidad) || 0
@@ -622,12 +659,7 @@ router.get("/movimientos", auth, async (req, res) => {
       return res.json([]);
     }
 
-    // Ordenar por fecha descendente
-    const movimientosOrdenados = [...wallet.movimientos].sort(
-      (a, b) => new Date(b.fecha) - new Date(a.fecha)
-    );
-
-    res.json(movimientosOrdenados);
+    res.json(serializeMovements(wallet.movimientos, req.query.limit));
 
   } catch (err) {
     res.status(500).json({ error: "Error obteniendo movimientos" });

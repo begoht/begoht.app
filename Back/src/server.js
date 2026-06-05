@@ -25,6 +25,7 @@ const { matchingQueue } = require("./config/queues");
 const Wallet = require("./models/Wallet");
 const User = require("./models/User");
 const Viaje = require("./models/Viaje");
+const { serializeWallet } = require("./services/wallet.presenter");
 
 const shareRoutes = require("./routes/pagos.share.route");
 const trackSocket = require("./sockets/viajes/track.socket");
@@ -84,7 +85,7 @@ global.emitWalletUpdate = async (userId) => {
   try {
     const wallet = await Wallet.findOne({ userId }).lean();
     if (!wallet) return;
-    io.to(`user:${userId}`).emit("wallet:update", wallet);
+    io.to(`user:${userId}`).emit("wallet:update", serializeWallet(wallet));
   } catch (err) {
     console.error("❌ Error emitWalletUpdate:", err);
   }
@@ -104,7 +105,7 @@ app.use(express.json());
 app.use(cors({ 
   origin: "*", 
   methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ['Content-Type', 'Authorization', 'ngrok-skip-browser-warning'] // ✅ CORREGIDO: Dentro del objeto cors
+  allowedHeaders: ['Content-Type', 'Authorization', 'Idempotency-Key', 'ngrok-skip-browser-warning'] // ✅ CORREGIDO: Dentro del objeto cors
 }));
 
 
@@ -553,7 +554,7 @@ if (user.rol === "motorista") {
   Wallet.findOne({ userId })
     .lean()
     .then((wallet) => {
-      if (wallet) socket.emit("wallet:update", wallet);
+      if (wallet) socket.emit("wallet:update", serializeWallet(wallet));
     })
     .catch(() => {});
 

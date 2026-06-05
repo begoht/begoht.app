@@ -1,8 +1,20 @@
 import { getServerUrl as getSharedServerUrl } from "../js/conexion.js";
 
 export function getUserId() {
-    const user = JSON.parse(localStorage.getItem("BeGO_user"));
-    return user?._id || user?.id || null;
+    try {
+        const user = JSON.parse(localStorage.getItem("BeGO_user") || "null");
+        return user?._id || user?.id || null;
+    } catch {
+        return null;
+    }
+}
+
+export function getCurrentUser() {
+    try {
+        return JSON.parse(localStorage.getItem("BeGO_user") || "null");
+    } catch {
+        return null;
+    }
 }
 
 export function getToken() {

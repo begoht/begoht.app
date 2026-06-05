@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const viajeService = require("../services/viaje.service");
 const Wallet = require("../../../../models/Wallet");
+const { serializeWallet } = require("../../../../services/wallet.presenter");
 const { asignarViaje } = require("../../../../services/matching_services/matching.service");
 const { matchingQueue } = require("../../../../config/queues");
 const { redis } = require("../../../../config/redis");
@@ -102,7 +103,7 @@ module.exports = async function confirmarViaje(socket, io, data) {
 
       await viaje.save({ session });
 
-      io.to(`user:${viaje.pasajero}`).emit("wallet:update", wallet);
+      io.to(`user:${viaje.pasajero}`).emit("wallet:update", serializeWallet(wallet));
     }
 
     await session.commitTransaction();

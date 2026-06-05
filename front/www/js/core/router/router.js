@@ -1,4 +1,4 @@
-import { routes } from "./router.routes.js?v=20260604-admin-offers";
+import { routes } from "./router.routes.js?v=20260605-wallet-secure";
 import { renderLayout } from "./router.render.js?v=20260601-finalizado-social";
 import { runCleanup, setCleanup } from "./router.cleanup.js";
 import { afterRender, pushURL, actualizarLinksActivos } from "./router.utils.js";

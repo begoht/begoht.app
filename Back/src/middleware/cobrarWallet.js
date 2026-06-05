@@ -30,7 +30,7 @@ module.exports = async function cobrarWallet(req, res, next) {
     // 💰 Descontar
     wallet.saldo -= viaje.precio;
     await wallet.save();
-    await global.emitWalletUpdate(userId);
+    await global.emitWalletUpdate(viaje.pasajero);
 
     // 🔒 Marcar pagado
     viaje.estadoPago = "pagado";

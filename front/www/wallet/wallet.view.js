@@ -1,239 +1,260 @@
 export function renderWallet() {
   return `
   <div class="view-wallet-context">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 
-  <div class="wallet-view">
-    <div class="app-container">
+    <div class="wallet-view">
+      <div class="app-container">
 
-      <header class="main-header">
-        <button class="header-btn"><i class="fa-solid fa-copy"></i> Alias</button>
-
-        <div class="header-right">
-          <button class="header-btn"><i class="fa-regular fa-circle-question"></i> Ayuda</button>
-          <div class="notification-icon">
-            <i class="fa-regular fa-bell"></i>
-            <span class="badge">1</span>
-          </div>
-        </div>
-
-        <div class="security-pill">
-          <button class="btn-secure" id="btnCambiarPin" aria-label="Seguridad">
-            🔐
+        <header class="main-header">
+          <button class="header-btn" type="button" data-action="copiar-alias">
+            <i class="fa-solid fa-copy"></i>
+            <span id="walletAliasLabel">Alias</span>
           </button>
-        </div>
-      </header>
 
-      <!-- BALANCE -->
-      <section class="balance-card">
-        <div class="premium-glow"></div>
-        <div class="balance-header">
-          <div class="balance-label">
-            Disponible <span class="trend">↑ 25,10%</span>
+          <div class="header-right">
+            <button class="header-btn" type="button" data-action="abrir-ayuda">
+              <i class="fa-regular fa-circle-question"></i> Aide
+            </button>
+            <button class="notification-icon" type="button" data-action="abrir-movimientos" aria-label="Mouvements wallet">
+              <i class="fa-regular fa-bell"></i>
+              <span class="badge" id="walletMovBadge">0</span>
+            </button>
           </div>
-          <button class="view-history" id="btnMovimientos">
-            Movimientos <i class="fa-solid fa-chevron-right"></i>
+
+          <div class="security-pill">
+            <button class="btn-secure" id="btnWalletSecurity" type="button" data-action="abrir-config-pin" aria-label="Securite wallet">
+              <i class="fa-solid fa-shield-halved"></i>
+              <span id="walletPinStatus">PIN</span>
+            </button>
+          </div>
+        </header>
+
+        <section class="balance-card">
+          <div class="premium-glow"></div>
+          <div class="balance-header">
+            <div class="balance-label">
+              Wallet BeGO <span class="trend" id="walletSecureState">Protegee</span>
+            </div>
+            <button class="view-history" id="btnMovimientos" type="button" data-action="abrir-movimientos">
+              Mouvements <i class="fa-solid fa-chevron-right"></i>
+            </button>
+          </div>
+
+          <div class="balance-main">
+            <span class="currency">HTG</span>
+            <span id="saldoWallet" class="amount">***.**</span>
+            <button class="toggle-visibility" type="button" aria-label="Afficher ou masquer le solde">
+              <i class="fa-regular fa-eye-slash"></i>
+            </button>
+          </div>
+
+          <div class="balance-footer">
+            <div>
+              <small>Disponible maintenant</small>
+              <strong id="walletAvailableLabel">HTG</strong>
+            </div>
+            <div>
+              <small>Reserve voyages</small>
+              <strong id="walletBlockedLabel">0.00</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="wallet-insights">
+          <div class="insight-item">
+            <i class="fa-solid fa-lock"></i>
+            <span>Escrow voyages</span>
+          </div>
+          <div class="insight-item">
+            <i class="fa-solid fa-fingerprint"></i>
+            <span>PIN requis</span>
+          </div>
+          <div class="insight-item">
+            <i class="fa-solid fa-receipt"></i>
+            <span>Recu verifiable</span>
+          </div>
+        </section>
+
+        <section class="action-grid">
+          <button class="action-item" type="button" data-action="recargar">
+            <div class="icon-box"><i class="fa-solid fa-arrow-down"></i></div>
+            <span>Recharger</span>
           </button>
-        </div>
 
-        <div class="balance-main">
-          <span class="currency">$</span>
-          <span id="saldoWallet" class="amount">***.***.***</span>
-          <button class="toggle-visibility">
-            <i class="fa-regular fa-eye-slash"></i>
+          <button class="action-item" type="button" id="btnEnviar">
+            <div class="icon-box"><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
+            <span>Envoyer</span>
           </button>
-        </div>
 
-        <div class="balance-footer">
-          <div>
-            <small>Disponible ahora</small>
-            <strong>HTG</strong>
+          <button class="action-item" type="button" data-action="retirar">
+            <div class="icon-box"><i class="fa-solid fa-arrow-up"></i></div>
+            <span>Retirer</span>
+          </button>
+        </section>
+
+        <section class="wallet-mini-history" aria-live="polite">
+          <div class="wallet-section-title">
+            <span>Derniers mouvements</span>
+            <button type="button" data-action="abrir-movimientos">Tout voir</button>
           </div>
-          <div>
-            <small>PIN + antifraude</small>
-            <strong>Activo</strong>
-          </div>
-        </div>
-      </section>
+          <div id="listaMovimientos" class="wallet-history-list"></div>
+        </section>
+      </div>
 
-      <section class="wallet-insights">
-        <div class="insight-item">
-          <i class="fa-solid fa-lock"></i>
-          <span>Escrow en viajes</span>
-        </div>
-        <div class="insight-item">
-          <i class="fa-solid fa-fingerprint"></i>
-          <span>PIN requerido</span>
-        </div>
-        <div class="insight-item">
-          <i class="fa-solid fa-receipt"></i>
-          <span>Recibos verificables</span>
-        </div>
-      </section>
-
-      <!-- MODAL ENVIAR -->
       <div id="modalSelectSendType" class="modal-bottom">
         <div class="modal-bottom-content animate-slide-up">
-
           <div class="modal-header-simple">
-            <button data-action="cerrar-modal-send" class="btn-back">
+            <button data-action="cerrar-modal-send" type="button" class="btn-back">
               <i class="fa-solid fa-arrow-left"></i>
             </button>
-            <h2>Enviar dinero</h2>
+            <h2>Envoyer de l'argent</h2>
           </div>
 
-          <p class="select-title">¿Cómo querés enviar dinero?</p>
+          <p class="select-title">Choisissez le destinataire</p>
 
           <div class="send-options">
-            <button class="option-item" data-action="buscar-telefono">
-              <div class="option-icon bg-red">
-                <i class="fa-solid fa-mobile-screen"></i>
-              </div>
+            <button class="option-item" type="button" data-action="buscar-telefono">
+              <div class="option-icon bg-red"><i class="fa-solid fa-mobile-screen"></i></div>
               <div class="option-text">
-                <span>Con número de teléfono</span>
+                <span>Avec numero de telephone</span>
                 <i class="fa-solid fa-chevron-right"></i>
               </div>
             </button>
 
-            <button class="option-item" data-action="buscar-alias">
-              <div class="option-icon bg-blue">
-                <i class="fa-solid fa-user"></i>
-              </div>
+            <button class="option-item" type="button" data-action="buscar-alias">
+              <div class="option-icon bg-blue"><i class="fa-solid fa-user"></i></div>
               <div class="option-text">
-                <span>Con alias, CBU o CVU</span>
+                <span>Avec alias BeGO</span>
                 <i class="fa-solid fa-chevron-right"></i>
               </div>
             </button>
           </div>
 
           <div class="favorites-section">
-            <p class="fav-label">TUS FAVORITOS</p>
+            <p class="fav-label">SECURITE</p>
             <div class="fav-empty-card">
-              <p>Acá vas a ver tus <br><strong>contactos favoritos.</strong></p>
-              <div class="fav-illustration">
-                <i class="fa-solid fa-address-book"></i>
-              </div>
+              <p>Chaque envoi exige votre <strong>PIN personnel.</strong></p>
+              <div class="fav-illustration"><i class="fa-solid fa-shield-halved"></i></div>
             </div>
           </div>
-
         </div>
       </div>
 
-      <!-- BUSCAR DESTINATARIO -->
       <div id="modalBuscarDestinatario" class="modal hidden">
         <div class="modal-content">
-          <h3 id="buscarTitulo">Enviar con Alias/CBU</h3>
+          <h3 id="buscarTitulo">Destinataire</h3>
+          <p class="wallet-modal-copy" id="buscarCopy">Entrez un alias BeGO.</p>
 
           <div class="input-container">
-            <input type="text" id="inputBusqueda" placeholder="Ej: tyler.moto o 00000..." />
+            <input type="text" id="inputBusqueda" autocomplete="off" placeholder="ex: bego1234" />
           </div>
 
           <div class="modal-actions">
-            <button id="btnProcesarBusqueda" class="btn-primary">Continuar</button>
-            <button data-action="cerrar-busqueda" class="btn-secondary">Cancelar</button>
+            <button id="btnProcesarBusqueda" class="btn-primary" type="button" data-action="procesar-busqueda">Continuer</button>
+            <button data-action="cerrar-busqueda" class="btn-secondary" type="button">Annuler</button>
           </div>
         </div>
       </div>
 
-      <!-- CONFIRMAR TRANSFER -->
       <div id="modalConfirmTransfer" class="modal hidden">
         <div class="modal-content">
-          <img id="destFoto" src="/img/default-avatar.png" alt="Foto" />
-          <h3 id="destNombre">Nombre Apellido</h3>
+          <img id="destFoto" src="/img/default-avatar.png" alt="Destinataire" />
+          <h3 id="destNombre">Nom</h3>
           <p id="destAlias">@alias</p>
 
           <p class="saldo-disponible">
-            Saldo disponible: <strong id="saldoDisponibleModal">$0.00</strong>
+            Solde disponible: <strong id="saldoDisponibleModal">HTG 0.00</strong>
           </p>
 
           <div class="input-container">
-            <label>Monto a enviar</label>
-            <div style="display:flex;align-items:center;justify-content:center;gap:8px;">
-              <span style="font-size:24px;font-weight:800;color:var(--secondary);">$</span>
-              <input type="number" id="destMonto" placeholder="0.00" step="0.01" />
+            <label>Montant a envoyer</label>
+            <div class="wallet-amount-input">
+              <span>HTG</span>
+              <input type="number" id="destMonto" inputmode="decimal" min="1" step="0.01" placeholder="0.00" />
             </div>
           </div>
 
           <div class="pin-container">
-            <label>Ingresa tu PIN</label>
-            <input type="password" id="destPin" maxlength="4" placeholder="••••"/>
+            <label>PIN wallet</label>
+            <input type="password" id="destPin" maxlength="4" inputmode="numeric" autocomplete="one-time-code" placeholder="----"/>
+          </div>
+
+          <p id="transferError" class="pin-error oculto"></p>
+
+          <div class="modal-actions">
+            <button id="confirmTransfer" type="button" data-action="confirmar-transferencia">
+              <span id="btnText">Confirmer</span>
+              <i id="btnSpinner" class="fa-solid fa-circle-notch fa-spin oculto"></i>
+            </button>
+            <button id="cancelTransfer" type="button" data-action="cancelar-transferencia">Annuler</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="modalMovimientosWallet" class="modal hidden">
+        <div class="modal-content wallet-movements-modal">
+          <div class="modal-header-simple">
+            <h2>Mouvements wallet</h2>
+            <button type="button" class="btn-back" data-action="cerrar-movimientos"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+          <div id="listaMovimientosModal" class="wallet-history-list"></div>
+        </div>
+      </div>
+
+      <div id="modalRetiroWallet" class="modal hidden">
+        <div class="modal-content">
+          <div class="wallet-disabled-icon"><i class="fa-solid fa-building-columns"></i></div>
+          <h3>Retraits bientot disponibles</h3>
+          <p class="wallet-modal-copy">MonCash et NatCash ne sont pas disponibles pour le moment. Votre solde reste protege dans Wallet BeGO.</p>
+          <div class="modal-actions">
+            <button type="button" data-action="cerrar-retiro">Compris</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="modalPin" class="modal hidden">
+        <div class="modal-content">
+          <h3 class="modal-title">Configurer le PIN de securite</h3>
+          <p class="wallet-modal-copy">Utilisez un code de 4 chiffres difficile a deviner.</p>
+
+          <div class="pin-container">
+            <label>Nouveau PIN</label>
+            <input type="password" id="nuevoPin" maxlength="4" inputmode="numeric" autocomplete="new-password" placeholder="----"/>
+            <small id="pinConfigError" class="pin-error oculto"></small>
           </div>
 
           <div class="modal-actions">
-            <button id="confirmTransfer">
-              <span id="btnText">Confirmar Envío</span>
-              <i id="btnSpinner" class="fa-solid fa-circle-notch fa-spin oculto"></i>
-            </button>
-            <button id="cancelTransfer">Cancelar</button>
+            <button id="btnGuardarPin" type="button">Enregistrer</button>
+            <button id="btnCerrarPin" type="button">Annuler</button>
           </div>
         </div>
       </div>
 
-      <!-- ACCIONES -->
-      <section class="action-grid">
-        <button class="action-item" data-action="recargar">
-          <div class="icon-box"><i class="fa-solid fa-arrow-down"></i></div>
-          <span>Recargar</span>
-        </button>
+      <div id="modalCambiarPin" class="modal hidden">
+        <div class="modal-content">
+          <h3 class="modal-title">Changer le PIN</h3>
 
-        <button class="action-item" id="btnEnviar">
-          <div class="icon-box">
-            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          <div class="pin-container">
+            <label>PIN actuel</label>
+            <input type="password" id="pinActual" maxlength="4" inputmode="numeric" autocomplete="current-password"/>
           </div>
-          <span>Enviar</span>
-        </button>
 
-        <button class="action-item">
-          <div class="icon-box"><i class="fa-solid fa-arrow-up"></i></div>
-          <span>Retirar</span>
-        </button>
-      </section>
+          <div class="pin-container">
+            <label>Nouveau PIN</label>
+            <input type="password" id="nuevoPinCambio" maxlength="4" inputmode="numeric" autocomplete="new-password"/>
+            <small id="pinCambioError" class="pin-error oculto"></small>
+          </div>
 
-    </div>
-
-    <!-- MODAL PIN -->
-    <div id="modalPin" class="modal hidden">
-      <div class="modal-content">
-        <h3 class="modal-title">Configurar PIN de Seguridad</h3>
-
-        <div class="pin-container">
-          <label>Nuevo PIN</label>
-          <input type="password" id="nuevoPin" maxlength="4" placeholder="••••"/>
-          <small id="pinConfigError" class="pin-error oculto"></small>
-        </div>
-
-        <div class="modal-actions">
-          <button id="btnGuardarPin">Guardar PIN</button>
+          <div class="modal-actions">
+            <button id="btnActualizarPin" type="button">Mettre a jour</button>
+            <button id="btnCerrarCambiarPin" type="button">Annuler</button>
+          </div>
         </div>
       </div>
+
+      <div id="walletToast" class="wallet-toast hidden" role="status" aria-live="polite"></div>
     </div>
-
-    <!-- CAMBIAR PIN -->
-    <div id="modalCambiarPin" class="modal hidden">
-      <div class="modal-content">
-
-        <h3 class="modal-title">Cambiar PIN</h3>
-
-        <div class="pin-container">
-          <label>PIN actual</label>
-          <input type="password" id="pinActual" maxlength="4"/>
-        </div>
-
-        <div class="pin-container">
-          <label>Nuevo PIN</label>
-          <input type="password" id="nuevoPinCambio" maxlength="4"/>
-          <small id="pinCambioError" class="pin-error oculto"></small>
-        </div>
-
-        <div class="modal-actions">
-          <button id="btnCambiarPin">Actualizar PIN</button>
-          <button id="btnCerrarPin">Cancelar</button>
-        </div>
-
-      </div>
-    </div>
-
-  </div>
   </div>
   `;
 }
