@@ -1,4 +1,4 @@
-import { pasajeroIcon } from "./map.icons.js?v=20260604-jacmel-gps";
+import { pasajeroIcon } from "./map.icons.js?v=20260605-passenger-dot";
 import { ACTIVE_CITY, cityConfig, coordsInCity, inferCityConfigFromCoords, persistDetectedCity } from "./config/index.js";
 import { viajeState } from "../viaje/viaje.state.js";
 import { reverseGeocode } from "./services/map.reverse.js";
