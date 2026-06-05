@@ -33,7 +33,7 @@
 @import "./pages/pagos.css";
 @import "./pages/configuracion.css?v=20260603-mobile-support";
 @import "./pages/perfil.css";
-@import "./pages/ganancias.css";
+@import "./pages/ganancias.css?v=20260605-earnings-page";
 @import "./pages/seguridad.css?v=20260603-mobile-support";
 @import "./pages/familia.css";
 @import "./pages/ayuda.css?v=20260603-mobile-support";

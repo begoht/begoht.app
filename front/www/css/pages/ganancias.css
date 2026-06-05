@@ -1,0 +1,375 @@
+.ganancias-page {
+  background:
+    radial-gradient(circle at 0 0, rgba(37, 99, 235, 0.12), transparent 28rem),
+    linear-gradient(180deg, #020616 0%, #08111f 54%, #020616 100%);
+}
+
+.ganancias-page .ganancias {
+  width: min(100%, 720px);
+  margin: 0 auto;
+  padding: 0 14px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ganancias-page .ganancias-hero {
+  margin: 0;
+  padding: 16px;
+  border-radius: 8px;
+  text-align: left;
+  display: grid;
+  gap: 14px;
+  background:
+    linear-gradient(135deg, rgba(37, 99, 235, 0.22), rgba(2, 6, 23, 0.92)),
+    #061124;
+  border: 1px solid rgba(96, 165, 250, 0.2);
+  box-shadow: 0 18px 34px rgba(0, 0, 0, 0.28);
+}
+
+.ganancias-page .ganancias-hero-copy {
+  min-width: 0;
+}
+
+.ganancias-page .ganancias-kicker,
+.ganancias-page .ganancias-section-head span,
+.ganancias-page .ganancias-feature-copy > span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 900;
+  color: #bfdbfe;
+  background: rgba(37, 99, 235, 0.16);
+  border: 1px solid rgba(96, 165, 250, 0.22);
+}
+
+.ganancias-page .ganancias-hero h1 {
+  margin: 12px 0 8px;
+  font-size: 1.75rem;
+  line-height: 1.03;
+  letter-spacing: 0;
+  color: #f8fafc;
+}
+
+.ganancias-page .ganancias-hero p,
+.ganancias-page .ganancias-feature-copy p,
+.ganancias-page .ganancia-card p,
+.ganancias-page .ganancias-steps p {
+  margin: 0;
+  color: #a8b4c7;
+  line-height: 1.5;
+  font-size: 0.92rem;
+}
+
+.ganancias-page .ganancias-hero-panel {
+  display: grid;
+  gap: 5px;
+  padding: 12px;
+  min-height: 96px;
+  border-radius: 8px;
+  background: rgba(248, 250, 252, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ganancias-page .ganancias-hero-panel span,
+.ganancias-page .ganancia-card-top span {
+  color: #93c5fd;
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+.ganancias-page .ganancias-hero-panel strong {
+  color: #ffffff;
+  font-size: 1rem;
+  line-height: 1.25;
+}
+
+.ganancias-page .ganancias-hero-panel small {
+  color: #cbd5e1;
+  font-size: 0.8rem;
+}
+
+.ganancias-page .ganancias-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.ganancias-page .ganancias-metrics article {
+  min-height: 92px;
+  padding: 12px;
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.84);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  display: grid;
+  align-content: space-between;
+  gap: 7px;
+}
+
+.ganancias-page .ganancias-metrics i,
+.ganancias-page .ganancia-card-top i,
+.ganancias-page .ganancias-feature-icon i {
+  color: #60a5fa;
+}
+
+.ganancias-page .ganancias-metrics span {
+  color: #94a3b8;
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.ganancias-page .ganancias-metrics strong {
+  color: #f8fafc;
+  font-size: 0.88rem;
+  line-height: 1.2;
+}
+
+.ganancias-page .ganancias-feature,
+.ganancias-page .ganancia-card,
+.ganancias-page .ganancias-steps {
+  border-radius: 8px;
+  background: rgba(2, 6, 23, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  box-shadow: 0 18px 34px rgba(0, 0, 0, 0.24);
+}
+
+.ganancias-page .ganancias-feature {
+  padding: 14px;
+  display: grid;
+  gap: 14px;
+}
+
+.ganancias-page .ganancias-feature-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  background: rgba(37, 99, 235, 0.16);
+  border: 1px solid rgba(96, 165, 250, 0.22);
+}
+
+.ganancias-page .ganancias-feature-icon i {
+  font-size: 1.55rem;
+}
+
+.ganancias-page .ganancias-feature-copy h2,
+.ganancias-page .ganancias-section-head h2,
+.ganancias-page .ganancia-card h3 {
+  margin: 8px 0 7px;
+  color: #f8fafc;
+  line-height: 1.15;
+  letter-spacing: 0;
+}
+
+.ganancias-page .ganancias-feature-copy h2 {
+  font-size: 1.2rem;
+}
+
+.ganancias-page .ganancias-feature-copy ul {
+  list-style: none;
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 0;
+}
+
+.ganancias-page .ganancias-feature-copy li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+  color: #dbeafe;
+  font-size: 0.88rem;
+  line-height: 1.35;
+}
+
+.ganancias-page .ganancias-feature-copy li i {
+  margin-top: 2px;
+  color: #22c55e;
+}
+
+.ganancias-page .ganancias-feature-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 9px;
+}
+
+.ganancias-page .ganancias-primary,
+.ganancias-page .ganancias-secondary,
+.ganancias-page .ganancias-card-action {
+  min-height: 48px;
+  width: 100%;
+  border-radius: 8px;
+  border: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  text-decoration: none;
+  font-size: 0.92rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.ganancias-page .ganancias-primary,
+.ganancias-page .ganancias-card-action {
+  color: #ffffff;
+  background: linear-gradient(135deg, #2563eb, #0f172a);
+  box-shadow: 0 12px 22px rgba(37, 99, 235, 0.22);
+}
+
+.ganancias-page .ganancias-secondary {
+  color: #dbeafe;
+  background: rgba(15, 23, 42, 0.82);
+  border: 1px solid rgba(96, 165, 250, 0.2);
+}
+
+.ganancias-page .ganancias-opciones {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.ganancias-page .ganancia-card {
+  padding: 12px;
+  text-align: left;
+  gap: 10px;
+}
+
+.ganancias-page .ganancia-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 32px;
+  gap: 8px;
+}
+
+.ganancias-page .ganancia-card-top i {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: rgba(37, 99, 235, 0.16);
+}
+
+.ganancias-page .ganancia-card h3 {
+  min-height: 44px;
+  font-size: 1rem;
+}
+
+.ganancias-page .ganancia-card p {
+  min-height: 84px;
+  font-size: 0.84rem;
+}
+
+.ganancias-page .ganancias-code {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 40px;
+  align-items: center;
+  min-height: 44px;
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.86);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  overflow: hidden;
+}
+
+.ganancias-page .ganancias-code strong {
+  min-width: 0;
+  padding: 0 10px;
+  color: #f8fafc;
+  font-size: 0.92rem;
+  letter-spacing: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ganancias-page .ganancias-code button {
+  height: 44px;
+  border: 0;
+  color: #bfdbfe;
+  background: rgba(37, 99, 235, 0.18);
+}
+
+.ganancias-page .ganancias-steps {
+  padding: 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.ganancias-page .ganancias-section-head {
+  display: grid;
+  gap: 3px;
+  margin-bottom: 4px;
+}
+
+.ganancias-page .ganancias-section-head h2 {
+  margin-top: 6px;
+  font-size: 1.06rem;
+}
+
+.ganancias-page .ganancias-steps article {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.72);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.ganancias-page .ganancias-steps article > span {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  font-size: 0.86rem;
+  font-weight: 900;
+  background: #2563eb;
+}
+
+.ganancias-page .ganancias-steps strong {
+  color: #f8fafc;
+  font-size: 0.93rem;
+}
+
+@media (min-width: 620px) {
+  .ganancias-page .ganancias-hero {
+    grid-template-columns: minmax(0, 1.45fr) minmax(220px, 0.75fr);
+    align-items: stretch;
+  }
+
+  .ganancias-page .ganancias-feature {
+    grid-template-columns: 62px minmax(0, 1fr) 180px;
+    align-items: center;
+  }
+
+  .ganancias-page .ganancias-feature-actions {
+    align-self: stretch;
+    align-content: center;
+  }
+}
+
+@media (max-width: 360px) {
+  .ganancias-page .ganancias {
+    padding-inline: 10px;
+  }
+
+  .ganancias-page .ganancias-opciones,
+  .ganancias-page .ganancias-metrics {
+    gap: 8px;
+  }
+
+  .ganancias-page .ganancia-card,
+  .ganancias-page .ganancias-metrics article {
+    padding: 10px;
+  }
+}

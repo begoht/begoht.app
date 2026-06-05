@@ -87,5 +87,10 @@ export function initEnvioPaquete() {
     input.addEventListener("change", actualizarPaquete);
   });
 
-  setServicio(viajeState.tipoServicio || "viaje");
+  const servicioPreferido = localStorage.getItem("bego_servicio_preferido");
+  if (servicioPreferido) {
+    localStorage.removeItem("bego_servicio_preferido");
+  }
+
+  setServicio(servicioPreferido || viajeState.tipoServicio || "viaje");
 }
