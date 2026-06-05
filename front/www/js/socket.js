@@ -8,7 +8,13 @@ if (token?.startsWith('"') && token.endsWith('"')) {
 
 const socket = io(getServerUrl(), {
   auth: { token },
-  transports: ["websocket"],
+  transports: ["polling", "websocket"],
+  reconnection: true,
+  reconnectionAttempts: Infinity,
+  reconnectionDelay: 1000,
+  reconnectionDelayMax: 10000,
+  randomizationFactor: 0.5,
+  timeout: 30000,
   autoConnect: true
 });
 

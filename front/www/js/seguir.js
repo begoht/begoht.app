@@ -52,8 +52,14 @@ async function cargarViaje() {
 
 function iniciarTracking(token) {
     const socket = io(window.location.origin, {
-        transports: ["websocket"],
-        auth: { tracking: true }
+        transports: ["polling", "websocket"],
+        auth: { tracking: true },
+        reconnection: true,
+        reconnectionAttempts: Infinity,
+        reconnectionDelay: 1000,
+        reconnectionDelayMax: 10000,
+        randomizationFactor: 0.5,
+        timeout: 30000
     });
 
     socket.on("connect", () => {

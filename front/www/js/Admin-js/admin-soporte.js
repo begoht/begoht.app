@@ -15,7 +15,13 @@ const API_BASE =
 
 const socket = io(API_BASE, {
   auth: { token },
-  transports: ["websocket"],
+  transports: ["polling", "websocket"],
+  reconnection: true,
+  reconnectionAttempts: Infinity,
+  reconnectionDelay: 1000,
+  reconnectionDelayMax: 10000,
+  randomizationFactor: 0.5,
+  timeout: 30000,
 });
 
 const listaUsuarios = document.getElementById("listaUsuarios");

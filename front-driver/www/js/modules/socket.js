@@ -8,11 +8,13 @@ export function initSocket(serverUrl, token) {
 
   socketInstance = io(serverUrl, {
     auth: { token, role: "motorista" },
-    transports: ["websocket"],
+    transports: ["polling", "websocket"],
     reconnection: true,
-    reconnectionAttempts: 10,
-    reconnectionDelay: 2000,
-    timeout: 10000
+    reconnectionAttempts: Infinity,
+    reconnectionDelay: 1000,
+    reconnectionDelayMax: 10000,
+    randomizationFactor: 0.5,
+    timeout: 30000
   });
 
   /*************************************************

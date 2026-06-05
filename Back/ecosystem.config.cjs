@@ -9,7 +9,7 @@ module.exports = {
       env: {
         NODE_ENV: "production",
         PORT: 3000,
-        SOCKET_TRANSPORTS: "websocket",
+        SOCKET_TRANSPORTS: "polling,websocket",
         LOCATION_MIN_INTERVAL_MS: 3000,
         LOCATION_MONGO_SNAPSHOT_ENABLED: "false",
         PUBLIC_API_URL: "https://bego.com.ht",

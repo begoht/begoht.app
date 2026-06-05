@@ -66,7 +66,7 @@ server.on("error", (err) => {
 // ============================
 // 🔹 SOCKET.IO
 // ============================
-const socketTransports = (process.env.SOCKET_TRANSPORTS || "websocket")
+const socketTransports = (process.env.SOCKET_TRANSPORTS || "polling,websocket")
   .split(",")
   .map((transport) => transport.trim())
   .filter(Boolean);
@@ -77,6 +77,7 @@ const io = new Server(server, {
   transports: socketTransports,
   pingInterval: 25000,
   pingTimeout: 60000,
+  connectTimeout: 45000,
 });
 
 io.adapter(createAdapter(socketPubClient, socketSubClient));

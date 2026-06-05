@@ -17,7 +17,7 @@ export function getSocket() {
   console.log("🔗 Conectando socket a:", serverUrl);
 
   socketInstance = io(serverUrl, {
-    transports: ["websocket"],
+    transports: ["polling", "websocket"],
 
     // 🔥 SOLO TOKEN
     auth: {
@@ -27,8 +27,9 @@ export function getSocket() {
     reconnection: true,
     reconnectionAttempts: Infinity,
     reconnectionDelay: 1000,
-    reconnectionDelayMax: 5000,
-    timeout: 20000,
+    reconnectionDelayMax: 10000,
+    randomizationFactor: 0.5,
+    timeout: 30000,
   });
 
   /*************************************************

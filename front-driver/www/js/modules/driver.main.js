@@ -3,7 +3,7 @@
  *************************************************/
 
 // Asegúrate de que estos archivos existan en estas rutas exactas
-import { initSocket } from "./socket.js?v=20260603-road-heading-stable";
+import { initSocket } from "./socket.js?v=20260605-socket-resilience";
 import { initMap } from "./map.js?v=20260603-road-heading-stable";
 import { initGPS } from "./gps.js?v=20260603-road-heading-stable";
 import { initOferta } from "./oferta/oferta.index.js?v=20260603-road-heading-stable";

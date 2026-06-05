@@ -68,12 +68,14 @@ async function obtenerViaje(token) {
 
 function iniciarSocket(token) {
   socket = io(API, {
-    transports: ["websocket"],
+    transports: ["polling", "websocket"],
     auth: { tracking: true },
     reconnection: true,
     reconnectionAttempts: Infinity,
     reconnectionDelay: 1000,
-    reconnectionDelayMax: 5000
+    reconnectionDelayMax: 10000,
+    randomizationFactor: 0.5,
+    timeout: 30000
   });
 
   socket.on("connect", () => {
