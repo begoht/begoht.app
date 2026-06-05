@@ -2,9 +2,9 @@
 import { viajeState } from "../../viaje/viaje.state.js";
 import { mostrarModalPrecio, mostrarBuscandoMotorista } from "../../pasajero/pasajero.ui.js";
 import { guardarSesionViaje, limpiarSesionViaje } from "../pasajero.utils.js";
-import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260605-price-modal-fix";
+import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260605-price-premium-cancel";
 import { cityConfig } from "../../map/config/index.js";
-import { resolverCotizacionPendiente } from "../../viaje/viaje.actions.js?v=20260605-price-modal-fix";
+import { resolverCotizacionPendiente } from "../../viaje/viaje.actions.js?v=20260605-price-premium-cancel";
 
 // ✅ Agregamos 'rutaGeometria' desestructurada del backend
 export const handlePrecio = ({ quoteId, viajeId, precio, precioBase, descuentoWallet, descuentoWalletRate, walletDiscount, distanciaKm, metodoPago, rutaGeometria, tipo, paquete }, socket) => {

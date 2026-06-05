@@ -39,6 +39,7 @@ router.get("/mis-viajes", auth, async (req, res) => {
 
     const viajes = await Viaje.find({
       ...filtroUsuario,
+      estado: { $nin: ["buscando", "ofertando", "sin_motorista"] },
     })
       .populate("motorista", "nombre apellido telefono vehiculo")
       .populate("pasajero", "nombre apellido telefono")

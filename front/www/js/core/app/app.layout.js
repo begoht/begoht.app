@@ -1,6 +1,6 @@
 import { renderHeader } from "../../components/header.js";
 import { renderFooter } from "../../components/footer.js";
-import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260605-price-modal-fix";
+import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260605-price-premium-cancel";
 
 export function renderLayout(route, viewHtml) {
     const header = document.getElementById("appHeader");

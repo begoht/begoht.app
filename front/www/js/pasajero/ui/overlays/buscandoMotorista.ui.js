@@ -1,6 +1,6 @@
 import { getSocket } from "../../../socket/socket.js";
 import { viajeState } from "../../../viaje/viaje.state.js";
-import { actualizarBotonViaje } from "../boton/botonViaje.ui.js?v=20260605-price-modal-fix";
+import { actualizarBotonViaje } from "../boton/botonViaje.ui.js?v=20260605-price-premium-cancel";
 
 export function mostrarBuscandoMotorista(force = false) {
   if (!force && !viajeState.precioConfirmado) {
@@ -390,7 +390,15 @@ Cancelar búsqueda
     if (el) el.textContent = `${min}:${sec}`;
   }, 1000);
 
-  modal.querySelector("#cancelarBusqueda").onclick = () => {
+  modal.querySelector("#cancelarBusqueda").onclick = (event) => {
+    const btn = event.currentTarget;
+    if (btn?.dataset.cancelando === "true") return;
+    if (btn) {
+      btn.dataset.cancelando = "true";
+      btn.disabled = true;
+      btn.textContent = "Annulation...";
+    }
+
     const socket = getSocket();
     if (viajeState.viajeId && socket) {
       socket.emit("cancelar-viaje", { viajeId: viajeState.viajeId });

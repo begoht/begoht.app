@@ -43,11 +43,10 @@ export function applyWalletDiscountToButton(config = currentConfig) {
   const normalized = normalizeConfig(config);
   button.classList.add("btn-pago-wallet");
   button.dataset.walletDiscount = normalized.enabled ? "active" : "inactive";
+  button.dataset.walletBadge = normalized.enabled ? normalized.badge : "";
 
   const baseText = "Wallet BeGO";
-  button.innerHTML = normalized.enabled
-    ? `<span class="btn-pago-main">Wallet BeGO</span><span class="wallet-discount-badge">${normalized.badge}</span>`
-    : `<span class="btn-pago-main">${baseText}</span>`;
+  button.innerHTML = `<span class="btn-pago-main">&#128179; ${baseText}</span>`;
 
   button.setAttribute(
     "aria-label",

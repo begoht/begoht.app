@@ -46,12 +46,25 @@ async function cancelarViaje(socket, io, { viajeId }) {
             session.endSession();
             if (redis) {
                 const status = await redis.get(`viaje:status:${viajeId}`);
-                if (status === "cancelado" || status === "busqueda_anulada") {
+                if (status === "busqueda_anulada") {
                     return socket.emit("viaje:cancelado", {
                         viajeId,
                         penalidad: 0,
                         reembolso: 0,
-                        busquedaAnulada: true
+                        busquedaAnulada: true,
+                        estado: "busqueda_anulada",
+                        historial: false
+                    });
+                }
+
+                if (status === "cancelado") {
+                    return socket.emit("viaje:cancelado", {
+                        viajeId,
+                        penalidad: 0,
+                        reembolso: 0,
+                        busquedaAnulada: false,
+                        estado: "cancelado",
+                        historial: true
                     });
                 }
             }
@@ -182,7 +195,9 @@ async function cancelarViaje(socket, io, { viajeId }) {
                 viajeId,
                 penalidad: 0,
                 reembolso,
-                busquedaAnulada: true
+                busquedaAnulada: true,
+                estado: "busqueda_anulada",
+                historial: false
             });
 
             return;

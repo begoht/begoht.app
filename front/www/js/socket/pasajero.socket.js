@@ -2,21 +2,21 @@ import { getSocket } from "./socket.js";
 import { viajeState } from "../viaje/viaje.state.js";
 
 import { handleMotoristas } from "./handlers/motoristas.handler.js";
-import { handlePrecio } from "./handlers/precio.handler.js?v=20260605-price-modal-fix";
-import { handleAsignado } from "./handlers/asignado.handler.js?v=20260605-price-modal-fix";
+import { handlePrecio } from "./handlers/precio.handler.js?v=20260605-price-premium-cancel";
+import { handleAsignado } from "./handlers/asignado.handler.js?v=20260605-price-premium-cancel";
 import { handleTrack } from "./handlers/track.handler.js?v=20260604-jacmel-gps";
 import { handleLlego } from "./handlers/llego.handler.js";
 import { handleIniciado } from "./handlers/iniciado.handler.js";
 import { handleFinalizado } from "./handlers/finalizado.handler.js";
 import { handleConnect } from "./handlers/connect.handler.js";
-import { handleError } from "./handlers/error.handler.js?v=20260605-price-modal-fix";
+import { handleError } from "./handlers/error.handler.js?v=20260605-price-premium-cancel";
 import { handleNoMotorista } from "./handlers/noMotorista.handler.js";
-import { handleCancelado } from "./handlers/cancelado.handler.js";
+import { handleCancelado } from "./handlers/cancelado.handler.js?v=20260605-price-premium-cancel";
 import { handleExpirado } from "./handlers/expirado.handler.js";
-import { handleSync } from "./handlers/sync.handler.js?v=20260605-price-modal-fix";
+import { handleSync } from "./handlers/sync.handler.js?v=20260605-price-premium-cancel";
 import { handleEstado } from "./handlers/estado.handler.js";
 import { handleMotoristaCandidato } from "./handlers/candidato.handler.js";
-import { handleBuscando } from "./handlers/buscando.handler.js?v=20260605-price-modal-fix";
+import { handleBuscando } from "./handlers/buscando.handler.js?v=20260605-price-premium-cancel";
 import { handleProximidad } from "./handlers/proximidad.handler.js";
 import { initPasajeroChat } from "../chat/viajeChat.pasajero.js";
 

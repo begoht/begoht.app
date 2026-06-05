@@ -1,5 +1,5 @@
 import { viajeState } from "../viaje/viaje.state.js";
-import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260605-price-modal-fix";
+import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260605-price-premium-cancel";
 import { mostrarPagoNoDisponible } from "../pasajero/ui/modales/pagoNoDisponible.ui.js?v=20260605-payments-premium";
 
 const METODOS_PAGO_NO_DISPONIBLES = new Set(["moncash", "natcash"]);

@@ -1,6 +1,6 @@
 import { viajeState } from "../../viaje/viaje.state.js";
 import { cerrarBuscandoMotorista, animarMotoristaEncontrado } from "../../pasajero/pasajero.ui.js";
-import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260605-price-modal-fix";
+import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260605-price-premium-cancel";
 import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260604-jacmel-gps";
 import { mostrarDestinoEnMapa } from "../../map/map.destino.js";
 import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js";
