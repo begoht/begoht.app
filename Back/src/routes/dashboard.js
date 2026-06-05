@@ -8,6 +8,7 @@ const { PLATFORM_WALLET_ID } = require("../config/constants");
 const { ensurePlatformAccount } = require("../services/platformAccount.service");
 const { ensureCommissionConfig } = require("../services/commission.service");
 const { ensureWalletDiscountConfig } = require("../services/walletDiscount.service");
+const { ensureFareConfig } = require("../services/fareConfig.service");
 
 const router = express.Router();
 const PLATAFORMA_ID = new mongoose.Types.ObjectId(PLATFORM_WALLET_ID);
@@ -105,6 +106,7 @@ router.get("/resumen", authAdmin, async (req, res) => {
       plataformaWallet,
       commissionConfig,
       walletDiscountConfig,
+      fareConfig,
     ] = await Promise.all([
       User.aggregate([{ $group: { _id: "$rol", total: { $sum: 1 } } }]),
       Viaje.aggregate([{ $group: { _id: "$estado", total: { $sum: 1 } } }]),
@@ -232,6 +234,7 @@ router.get("/resumen", authAdmin, async (req, res) => {
         .lean(),
       ensureCommissionConfig(),
       ensureWalletDiscountConfig(),
+      ensureFareConfig(),
     ]);
 
     const movimientosPlataforma = [...(plataformaWallet?.movimientos || [])]
@@ -277,6 +280,7 @@ router.get("/resumen", authAdmin, async (req, res) => {
       config: {
         commission: commissionConfig,
         walletDiscount: walletDiscountConfig,
+        fares: fareConfig,
       },
       tendencia,
       viajesActivos,

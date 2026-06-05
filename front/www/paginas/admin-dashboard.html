@@ -1349,6 +1349,56 @@
         <section class="panel">
           <div class="panel-head">
             <div>
+              <h2>Tarifas de viaje</h2>
+              <p class="muted">Controla la tarifa base y el precio por kilometro que se aplican a nuevas cotizaciones.</p>
+            </div>
+            <span class="status activo" id="baseFareStatus">200 HTG activo</span>
+          </div>
+          <div class="panel-body commission-control-grid">
+            <article class="commission-preview-card">
+              <div>
+                <span class="eyebrow"><i class="fa-solid fa-taxi"></i> Base activa</span>
+                <strong id="baseFareDisplay">200 HTG</strong>
+                <p>Aplica solamente a nuevas cotizaciones. Los viajes ya cotizados o activos mantienen su precio actual.</p>
+              </div>
+              <div class="commission-mini-grid">
+                <div class="commission-mini">
+                  <span>Por km</span>
+                  <b id="baseFarePerKmDisplay">60 HTG</b>
+                </div>
+                <div class="commission-mini">
+                  <span>Total simulado</span>
+                  <b id="baseFarePreviewTotal">500 HTG</b>
+                </div>
+              </div>
+            </article>
+
+            <div class="launch-form-grid">
+              <label class="admin-field" for="baseFareInput">
+                Tarifa base HTG
+                <input id="baseFareInput" type="number" min="0" max="100000" step="1" inputmode="numeric" placeholder="200">
+              </label>
+
+              <label class="admin-field" for="pricePerKmInput">
+                Precio por kilometro HTG
+                <input id="pricePerKmInput" type="number" min="0" max="100000" step="1" inputmode="numeric" placeholder="60">
+              </label>
+
+              <label class="admin-field" for="baseFarePreviewKmInput">
+                Simular kilometros
+                <input id="baseFarePreviewKmInput" type="number" min="0" step="0.1" inputmode="decimal" value="5">
+              </label>
+
+              <div class="launch-actions">
+                <button class="btn blue" id="saveBaseFareBtn" type="button"><i class="fa-solid fa-floppy-disk"></i>Guardar tarifas</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
               <h2>Descuento Wallet pasajero</h2>
               <p class="muted">Controla el incentivo que aparece en el boton Wallet BeGO y se aplica al precio real del viaje.</p>
             </div>
@@ -1583,6 +1633,7 @@
       launch: null,
       commission: null,
       walletDiscount: null,
+      fares: null,
       filtroViajes: "todos",
       search: "",
       charts: {}
@@ -1620,6 +1671,10 @@
       document.getElementById("saveCommissionBtn")?.addEventListener("click", saveCommission);
       document.getElementById("commissionPercentInput")?.addEventListener("input", renderCommissionPreview);
       document.getElementById("commissionPreviewTotalInput")?.addEventListener("input", renderCommissionPreview);
+      document.getElementById("saveBaseFareBtn")?.addEventListener("click", saveBaseFare);
+      document.getElementById("baseFareInput")?.addEventListener("input", renderBaseFarePreview);
+      document.getElementById("pricePerKmInput")?.addEventListener("input", renderBaseFarePreview);
+      document.getElementById("baseFarePreviewKmInput")?.addEventListener("input", renderBaseFarePreview);
       document.getElementById("saveWalletDiscountBtn")?.addEventListener("click", saveWalletDiscount);
       document.getElementById("walletDiscountEnabledInput")?.addEventListener("change", renderWalletDiscountPreview);
       document.getElementById("walletDiscountPercentInput")?.addEventListener("input", renderWalletDiscountPreview);
@@ -1647,13 +1702,14 @@
     async function loadAll() {
       setBusy(true);
       try {
-        const [resumen, usuarios, retiros, launch, commission, walletDiscount] = await Promise.all([
+        const [resumen, usuarios, retiros, launch, commission, walletDiscount, fares] = await Promise.all([
           api("/api/dashboard/resumen"),
           api("/api/admin/usuarios"),
           api("/api/admin/retiros").catch(() => []),
           api("/api/admin/launch").catch(() => null),
           api("/api/admin/commission").catch(() => null),
-          api("/api/admin/wallet-discount").catch(() => null)
+          api("/api/admin/wallet-discount").catch(() => null),
+          api("/api/admin/fares").catch(() => null)
         ]);
         state.resumen = resumen || {};
         state.usuarios = Array.isArray(usuarios) ? usuarios : [];
@@ -1661,6 +1717,7 @@
         state.launch = launch || null;
         state.commission = commission || state.resumen?.config?.commission || null;
         state.walletDiscount = walletDiscount || state.resumen?.config?.walletDiscount || null;
+        state.fares = fares || state.resumen?.config?.fares || null;
         state.viajes = state.resumen.ultimosViajes || [];
         renderAll();
         setText("lastSync", `Actualizado ${new Date().toLocaleTimeString()}`);
@@ -1693,6 +1750,7 @@
       renderPackages();
       renderPlatformWallet();
       renderCommission();
+      renderBaseFare();
       renderWalletDiscount();
       renderWallets();
       renderWithdraws();
@@ -1908,6 +1966,82 @@
 
     function currentCommissionPercent() {
       return Number(state.commission?.percentage ?? state.resumen?.config?.commission?.percentage ?? 15);
+    }
+
+    function currentFareConfig() {
+      return state.fares || state.resumen?.config?.fares || { baseFare: 200, pricePerKm: 60 };
+    }
+
+    function renderBaseFare() {
+      const fares = currentFareConfig();
+      const active = document.activeElement;
+      const baseInput = document.getElementById("baseFareInput");
+      const pricePerKmInput = document.getElementById("pricePerKmInput");
+      const status = document.getElementById("baseFareStatus");
+
+      if (baseInput && active?.id !== "baseFareInput") {
+        baseInput.value = Math.round(Number(fares.baseFare || 0));
+      }
+
+      if (pricePerKmInput && active?.id !== "pricePerKmInput") {
+        pricePerKmInput.value = Math.round(Number(fares.pricePerKm || 0));
+      }
+
+      setText("baseFareDisplay", money(fares.baseFare));
+      setText("baseFarePerKmDisplay", money(fares.pricePerKm));
+
+      if (status) {
+        status.textContent = `${money(fares.baseFare)} + ${money(fares.pricePerKm)}/km`;
+        status.className = "status activo";
+      }
+
+      renderBaseFarePreview();
+    }
+
+    function renderBaseFarePreview() {
+      const fares = currentFareConfig();
+      const baseRaw = Number(document.getElementById("baseFareInput")?.value ?? fares.baseFare);
+      const kmPriceRaw = Number(document.getElementById("pricePerKmInput")?.value ?? fares.pricePerKm);
+      const kmRaw = Number(document.getElementById("baseFarePreviewKmInput")?.value || 0);
+      const baseFare = Number.isFinite(baseRaw) ? Math.min(100000, Math.max(0, Math.round(baseRaw))) : Number(fares.baseFare || 0);
+      const pricePerKm = Number.isFinite(kmPriceRaw) ? Math.min(100000, Math.max(0, Math.round(kmPriceRaw))) : Number(fares.pricePerKm || 0);
+      const km = Number.isFinite(kmRaw) ? Math.max(0, kmRaw) : 0;
+      const total = baseFare + Math.round(km * pricePerKm);
+
+      setText("baseFareDisplay", money(baseFare));
+      setText("baseFarePerKmDisplay", money(pricePerKm));
+      setText("baseFarePreviewTotal", money(total));
+    }
+
+    async function saveBaseFare() {
+      const baseFare = Number(document.getElementById("baseFareInput")?.value);
+      const pricePerKm = Number(document.getElementById("pricePerKmInput")?.value);
+
+      if (!Number.isFinite(baseFare) || baseFare < 0 || baseFare > 100000) {
+        showToast("La tarifa base debe estar entre 0 y 100,000 HTG");
+        return;
+      }
+
+      if (!Number.isFinite(pricePerKm) || pricePerKm < 0 || pricePerKm > 100000) {
+        showToast("El precio por kilometro debe estar entre 0 y 100,000 HTG");
+        return;
+      }
+
+      try {
+        state.fares = await api("/api/admin/fares", {
+          method: "PUT",
+          body: { baseFare, pricePerKm }
+        });
+
+        if (!state.resumen) state.resumen = {};
+        if (!state.resumen.config) state.resumen.config = {};
+        state.resumen.config.fares = state.fares;
+        renderBaseFare();
+        showToast(`Tarifas actualizadas: ${money(state.fares.baseFare)} + ${money(state.fares.pricePerKm)}/km`);
+      } catch (err) {
+        console.error(err);
+        showToast("No se pudieron guardar las tarifas");
+      }
     }
 
     function renderWalletDiscount() {

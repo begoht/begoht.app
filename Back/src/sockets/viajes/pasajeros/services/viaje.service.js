@@ -1,9 +1,9 @@
-const { TARIFA_BASE, PRECIO_POR_KM } = require("../../../../config/tarifas");
 const { calcularDistanciaMetros } = require("../../../../utils/geo");
 const { pointInCity, resolveCityForPoints } = require("../../../../config/cities");
 const viajeRepo = require("../repositories/viaje.repository");
 const Viaje = require("../../../../models/Viaje");
 const Wallet = require("../../../../models/Wallet");
+const { getFareConfig } = require("../../../../services/fareConfig.service");
 const {
   applyWalletDiscount,
   getWalletDiscountConfig,
@@ -126,14 +126,18 @@ module.exports = {
       throw err;
     }
 
+    const fareConfig = await getFareConfig();
+    const tarifaBase = fareConfig.baseFare;
+    const precioPorKm = fareConfig.pricePerKm;
+
     let distanciaKm = 0;
-    let precioBase = TARIFA_BASE;
+    let precioBase = tarifaBase;
     let duracionMin = 0;
 
     if (destino?.lat && destino?.lng) {
       const metros = calcularDistanciaMetros(origen.lat, origen.lng, destino.lat, destino.lng);
       distanciaKm = Number((metros / 1000).toFixed(2));
-      precioBase = TARIFA_BASE + Math.round(distanciaKm * PRECIO_POR_KM);
+      precioBase = tarifaBase + Math.round(distanciaKm * precioPorKm);
       duracionMin = Math.max(1, Math.round((distanciaKm / 24) * 60));
     }
 

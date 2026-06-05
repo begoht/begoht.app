@@ -185,6 +185,7 @@ app.use("/api/admin", require("./routes/admin.users"));
 app.use("/api/admin", require("./routes/admin.trips"));
 app.use("/api/admin", require("./routes/admin.email"));
 app.use("/api/admin", require("./routes/admin.commission"));
+app.use("/api/admin", require("./routes/admin.fares"));
 app.use("/api/admin", require("./routes/adminRetiros"));
 app.use("/api/admin", require("./routes/admin.audit"));
 app.use("/api", require("./routes/passenger.offers"));
