@@ -1,5 +1,5 @@
 import { viajeState } from "../../../viaje/viaje.state.js";
-import { pedirViaje, cancelarViaje } from "../../../viaje/viaje.actions.js";
+import { pedirViaje, cancelarViaje } from "../../../viaje/viaje.actions.js?v=20260605-price-modal-fix";
 import { mostrarModalConfirmarCancelacion } from "../modales/modalCancelacion.ui.js";
 
 export function actualizarBotonViaje() {
@@ -12,6 +12,7 @@ export function actualizarBotonViaje() {
         destino,
         metodoPago,
         activo,
+        cotizando,
         buscando,
         asignado,
     } = viajeState;
@@ -22,6 +23,7 @@ export function actualizarBotonViaje() {
         destino &&
         metodoPago &&
         !activo &&
+        !cotizando &&
         !buscando &&
         !asignado
     );
@@ -52,7 +54,7 @@ export function actualizarBotonViaje() {
     }
 
     // 🔍 BUSCANDO
-    if (buscando) {
+    if (cotizando || viajeState.estado === "cotizando" || buscando) {
         btn.disabled = true;
         btn.onclick = null;
         btn.classList.add("btn-searching");

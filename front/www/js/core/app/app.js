@@ -1,7 +1,7 @@
 import { AppState } from "./app.state.js";
 import { getSocket } from "../../socket/socket.js";
 import { createMap } from "../../map/map.singleton.js";
-import { initRouter } from "../router/router.js?v=20260605-wallet-discount";
+import { initRouter } from "../router/router.js?v=20260605-price-modal-fix";
 import { initLaunchCountdown } from "../../launch-countdown.js?v=20260604-cordoba-map-test";
 
 function mostrarAppLista() {

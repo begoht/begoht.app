@@ -1,6 +1,6 @@
 import { getSocket } from "../../../socket/socket.js";
 import { viajeState } from "../../../viaje/viaje.state.js";
-import { actualizarBotonViaje } from "../boton/botonViaje.ui.js";
+import { actualizarBotonViaje } from "../boton/botonViaje.ui.js?v=20260605-price-modal-fix";
 
 export function mostrarBuscandoMotorista(force = false) {
   if (!force && !viajeState.precioConfirmado) {

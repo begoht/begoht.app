@@ -1,27 +1,93 @@
 import { getSocket } from "../socket/socket.js";
 import { viajeState } from "./viaje.state.js";
 import { limpiarViajePasajero } from "../socket/viaje.limpieza.js";
-import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js";
-import { cerrarBuscandoMotorista } from "../pasajero/ui/overlays/buscandoMotorista.ui.js";
+import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260605-price-modal-fix";
+import { cerrarBuscandoMotorista } from "../pasajero/ui/overlays/buscandoMotorista.ui.js?v=20260605-price-modal-fix";
 import { cityConfig } from "../map/config/index.js";
 
 let socket = null;
+let cotizacionTimer = null;
+const COTIZACION_TIMEOUT_MS = 15000;
 
 function getSafeSocket() {
   if (!socket) socket = getSocket();
   return socket;
 }
 
+function crearQuoteId() {
+  return `quote-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+export function clearCotizacionTimer() {
+  if (cotizacionTimer) {
+    clearTimeout(cotizacionTimer);
+    cotizacionTimer = null;
+  }
+}
+
+export function resetCotizacionPendiente({ notify = false } = {}) {
+  clearCotizacionTimer();
+
+  Object.assign(viajeState, {
+    activo: false,
+    cotizando: false,
+    buscando: false,
+    asignado: false,
+    estado: null,
+    viajeId: null,
+    quoteId: null,
+    precio: null,
+    precioBase: null,
+    descuentoWallet: 0,
+    descuentoWalletRate: 0,
+    walletDiscount: null,
+    distanciaKm: null,
+    duracionMin: null,
+    precioConfirmado: false
+  });
+
+  localStorage.removeItem("viajeActivo");
+  sessionStorage.removeItem("viajeActivo");
+  actualizarBotonViaje();
+
+  if (notify) {
+    alert("No pudimos calcular el precio. Revisa tu conexion e intenta nuevamente.");
+  }
+}
+
+export function resolverCotizacionPendiente(quoteId = null) {
+  if (!viajeState.cotizando && viajeState.estado !== "cotizando") {
+    return false;
+  }
+
+  if (quoteId && viajeState.quoteId && quoteId !== viajeState.quoteId) {
+    return false;
+  }
+
+  clearCotizacionTimer();
+  viajeState.cotizando = false;
+  viajeState.estado = "cotizado";
+  return true;
+}
+
 /**
  * 💸 Pedir viaje
  */
 export function pedirViaje() {
+  if (viajeState.cotizando || viajeState.estado === "cotizando") return;
   if (viajeState.activo || !viajeState.origen || !viajeState.destino) return;
 
   const socket = getSafeSocket();
-  if (!socket) return;
+  if (!socket || socket.connected === false) {
+    resetCotizacionPendiente();
+    alert("Conexion no disponible. Intenta nuevamente en unos segundos.");
+    return;
+  }
+
+  const quoteId = crearQuoteId();
 
   const datosViaje = {
+    quoteId,
     origen: viajeState.origen,
     destino: viajeState.destino,
     metodoPago: viajeState.metodoPago || "efectivo",
@@ -32,7 +98,11 @@ export function pedirViaje() {
 
   Object.assign(viajeState, {
     activo: true,
+    cotizando: true,
     buscando: false,
+    estado: "cotizando",
+    viajeId: null,
+    quoteId,
     precioConfirmado: false
   });
 
@@ -40,8 +110,17 @@ export function pedirViaje() {
 
   localStorage.setItem("viajeActivo", JSON.stringify({
     ...datosViaje,
-    estado: "cotizando"
+    estado: "cotizando",
+    precioConfirmado: false,
+    timestamp: Date.now()
   }));
+
+  clearCotizacionTimer();
+  cotizacionTimer = setTimeout(() => {
+    if (viajeState.quoteId === quoteId && viajeState.estado === "cotizando") {
+      resetCotizacionPendiente({ notify: true });
+    }
+  }, COTIZACION_TIMEOUT_MS);
 
   socket.emit("pedir-viaje", datosViaje);
 }
@@ -51,6 +130,7 @@ export function pedirViaje() {
  */
 export function cancelarViaje() {
   const socket = getSafeSocket();
+  clearCotizacionTimer();
 
   if (viajeState.viajeId && socket) {
     socket.emit("cancelar-viaje", { viajeId: viajeState.viajeId });

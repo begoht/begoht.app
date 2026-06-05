@@ -1,6 +1,6 @@
 // js/viaje/viaje.limpieza.js
 import { viajeState } from "../viaje/viaje.state.js";
-import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js"; 
+import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260605-price-modal-fix";
 import { eliminarMotoristaDelMapa } from "../map/map.motorista.js?v=20260604-jacmel-gps";
 import { getMap } from "../map/map.singleton.js";
 import { getSocket } from "../socket/socket.js";
@@ -22,6 +22,7 @@ export function limpiarViajePasajero({ map, limpiarMapa = true, rutaLayerRef, or
 
     /********************* 1. ESTADO INTERNO (RESET TOTAL) *********************/
     viajeState.activo = false;
+    viajeState.cotizando = false;
     viajeState.estado = null; // 🔓 Libera el bloqueo de clicks en el mapa
     viajeState.buscando = false;
     viajeState.asignado = false;
@@ -29,11 +30,16 @@ export function limpiarViajePasajero({ map, limpiarMapa = true, rutaLayerRef, or
     viajeState.enCurso = false;
     viajeState.finalizado = false;
     viajeState.viajeId = null;
+    viajeState.quoteId = null;
     viajeState.motorista = null;
     viajeState.proximoDestino = null;
     viajeState.metodoPago = null;
     viajeState.estadoPago = null;
     viajeState.precio = null;
+    viajeState.precioBase = null;
+    viajeState.descuentoWallet = 0;
+    viajeState.descuentoWalletRate = 0;
+    viajeState.walletDiscount = null;
     viajeState.distanciaKm = null;
     viajeState.duracionMin = null;
     viajeState.precioConfirmado = false;

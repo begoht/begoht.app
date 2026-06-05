@@ -2,14 +2,20 @@
 import { viajeState } from "../../viaje/viaje.state.js";
 import { mostrarModalPrecio, mostrarBuscandoMotorista } from "../../pasajero/pasajero.ui.js";
 import { guardarSesionViaje, limpiarSesionViaje } from "../pasajero.utils.js";
-import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js";
+import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260605-price-modal-fix";
 import { cityConfig } from "../../map/config/index.js";
+import { resolverCotizacionPendiente } from "../../viaje/viaje.actions.js?v=20260605-price-modal-fix";
 
 // ✅ Agregamos 'rutaGeometria' desestructurada del backend
-export const handlePrecio = ({ viajeId, precio, precioBase, descuentoWallet, descuentoWalletRate, walletDiscount, distanciaKm, metodoPago, rutaGeometria, tipo, paquete }, socket) => {
+export const handlePrecio = ({ quoteId, viajeId, precio, precioBase, descuentoWallet, descuentoWalletRate, walletDiscount, distanciaKm, metodoPago, rutaGeometria, tipo, paquete }, socket) => {
+  if (!resolverCotizacionPendiente(quoteId)) {
+    console.warn("Cotizacion vieja ignorada:", quoteId);
+    return;
+  }
   
   // Guardamos los datos base y cacheamos la geometría de la ruta si el backend la envió
   Object.assign(viajeState, { 
+    quoteId: quoteId || viajeState.quoteId,
     viajeId, 
     precio, 
     distanciaKm, 

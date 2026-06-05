@@ -1,6 +1,6 @@
 // js/pasajero/pasajero.ui.js
 import { viajeState } from "../viaje/viaje.state.js";
-import { actualizarBotonViaje } from "./ui/boton/botonViaje.ui.js";
+import { actualizarBotonViaje } from "./ui/boton/botonViaje.ui.js?v=20260605-price-modal-fix";
 import { mostrarPagoNoDisponible } from "./ui/modales/pagoNoDisponible.ui.js?v=20260605-payments-premium";
 
 export { actualizarBotonViaje };
@@ -9,10 +9,10 @@ export {
   mostrarBuscandoMotorista,
   cerrarBuscandoMotorista,
   actualizarMotoristaCandidato
-} from "./ui/overlays/buscandoMotorista.ui.js";
+} from "./ui/overlays/buscandoMotorista.ui.js?v=20260605-price-modal-fix";
 
 export { mostrarModalConfirmacion } from "./ui/modales/modalConfirmacion.ui.js";
-export { mostrarModalPrecio } from "./ui/modales/modalPrecio.ui.js?v=20260605-wallet-discount";
+export { mostrarModalPrecio } from "./ui/modales/modalPrecio.ui.js?v=20260605-price-modal-fix";
 export { mostrarModalConfirmarCancelacion } from "./ui/modales/modalCancelacion.ui.js";
 
 export {

@@ -3,13 +3,14 @@ const cotizacionCache = require("./cotizacion.cache");
 
 module.exports = async function pedirViaje(socket, io, data) {
   const { origen, metodoPago } = data;
+  const quoteId = String(data?.quoteId || "").slice(0, 80);
 
   if (!origen?.lat || !origen?.lng) {
-    return socket.emit("viaje-error", { mensaje: "Origen invalido" });
+    return socket.emit("viaje-error", { quoteId, mensaje: "Origen invalido" });
   }
 
   if (!metodoPago) {
-    return socket.emit("viaje-error", { mensaje: "Metodo de pago requerido" });
+    return socket.emit("viaje-error", { quoteId, mensaje: "Metodo de pago requerido" });
   }
 
   try {
@@ -18,6 +19,7 @@ module.exports = async function pedirViaje(socket, io, data) {
     await cotizacionCache.guardar(socket.user.id, cotizacion);
 
     socket.emit("precio-calculado", {
+      quoteId,
       precio: cotizacion.precio,
       precioBase: cotizacion.precioBase,
       descuentoWallet: cotizacion.descuentoWallet,
@@ -44,12 +46,14 @@ module.exports = async function pedirViaje(socket, io, data) {
 
     if (err.type === "city") {
       return socket.emit("viaje-error", {
+        quoteId,
         mensaje: "BeGO no esta disponible en esa zona. Para probar, usa ubicaciones dentro de Jacmel o Cordoba."
       });
     }
 
     if (err.type === "paquete") {
       return socket.emit("viaje-error", {
+        quoteId,
         mensaje: err.message === "PESO_ENVIO_MAXIMO"
           ? "El envio de paquete permite maximo 5 kg."
           : "Completa los datos del paquete para continuar."
@@ -58,6 +62,7 @@ module.exports = async function pedirViaje(socket, io, data) {
 
     if (err.type === "pago_no_disponible") {
       return socket.emit("viaje-error", {
+        quoteId,
         code: "PAGO_NO_DISPONIBLE",
         metodoPago: err.metodoPago,
         mensaje: "Ce mode de paiement n'est pas disponible pour le moment."
@@ -66,12 +71,14 @@ module.exports = async function pedirViaje(socket, io, data) {
 
     if (err.type === "pago_invalido") {
       return socket.emit("viaje-error", {
+        quoteId,
         mensaje: "Metodo de pago invalido"
       });
     }
 
     if (err.type === "wallet" || err.message === "SALDO_INSUFICIENTE") {
       return socket.emit("viaje-error", {
+        quoteId,
         code: "SALDO_INSUFICIENTE",
         mensaje: "Saldo insuficiente en tu Wallet BeGO.",
         saldo: err.saldo || 0,
@@ -81,6 +88,6 @@ module.exports = async function pedirViaje(socket, io, data) {
     }
 
     console.error("Error en pedir-viaje:", err);
-    socket.emit("viaje-error", { mensaje: "Error al calcular precio" });
+    socket.emit("viaje-error", { quoteId, mensaje: "Error al calcular precio" });
   }
 };

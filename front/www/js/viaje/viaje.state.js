@@ -1,6 +1,7 @@
 export const viajeState = {
   // 🔁 estados del viaje
   activo: false,
+  cotizando: false,
   buscando: false,
   asignado: false,
   enCurso: false,
@@ -10,6 +11,7 @@ export const viajeState = {
 
   // 🆔 datos
   viajeId: null,
+  quoteId: null,
   precio: null,
   precioBase: null,
   descuentoWallet: 0,

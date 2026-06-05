@@ -1,6 +1,7 @@
 import { viajeState } from "../../viaje/viaje.state.js";
 import { manejarCancelacionOLimpieza } from "../pasajero.utils.js";
 import { mostrarPagoNoDisponible } from "../../pasajero/ui/modales/pagoNoDisponible.ui.js?v=20260605-payments-premium";
+import { clearCotizacionTimer, resetCotizacionPendiente } from "../../viaje/viaje.actions.js?v=20260605-price-modal-fix";
 
 const ESTADOS_PROTEGIDOS = [
   "buscando",
@@ -257,16 +258,34 @@ function mostrarModalSaldoInsuficiente({ saldo = 0, requerido = 0, faltante = 0 
 }
 
 export const handleError = (data = {}) => {
-  const { mensaje, code, metodoPago } = data;
+  const { mensaje, code, metodoPago, quoteId } = data;
+  const esCotizacion = viajeState.cotizando || viajeState.estado === "cotizando";
+
+  if (esCotizacion && quoteId && viajeState.quoteId && quoteId !== viajeState.quoteId) {
+    console.warn("Error de cotizacion vieja ignorado:", quoteId);
+    return;
+  }
+
+  if (esCotizacion) {
+    clearCotizacionTimer();
+  }
 
   if (code === "SALDO_INSUFICIENTE") {
-    limpiarIntentoWalletSiCorresponde();
+    if (esCotizacion) {
+      resetCotizacionPendiente();
+    } else {
+      limpiarIntentoWalletSiCorresponde();
+    }
     mostrarModalSaldoInsuficiente(data);
     return;
   }
 
   if (code === "PAGO_NO_DISPONIBLE") {
-    document.getElementById("modalPrecio")?.remove();
+    if (esCotizacion) {
+      resetCotizacionPendiente();
+    } else {
+      document.getElementById("modalPrecio")?.remove();
+    }
     mostrarPagoNoDisponible({ metodo: metodoPago || "pago" });
     return;
   }
@@ -276,6 +295,11 @@ export const handleError = (data = {}) => {
     return;
   }
 
+  if (esCotizacion) {
+    resetCotizacionPendiente();
+  } else {
+    manejarCancelacionOLimpieza();
+  }
+
   alert(mensaje || "No pudimos completar la solicitud. Intenta nuevamente.");
-  manejarCancelacionOLimpieza();
 };

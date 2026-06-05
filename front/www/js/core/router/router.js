@@ -1,8 +1,8 @@
-import { routes } from "./router.routes.js?v=20260605-wallet-discount";
+import { routes } from "./router.routes.js?v=20260605-price-modal-fix";
 import { renderLayout } from "./router.render.js?v=20260601-finalizado-social";
 import { runCleanup, setCleanup } from "./router.cleanup.js";
 import { afterRender, pushURL, actualizarLinksActivos } from "./router.utils.js";
-import { runPageInit } from "../app/app.lifecycle.js?v=20260605-wallet-discount";
+import { runPageInit } from "../app/app.lifecycle.js?v=20260605-price-modal-fix";
 import { AppState } from "../state.js";
 import { stopGeo } from "../../map/map.geo.js";
 

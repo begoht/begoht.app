@@ -1,4 +1,4 @@
-import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js";
+import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260605-price-modal-fix";
 import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260604-jacmel-gps";
 import { getMap } from "../../map/map.singleton.js";
 import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260604-jacmel-gps";
@@ -41,6 +41,7 @@ export async function restoreViajeUI() {
     // ===============================
     Object.assign(viajeState, {
       activo: true,
+      cotizando: false,
       buscando: data.estado === "buscando",
       asignado: ["asignado", "reservado", "llego"].includes(data.estado),
       enCurso: data.estado === "en_curso",
@@ -48,6 +49,7 @@ export async function restoreViajeUI() {
       estado: data.estado, // 🔥 IMPORTANTE (fuente real)
       motorista: data.motorista || null,
       viajeId: data.viajeId || null,
+      quoteId: null,
       precio: data.precio ?? null,
       precioBase: data.precioBase ?? data.precio ?? null,
       descuentoWallet: data.descuentoWallet || 0,
@@ -87,7 +89,7 @@ export async function restoreViajeUI() {
         !document.getElementById("modalPrecio") &&
         !document.getElementById("buscandoMotorista")
       ) {
-        import("../../pasajero/ui/overlays/buscandoMotorista.ui.js")
+        import("../../pasajero/ui/overlays/buscandoMotorista.ui.js?v=20260605-price-modal-fix")
           .then(m => m.mostrarBuscandoMotorista?.(true))
           .catch(err => console.error("❌ Error importando modal:", err));
       }

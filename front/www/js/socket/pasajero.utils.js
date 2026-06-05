@@ -1,6 +1,6 @@
 // pasajero/ui.js
 import { viajeState } from "../viaje/viaje.state.js";
-import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js";
+import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260605-price-modal-fix";
 import { cerrarBuscandoMotorista } from "../pasajero/pasajero.ui.js";
 import { limpiarViajePasajero } from "../socket/viaje.limpieza.js";
 import { limpiarRutas } from "../map/map.ruta.js?v=20260604-jacmel-gps";
@@ -19,6 +19,8 @@ export function guardarSesionViaje(estadoStr) {
     const dataASalvar = {
       estado: estadoStr,
       viajeId: viajeState.viajeId,
+      cotizando: viajeState.cotizando,
+      quoteId: viajeState.quoteId,
       precio: viajeState.precio,
       precioBase: viajeState.precioBase,
       descuentoWallet: viajeState.descuentoWallet,
@@ -48,8 +50,8 @@ export function guardarSesionViaje(estadoStr) {
  */
 export function limpiarSesionViaje() {
   Object.assign(viajeState, {
-    activo: false, buscando: false, asignado: false, llego: false, enCurso: false,
-    viajeId: null, motorista: null, precioConfirmado: false,
+    activo: false, cotizando: false, buscando: false, asignado: false, llego: false, enCurso: false,
+    viajeId: null, quoteId: null, motorista: null, precioConfirmado: false,
     precio: null, precioBase: null, descuentoWallet: 0, descuentoWalletRate: 0, walletDiscount: null,
     distanciaKm: null, duracionMin: null,
     metodoPago: null, estadoPago: null,
