@@ -1,7 +1,7 @@
 // js/pasajero/pasajero.ui.js
 import { viajeState } from "../viaje/viaje.state.js";
 import { actualizarBotonViaje } from "./ui/boton/botonViaje.ui.js";
-import { mostrarPagoNoDisponible } from "./ui/modales/pagoNoDisponible.ui.js?v=20260604-payments-disabled";
+import { mostrarPagoNoDisponible } from "./ui/modales/pagoNoDisponible.ui.js?v=20260605-payments-premium";
 
 export { actualizarBotonViaje };
 

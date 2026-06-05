@@ -1,48 +1,67 @@
 const express = require("express");
 const router = express.Router();
 const Viaje = require("../models/Viaje");
+const PaymentMethod = require("../models/PaymentMethod");
+const auth = require("../middleware/authHttp");
+const { normalizeProvider, providerConfig } = require("../services/paymentMethods.service");
 
-/*************************************************
- * 💳 INICIAR PAGO (MonCash / NatCash)
- *************************************************/
-router.post("/iniciar", async (req, res) => {
+router.post("/iniciar", auth, async (req, res) => {
   try {
-    const { viajeId } = req.body;
+    const { viajeId, metodoPago } = req.body;
 
-    const viaje = await Viaje.findById(viajeId);
+    const viaje = await Viaje.findOne({ _id: viajeId, pasajero: req.user.id });
     if (!viaje) {
       return res.status(404).json({ error: "Viaje no encontrado" });
     }
 
-    if (viaje.metodoPago === "efectivo") {
-      return res.status(400).json({ error: "Este viaje es en efectivo" });
+    const metodoRaw = String(metodoPago || viaje.metodoPago || "").toLowerCase();
+
+    if (metodoRaw === "efectivo" || metodoRaw === "wallet") {
+      return res.status(400).json({ error: "Este metodo no usa pasarela externa." });
     }
+
+    const metodo = normalizeProvider(metodoRaw);
 
     if (viaje.estadoPago === "pagado") {
-      return res.json({ ok: true, mensaje: "Ya está pagado" });
+      return res.json({ ok: true, mensaje: "Ya esta pagado" });
     }
 
-    // 🔐 Código único para el pago
-    const codigo = `GM-${viaje._id}-${Date.now()}`;
+    const method = await PaymentMethod.findOne({
+      userId: req.user.id,
+      provider: metodo,
+      status: "active",
+    }).lean();
 
-    viaje.codigoPago = codigo;
-    viaje.estadoPago = "pendiente";
-    await viaje.save();
+    if (!method) {
+      return res.status(409).json({
+        error: "Primero asocia una cuenta real para este metodo de pago.",
+      });
+    }
 
-    // 🔥 Aquí se conecta luego con MonCash / NatCash
-    // Por ahora simulamos el link
-    const urlPago = `https://sandbox.moncash.ht/pay?code=${codigo}&amount=${viaje.precio}`;
+    const cfg = providerConfig(metodo);
+    if (!cfg.canPay) {
+      return res.status(503).json({
+        error: "Proveedor no configurado para cobros reales.",
+        code: "PROVIDER_NOT_READY",
+        provider: metodo,
+      });
+    }
 
-    res.json({
+    return res.json({
       ok: true,
-      urlPago,
-      codigo,
+      provider: metodo,
       monto: viaje.precio,
-      metodo: viaje.metodoPago,
+      estadoPago: viaje.estadoPago,
+      mensaje: "Proveedor configurado. Completa la orden con el adaptador real del proveedor.",
     });
   } catch (err) {
-    console.error("❌ iniciar pago:", err);
-    res.status(500).json({ error: "Error iniciando pago" });
+    console.error("iniciar pago:", err);
+
+    if (err.message === "PROVIDER_INVALID") {
+      return res.status(400).json({ error: "Metodo de pago invalido" });
+    }
+
+    return res.status(500).json({ error: "Error iniciando pago" });
   }
 });
 

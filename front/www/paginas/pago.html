@@ -1,71 +1,15 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Método de pago</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <link rel="stylesheet" href="../css/index.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <meta http-equiv="refresh" content="0; url=../index.html#/pago">
+  <title>Paiements BeGO</title>
+  <script>
+    window.location.replace("../index.html#/pago");
+  </script>
 </head>
 <body>
-
-<header class="app-header">
-  <nav>
-    <button onclick="history.back()" class="icon-btn">
-      <i class="fa-solid fa-arrow-left"></i>
-    </button>
-    <strong>Pagar</strong>
-  </nav>
-</header>
-
-<main class="pagos">
-
-  <button class="pago-btn" aria-disabled="true" onclick="pagar('moncash')">
-    <img src="../assets/moncash.png"> MonCash
-  </button>
-
-  <button class="pago-btn" aria-disabled="true" onclick="pagar('natcash')">
-    <img src="../assets/natcash.png"> NatCash
-  </button>
-
-  <button class="pago-btn" onclick="pagar('tarjeta')">
-    <i class="fa-solid fa-credit-card"></i> Tarjeta
-  </button>
-
-</main>
-<!-- MODAL CONFIRMACIÓN DE PAGO -->
-<div id="modalPago" class="modal oculto">
-  <div class="modal-box">
-    <div class="icono exito">
-      <i class="fa-solid fa-check"></i>
-    </div>
-
-    <h2 id="tituloPago">Pago exitoso</h2>
-    <p id="detallePago">Tu recarga fue acreditada correctamente</p>
-
-    <div class="resumen">
-      <div>
-        <span>Método</span>
-        <strong id="metodoPago">—</strong>
-      </div>
-      <div>
-        <span>Monto</span>
-        <strong id="montoPago">$0</strong>
-      </div>
-      <div>
-        <span>Referencia</span>
-        <strong id="refPago">—</strong>
-      </div>
-    </div>
-
-    <button class="btn-principal ripple" onclick="cerrarModal()">
-      Continuar
-    </button>
-  </div>
-</div>
-
-
-<script src="../js/pagos.js"></script>
+  <a href="../index.html#/pago">Ouvrir Paiements BeGO</a>
 </body>
 </html>

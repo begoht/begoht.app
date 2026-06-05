@@ -1,6 +1,6 @@
 import { viajeState } from "../../viaje/viaje.state.js";
 import { manejarCancelacionOLimpieza } from "../pasajero.utils.js";
-import { mostrarPagoNoDisponible } from "../../pasajero/ui/modales/pagoNoDisponible.ui.js?v=20260604-payments-disabled";
+import { mostrarPagoNoDisponible } from "../../pasajero/ui/modales/pagoNoDisponible.ui.js?v=20260605-payments-premium";
 
 const ESTADOS_PROTEGIDOS = [
   "buscando",

@@ -104,7 +104,7 @@ require("./worker/matching.worker");
 app.use(express.json());
 app.use(cors({ 
   origin: "*", 
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   allowedHeaders: ['Content-Type', 'Authorization', 'Idempotency-Key', 'ngrok-skip-browser-warning'] // ✅ CORREGIDO: Dentro del objeto cors
 }));
 
@@ -179,6 +179,7 @@ app.use("/api/admin", require("./routes/admin.commission"));
 app.use("/api/admin", require("./routes/adminRetiros"));
 app.use("/api", require("./routes/passenger.offers"));
 app.use("/api/recargas", require("./routes/recargas"));
+app.use("/api/payment-methods", require("./routes/payment.methods"));
 app.use("/api/pagos", require("./routes/pagos"));
 app.use("/api/webhook", require("./routes/webhook"));
 app.use("/api/driver/auth", require("./routes/driver.auth"));

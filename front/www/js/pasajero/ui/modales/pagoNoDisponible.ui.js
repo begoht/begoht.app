@@ -18,10 +18,13 @@ export function mostrarPagoNoDisponible({ metodo = "pago" } = {}) {
         </div>
 
         <span class="pago-no-disponible-kicker">BeGO Paiement</span>
-        <h2 id="pagoNoDisponibleTitulo">${nombre} indisponible</h2>
-        <p>Ce mode de paiement n'est pas disponible pour le moment. Vous pouvez continuer avec Cash ou Wallet BeGO.</p>
+        <h2 id="pagoNoDisponibleTitulo">${nombre} en verification</h2>
+        <p>Vous pouvez associer votre compte reel dans Paiements. Les debits de voyage restent proteges jusqu'a l'activation fournisseur.</p>
 
-        <button id="btnPagoNoDisponibleCerrar" type="button">Compris</button>
+        <div class="pago-no-disponible-actions">
+          <button id="btnPagoNoDisponibleAbrir" type="button">Associer un compte</button>
+          <button id="btnPagoNoDisponibleCerrar" type="button">Continuer avec Wallet</button>
+        </div>
       </div>
     </div>
 
@@ -91,10 +94,16 @@ export function mostrarPagoNoDisponible({ metodo = "pago" } = {}) {
         line-height: 1.4;
       }
 
+      .pago-no-disponible-actions {
+        display: grid;
+        gap: 9px;
+        margin-top: 17px;
+      }
+
       .pago-no-disponible-card button {
         width: 100%;
         min-height: 50px;
-        margin-top: 17px;
+        margin-top: 0;
         border: 0;
         border-radius: 16px;
         color: #ffffff;
@@ -103,6 +112,13 @@ export function mostrarPagoNoDisponible({ metodo = "pago" } = {}) {
         font-weight: 950;
         cursor: pointer;
         box-shadow: 0 14px 26px rgba(37, 99, 235, 0.24);
+      }
+
+      #btnPagoNoDisponibleCerrar {
+        color: #dbeafe;
+        background: rgba(15, 23, 42, 0.9);
+        border: 1px solid rgba(96, 165, 250, 0.22);
+        box-shadow: none;
       }
 
       .pago-no-disponible-card button:active {
@@ -126,5 +142,10 @@ export function mostrarPagoNoDisponible({ metodo = "pago" } = {}) {
 
   modal.querySelector("#btnPagoNoDisponibleCerrar")?.addEventListener("click", () => {
     modal.remove();
+  });
+
+  modal.querySelector("#btnPagoNoDisponibleAbrir")?.addEventListener("click", () => {
+    modal.remove();
+    window.location.hash = "#/pago";
   });
 }

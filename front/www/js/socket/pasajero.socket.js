@@ -9,7 +9,7 @@ import { handleLlego } from "./handlers/llego.handler.js";
 import { handleIniciado } from "./handlers/iniciado.handler.js";
 import { handleFinalizado } from "./handlers/finalizado.handler.js";
 import { handleConnect } from "./handlers/connect.handler.js";
-import { handleError } from "./handlers/error.handler.js?v=20260604-payments-disabled";
+import { handleError } from "./handlers/error.handler.js?v=20260605-payments-premium";
 import { handleNoMotorista } from "./handlers/noMotorista.handler.js";
 import { handleCancelado } from "./handlers/cancelado.handler.js";
 import { handleExpirado } from "./handlers/expirado.handler.js";

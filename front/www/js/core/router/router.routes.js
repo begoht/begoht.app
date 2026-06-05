@@ -26,6 +26,8 @@ import { renderRecarga } from "../../../paginas/recarga.js";
 import { initRecarga } from "../../recarga.js";
 import { renderPromos } from "../../../paginas/promos.js?v=20260604-admin-offers";
 import { initPromosPage } from "../../promos/passenger-offers.js?v=20260604-admin-offers";
+import { renderPago } from "../../../paginas/pago.js?v=20260605-payments-premium";
+import { initPago } from "../../pagos.js?v=20260605-payments-premium";
 
 // 🔥 Importa el render de actividad
 import { initActividad } from "../../pages/actividad.js";
@@ -76,7 +78,7 @@ export const routes = {
   "/recibo-recarga": { render: renderReciboRecarga, init: initReciboRecarga, class: "recibo-recarga-page" },
 
   "/familia": { render: renderFamilia, init: initFamilia, class: "familia-container" },
-  "/pago": { render: renderPago, class: "pagos" },
+  "/pago": { render: renderPago, init: initPago, class: "pagos" },
   "/seguimiento": { render: renderSeguimiento, class: "seguimiento-page" },
   "/promos": { render: renderPromos, init: initPromosPage, class: "promos-page" },
   "/datos-motorista": { render: () => renderSimple("Datos del motorista", "Se mostraran cuando tengas un viaje asignado."), class: "simple-page" },
@@ -155,14 +157,6 @@ function initFamilia() {
   };
 
   render();
-}
-
-function renderPago() {
-  return `
-    <button class="pago-btn"><i class="fa-solid fa-mobile-screen"></i> MonCash</button>
-    <button class="pago-btn"><i class="fa-solid fa-building-columns"></i> NatCash</button>
-    <button class="pago-btn"><i class="fa-solid fa-credit-card"></i> Tarjeta</button>
-  `;
 }
 
 function renderSeguimiento() {
