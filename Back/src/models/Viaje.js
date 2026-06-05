@@ -93,6 +93,9 @@ const ViajeSchema = new mongoose.Schema(
     distanciaKm: { type: Number, default: 0, min: 0 },
     distanciaRealMetros: { type: Number, default: 0, min: 0 },
     precio: { type: Number, default: 0, min: 0 },
+    precioBase: { type: Number, default: 0, min: 0 },
+    descuentoWallet: { type: Number, default: 0, min: 0 },
+    descuentoWalletRate: { type: Number, default: 0, min: 0, max: 0.5 },
     duracionMin: { type: Number, default: 0, min: 0 },
 
     estado: {

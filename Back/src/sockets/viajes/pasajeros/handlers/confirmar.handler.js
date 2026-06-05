@@ -117,6 +117,9 @@ module.exports = async function confirmarViaje(socket, io, data) {
       .hset(`viaje:data:${viajeId}`, {
         pasajeroId: viaje.pasajero.toString(),
         precio: viaje.precio,
+        precioBase: viaje.precioBase || viaje.precio,
+        descuentoWallet: viaje.descuentoWallet || 0,
+        descuentoWalletRate: viaje.descuentoWalletRate || 0,
         metodoPago: viaje.metodoPago,
         tipo: viaje.tipo || "viaje",
         paquete: viaje.paquete ? JSON.stringify({

@@ -1,15 +1,16 @@
 import { initGeo } from "../map/map.geo.js?v=20260605-passenger-dot";
 import { initSeleccionDestino } from "../map/map.destino.js?v=20260604-jacmel-gps";
-import { actualizarBotonViaje } from "../pasajero/pasajero.ui.js?v=20260605-payments-premium";
-import { initToggleMenuDriver, seleccionarPago } from "./pasajero.ui.js?v=20260605-payments-premium";
+import { actualizarBotonViaje } from "../pasajero/pasajero.ui.js?v=20260605-wallet-discount";
+import { initToggleMenuDriver, seleccionarPago } from "./pasajero.ui.js?v=20260605-wallet-discount";
 import { getSocket } from "../socket/socket.js";
-import { initPasajeroSocket } from "../socket/pasajero.socket.js?v=20260605-payments-premium";
+import { initPasajeroSocket } from "../socket/pasajero.socket.js?v=20260605-wallet-discount";
 import { viajeState } from "../viaje/viaje.state.js";
 import { setMapa } from "../map/map.motorista.js?v=20260604-jacmel-gps";
 import { cityConfig } from "../map/config/index.js";
 import { initSavedDestinations } from "../map/map.saved-destinations.js";
 import { initEnvioPaquete } from "./envio.paquete.js";
 import { initHomeOffers } from "../promos/passenger-offers.js?v=20260604-admin-offers";
+import { initWalletDiscountUI } from "./wallet-discount.js?v=20260605-wallet-discount";
 
 /***********************
  * 🧠 CONTROL GLOBAL SPA
@@ -91,6 +92,7 @@ export function initPasajero(map) {
     initSeleccionDestino(map);
     initSavedDestinations(map);
     initEnvioPaquete();
+    initWalletDiscountUI();
     initHomeOffers();
 
     /***********************

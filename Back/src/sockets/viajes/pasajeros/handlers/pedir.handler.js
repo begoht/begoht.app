@@ -19,6 +19,10 @@ module.exports = async function pedirViaje(socket, io, data) {
 
     socket.emit("precio-calculado", {
       precio: cotizacion.precio,
+      precioBase: cotizacion.precioBase,
+      descuentoWallet: cotizacion.descuentoWallet,
+      descuentoWalletRate: cotizacion.descuentoWalletRate,
+      walletDiscount: cotizacion.walletDiscount || null,
       distanciaKm: cotizacion.distanciaKm,
       duracionMin: cotizacion.duracionMin,
       metodoPago: cotizacion.metodoPago,

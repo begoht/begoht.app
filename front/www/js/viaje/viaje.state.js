@@ -11,6 +11,10 @@ export const viajeState = {
   // 🆔 datos
   viajeId: null,
   precio: null,
+  precioBase: null,
+  descuentoWallet: 0,
+  descuentoWalletRate: 0,
+  walletDiscount: null,
   distanciaKm: null,
   duracionMin: null,
   metodoPago: null,

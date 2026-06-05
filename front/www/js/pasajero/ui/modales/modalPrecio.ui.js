@@ -1,11 +1,21 @@
 /*************************************************
  * MODAL CONFIRMAR VIAJE (PREMIUM)
  *************************************************/
-export function mostrarModalPrecio({ precio, distanciaKm, metodoPago, tipo = "viaje", paquete = null, onConfirm, onCancel }) {
+export function mostrarModalPrecio({ precio, precioBase = null, descuentoWallet = 0, walletDiscount = null, distanciaKm, metodoPago, tipo = "viaje", paquete = null, onConfirm, onCancel }) {
     cerrarModalPrecio();
 
     const esEnvio = tipo === "envio";
     const peso = Number(paquete?.pesoKg || 0);
+    const ahorroWallet = Number(descuentoWallet || walletDiscount?.discountAmount || 0);
+    const precioOriginal = Number(precioBase || walletDiscount?.basePrice || precio || 0);
+    const tieneDescuentoWallet = String(metodoPago || "").toLowerCase() === "wallet" && ahorroWallet > 0;
+    const descuentoHtml = tieneDescuentoWallet ? `
+            <div style="margin:12px 0; padding:12px; border-radius:14px; background:rgba(37,99,235,0.12); border:1px solid rgba(96,165,250,0.22); color:#dbeafe; font-size:13px; line-height:1.45;">
+                <strong style="display:block; color:#93c5fd; margin-bottom:4px;">${walletDiscount?.label || "Remise Wallet"}</strong>
+                Avant: <span style="text-decoration:line-through; color:#94a3b8;">${precioOriginal} G</span><br>
+                Vous economisez: <span style="color:#22c55e; font-weight:900;">${ahorroWallet} G</span>
+            </div>
+    ` : "";
     const paqueteHtml = esEnvio && paquete ? `
             <div style="margin:12px 0; padding:12px; border-radius:14px; background:rgba(14,165,233,0.1); border:1px solid rgba(56,189,248,0.18); color:#e0f2fe; font-size:13px; line-height:1.45;">
                 <strong style="display:block; color:#7dd3fc; margin-bottom:4px;">Envio de paquete</strong>
@@ -49,6 +59,7 @@ export function mostrarModalPrecio({ precio, distanciaKm, metodoPago, tipo = "vi
             </div>
 
             ${paqueteHtml}
+            ${descuentoHtml}
 
             <div style="
                 font-size:28px;

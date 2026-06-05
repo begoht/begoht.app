@@ -33,6 +33,10 @@ module.exports = async function replayViaje(socket) {
       socket.emit("precio-calculado", {
         viajeId,
         precio: viaje.precio,
+        precioBase: viaje.precioBase || viaje.precio,
+        descuentoWallet: viaje.descuentoWallet || 0,
+        descuentoWalletRate: viaje.descuentoWalletRate || 0,
+        walletDiscount: prepararWalletDiscount(viaje),
         distanciaKm: viaje.distanciaKm,
         metodoPago: viaje.metodoPago,
         tipo: viaje.tipo || "viaje",
@@ -72,6 +76,10 @@ module.exports = async function replayViaje(socket) {
       destino: viaje.destino,
       proximoDestino,
       precio: viaje.precio,
+      precioBase: viaje.precioBase || viaje.precio,
+      descuentoWallet: viaje.descuentoWallet || 0,
+      descuentoWalletRate: viaje.descuentoWalletRate || 0,
+      walletDiscount: prepararWalletDiscount(viaje),
       distanciaKm: viaje.distanciaKm,
       duracionMin: viaje.duracionMin,
       metodoPago: viaje.metodoPago,
@@ -126,6 +134,10 @@ module.exports = async function replayViaje(socket) {
       destino: viaje.destino,
       proximoDestino,
       precio: viaje.precio,
+      precioBase: viaje.precioBase || viaje.precio,
+      descuentoWallet: viaje.descuentoWallet || 0,
+      descuentoWalletRate: viaje.descuentoWalletRate || 0,
+      walletDiscount: prepararWalletDiscount(viaje),
       distanciaKm: viaje.distanciaKm,
       duracionMin: viaje.duracionMin,
       metodoPago: viaje.metodoPago,
@@ -142,6 +154,22 @@ module.exports = async function replayViaje(socket) {
     socket.data.replayInFlight = false;
   }
 };
+
+function prepararWalletDiscount(viaje) {
+  const discountAmount = Number(viaje.descuentoWallet || 0);
+  const rate = Number(viaje.descuentoWalletRate || 0);
+  if (viaje.metodoPago !== "wallet" || discountAmount <= 0 || rate <= 0) return null;
+
+  return {
+    enabled: true,
+    basePrice: Number(viaje.precioBase || viaje.precio || 0),
+    finalPrice: Number(viaje.precio || 0),
+    discountAmount,
+    rate,
+    percentage: Number((rate * 100).toFixed(2)),
+    label: "Remise Wallet",
+  };
+}
 
 async function obtenerUltimaPosicion(motoristaId) {
   const raw = await redis.get(`motorista:pos:${motoristaId}`);

@@ -4,6 +4,10 @@ const { pointInCity, resolveCityForPoints } = require("../../../../config/cities
 const viajeRepo = require("../repositories/viaje.repository");
 const Viaje = require("../../../../models/Viaje");
 const Wallet = require("../../../../models/Wallet");
+const {
+  applyWalletDiscount,
+  getWalletDiscountConfig,
+} = require("../../../../services/walletDiscount.service");
 
 const MAX_PESO_ENVIO_KG = 5;
 const METODOS_PAGO_ACTIVOS = new Set(["efectivo", "wallet"]);
@@ -123,15 +127,23 @@ module.exports = {
     }
 
     let distanciaKm = 0;
-    let precio = TARIFA_BASE;
+    let precioBase = TARIFA_BASE;
     let duracionMin = 0;
 
     if (destino?.lat && destino?.lng) {
       const metros = calcularDistanciaMetros(origen.lat, origen.lng, destino.lat, destino.lng);
       distanciaKm = Number((metros / 1000).toFixed(2));
-      precio = TARIFA_BASE + Math.round(distanciaKm * PRECIO_POR_KM);
+      precioBase = TARIFA_BASE + Math.round(distanciaKm * PRECIO_POR_KM);
       duracionMin = Math.max(1, Math.round((distanciaKm / 24) * 60));
     }
+
+    const walletDiscountConfig = metodoPagoNormalizado === "wallet"
+      ? await getWalletDiscountConfig()
+      : null;
+    const walletDiscount = metodoPagoNormalizado === "wallet"
+      ? applyWalletDiscount(precioBase, walletDiscountConfig)
+      : applyWalletDiscount(precioBase, { enabled: false });
+    const precio = walletDiscount.finalPrice;
 
     const walletInfo = metodoPagoNormalizado === "wallet"
       ? await validarSaldoWallet(pasajeroId, precio)
@@ -151,6 +163,10 @@ module.exports = {
       distanciaKm,
       duracionMin,
       precio,
+      precioBase,
+      descuentoWallet: walletDiscount.discountAmount,
+      descuentoWalletRate: walletDiscount.rate,
+      walletDiscount: walletDiscount.enabled ? walletDiscount : null,
       metodoPago: metodoPagoNormalizado,
       wallet: walletInfo,
       ciudad: cityConfig.id,
@@ -173,6 +189,9 @@ module.exports = {
       distanciaKm: cotizacion.distanciaKm,
       duracionMin: cotizacion.duracionMin,
       precio: cotizacion.precio,
+      precioBase: cotizacion.precioBase || cotizacion.precio,
+      descuentoWallet: cotizacion.descuentoWallet || 0,
+      descuentoWalletRate: cotizacion.descuentoWalletRate || 0,
       pasajero: pasajeroId,
       pasajeroSocket: socket.id,
       metodoPago: cotizacion.metodoPago,

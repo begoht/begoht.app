@@ -2,7 +2,7 @@ import { getSocket } from "./socket.js";
 import { viajeState } from "../viaje/viaje.state.js";
 
 import { handleMotoristas } from "./handlers/motoristas.handler.js";
-import { handlePrecio } from "./handlers/precio.handler.js";
+import { handlePrecio } from "./handlers/precio.handler.js?v=20260605-wallet-discount";
 import { handleAsignado } from "./handlers/asignado.handler.js?v=20260604-jacmel-gps";
 import { handleTrack } from "./handlers/track.handler.js?v=20260604-jacmel-gps";
 import { handleLlego } from "./handlers/llego.handler.js";

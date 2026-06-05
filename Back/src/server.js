@@ -188,6 +188,7 @@ app.use("/api/admin", require("./routes/admin.commission"));
 app.use("/api/admin", require("./routes/adminRetiros"));
 app.use("/api/admin", require("./routes/admin.audit"));
 app.use("/api", require("./routes/passenger.offers"));
+app.use("/api", require("./routes/wallet.discount"));
 app.use("/api/recargas", require("./routes/recargas"));
 app.use("/api/payment-methods", require("./routes/payment.methods"));
 app.use("/api/pagos", require("./routes/pagos"));

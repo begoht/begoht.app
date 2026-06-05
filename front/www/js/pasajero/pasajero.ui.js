@@ -12,7 +12,7 @@ export {
 } from "./ui/overlays/buscandoMotorista.ui.js";
 
 export { mostrarModalConfirmacion } from "./ui/modales/modalConfirmacion.ui.js";
-export { mostrarModalPrecio } from "./ui/modales/modalPrecio.ui.js";
+export { mostrarModalPrecio } from "./ui/modales/modalPrecio.ui.js?v=20260605-wallet-discount";
 export { mostrarModalConfirmarCancelacion } from "./ui/modales/modalCancelacion.ui.js";
 
 export {
