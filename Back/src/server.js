@@ -15,6 +15,9 @@ const { Server } = require("socket.io");
 const { createAdapter } = require("@socket.io/redis-adapter");
 const path = require("path");
 const limpiarEstadosHuerfanos = require("./utils/startupCleanup");
+const securityHeaders = require("./middleware/securityHeaders");
+const { buildCorsOptions } = require("./utils/corsOptions");
+const { getReadiness } = require("./utils/readiness");
 
 // 🔹 BullBoard
 const { createBullBoard } = require("@bull-board/api");
@@ -70,7 +73,7 @@ const socketTransports = (process.env.SOCKET_TRANSPORTS || "websocket")
 if (!socketTransports.length) socketTransports.push("websocket");
 
 const io = new Server(server, {
-  cors: { origin: "*", methods: ["GET", "POST"], credentials: true },
+  cors: buildCorsOptions(),
   transports: socketTransports,
   pingInterval: 25000,
   pingTimeout: 60000,
@@ -102,13 +105,14 @@ require("./worker/matching.worker");
 // 🔹 MIDDLEWARES
 // ============================
 app.use(express.json());
-app.use(cors({ 
-  origin: "*", 
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+app.use(securityHeaders);
+app.use(cors(buildCorsOptions()));
+/*
   allowedHeaders: ['Content-Type', 'Authorization', 'Idempotency-Key', 'ngrok-skip-browser-warning'] // ✅ CORREGIDO: Dentro del objeto cors
 }));
 
 
+*/
 app.use((req, res, next) => {
   res.setHeader('ngrok-skip-browser-warning', 'true');
   next();
@@ -121,6 +125,11 @@ app.get("/healthz", (req, res) => {
     uptime: process.uptime(),
     timestamp: new Date().toISOString(),
   });
+});
+
+app.get("/readyz", async (req, res) => {
+  const readiness = await getReadiness();
+  res.status(readiness.ready ? 200 : 503).json(readiness);
 });
 
 // ============================
@@ -177,6 +186,7 @@ app.use("/api/admin", require("./routes/admin.trips"));
 app.use("/api/admin", require("./routes/admin.email"));
 app.use("/api/admin", require("./routes/admin.commission"));
 app.use("/api/admin", require("./routes/adminRetiros"));
+app.use("/api/admin", require("./routes/admin.audit"));
 app.use("/api", require("./routes/passenger.offers"));
 app.use("/api/recargas", require("./routes/recargas"));
 app.use("/api/payment-methods", require("./routes/payment.methods"));

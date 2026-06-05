@@ -5,6 +5,7 @@ const {
   updateCommissionConfig,
   MAX_RATE,
 } = require("../services/commission.service");
+const { logAdminAction } = require("../services/adminAudit.service");
 
 const router = express.Router();
 
@@ -28,9 +29,18 @@ router.put("/commission", authAdmin, async (req, res) => {
       });
     }
 
+    const before = await ensureCommissionConfig();
     const config = await updateCommissionConfig({
       percentage,
       updatedBy: req.user?._id || null,
+    });
+
+    await logAdminAction(req, {
+      action: "commission.update",
+      entity: "CommissionSetting",
+      entityId: config._id,
+      before,
+      after: config,
     });
 
     res.json(config);

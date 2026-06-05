@@ -8,106 +8,145 @@ const {
 } = require("../utils/jwt");
 const jwt = require("jsonwebtoken");
 
-/*************************************************
- * 🔐 REGISTRO
- *************************************************/
+function normalizePhone(value = "") {
+  return String(value).replace(/[^\d+]/g, "").trim();
+}
+
+function normalizeEmail(value = "") {
+  return String(value).trim().toLowerCase();
+}
+
+function publicUser(user) {
+  return {
+    id: user._id,
+    nombre: user.nombre,
+    apellido: user.apellido || "",
+    rol: user.rol,
+    alias: user.alias || "",
+  };
+}
+
 exports.register = async (req, res) => {
   const session = await mongoose.startSession();
 
   try {
+    const nombre = String(req.body?.nombre || "").trim();
+    const apellido = String(req.body?.apellido || "").trim();
+    const telefono = normalizePhone(req.body?.telefono);
+    const email = normalizeEmail(req.body?.email);
+    const password = String(req.body?.password || "");
+
+    if (!nombre || !telefono || !password) {
+      return res.status(400).json({ error: "Faltan datos obligatorios" });
+    }
+
+    if (!/^\+?\d{8,15}$/.test(telefono)) {
+      return res.status(400).json({ error: "Telefono invalido" });
+    }
+
+    if (email && !/^\S+@\S+\.\S+$/.test(email)) {
+      return res.status(400).json({ error: "Email invalido" });
+    }
+
+    if (password.length < 8) {
+      return res.status(400).json({ error: "Contrasena minimo 8 caracteres" });
+    }
+
     session.startTransaction();
 
-    const { nombre, apellido, telefono, email, password } = req.body;
+    const existe = await User.findOne({
+      $or: email ? [{ telefono }, { email }] : [{ telefono }],
+    }).session(session);
 
-    const existe = await User.findOne({ telefono }).session(session);
     if (existe) {
+      await session.abortTransaction();
       return res.status(409).json({
-        error: "El teléfono ya está registrado"
+        error: existe.telefono === telefono
+          ? "El telefono ya esta registrado"
+          : "El email ya esta registrado",
       });
     }
 
     const hash = await bcrypt.hash(password, 12);
-
     const user = new User({
       nombre,
-      apellido: apellido || "",
+      apellido,
       telefono,
-      email: email || null,
+      email: email || undefined,
       password: hash,
       rol: "pasajero",
     });
 
     await user.save({ session });
 
-    await Wallet.create(
-      [
-        {
+    await Wallet.updateOne(
+      { userId: user._id },
+      {
+        $setOnInsert: {
           userId: user._id,
           saldo: 0,
           saldoBloqueado: 0,
         },
-      ],
-      { session }
+      },
+      { upsert: true, session }
     );
 
     await session.commitTransaction();
 
-    // 🔥 TODO lo que no sea DB va después del commit
     const accessToken = generarAccessToken(user);
     const refreshToken = generarRefreshToken(user);
-    
-    user.refreshToken = refreshToken;
-    await user.save();
-    
-    res.json({
+
+    await User.updateOne(
+      { _id: user._id },
+      { $set: { refreshToken } }
+    );
+
+    return res.json({
       accessToken,
       refreshToken,
-      user: {
-        id: user._id,
-        nombre: user.nombre,
-        apellido: user.apellido || "",
-        rol: user.rol,
-        alias: user.alias || "",
-      },
+      user: publicUser(user),
     });
-      
-    } catch (err) {
-
-    // 🔥 Abort solo si la transacción sigue activa
+  } catch (err) {
     if (session.inTransaction()) {
       await session.abortTransaction();
     }
 
     console.error("Register error:", err);
-    res.status(400).json({ error: err.message });
 
+    if (err?.code === 11000) {
+      return res.status(409).json({ error: "Usuario ya registrado" });
+    }
+
+    return res.status(400).json({ error: err.message || "Error en registro" });
   } finally {
     session.endSession();
   }
 };
 
-/*************************************************
- * 🔐 LOGIN
- *************************************************/
 exports.login = async (req, res) => {
   try {
-    const { identificador, password } = req.body;
+    const identificador = String(req.body?.identificador || "").trim();
+    const password = String(req.body?.password || "");
 
-    if (!identificador || !password)
+    if (!identificador || !password) {
       return res.status(400).json({ msg: "Faltan datos" });
+    }
 
-    const user = await User.findOne({
-      $or: [
-        { telefono: identificador },
-        { email: identificador.toLowerCase() },
-      ],
-    }).select("+password");
+    const telefono = normalizePhone(identificador);
+    const email = normalizeEmail(identificador);
+    const search = [];
+    if (telefono) search.push({ telefono });
+    if (email.includes("@")) search.push({ email });
 
-    if (!user)
-      return res.status(400).json({ msg: "Credenciales inválidas" });
+    const user = await User.findOne({ $or: search }).select("+password");
 
-    if (user.saldoBloqueado)
+    if (!user) {
+      return res.status(400).json({ msg: "Credenciales invalidas" });
+    }
+
+    if (user.saldoBloqueado) {
       return res.status(403).json({ msg: "Cuenta bloqueada" });
+    }
 
     const ok = await bcrypt.compare(password, user.password);
 
@@ -119,7 +158,7 @@ exports.login = async (req, res) => {
       }
 
       await user.save();
-      return res.status(400).json({ msg: "Credenciales inválidas" });
+      return res.status(400).json({ msg: "Credenciales invalidas" });
     }
 
     user.intentosFallidos = 0;
@@ -130,50 +169,47 @@ exports.login = async (req, res) => {
     user.refreshToken = refreshToken;
     await user.save();
 
-    res.json({
+    return res.json({
       accessToken,
       refreshToken,
-      user: {
-        id: user._id,
-        nombre: user.nombre,
-        apellido: user.apellido || "",
-        rol: user.rol,
-        alias: user.alias || "",
-      },
+      user: publicUser(user),
     });
   } catch (err) {
     console.error("Login error:", err);
-    res.status(500).json({ msg: "Error servidor" });
+    return res.status(500).json({ msg: "Error servidor" });
   }
 };
 
-/*************************************************
- * 🛵 LOGIN MOTORISTA
- *************************************************/
 exports.loginMotorista = async (req, res) => {
   try {
-    const { telefono, password } = req.body;
+    const telefono = normalizePhone(req.body?.telefono);
+    const password = String(req.body?.password || "");
 
-    if (!telefono || !password)
+    if (!telefono || !password) {
       return res.status(400).json({ msg: "Faltan datos" });
+    }
 
     const user = await User.findOne({ telefono }).select("+password");
 
-    if (!user || user.rol !== "motorista")
-      return res.status(400).json({ msg: "Credenciales inválidas" });
+    if (!user || user.rol !== "motorista") {
+      return res.status(400).json({ msg: "Credenciales invalidas" });
+    }
 
-    if (user.saldoBloqueado)
+    if (user.saldoBloqueado) {
       return res.status(403).json({ msg: "Cuenta bloqueada" });
+    }
 
     const ok = await bcrypt.compare(password, user.password);
 
-    if (!ok)
-      return res.status(400).json({ msg: "Credenciales inválidas" });
+    if (!ok) {
+      return res.status(400).json({ msg: "Credenciales invalidas" });
+    }
 
-    if (!user.aprobado)
+    if (user.aprobado === false) {
       return res.status(403).json({
-        msg: "Cuenta pendiente de aprobación",
+        msg: "Cuenta pendiente de aprobacion",
       });
+    }
 
     const accessToken = generarAccessToken(user);
     const refreshToken = generarRefreshToken(user);
@@ -181,26 +217,17 @@ exports.loginMotorista = async (req, res) => {
     user.refreshToken = refreshToken;
     await user.save();
 
-    res.json({
+    return res.json({
       accessToken,
       refreshToken,
-      user: {
-        id: user._id,
-        nombre: user.nombre,
-        apellido: user.apellido || "",
-        rol: user.rol,
-        alias: user.alias || "",
-      },
+      user: publicUser(user),
     });
   } catch (err) {
     console.error("Login motorista error:", err);
-    res.status(500).json({ msg: "Error servidor" });
+    return res.status(500).json({ msg: "Error servidor" });
   }
 };
 
-/*************************************************
- * REFRESH TOKEN
- *************************************************/
 exports.refresh = async (req, res) => {
   try {
     const refreshToken = req.body?.refreshToken;
@@ -226,22 +253,16 @@ exports.refresh = async (req, res) => {
     user.refreshToken = nextRefreshToken;
     await user.save();
 
-    res.json({
+    return res.json({
       accessToken,
       refreshToken: nextRefreshToken,
-      user: {
-        id: user._id,
-        nombre: user.nombre,
-        apellido: user.apellido || "",
-        rol: user.rol,
-        alias: user.alias || "",
-      },
+      user: publicUser(user),
     });
   } catch (err) {
     const msg = err.name === "TokenExpiredError"
       ? "Sesion expirada"
       : "Sesion invalida";
 
-    res.status(401).json({ msg });
+    return res.status(401).json({ msg });
   }
 };

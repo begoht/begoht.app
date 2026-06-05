@@ -116,6 +116,11 @@ function providerConfig(provider) {
   };
 }
 
+function providerUnavailableMessage(provider) {
+  const normalized = normalizeProvider(provider);
+  return `${PROVIDERS[normalized].label} no esta disponible por ahora.`;
+}
+
 function allProviderConfig() {
   return Object.keys(PROVIDERS).map(providerConfig);
 }
@@ -158,6 +163,7 @@ module.exports = {
   normalizeHaitiPhone,
   normalizeProvider,
   providerConfig,
+  providerUnavailableMessage,
   serializeMethod,
   serializeMethods,
 };

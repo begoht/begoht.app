@@ -1,6 +1,11 @@
 const Viaje = require("../models/Viaje");
 const WalletService = require("./wallet.service");
 const crypto = require("crypto");
+const {
+  normalizeProvider,
+  providerConfig,
+  providerUnavailableMessage,
+} = require("./paymentMethods.service");
 
 class PaymentService {
 
@@ -58,6 +63,17 @@ class PaymentService {
     // ==========================================
     // 🌍 PASARELA EXTERNA
     // ==========================================
+    const provider = normalizeProvider(metodoPago);
+    const cfg = providerConfig(provider);
+    const checkoutUrl = process.env[`${provider.toUpperCase()}_CHECKOUT_URL`];
+
+    if (!cfg.canPay || !checkoutUrl) {
+      const err = new Error(providerUnavailableMessage(provider));
+      err.code = "PROVIDER_NOT_READY";
+      err.status = 503;
+      throw err;
+    }
+
     const reference = this.generarReferencia();
 
     viaje.referenciaPago = reference;
@@ -69,7 +85,7 @@ class PaymentService {
       metodo: metodoPago,
       reference,
       estadoPago: "pendiente",
-      urlPago: this.generarURLPago(reference, viaje.precio)
+      urlPago: this.generarURLPago(checkoutUrl, reference, viaje.precio)
     };
   }
 
@@ -126,9 +142,20 @@ class PaymentService {
   // =====================================================
   // 🌍 GENERAR URL DE PAGO (SANDBOX / PROD)
   // =====================================================
-  static generarURLPago(reference, monto) {
-    const baseURL = process.env.PAYMENT_BASE_URL || "https://sandbox.BeGO.app/pagar";
-    return `${baseURL}/${reference}?monto=${monto}`;
+  static generarURLPago(baseURL, reference, monto) {
+    let url;
+    try {
+      url = new URL(baseURL);
+    } catch (err) {
+      const error = new Error("Proveedor de pago no configurado");
+      error.code = "PROVIDER_NOT_READY";
+      error.status = 503;
+      throw error;
+    }
+
+    url.searchParams.set("orderId", reference);
+    url.searchParams.set("amount", String(monto));
+    return url.toString();
   }
 }
 

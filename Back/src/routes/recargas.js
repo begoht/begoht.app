@@ -7,8 +7,14 @@ const auth = require("../middleware/authHttp");
 const Wallet = require("../models/Wallet");
 const Recarga = require("../models/recarga");
 const Viaje = require("../models/Viaje");
+const PaymentMethod = require("../models/PaymentMethod");
 const PDFDocument = require("pdfkit");
 const qr = require("qr-image");
+const {
+  normalizeProvider,
+  providerConfig,
+  providerUnavailableMessage,
+} = require("../services/paymentMethods.service");
 
 function getPublicApiUrl(req) {
   const configuredUrl = process.env.PUBLIC_API_URL || process.env.API_URL;
@@ -45,6 +51,17 @@ function normalizarOperadora(value = "") {
 function validarMontoRecarga(monto) {
   const max = Number(process.env.RECARGA_CELULAR_MAX || 5000);
   const min = Number(process.env.RECARGA_CELULAR_MIN || 10);
+
+  if (!monto || monto < min || monto > max) {
+    return { ok: false, msg: `Monto permitido: HTG ${min} a HTG ${max}` };
+  }
+
+  return { ok: true };
+}
+
+function validarMontoRecargaWallet(monto) {
+  const max = Number(process.env.RECARGA_WALLET_MAX || 100000);
+  const min = Number(process.env.RECARGA_WALLET_MIN || 50);
 
   if (!monto || monto < min || monto > max) {
     return { ok: false, msg: `Monto permitido: HTG ${min} a HTG ${max}` };
@@ -174,9 +191,41 @@ router.post("/wallet/iniciar", auth, async (req, res) => {
   try {
     const { monto, metodoPago } = req.body;
     const MONTO = parseMoney(monto);
+    const metodo = normalizeProvider(metodoPago);
 
-    if (!MONTO || MONTO <= 0 || !["moncash", "natcash"].includes(metodoPago)) {
+    if (!MONTO || MONTO <= 0) {
       return res.status(400).json({ ok: false, msg: "Datos incompletos" });
+    }
+
+    const montoValido = validarMontoRecargaWallet(MONTO);
+    if (!montoValido.ok) {
+      return res.status(400).json({ ok: false, msg: montoValido.msg });
+    }
+
+    const method = await PaymentMethod.findOne({
+      userId: req.user.id,
+      provider: metodo,
+      status: "active",
+    }).lean();
+
+    if (!method) {
+      return res.status(409).json({
+        ok: false,
+        code: "PAYMENT_METHOD_REQUIRED",
+        msg: "Primero asocia una cuenta real para este metodo.",
+      });
+    }
+
+    const cfg = providerConfig(metodo);
+    const checkoutUrl = process.env[`${metodo.toUpperCase()}_CHECKOUT_URL`];
+
+    if (!cfg.canPay || !checkoutUrl) {
+      return res.status(503).json({
+        ok: false,
+        code: "PROVIDER_NOT_READY",
+        provider: metodo,
+        msg: providerUnavailableMessage(metodo),
+      });
     }
 
     const firmaBeGO = generarFirma(req.user.id);
@@ -185,24 +234,38 @@ router.post("/wallet/iniciar", auth, async (req, res) => {
       userId: req.user.id,
       monto: MONTO,
       tipo: "recarga_wallet",
-      metodoPago,
+      metodoPago: metodo,
       estado: "pendiente",
       firmaBeGO
     });
 
     const callback = `${getPublicApiUrl(req)}/api/recargas/wallet/callback/${firmaBeGO}`;
+    let url;
+    try {
+      url = new URL(checkoutUrl);
+    } catch (urlErr) {
+      recarga.estado = "fallida";
+      await recarga.save();
 
-    let urlPago;
-    if (metodoPago === "moncash") {
-      urlPago = `https://moncashbutton.com/pay?amount=${MONTO}&orderId=${firmaBeGO}&callback=${encodeURIComponent(callback)}`;
-    } else {
-      urlPago = `https://natcash.ht/pay?amount=${MONTO}&orderId=${firmaBeGO}&callback=${encodeURIComponent(callback)}`;
+      return res.status(503).json({
+        ok: false,
+        code: "PROVIDER_NOT_READY",
+        provider: metodo,
+        msg: providerUnavailableMessage(metodo),
+      });
     }
 
-    res.json({ ok: true, urlPago });
+    url.searchParams.set("amount", String(MONTO));
+    url.searchParams.set("orderId", firmaBeGO);
+    url.searchParams.set("callback", callback);
+
+    res.json({ ok: true, recargaId: recarga._id, urlPago: url.toString() });
 
   } catch (err) {
     console.error(err);
+    if (err.message === "PROVIDER_INVALID") {
+      return res.status(400).json({ ok: false, msg: "Metodo de pago invalido" });
+    }
     res.status(500).json({ ok: false, msg: "Error iniciando pago" });
   }
 });

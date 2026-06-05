@@ -4,9 +4,12 @@ const auth = require("../middleware/authHttp");
 const Viaje = require("../models/Viaje");
 const Wallet = require("../models/Wallet");
 const User = require("../models/User");
-const crypto = require("crypto");
-const redis = require("../config/redis");
 const { getCommissionRate, calculateCommission } = require("../services/commission.service");
+const {
+  normalizeProvider,
+  providerConfig,
+  providerUnavailableMessage,
+} = require("../services/paymentMethods.service");
 
 /*************************************************
  * 💳 INICIAR PAGO
@@ -48,14 +51,42 @@ router.post("/iniciar", auth, async (req, res) => {
     }
 
     // 📱 MONCASH / NATCASH
+    const provider = normalizeProvider(metodoPago);
+    const cfg = providerConfig(provider);
+    const checkoutUrl = process.env[`${provider.toUpperCase()}_CHECKOUT_URL`];
+
+    if (!cfg.canPay || !checkoutUrl) {
+      return res.status(503).json({
+        ok: false,
+        code: "PROVIDER_NOT_READY",
+        provider,
+        error: providerUnavailableMessage(provider),
+      });
+    }
+
     const reference = "GM-" + Date.now();
     viaje.referenciaPago = reference;
     await viaje.save();
 
+    let urlPago;
+    try {
+      urlPago = new URL(checkoutUrl);
+    } catch (urlErr) {
+      return res.status(503).json({
+        ok: false,
+        code: "PROVIDER_NOT_READY",
+        provider,
+        error: providerUnavailableMessage(provider),
+      });
+    }
+
+    urlPago.searchParams.set("orderId", reference);
+    urlPago.searchParams.set("amount", String(viaje.precio));
+
     res.json({
       ok: true,
       reference,
-      urlPago: `https://sandbox.BeGO.ht/pagar/${reference}?monto=${viaje.precio}`,
+      urlPago: urlPago.toString(),
       estadoPago: "esperando_pago",
     });
   } catch (err) {

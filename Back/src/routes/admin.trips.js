@@ -11,6 +11,7 @@ const {
   getOfferMotoristaIds,
   releaseOfferLocksForViaje,
 } = require("../services/matching_services/offerLock.service");
+const { logAdminAction } = require("../services/adminAudit.service");
 
 const router = express.Router();
 
@@ -97,6 +98,24 @@ router.post("/viajes/:id/reasignar", authAdmin, async (req, res) => {
         timestamp: Date.now(),
       });
     }
+
+    await logAdminAction(req, {
+      action: "trip.reassign",
+      entity: "Viaje",
+      entityId: viajeId,
+      before: {
+        estado: estadoAnterior,
+        motorista: motoristaAnterior,
+      },
+      after: {
+        estado: actualizado.estado,
+        motorista: actualizado.motorista || null,
+      },
+      meta: {
+        motivo,
+        pasajeroId,
+      },
+    });
 
     return res.json({
       ok: true,

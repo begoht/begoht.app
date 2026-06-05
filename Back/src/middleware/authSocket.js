@@ -1,6 +1,18 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
+function activeTripTokenGraceSeconds() {
+  const value = Number(process.env.ACTIVE_TRIP_TOKEN_GRACE_SECONDS ?? 900);
+  if (!Number.isFinite(value) || value < 0) return 0;
+  return Math.min(value, 3600);
+}
+
+function tokenInsideGrace(decoded) {
+  if (!decoded?.exp) return false;
+  const expiredFor = Math.floor(Date.now() / 1000) - Number(decoded.exp);
+  return expiredFor >= 0 && expiredFor <= activeTripTokenGraceSeconds();
+}
+
 module.exports = async (socket, next) => {
   try {
     console.log("🔐 AUTH SOCKET INICIADO");
@@ -30,17 +42,29 @@ module.exports = async (socket, next) => {
       decoded = jwt.verify(token, process.env.JWT_SECRET);
     } catch (err) {
       if (err.name === "TokenExpiredError") {
-        // 1. Decodificamos sin verificar para saber quién es el usuario
-        const payloadInseguro = jwt.decode(token);
+        // Firma valida, expiracion ignorada solo para una gracia corta de viaje activo.
+        let expiredPayload;
+        try {
+          expiredPayload = jwt.verify(token, process.env.JWT_SECRET, { ignoreExpiration: true });
+        } catch (verifyErr) {
+          console.warn("Token expirado con firma invalida:", verifyErr.message);
+          return next(new Error("Invalid token"));
+        }
+
+        if (!tokenInsideGrace(expiredPayload)) {
+          console.warn("Token expirado fuera del margen de gracia");
+          socket.emit("auth-expired");
+          return socket.disconnect(true);
+        }
         
-        if (payloadInseguro && payloadInseguro.id) {
-          const userCheck = await User.findById(payloadInseguro.id).lean();
+        if (expiredPayload && expiredPayload.id) {
+          const userCheck = await User.findById(expiredPayload.id).lean();
           
           // 2. Condición especial: Si es pasajero y está en un viaje activo
           // Nota: Asegúrate de que 'estado' o 'enViaje' sea el campo correcto en tu modelo
           if (userCheck && userCheck.rol === "pasajero" && userCheck.enViaje === true) {
             console.log(`⏳ Token expirado pero usuario ${userCheck.nombre} está en viaje. Permitiendo conexión.`);
-            decoded = payloadInseguro; // Bypass de expiración
+            decoded = expiredPayload;
           } else {
             console.warn("⛔ Token expirado y usuario no está activo");
             socket.emit("auth-expired");

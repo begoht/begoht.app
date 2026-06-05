@@ -4,11 +4,15 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const Wallet = require("../models/Wallet");
+const {
+  authLimiter,
+  registerLimiter,
+} = require("../middleware/rateLimits");
 
 /*************************************************
  * 🛵 REGISTER DRIVER
  *************************************************/
-router.post("/register", async (req, res) => {
+router.post("/register", registerLimiter, async (req, res) => {
   try {
     const {
       nombre,
@@ -89,7 +93,7 @@ router.post("/register", async (req, res) => {
 /*************************************************
  * 🛵 LOGIN DRIVER
  *************************************************/
-router.post("/login", async (req, res) => {
+router.post("/login", authLimiter, async (req, res) => {
   try {
     const { telefono, password } = req.body;
 
