@@ -1,5 +1,4 @@
 import { safe } from "../features/shared/safe.js";
-import { safeImport } from "../features/shared/import.js";
 import { initModo } from "../../modo.js";
 import { initWalletUI } from "../../wallet.js";
 import { initLogout } from "../../logout.js";
@@ -43,9 +42,6 @@ export async function runPageInit() {
 
 
 
-    if (document.body.classList.contains("route-cuenta")) {
-        await safeImport(initId, "../user.js", "initUserUI");
-    }
 }
 
 function toggleMap(isHome) {
