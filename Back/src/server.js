@@ -130,27 +130,33 @@ app.get("/healthz", (req, res) => {
 const driverPath = path.resolve(__dirname, "../../front-driver/www");
 const pasajeroPath = path.resolve(__dirname, "../../front/www");
 const downloadsPath = path.resolve(__dirname, "../../downloads");
+const allowedDownloadFiles = Object.freeze({
+  "bego-pasajero.apk": "bego-pasajero.apk",
+  "bego-motorista.apk": "bego-motorista.apk",
+});
 
 app.get("/", (req, res) => {
   res.sendFile(path.join(pasajeroPath, "landing.html"));
 });
 
 app.use("/driver", express.static(driverPath));
-app.use(express.static(pasajeroPath));
 
-app.get("/download/:apk", (req, res) => {
-  const allowed = {
-    "bego-pasajero.apk": "bego-pasajero.apk",
-    "bego-motorista.apk": "bego-motorista.apk"
-  };
-  const fileName = allowed[req.params.apk];
+app.get(["/download/:apk", "/downloads/:apk"], (req, res) => {
+  const fileName = allowedDownloadFiles[req.params.apk];
 
   if (!fileName) {
     return res.status(404).send("Archivo no encontrado");
   }
 
-  res.download(path.join(downloadsPath, fileName), fileName);
+  res.setHeader("Cache-Control", "no-store");
+  res.download(path.join(downloadsPath, fileName), fileName, (err) => {
+    if (err && !res.headersSent) {
+      res.status(404).send("Archivo no disponible");
+    }
+  });
 });
+
+app.use(express.static(pasajeroPath));
 
 app.get("/driver/*", (req, res) => {
   res.sendFile(path.join(driverPath, "index.html"));
