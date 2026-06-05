@@ -78,6 +78,10 @@ export function renderDetalleViaje() {
             <span id="detalleVehiculo">Moto BeGO</span>
             <small id="detalleTelefono">Verification BeGO</small>
           </div>
+          <div class="motorista-rating-pill" id="detalleMotoristaRating">
+            <i class="fa-solid fa-star"></i>
+            <span>5.0</span>
+          </div>
         </div>
       </section>
 
@@ -104,21 +108,36 @@ export function renderDetalleViaje() {
 
     <div id="modalRating" class="modal hidden">
       <div class="modal-content detalle-rating-modal">
-        <span class="rating-kicker">Evaluation BeGO</span>
+        <div class="rating-modal-head">
+          <span class="rating-kicker">Evaluation BeGO</span>
+          <button id="cerrarRating" class="rating-close" type="button" aria-label="Fermer">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
         <h3>Noter le conducteur</h3>
+        <p class="rating-subtitle">Votre avis aide BeGO a garder une experience fiable.</p>
 
-        <div class="estrellas">
-          <i class="fa-solid fa-star" data-value="1"></i>
-          <i class="fa-solid fa-star" data-value="2"></i>
-          <i class="fa-solid fa-star" data-value="3"></i>
-          <i class="fa-solid fa-star" data-value="4"></i>
-          <i class="fa-solid fa-star" data-value="5"></i>
+        <div class="estrellas" role="group" aria-label="Note">
+          <button class="rating-star" type="button" data-value="1" aria-label="1 sur 5"><i class="fa-solid fa-star"></i></button>
+          <button class="rating-star" type="button" data-value="2" aria-label="2 sur 5"><i class="fa-solid fa-star"></i></button>
+          <button class="rating-star" type="button" data-value="3" aria-label="3 sur 5"><i class="fa-solid fa-star"></i></button>
+          <button class="rating-star" type="button" data-value="4" aria-label="4 sur 5"><i class="fa-solid fa-star"></i></button>
+          <button class="rating-star" type="button" data-value="5" aria-label="5 sur 5"><i class="fa-solid fa-star"></i></button>
         </div>
 
-        <textarea id="comentario" placeholder="Commentaire optionnel"></textarea>
+        <div class="rating-tags" aria-label="Details rapides">
+          <button type="button" data-rating-tag="safe">Securite</button>
+          <button type="button" data-rating-tag="clean">Moto propre</button>
+          <button type="button" data-rating-tag="polite">Courtoisie</button>
+          <button type="button" data-rating-tag="fast">Ponctualite</button>
+          <button type="button" data-rating-tag="route">Bon trajet</button>
+          <button type="button" data-rating-tag="communication">Communication</button>
+        </div>
+
+        <textarea id="comentario" maxlength="280" placeholder="Commentaire optionnel"></textarea>
+        <p id="ratingStatus" class="rating-status" aria-live="polite"></p>
 
         <div class="modal-actions">
-          <button id="cerrarRating" class="btn-secundario ripple" type="button">Annuler</button>
           <button id="btnEnviarRating" class="btn-primario ripple" type="button">Envoyer</button>
         </div>
       </div>

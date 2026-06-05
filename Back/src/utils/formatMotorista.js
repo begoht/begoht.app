@@ -12,7 +12,9 @@ module.exports = function formatMotorista(motoristaDoc) {
     apellido: motoristaDoc.apellido || "",
     telefono: motoristaDoc.telefono || null,
     foto: motoristaDoc.foto || null,
-    calificacion: motoristaDoc.calificacion || 5.0,
+    calificacion: motoristaDoc.rating || motoristaDoc.calificacion || 5.0,
+    rating: motoristaDoc.rating || motoristaDoc.calificacion || 5.0,
+    ratingCount: motoristaDoc.ratingCount || 0,
     vehiculo: {
       marca: v.marca || motoristaDoc.vehiculoMarca || "",
       modelo: v.modelo || motoristaDoc.vehiculoModelo || "",

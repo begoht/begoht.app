@@ -27,8 +27,8 @@
 /* 6. PÁGINAS (LO MÁS ESPECÍFICO) */
 @import "./pages/driver.css";
 @import "./pages/servicios.css";
-@import "./pages/actividad.css";
-@import "./pages/detalle-viaje.css?v=20260603-detalle-premium";
+@import "./pages/actividad.css?v=20260605-rating-premium";
+@import "./pages/detalle-viaje.css?v=20260605-rating-premium";
 @import "./pages/billetera.css";
 @import "./pages/pagos.css?v=20260605-payments-premium";
 @import "./pages/configuracion.css?v=20260603-mobile-support";

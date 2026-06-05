@@ -323,6 +323,7 @@
 
 .route-detalle-viaje .motorista-info {
   min-width: 0;
+  flex: 1;
 }
 
 .route-detalle-viaje .motorista-info strong {
@@ -338,6 +339,26 @@
   color: #cbd5e1;
   font-size: 13px;
   line-height: 1.35;
+}
+
+.route-detalle-viaje .motorista-rating-pill {
+  min-width: 62px;
+  min-height: 34px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid rgba(250, 204, 21, 0.22);
+  border-radius: 999px;
+  color: #fde68a;
+  background: rgba(250, 204, 21, 0.08);
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.route-detalle-viaje .motorista-rating-pill i {
+  font-size: 11px;
 }
 
 .route-detalle-viaje .detalle-security {
@@ -405,33 +426,125 @@
   background: linear-gradient(135deg, #2563eb, #38bdf8);
 }
 
+.route-detalle-viaje .modal {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: end center;
+  padding: 16px;
+  background: rgba(2, 6, 23, 0.72);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.route-detalle-viaje .modal.hidden {
+  display: none;
+}
+
 .route-detalle-viaje .detalle-rating-modal {
+  width: min(100%, 420px);
+  max-height: calc(100vh - 32px);
+  overflow: auto;
+  border: 1px solid rgba(148, 163, 184, 0.16);
   border-radius: 8px;
+  padding: 18px;
+  color: #f8fafc;
+  background:
+    radial-gradient(circle at 50% -12%, rgba(37, 99, 235, 0.24), transparent 35%),
+    linear-gradient(180deg, rgba(15, 23, 42, 0.98), rgba(2, 6, 23, 0.99));
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.48);
+}
+
+.route-detalle-viaje .rating-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .route-detalle-viaje .rating-kicker {
   display: block;
-  margin-bottom: 6px;
   color: #60a5fa;
   font-size: 11px;
-  font-weight: 900;
+  font-weight: 950;
   text-transform: uppercase;
+}
+
+.route-detalle-viaje .rating-close {
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  color: #cbd5e1;
+  background: rgba(15, 23, 42, 0.72);
+}
+
+.route-detalle-viaje .detalle-rating-modal h3 {
+  margin: 8px 0 4px;
+  color: #ffffff;
+  font-size: 22px;
+  line-height: 1.15;
+  font-weight: 950;
+}
+
+.route-detalle-viaje .rating-subtitle {
+  margin: 0;
+  color: #cbd5e1;
+  font-size: 13px;
+  line-height: 1.45;
 }
 
 .route-detalle-viaje .estrellas {
   display: flex;
   justify-content: center;
-  gap: 10px;
-  margin: 18px 0;
+  gap: 7px;
+  margin: 18px 0 14px;
 }
 
-.route-detalle-viaje .estrellas i {
-  color: rgba(148, 163, 184, 0.45);
-  font-size: 28px;
+.route-detalle-viaje .rating-star {
+  width: 46px;
+  height: 46px;
+  border: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: rgba(148, 163, 184, 0.55);
+  background: rgba(15, 23, 42, 0.82);
+  font-size: 20px;
 }
 
-.route-detalle-viaje .estrellas i.activa {
+.route-detalle-viaje .rating-star.activa {
   color: #facc15;
+  background: rgba(250, 204, 21, 0.13);
+  box-shadow: inset 0 0 0 1px rgba(250, 204, 21, 0.24);
+}
+
+.route-detalle-viaje .rating-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.route-detalle-viaje .rating-tags button {
+  min-height: 34px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 999px;
+  padding: 0 12px;
+  color: #cbd5e1;
+  background: rgba(15, 23, 42, 0.76);
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.route-detalle-viaje .rating-tags button.selected {
+  color: #dbeafe;
+  border-color: rgba(96, 165, 250, 0.38);
+  background: rgba(37, 99, 235, 0.2);
 }
 
 .route-detalle-viaje #comentario {
@@ -440,9 +553,47 @@
   resize: vertical;
   border: 1px solid rgba(148, 163, 184, 0.18);
   border-radius: 8px;
-  padding: 12px;
+  padding: 13px;
   color: var(--text-main);
   background: rgba(15, 23, 42, 0.96);
+  font: inherit;
+  font-size: 14px;
+}
+
+.route-detalle-viaje .rating-status {
+  min-height: 18px;
+  margin: 8px 2px 0;
+  color: #93c5fd;
+  font-size: 12px;
+  line-height: 1.35;
+  text-align: center;
+}
+
+.route-detalle-viaje .rating-status[data-type="success"] {
+  color: #86efac;
+}
+
+.route-detalle-viaje .rating-status[data-type="warning"] {
+  color: #fde68a;
+}
+
+.route-detalle-viaje .modal-actions {
+  margin-top: 12px;
+}
+
+.route-detalle-viaje .modal-actions .btn-primario {
+  width: 100%;
+  min-height: 50px;
+  border: 0;
+  border-radius: 8px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #2563eb, #38bdf8);
+  font-weight: 950;
+}
+
+.route-detalle-viaje .modal-actions .btn-primario:disabled {
+  opacity: 0.72;
+  cursor: wait;
 }
 
 @media (max-width: 360px) {
@@ -463,5 +614,19 @@
   .route-detalle-viaje .detalle-grid,
   .route-detalle-viaje .detalle-acciones {
     grid-template-columns: 1fr;
+  }
+
+  .route-detalle-viaje .motorista-row {
+    align-items: flex-start;
+  }
+
+  .route-detalle-viaje .motorista-rating-pill {
+    min-width: 54px;
+  }
+
+  .route-detalle-viaje .rating-star {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
   }
 }

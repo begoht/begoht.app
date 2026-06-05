@@ -145,6 +145,7 @@ export function initActividad() {
     const titulo = cancelado
       ? "Viaje cancelado"
       : tipo === "envio" ? "Envio completado" : "Viaje completado";
+    const ratingScore = ratingViaje(viaje.rating);
 
     const btn = document.createElement("button");
     btn.type = "button";
@@ -163,6 +164,7 @@ export function initActividad() {
         </div>
         <div class="actividad-der">
           <span class="precio">HTG ${money(viaje.precio)}</span>
+          ${ratingScore ? `<small class="actividad-rating"><i class="fa-solid fa-star"></i> ${ratingScore.toFixed(0)}/5</small>` : ""}
         </div>
       </div>
     `;
@@ -230,4 +232,10 @@ function formatDate(value) {
 function money(value) {
   const number = Number(value || 0);
   return number.toLocaleString(undefined, { maximumFractionDigits: 2 });
+}
+
+function ratingViaje(value) {
+  if (typeof value === "number") return value;
+  const score = Number(value?.score || value?.rating || 0);
+  return Number.isFinite(score) && score > 0 ? Math.max(1, Math.min(5, score)) : 0;
 }

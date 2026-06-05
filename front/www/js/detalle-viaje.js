@@ -1,4 +1,4 @@
-import { initRating } from "./initRating.js";
+import { initRating } from "./initRating.js?v=20260605-rating-premium";
 
 export async function initDetalleViaje() {
   await new Promise(requestAnimationFrame);
@@ -82,6 +82,8 @@ function pintarMotorista(data) {
   setText("#detalleVehiculo", `${vehiculoTexto}${placa}`);
   setText("#detalleTelefono", data.motorista?.telefono ? `Tel: ${data.motorista.telefono}` : "Verification BeGO");
   setText("#detalleMotoristaInicial", iniciales(nombre));
+  const rating = Number(data.motorista?.rating || data.motorista?.calificacion || 5);
+  setText("#detalleMotoristaRating span", `${rating.toFixed(1)}`);
 }
 
 function pintarMetricas(data) {

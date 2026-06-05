@@ -118,6 +118,12 @@ const UserSchema = new mongoose.Schema(
       max: 5,
     },
 
+    ratingCount: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+
     totalViajes: {
       type: Number,
       default: 0,

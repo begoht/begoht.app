@@ -37,6 +37,19 @@ const PaqueteSchema = new mongoose.Schema(
   { _id: false }
 );
 
+const RatingViajeSchema = new mongoose.Schema(
+  {
+    score: { type: Number, min: 1, max: 5, default: null },
+    comentario: { type: String, trim: true, maxlength: 280, default: "" },
+    tags: { type: [String], default: [] },
+    pasajero: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
+    motorista: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
+    submittedAt: { type: Date, default: null },
+    updatedAt: { type: Date, default: null },
+  },
+  { _id: false }
+);
+
 const ViajeSchema = new mongoose.Schema(
   {
     pasajero: {
@@ -159,6 +172,11 @@ const ViajeSchema = new mongoose.Schema(
     paBeGOrista: { type: Number, default: 0, min: 0 },
 
     finalizacionProcesada: { type: Boolean, default: false },
+
+    rating: {
+      type: RatingViajeSchema,
+      default: null,
+    },
 
     rutaPoints: { type: [RutaPointSchema], default: [] },
     rutaGeometria: { type: mongoose.Schema.Types.Mixed, default: null },

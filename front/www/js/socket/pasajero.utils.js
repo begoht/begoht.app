@@ -7,6 +7,7 @@ import { limpiarRutas } from "../map/map.ruta.js?v=20260604-jacmel-gps";
 import { initDriverMinimize } from "../ui/driver.minimize.js";
 import { resetRutaController } from "../map/map.route.flow.js?v=20260604-jacmel-gps";
 import { actualizarETA, resetETA } from "../pasajero/pasajero.eta.js";
+import { queuePendingRating, submitViajeRating } from "../rating/rating.api.js?v=20260605-rating-premium";
 
 /**
  * Guarda la sesión del viaje actual en localStorage de forma segura
@@ -363,7 +364,7 @@ function mostrarModalFinalizadoLegacy(total) {
   });
 }
 
-export function mostrarModalFinalizado(total) {
+export function mostrarModalFinalizado(total, payload = {}) {
   document.getElementById("modalFinalizado")?.remove();
 
   const motorista = viajeState.motorista || {};
@@ -397,6 +398,7 @@ export function mostrarModalFinalizado(total) {
   const conductor = escapeHtml(
     `${motorista.nombre || ""} ${motorista.apellido || ""}`.trim() || "Motorista BeGO"
   );
+  const viajeId = viajeState.viajeId || payload.viajeId || payload.viaje?._id || null;
 
   modal.innerHTML = `
   <div class="finalizado-overlay">
@@ -429,11 +431,26 @@ export function mostrarModalFinalizado(total) {
       </div>
 
       <div class="finalizado-rating">
-        <p>Califica la experiencia</p>
-        <div id="ratingStars" class="finalizado-stars" aria-label="Calificacion">★★★★★</div>
+        <p>Notez l'experience</p>
+        <div id="ratingStars" class="finalizado-stars" role="group" aria-label="Note">
+          <button type="button" data-value="1" aria-label="1 sur 5"><i class="fa-solid fa-star"></i></button>
+          <button type="button" data-value="2" aria-label="2 sur 5"><i class="fa-solid fa-star"></i></button>
+          <button type="button" data-value="3" aria-label="3 sur 5"><i class="fa-solid fa-star"></i></button>
+          <button type="button" data-value="4" aria-label="4 sur 5"><i class="fa-solid fa-star"></i></button>
+          <button type="button" data-value="5" aria-label="5 sur 5"><i class="fa-solid fa-star"></i></button>
+        </div>
+        <div class="finalizado-tags" aria-label="Details rapides">
+          <button type="button" data-rating-tag="safe">Securite</button>
+          <button type="button" data-rating-tag="clean">Moto propre</button>
+          <button type="button" data-rating-tag="polite">Courtoisie</button>
+          <button type="button" data-rating-tag="fast">Ponctualite</button>
+          <button type="button" data-rating-tag="route">Bon trajet</button>
+          <button type="button" data-rating-tag="communication">Communication</button>
+        </div>
       </div>
 
-      <textarea id="feedbackViaje" class="finalizado-feedback" placeholder="Dejar comentario (opcional)"></textarea>
+      <textarea id="feedbackViaje" class="finalizado-feedback" maxlength="280" placeholder="Commentaire optionnel"></textarea>
+      <p id="finalizadoRatingStatus" class="finalizado-rating-status" aria-live="polite"></p>
 
       <div class="finalizado-social">
         <span>Siguenos para promociones y novedades</span>
@@ -568,13 +585,50 @@ export function mostrarModalFinalizado(total) {
     }
     .finalizado-stars {
       display: inline-flex;
+      gap: 5px;
       min-height: 40px;
       align-items: center;
-      color: #facc15;
-      font-size: 1.75rem;
-      letter-spacing: 0;
+      justify-content: center;
+    }
+    .finalizado-stars button {
+      width: 38px;
+      height: 38px;
+      border: 0;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: rgba(148, 163, 184, 0.5);
+      background: rgba(15, 23, 42, 0.76);
+      font-size: 1.18rem;
       cursor: pointer;
-      user-select: none;
+    }
+    .finalizado-stars button.activa {
+      color: #facc15;
+      background: rgba(250, 204, 21, 0.12);
+      box-shadow: inset 0 0 0 1px rgba(250, 204, 21, 0.22);
+    }
+    .finalizado-tags {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 7px;
+      margin-top: 10px;
+    }
+    .finalizado-tags button {
+      min-height: 32px;
+      border: 1px solid rgba(148, 163, 184, 0.15);
+      border-radius: 999px;
+      padding: 0 10px;
+      color: #cbd5e1;
+      background: rgba(15, 23, 42, 0.72);
+      font: inherit;
+      font-size: 0.74rem;
+      font-weight: 850;
+    }
+    .finalizado-tags button.selected {
+      color: #dbeafe;
+      border-color: rgba(96, 165, 250, 0.36);
+      background: rgba(37, 99, 235, 0.2);
     }
     .finalizado-feedback {
       width: 100%;
@@ -590,6 +644,13 @@ export function mostrarModalFinalizado(total) {
       background: rgba(15, 23, 42, 0.78);
       font: inherit;
       font-size: 0.9rem;
+    }
+    .finalizado-rating-status {
+      min-height: 18px;
+      margin: 8px 2px 0;
+      color: #93c5fd;
+      font-size: 0.78rem;
+      text-align: center;
     }
     .finalizado-social {
       margin-top: 12px;
@@ -635,6 +696,10 @@ export function mostrarModalFinalizado(total) {
     .finalizado-btn:active {
       transform: scale(0.98);
     }
+    .finalizado-btn:disabled {
+      opacity: 0.72;
+      cursor: wait;
+    }
     @keyframes finalizadoFade { from { opacity: 0 } to { opacity: 1 } }
     @keyframes finalizadoScale { from { transform: scale(0.94); opacity: 0 } to { transform: scale(1); opacity: 1 } }
   </style>
@@ -643,21 +708,60 @@ export function mostrarModalFinalizado(total) {
   document.body.appendChild(modal);
 
   let rating = 5;
+  const selectedTags = new Set();
   const starsEl = modal.querySelector("#ratingStars");
+  const starButtons = [...modal.querySelectorAll("#ratingStars [data-value]")];
+  const tagButtons = [...modal.querySelectorAll("[data-rating-tag]")];
+  const statusEl = modal.querySelector("#finalizadoRatingStatus");
+  const listoBtn = modal.querySelector("#cerrarModalViaje");
+
+  const renderStars = () => {
+    starButtons.forEach((button) => {
+      const active = Number(button.dataset.value) <= rating;
+      button.classList.toggle("activa", active);
+      button.setAttribute("aria-pressed", active ? "true" : "false");
+    });
+  };
 
   if (starsEl) {
-    starsEl.addEventListener("click", (e) => {
-      const rect = starsEl.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const index = Math.ceil((x / rect.width) * 5);
-      rating = Math.max(1, Math.min(5, index));
-      starsEl.textContent = "★".repeat(rating) + "☆".repeat(5 - rating);
+    renderStars();
+    starButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        rating = Math.max(1, Math.min(5, Number(button.dataset.value)));
+        renderStars();
+      });
     });
   }
 
-  modal.querySelector("#cerrarModalViaje")?.addEventListener("click", () => {
+  tagButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const tag = button.dataset.ratingTag;
+      if (selectedTags.has(tag)) selectedTags.delete(tag);
+      else selectedTags.add(tag);
+      button.classList.toggle("selected", selectedTags.has(tag));
+    });
+  });
+
+  listoBtn?.addEventListener("click", async () => {
+    const feedback = modal.querySelector("#feedbackViaje")?.value?.trim() || "";
+    const ratingPayload = { rating, comentario: feedback, tags: [...selectedTags] };
+
+    if (listoBtn) {
+      listoBtn.disabled = true;
+      listoBtn.textContent = "Enregistrement...";
+    }
+    if (statusEl) statusEl.textContent = "";
+
     try {
-      const feedback = modal.querySelector("#feedbackViaje")?.value?.trim() || "";
+      if (viajeId) {
+        try {
+          await submitViajeRating(viajeId, ratingPayload);
+        } catch {
+          queuePendingRating(viajeId, ratingPayload);
+          if (statusEl) statusEl.textContent = "Connexion instable. La note sera renvoyee.";
+        }
+      }
+
       const viajes = JSON.parse(localStorage.getItem("viajes") || "[]");
 
       viajes.unshift({
@@ -673,7 +777,12 @@ export function mostrarModalFinalizado(total) {
         },
         precio: total,
         tipoServicio: viajeState.tipoServicio || "viaje",
-        rating,
+        rating: {
+          score: rating,
+          comentario: feedback,
+          tags: [...selectedTags],
+          pending: !viajeId
+        },
         feedback
       });
 

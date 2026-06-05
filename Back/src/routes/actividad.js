@@ -41,7 +41,7 @@ router.get("/mis-viajes", auth, async (req, res) => {
       ...filtroUsuario,
       estado: { $nin: ["buscando", "ofertando", "sin_motorista"] },
     })
-      .populate("motorista", "nombre apellido telefono vehiculo")
+      .populate("motorista", "nombre apellido telefono vehiculo rating ratingCount")
       .populate("pasajero", "nombre apellido telefono")
       .sort({ createdAt: -1 });
 

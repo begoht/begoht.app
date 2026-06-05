@@ -22,7 +22,7 @@ module.exports = async (motoristaId, socket) => {
                     apellido: user.apellido || "",
                     foto: user.foto || "",
                     telefono: user.telefono || "",
-                    calificacion: String(user.calificacion || 5),
+                    calificacion: String(user.rating || user.calificacion || 5),
                     vehiculoMarca: user.vehiculo?.marca || "",
                     vehiculoModelo: user.vehiculo?.modelo || "",
                     vehiculoColor: user.vehiculo?.color || "",

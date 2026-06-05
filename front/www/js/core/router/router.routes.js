@@ -16,8 +16,8 @@ import { initModo } from "../../modo.js";
 import { initUserUI } from "../../user.js";
 import { renderGanancias } from "../../../paginas/generar-ganancias.js?v=20260605-earnings-page";
 import { initGanancias } from "../../ganancias.js?v=20260605-earnings-page";
-import { initDetalleViaje } from "../../detalle-viaje.js?v=20260603-detalle-premium";
-import { renderDetalleViaje } from "../../../paginas/detalle-viaje.js?v=20260603-detalle-premium";
+import { initDetalleViaje } from "../../detalle-viaje.js?v=20260605-rating-premium";
+import { renderDetalleViaje } from "../../../paginas/detalle-viaje.js?v=20260605-rating-premium";
 
 import { renderReciboRecarga } from "../../../paginas/recibo-recarga.js";
 import { initReciboRecarga } from "../../ReciboRecarga.js";

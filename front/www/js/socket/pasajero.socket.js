@@ -7,7 +7,7 @@ import { handleAsignado } from "./handlers/asignado.handler.js?v=20260605-price-
 import { handleTrack } from "./handlers/track.handler.js?v=20260604-jacmel-gps";
 import { handleLlego } from "./handlers/llego.handler.js";
 import { handleIniciado } from "./handlers/iniciado.handler.js";
-import { handleFinalizado } from "./handlers/finalizado.handler.js";
+import { handleFinalizado } from "./handlers/finalizado.handler.js?v=20260605-rating-premium";
 import { handleConnect } from "./handlers/connect.handler.js";
 import { handleError } from "./handlers/error.handler.js?v=20260605-price-premium-cancel";
 import { handleNoMotorista } from "./handlers/noMotorista.handler.js";
