@@ -52,7 +52,7 @@ async function cargarViaje() {
 
 function iniciarTracking(token) {
     const socket = io(window.location.origin, {
-        transports: ["polling", "websocket"],
+        transports: ["websocket"],
         auth: { tracking: true },
         reconnection: true,
         reconnectionAttempts: Infinity,

@@ -15,7 +15,7 @@ const API_BASE =
 
 const socket = io(API_BASE, {
   auth: { token },
-  transports: ["polling", "websocket"],
+  transports: ["websocket"],
   reconnection: true,
   reconnectionAttempts: Infinity,
   reconnectionDelay: 1000,

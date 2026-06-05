@@ -66,7 +66,7 @@ server.on("error", (err) => {
 // ============================
 // 🔹 SOCKET.IO
 // ============================
-const socketTransports = (process.env.SOCKET_TRANSPORTS || "polling,websocket")
+const socketTransports = (process.env.SOCKET_TRANSPORTS || "websocket")
   .split(",")
   .map((transport) => transport.trim())
   .filter(Boolean);

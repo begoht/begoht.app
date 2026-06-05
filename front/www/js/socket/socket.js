@@ -17,7 +17,7 @@ export function getSocket() {
   console.log("🔗 Conectando socket a:", serverUrl);
 
   socketInstance = io(serverUrl, {
-    transports: ["polling", "websocket"],
+    transports: ["websocket"],
 
     // 🔥 SOLO TOKEN
     auth: {
