@@ -17,7 +17,7 @@ function buildCorsOptions() {
       if (!origin) return callback(null, true);
       if (allowed.includes(origin)) return callback(null, true);
 
-      return callback(new Error("Origen CORS no permitido"));
+      return callback(null, false);
     },
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     allowedHeaders: [
