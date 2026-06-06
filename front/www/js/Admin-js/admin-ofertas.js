@@ -74,7 +74,7 @@ document.querySelectorAll("[data-status-action]").forEach((button) => {
 });
 
 loadOffers().catch((err) => {
-  showListMessage(`No se pudieron cargar ofertas: ${err.message}`);
+  showListMessage(`Impossible de charger les offres : ${err.message}`);
 });
 
 async function api(path, options = {}) {
@@ -98,7 +98,7 @@ async function api(path, options = {}) {
 }
 
 async function loadOffers() {
-  showListMessage("Cargando ofertas...");
+  showListMessage("Chargement des offres...");
   const data = await api("/api/admin/offers");
   state.offers = Array.isArray(data.offers) ? data.offers : [];
   renderOffersList();
@@ -123,7 +123,7 @@ function renderOffersList() {
   });
 
   if (!rows.length) {
-    showListMessage("No hay ofertas para mostrar.");
+    showListMessage("Aucune offre a afficher.");
     return;
   }
 
@@ -131,10 +131,10 @@ function renderOffersList() {
     <article class="offer-row ${offer.id === state.selectedId ? "active" : ""}">
       <div>
         <strong>${escapeHtml(offer.title)}</strong>
-        <span>${escapeHtml(offer.kicker || "Oferta BeGO")}</span>
+        <span>${escapeHtml(offer.kicker || "Offre BeGO")}</span>
         <small>${statusLabel(offer.status)} - ${escapeHtml(offer.placement)} - ${escapeHtml(offer.city || "all")}</small>
       </div>
-      <button type="button" data-select-offer="${escapeAttr(offer.id)}" aria-label="Editar oferta">
+      <button type="button" data-select-offer="${escapeAttr(offer.id)}" aria-label="Modifier l'offre">
         <i class="fa-solid fa-pen"></i>
       </button>
     </article>
@@ -166,8 +166,8 @@ function selectOffer(id) {
   fields.endsAt.value = toDateInput(offer.endsAt);
   fields.status.value = offer.status || "draft";
 
-  els.mode.textContent = "Editar oferta";
-  els.editorTitle.textContent = offer.title || "Control de publicacion";
+  els.mode.textContent = "Modifier l'offre";
+  els.editorTitle.textContent = offer.title || "Controle de publication";
   renderPreview();
   renderOffersList();
 }
@@ -187,8 +187,8 @@ function resetForm() {
   fields.actionRoute.value = "#/promos";
   fields.status.value = "draft";
 
-  els.mode.textContent = "Crear oferta";
-  els.editorTitle.textContent = "Control de publicacion";
+  els.mode.textContent = "Creer une offre";
+  els.editorTitle.textContent = "Controle de publication";
   renderPreview();
   renderOffersList();
 }
@@ -196,7 +196,7 @@ function resetForm() {
 async function saveOffer() {
   const payload = getPayload();
   if (!payload.title) {
-    alert("El titulo es obligatorio.");
+    alert("Le titre est obligatoire.");
     return;
   }
 
@@ -217,7 +217,7 @@ async function changeStatus(status) {
     return;
   }
 
-  if (status === "archived" && !confirm("Archivar esta oferta? Dejaria de mostrarse en la app.")) {
+  if (status === "archived" && !confirm("Archiver cette offre ? Elle ne sera plus affichee dans l'app.")) {
     return;
   }
 
@@ -270,7 +270,7 @@ function showListMessage(message) {
     <div class="offer-row">
       <div>
         <strong>${escapeHtml(message)}</strong>
-        <span>Admin ofertas pasajero</span>
+        <span>Admin offres passager</span>
       </div>
     </div>
   `;
@@ -278,21 +278,21 @@ function showListMessage(message) {
 
 function statusLabel(status) {
   const labels = {
-    draft: "Borrador",
-    published: "Publicado",
-    paused: "Pausado",
-    archived: "Archivado",
+    draft: "Brouillon",
+    published: "Publie",
+    paused: "En pause",
+    archived: "Archive",
   };
-  return labels[status] || status || "Borrador";
+  return labels[status] || status || "Brouillon";
 }
 
 function placementLabel(placement) {
   const labels = {
-    both: "Home y Promos",
-    home: "Home",
+    both: "Accueil et Promos",
+    home: "Accueil",
     promos: "Promos",
   };
-  return labels[placement] || "Home";
+  return labels[placement] || "Accueil";
 }
 
 function toDateInput(value) {
