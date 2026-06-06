@@ -11,12 +11,31 @@ let routeRequestId = 0;
 let recenterButtonBound = false;
 
 export function initMap() {
-  map = L.map("map", { zoomControl: false })
+  map = L.map("map", {
+    zoomControl: false,
+    preferCanvas: true,
+    tap: true,
+    inertia: true,
+    inertiaDeceleration: 2400,
+    inertiaMaxSpeed: 1600,
+    easeLinearity: 0.25,
+    zoomAnimation: true,
+    markerZoomAnimation: true,
+    fadeAnimation: true,
+    bounceAtZoomLimits: false
+  })
     .setView(DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM);
 
   L.tileLayer(
     "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
-    { maxZoom: 19 }
+    {
+      maxZoom: 19,
+      detectRetina: false,
+      updateWhenIdle: false,
+      updateWhenZooming: false,
+      updateInterval: 150,
+      keepBuffer: 5
+    }
   ).addTo(map);
 
   L.control.zoom({ position: "bottomright" }).addTo(map);

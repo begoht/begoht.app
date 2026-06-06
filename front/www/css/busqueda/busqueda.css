@@ -18,6 +18,9 @@
   height: clamp(280px, 38vh, 430px);
   min-height: 280px;
   margin: calc(var(--header-height, 76px) + env(safe-area-inset-top) + 18px) 16px 20px;
+  border-radius: 22px;
+  contain: layout paint;
+  isolation: isolate;
   z-index: 1;
 }
 
@@ -39,7 +42,23 @@
   overflow: hidden;
   position: relative;
   z-index: 1;
-  touch-action: pan-x pan-y;
+  touch-action: none;
+  overscroll-behavior: contain;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+#map.leaflet-container,
+#map .leaflet-pane,
+#map .leaflet-map-pane,
+#map .leaflet-tile-container {
+  will-change: transform;
+}
+
+#map .leaflet-tile {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 #map .leaflet-control-container {
