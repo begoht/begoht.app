@@ -9,6 +9,7 @@ const { sendMonitoringAlert } = require("../../src/services/monitoring/alert.ser
 
 const CHECK_INTERVAL_MS = Number(process.env.MONITOR_INTERVAL_MS || 60_000);
 const PM2_RESTART_THRESHOLD = Number(process.env.MONITOR_PM2_RESTART_THRESHOLD || 3);
+const PM2_BAD_STATUS_CHECKS = Number(process.env.MONITOR_PM2_BAD_STATUS_CHECKS || 2);
 const SOCKET_DISCONNECT_THRESHOLD = Number(process.env.MONITOR_SOCKET_DISCONNECT_THRESHOLD || 80);
 const FRONTEND_ERROR_THRESHOLD = Number(process.env.MONITOR_FRONTEND_ERROR_THRESHOLD || 12);
 const WINDOW_MINUTES = Number(process.env.MONITOR_WINDOW_MINUTES || 5);
@@ -143,17 +144,19 @@ async function checkPm2Restarts(state) {
     seen.add(app.name);
     const restarts = Number(app.pm2_env?.restart_time || 0);
     const status = app.pm2_env?.status || "unknown";
-    const previous = Number(state.pm2?.[app.name]?.restarts ?? restarts);
+    const previousState = state.pm2?.[app.name] || {};
+    const previous = Number(previousState.restarts ?? restarts);
     const delta = Math.max(0, restarts - previous);
-    result[app.name] = { status, restarts, delta };
+    const badStatusCount = status === "online" ? 0 : Number(previousState.badStatusCount || 0) + 1;
+    result[app.name] = { status, restarts, delta, badStatusCount };
 
-    if (status !== "online") {
+    if (status !== "online" && badStatusCount >= PM2_BAD_STATUS_CHECKS) {
       await sendMonitoringAlert({
         type: "pm2_app_not_online",
         severity: "critical",
         title: `${app.name} no esta online`,
         message: `Estado PM2: ${status}`,
-        meta: { app: app.name, status, restarts },
+        meta: { app: app.name, status, restarts, badStatusCount },
         dedupeKey: `pm2_app_not_online:${app.name}`,
         dedupeSeconds: 300,
       });
@@ -172,22 +175,30 @@ async function checkPm2Restarts(state) {
     }
 
     state.pm2 = state.pm2 || {};
-    state.pm2[app.name] = { restarts, checkedAt: new Date().toISOString() };
+    state.pm2[app.name] = { restarts, badStatusCount, checkedAt: new Date().toISOString() };
   }
 
   for (const appName of watched) {
     if (seen.has(appName)) continue;
 
-    result[appName] = { status: "missing", restarts: 0, delta: 0 };
-    await sendMonitoringAlert({
-      type: "pm2_app_missing",
-      severity: "critical",
-      title: `${appName} no existe en PM2`,
-      message: `No se encontro ${appName} en pm2 jlist`,
-      meta: { app: appName, watched },
-      dedupeKey: `pm2_app_missing:${appName}`,
-      dedupeSeconds: 300,
-    });
+    const previousState = state.pm2?.[appName] || {};
+    const badStatusCount = Number(previousState.badStatusCount || 0) + 1;
+    result[appName] = { status: "missing", restarts: 0, delta: 0, badStatusCount };
+
+    if (badStatusCount >= PM2_BAD_STATUS_CHECKS) {
+      await sendMonitoringAlert({
+        type: "pm2_app_missing",
+        severity: "critical",
+        title: `${appName} no existe en PM2`,
+        message: `No se encontro ${appName} en pm2 jlist`,
+        meta: { app: appName, watched, badStatusCount },
+        dedupeKey: `pm2_app_missing:${appName}`,
+        dedupeSeconds: 300,
+      });
+    }
+
+    state.pm2 = state.pm2 || {};
+    state.pm2[appName] = { restarts: Number(previousState.restarts || 0), badStatusCount, checkedAt: new Date().toISOString() };
   }
 
   return { ok: true, apps: result };
