@@ -5,7 +5,7 @@ import {
 } from "./viajeControl/viajeEstado.js";
 
 import { limpiarViajeMain } from "./viajeControl/viajeUI.js";
-import { borrarRuta } from "./map.js?v=20260603-road-heading-stable";
+import { borrarRuta } from "./map.js?v=20260606-recenter-map";
 
 const viajesFinalizadosProcesados = new Set();
 const finalizacionesPendientes = new Map();

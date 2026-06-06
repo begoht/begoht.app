@@ -6,8 +6,8 @@ import {
     viajesActivos 
 } from "../viajeControl/viajeEstado.js";
 import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js";
-import { getUltimaPosicion } from "../gps.js?v=20260603-road-heading-stable";
-import { redibujarRutaRecovery } from "./viajeInicioUI.js?v=20260603-road-heading-stable";
+import { getUltimaPosicion } from "../gps.js?v=20260606-recenter-map";
+import { redibujarRutaRecovery } from "./viajeInicioUI.js?v=20260606-recenter-map";
 let ultimoSyncProcesado = null;
 let ultimoSyncTs = 0;
 export function initViajeRecovery(socket) {

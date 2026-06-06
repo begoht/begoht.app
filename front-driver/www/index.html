@@ -24,7 +24,7 @@
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-  <link rel="stylesheet" href="./css/inicio.css?v=20260603-road-heading-stable" />
+  <link rel="stylesheet" href="./css/inicio.css?v=20260606-recenter-map" />
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -258,6 +258,9 @@
     
     <section class="mapa-container">
       <div id="map"></div>
+      <button id="driverRecenterMap" class="driver-map-recenter" type="button" aria-label="Recentrer la carte" title="Recentrer la carte">
+        <i class="fa-solid fa-location-crosshairs" aria-hidden="true"></i>
+      </button>
     </section>
     <div id="panelOferta" class="oferta-panel hidden">
       <div class="oferta-card-premium">
@@ -337,7 +340,7 @@
   <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
   <script src="./js/core/conexion.js"></script>
   <script type="module" src="./js/monitoring/frontend-monitor.js?v=20260606-monitoring"></script>
-  <script type="module" src="js/modules/driver.main.js?v=20260606-legal-trust"></script>
+  <script type="module" src="js/modules/driver.main.js?v=20260606-recenter-map"></script>
   <script src="./js/i18n/fr.visual.js?v=20260601-fr"></script>
 
   <script>

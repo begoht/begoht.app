@@ -1,4 +1,4 @@
-import { stopGeo } from "../../map/map.geo.js";
+import { stopGeo } from "../../map/map.geo.js?v=20260606-recenter-map";
 
 // ===============================
 // 🌍 BASE PATH ROBUSTO

@@ -11,7 +11,7 @@
   <!-- CSS -->
   <link rel="stylesheet" href="./css/fouter/footer.css?v=20260602-home-blue">
 <link rel="stylesheet" href="./css/main.css?v=20260606-legal-trust">
-<link rel="stylesheet" href="./css/busqueda/busqueda.css?v=20260602-home-promos-title">
+<link rel="stylesheet" href="./css/busqueda/busqueda.css?v=20260606-recenter-map">
   <link rel="stylesheet" href="./wallet/wallet.css?v=20260605-wallet-secure">
   <!-- LEAFLET -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
@@ -24,6 +24,7 @@
     body:not(.app-ready) #appHeader,
     body:not(.app-ready) #app,
     body:not(.app-ready) #map,
+    body:not(.app-ready) #btnRecentrarMapa,
     body:not(.app-ready) #appMain,
     body:not(.app-ready) #appFooter,
     body:not(.app-ready) #overlayBuscando,
@@ -143,6 +144,9 @@
   </header>
   <div id="app"></div>
   <div id="map"></div>
+  <button id="btnRecentrarMapa" class="map-recenter-btn" type="button" aria-label="Recentrer la carte" title="Recentrer la carte">
+    <i class="fa-solid fa-location-crosshairs" aria-hidden="true"></i>
+  </button>
   <main id="appMain" class="home-page">
 
   <button id="btnUbicacion">Usar ubicación actual</button>
@@ -427,7 +431,7 @@
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 <script type="module" src="./js/monitoring/frontend-monitor.js?v=20260606-monitoring"></script>
 <script type="module">
-  import { initApp } from "./js/core/app/app.js?v=20260606-legal-trust";
+  import { initApp } from "./js/core/app/app.js?v=20260606-recenter-map";
   initApp();
 </script>
 

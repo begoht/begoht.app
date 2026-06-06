@@ -21,6 +21,8 @@ import { animarMarker } from "./tracking/map.animation.js";
 
 let marcadorPasajero = null;
 let ubicacionButtonBound = false;
+let recenterButtonBound = false;
+let ultimaUbicacionGps = null;
 
 function viajeProtegido() {
   return ["buscando", "asignado", "reservado", "llego", "en_curso"].includes(viajeState.estado);
@@ -96,6 +98,8 @@ function mostrarCentroServicio(map, mensaje) {
 }
 
 function aplicarUbicacionGps(map, lat, lng, direccion, { center = false, animate = false } = {}) {
+  ultimaUbicacionGps = { lat, lng, direccion };
+
   if (!viajeProtegido()) {
     viajeState.origen = { lat, lng, direccion };
   }
@@ -106,6 +110,27 @@ function aplicarUbicacionGps(map, lat, lng, direccion, { center = false, animate
 
   setInputInicio(direccion);
   renderPasajeroMarker(map, lat, lng, direccion, { animate });
+}
+
+function centrarMapaEn(map, punto, zoom = 16) {
+  if (!map || !punto) return false;
+
+  const lat = Number(punto.lat);
+  const lng = Number(punto.lng);
+
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+    return false;
+  }
+
+  if (typeof map.flyTo === "function") {
+    map.flyTo([lat, lng], Math.max(map.getZoom?.() || zoom, zoom), {
+      duration: 0.65
+    });
+  } else {
+    map.setView([lat, lng], zoom);
+  }
+
+  return true;
 }
 
 function switchCityFromGpsIfNeeded(lat, lng) {
@@ -188,6 +213,34 @@ function bindUbicacionButton(map) {
   });
 }
 
+function bindRecenterButton(map) {
+  const btn = document.getElementById("btnRecentrarMapa");
+  if (!btn || recenterButtonBound) return;
+
+  recenterButtonBound = true;
+
+  btn.addEventListener("click", async () => {
+    btn.disabled = true;
+    btn.classList.add("is-loading");
+
+    try {
+      const gpsOk = await tomarUbicacionActual(map, { center: true, fromButton: true });
+      if (!gpsOk && !centrarMapaEn(map, ultimaUbicacionGps || viajeState.origen || getCiudadCentro())) {
+        mostrarCentroServicio(map);
+      }
+    } catch (err) {
+      console.warn("recentrar pasajero:", err);
+
+      if (!centrarMapaEn(map, ultimaUbicacionGps || viajeState.origen || getCiudadCentro())) {
+        mostrarCentroServicio(map);
+      }
+    } finally {
+      btn.disabled = false;
+      btn.classList.remove("is-loading");
+    }
+  });
+}
+
 export async function initGeo(map) {
   if (!map || typeof map.addLayer !== "function") {
     console.error("Mapa invalido");
@@ -204,6 +257,7 @@ export async function initGeo(map) {
   layerMotoristas.addTo(map);
   layerReferencias.addTo(map);
   bindUbicacionButton(map);
+  bindRecenterButton(map);
 
   try {
     const gpsOk = await tomarUbicacionActual(map, { center: true });

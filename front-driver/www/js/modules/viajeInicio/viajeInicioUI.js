@@ -1,4 +1,4 @@
-import { borrarRuta, dibujarRutaPremium } from "../map.js?v=20260603-road-heading-stable";
+import { borrarRuta, dibujarRutaPremium } from "../map.js?v=20260606-recenter-map";
 import { setViajeEnCurso, setEstadoViaje,viajesActivos,setViajeReservadoId} from "../viajeControl/viajeEstado.js";
 import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js";
 import { llegadaTimeout } from "./viajeInicioEstado.js";

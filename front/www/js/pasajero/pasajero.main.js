@@ -1,4 +1,4 @@
-import { initGeo } from "../map/map.geo.js?v=20260605-passenger-dot";
+import { initGeo } from "../map/map.geo.js?v=20260606-recenter-map";
 import { initSeleccionDestino } from "../map/map.destino.js?v=20260605-price-premium-cancel";
 import { actualizarBotonViaje } from "../pasajero/pasajero.ui.js?v=20260606-legal-trust";
 import { initPaymentMethodSettings, initToggleMenuDriver, seleccionarPago } from "./pasajero.ui.js?v=20260606-legal-trust";

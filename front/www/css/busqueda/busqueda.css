@@ -45,6 +45,58 @@
   display: none !important;
 }
 
+.map-recenter-btn {
+  position: fixed;
+  top: calc(var(--header-height, 76px) + env(safe-area-inset-top) + 34px);
+  right: 28px;
+  z-index: 82;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(96, 165, 250, 0.28);
+  border-radius: 16px;
+  color: #93c5fd;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.18), transparent 18%),
+    rgba(8, 15, 28, 0.92);
+  box-shadow:
+    0 18px 36px rgba(2, 6, 23, 0.44),
+    0 0 0 7px rgba(37, 99, 235, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  cursor: pointer;
+  transition: transform 0.18s ease, opacity 0.18s ease, box-shadow 0.18s ease;
+}
+
+.map-recenter-btn i {
+  font-size: 17px;
+}
+
+.map-recenter-btn:active {
+  transform: scale(0.94);
+  box-shadow:
+    0 10px 24px rgba(2, 6, 23, 0.42),
+    0 0 0 5px rgba(37, 99, 235, 0.14),
+    inset 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.map-recenter-btn.is-loading i {
+  animation: mapRecenterSpin 0.8s linear infinite;
+}
+
+body:not(.route-home) .map-recenter-btn,
+#map.hidden + .map-recenter-btn {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+@keyframes mapRecenterSpin {
+  to { transform: rotate(360deg); }
+}
+
 /* 🔍 INPUT PRINCIPAL (ESTILO HUECO/INSET) */
 .inicio {
   width: 100%;
@@ -90,6 +142,14 @@
     height: 280px;
     margin-left: 12px;
     margin-right: 12px;
+  }
+
+  .map-recenter-btn {
+    top: calc(var(--header-height, 76px) + env(safe-area-inset-top) + 30px);
+    right: 24px;
+    width: 44px;
+    height: 44px;
+    border-radius: 15px;
   }
 
   .busqueda {

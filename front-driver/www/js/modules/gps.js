@@ -1,4 +1,4 @@
-import { map, getRutaActualCoords } from "./map.js?v=20260603-road-heading-stable";
+import { map, getRutaActualCoords } from "./map.js?v=20260606-recenter-map";
 import { isDriverOnline, updateDriverPosition } from "./driver.status.js?v=20260603-road-heading-stable";
 import { motoIcon } from "./map.icons.js?v=20260603-road-heading-stable";
 import {
