@@ -6,6 +6,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnLogin = document.getElementById("btnLogin");
   const msgLogin = document.getElementById("msgLogin");
 
+  function normalizarTelefonoInternacional(value = "") {
+    const clean = String(value || "").replace(/[\s().-]/g, "").trim();
+    if (!clean.startsWith("+")) return String(value || "").trim();
+    return `+${clean.slice(1).replace(/\D/g, "")}`;
+  }
+
   if (!btnLogin) {
     console.log("No se encontro btnLogin");
     return;
@@ -14,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
   btnLogin.addEventListener("click", async (e) => {
     e.preventDefault();
 
-    const telefono = document.getElementById("telefono")?.value.trim();
+    const telefono = normalizarTelefonoInternacional(document.getElementById("telefono")?.value);
     const password = document.getElementById("password")?.value.trim();
 
     if (!telefono || !password) {

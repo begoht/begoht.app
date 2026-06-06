@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { normalizeInternationalPhone } = require("../utils/phone");
 
 const VehiculoSchema = new mongoose.Schema(
   {
@@ -28,7 +29,6 @@ const UserSchema = new mongoose.Schema(
     telefono: {
       type: String,
       required: true,
-      unique: true,
       trim: true,
     },
 
@@ -42,7 +42,6 @@ const UserSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
       sparse: true,
-      unique: true,
     },
 
     emailVerificado: {
@@ -159,6 +158,21 @@ const UserSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+UserSchema.index({ telefono: 1, rol: 1 }, { unique: true });
+UserSchema.index(
+  { email: 1, rol: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { email: { $exists: true, $type: "string" } },
+  }
+);
+
+UserSchema.pre("validate", function normalizePhoneBeforeValidate() {
+  if (this.telefono) {
+    this.telefono = normalizeInternationalPhone(this.telefono);
+  }
+});
 
 
 UserSchema.pre("save", async function () {

@@ -1,17 +1,20 @@
 const express = require("express");
-const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+
 const User = require("../models/User");
 const Wallet = require("../models/Wallet");
+const {
+  phoneLoginCandidates,
+  requireInternationalPhone,
+} = require("../utils/phone");
 const {
   authLimiter,
   registerLimiter,
 } = require("../middleware/rateLimits");
 
-/*************************************************
- * 🛵 REGISTER DRIVER
- *************************************************/
+const router = express.Router();
+
 router.post("/register", registerLimiter, async (req, res) => {
   try {
     const {
@@ -21,33 +24,54 @@ router.post("/register", registerLimiter, async (req, res) => {
       password,
       vehiculoMarca,
       vehiculoModelo,
-      placa
+      placa,
     } = req.body;
 
     if (!nombre || !telefono || !password) {
       return res.status(400).json({ msg: "Faltan datos obligatorios" });
     }
 
-    if (!/^[0-9]{8,15}$/.test(telefono)) {
-      return res.status(400).json({ msg: "Teléfono inválido" });
+    let telefonoNormalizado;
+    try {
+      telefonoNormalizado = requireInternationalPhone(telefono);
+    } catch (err) {
+      return res.status(400).json({
+        msg: "Telefono invalido. Usa formato internacional, ejemplo +50937123456",
+      });
     }
 
     if (password.length < 8) {
-      return res.status(400).json({ msg: "Contraseña mínimo 8 caracteres" });
+      return res.status(400).json({ msg: "Contrasena minimo 8 caracteres" });
     }
 
-    const existeTelefono = await User.findOne({ telefono });
+    const emailNormalizado = String(email || "").trim().toLowerCase();
+
+    const existeTelefono = await User.findOne({
+      telefono: telefonoNormalizado,
+      rol: "motorista",
+    }).lean();
+
     if (existeTelefono) {
-      return res.status(409).json({ msg: "Teléfono ya registrado" });
+      return res.status(409).json({ msg: "Este telefono ya tiene una cuenta motorista" });
+    }
+
+    if (emailNormalizado) {
+      const existeEmail = await User.findOne({
+        email: emailNormalizado,
+        rol: "motorista",
+      }).lean();
+
+      if (existeEmail) {
+        return res.status(409).json({ msg: "Este email ya tiene una cuenta motorista" });
+      }
     }
 
     const hash = await bcrypt.hash(password, 12);
 
-    // 🔥 Crear usuario
     const user = await User.create({
       nombre,
-      telefono,
-      email: email || null,
+      telefono: telefonoNormalizado,
+      email: emailNormalizado || null,
       password: hash,
       rol: "motorista",
       activo: true,
@@ -55,61 +79,57 @@ router.post("/register", registerLimiter, async (req, res) => {
       vehiculo: {
         marca: vehiculoMarca,
         modelo: vehiculoModelo,
-        placa
-      }
+        placa,
+      },
     });
 
-    // 🔥 Crear wallet inmediatamente (PRODUCCIÓN READY)
     await Wallet.findOneAndUpdate(
       { userId: user._id },
       {
         $setOnInsert: {
           userId: user._id,
           saldo: 0,
-          saldoBloqueado: 0
-        }
+          saldoBloqueado: 0,
+        },
       },
       { upsert: true, new: true }
     );
 
-    console.log("💰 Wallet creada para motorista:", user._id);
-
-    res.status(201).json({
+    return res.status(201).json({
       msg: "Motorista registrado correctamente",
       user: {
         id: user._id,
         nombre: user.nombre,
-        rol: user.rol
-      }
+        rol: user.rol,
+      },
     });
-
   } catch (err) {
     console.error("Driver register error:", err);
-    res.status(500).json({ msg: "Error servidor" });
+
+    if (err?.code === 11000) {
+      return res.status(409).json({ msg: "Ya existe una cuenta motorista con esos datos" });
+    }
+
+    return res.status(500).json({ msg: "Error servidor" });
   }
 });
 
-
-/*************************************************
- * 🛵 LOGIN DRIVER
- *************************************************/
 router.post("/login", authLimiter, async (req, res) => {
   try {
     const { telefono, password } = req.body;
+    const telefonos = phoneLoginCandidates(telefono);
 
-    if (!telefono || !password) {
+    if (!telefonos.length || !password) {
       return res.status(400).json({ msg: "Faltan datos" });
     }
 
-    const user = await User.findOne({ telefono })
-      .select("+password");
+    const user = await User.findOne({
+      telefono: { $in: telefonos },
+      rol: "motorista",
+    }).select("+password");
 
     if (!user) {
       return res.status(401).json({ msg: "Usuario no encontrado" });
-    }
-
-    if (user.rol !== "motorista") {
-      return res.status(403).json({ msg: "Usuario no válido para Driver" });
     }
 
     if (user.saldoBloqueado) {
@@ -118,30 +138,29 @@ router.post("/login", authLimiter, async (req, res) => {
 
     const ok = await bcrypt.compare(password, user.password);
     if (!ok) {
-      return res.status(401).json({ msg: "Contraseña incorrecta" });
+      return res.status(401).json({ msg: "Contrasena incorrecta" });
     }
 
     const token = jwt.sign(
       {
         id: user._id,
-        tokenVersion: user.tokenVersion
+        tokenVersion: user.tokenVersion,
       },
       process.env.JWT_SECRET,
       { expiresIn: "30d" }
     );
 
-    res.json({
+    return res.json({
       token,
       user: {
         id: user._id,
         nombre: user.nombre,
-        rol: user.rol
-      }
+        rol: user.rol,
+      },
     });
-
   } catch (err) {
     console.error("Driver login error:", err);
-    res.status(500).json({ msg: "Error servidor" });
+    return res.status(500).json({ msg: "Error servidor" });
   }
 });
 

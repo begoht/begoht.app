@@ -66,6 +66,16 @@ document.addEventListener("DOMContentLoaded", () => {
     elemento.className = tipo === "ok" ? "msg ok" : "msg error";
   }
 
+  function normalizarTelefonoInternacional(value = "") {
+    const clean = String(value || "").replace(/[\s().-]/g, "").trim();
+    if (!clean.startsWith("+")) return "";
+    return `+${clean.slice(1).replace(/\D/g, "")}`;
+  }
+
+  function telefonoInternacionalValido(value = "") {
+    return /^\+\d{8,15}$/.test(normalizarTelefonoInternacional(value));
+  }
+
   // =============================
   // CAMBIO ENTRE LOGIN / REGISTRO
   // =============================
@@ -114,8 +124,8 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    if (!/^[0-9]{8,15}$/.test(telefono.value.trim())) {
-      mostrarMsg(msgRegistro, "Teléfono inválido");
+    if (!telefonoInternacionalValido(telefono.value)) {
+      mostrarMsg(msgRegistro, "Telefono invalido. Usa formato internacional, ejemplo +50937123456");
       return;
     }
 
@@ -162,7 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const usuario = {
       nombre: nombre.value.trim(),
       apellido: apellido.value.trim(),
-      telefono: telefono.value.trim(),
+      telefono: normalizarTelefonoInternacional(telefono.value),
       email: email.value.trim().toLowerCase() || null,
       password: password.value.trim(),
       rol: rol.value
@@ -182,7 +192,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await res.json().catch(() => null);
 
       if (!res.ok) {
-        throw new Error(data?.msg || "Error en registro");
+        throw new Error(data?.error || data?.msg || "Error en registro");
       }
 
       mostrarMsg(msgRegistro, "Cuenta creada correctamente ✅", "ok");
@@ -212,7 +222,9 @@ document.addEventListener("DOMContentLoaded", () => {
     limpiarMsg(msgLogin);
 
     const datos = {
-      identificador: loginTelefono?.value.trim(),
+      identificador: loginTelefono?.value.trim().startsWith("+")
+        ? normalizarTelefonoInternacional(loginTelefono.value)
+        : loginTelefono?.value.trim(),
       password: loginPassword?.value.trim(),
     };
 

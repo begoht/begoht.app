@@ -4,6 +4,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnRegistro = document.getElementById("btnRegistro");
   const msgRegistro = document.getElementById("msgRegistro");
 
+  function normalizarTelefonoInternacional(value = "") {
+    const clean = String(value || "").replace(/[\s().-]/g, "").trim();
+    if (!clean.startsWith("+")) return "";
+    return `+${clean.slice(1).replace(/\D/g, "")}`;
+  }
+
+  function telefonoInternacionalValido(value = "") {
+    return /^\+\d{8,15}$/.test(normalizarTelefonoInternacional(value));
+  }
+
   if (!btnRegistro) {
     console.log("No se encontro btnRegistro");
     return;
@@ -22,6 +32,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!nombre || !email || !telefono || !password) {
       showMsg("Completa nombre, email, telefono y contrasena");
+      return;
+    }
+
+    if (!telefonoInternacionalValido(telefono)) {
+      showMsg("Telefono invalido. Usa formato internacional, ejemplo +50937123456");
       return;
     }
 
@@ -46,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
         body: JSON.stringify({
           nombre,
           email,
-          telefono,
+          telefono: normalizarTelefonoInternacional(telefono),
           password,
           vehiculoMarca,
           vehiculoModelo,

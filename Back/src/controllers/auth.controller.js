@@ -6,11 +6,11 @@ const {
   generarAccessToken,
   generarRefreshToken,
 } = require("../utils/jwt");
+const {
+  phoneLoginCandidates,
+  requireInternationalPhone,
+} = require("../utils/phone");
 const jwt = require("jsonwebtoken");
-
-function normalizePhone(value = "") {
-  return String(value).replace(/[^\d+]/g, "").trim();
-}
 
 function normalizeEmail(value = "") {
   return String(value).trim().toLowerCase();
@@ -32,16 +32,12 @@ exports.register = async (req, res) => {
   try {
     const nombre = String(req.body?.nombre || "").trim();
     const apellido = String(req.body?.apellido || "").trim();
-    const telefono = normalizePhone(req.body?.telefono);
+    const telefono = requireInternationalPhone(req.body?.telefono);
     const email = normalizeEmail(req.body?.email);
     const password = String(req.body?.password || "");
 
     if (!nombre || !telefono || !password) {
       return res.status(400).json({ error: "Faltan datos obligatorios" });
-    }
-
-    if (!/^\+?\d{8,15}$/.test(telefono)) {
-      return res.status(400).json({ error: "Telefono invalido" });
     }
 
     if (email && !/^\S+@\S+\.\S+$/.test(email)) {
@@ -55,6 +51,7 @@ exports.register = async (req, res) => {
     session.startTransaction();
 
     const existe = await User.findOne({
+      rol: "pasajero",
       $or: email ? [{ telefono }, { email }] : [{ telefono }],
     }).session(session);
 
@@ -62,8 +59,8 @@ exports.register = async (req, res) => {
       await session.abortTransaction();
       return res.status(409).json({
         error: existe.telefono === telefono
-          ? "El telefono ya esta registrado"
-          : "El email ya esta registrado",
+          ? "Este telefono ya tiene una cuenta pasajero"
+          : "Este email ya tiene una cuenta pasajero",
       });
     }
 
@@ -113,6 +110,12 @@ exports.register = async (req, res) => {
 
     console.error("Register error:", err);
 
+    if (err?.status === 400 || err?.message === "PHONE_INVALID") {
+      return res.status(400).json({
+        error: "Telefono invalido. Usa formato internacional, ejemplo +50937123456",
+      });
+    }
+
     if (err?.code === 11000) {
       return res.status(409).json({ error: "Usuario ya registrado" });
     }
@@ -132,13 +135,15 @@ exports.login = async (req, res) => {
       return res.status(400).json({ msg: "Faltan datos" });
     }
 
-    const telefono = normalizePhone(identificador);
     const email = normalizeEmail(identificador);
     const search = [];
-    if (telefono) search.push({ telefono });
+    phoneLoginCandidates(identificador).forEach((phone) => search.push({ telefono: phone }));
     if (email.includes("@")) search.push({ email });
 
-    const user = await User.findOne({ $or: search }).select("+password");
+    const user = await User.findOne({
+      rol: { $in: ["pasajero", "admin"] },
+      $or: search,
+    }).select("+password");
 
     if (!user) {
       return res.status(400).json({ msg: "Credenciales invalidas" });
@@ -182,14 +187,17 @@ exports.login = async (req, res) => {
 
 exports.loginMotorista = async (req, res) => {
   try {
-    const telefono = normalizePhone(req.body?.telefono);
+    const telefonoCandidates = phoneLoginCandidates(req.body?.telefono);
     const password = String(req.body?.password || "");
 
-    if (!telefono || !password) {
+    if (!telefonoCandidates.length || !password) {
       return res.status(400).json({ msg: "Faltan datos" });
     }
 
-    const user = await User.findOne({ telefono }).select("+password");
+    const user = await User.findOne({
+      rol: "motorista",
+      telefono: { $in: telefonoCandidates },
+    }).select("+password");
 
     if (!user || user.rol !== "motorista") {
       return res.status(400).json({ msg: "Credenciales invalidas" });
