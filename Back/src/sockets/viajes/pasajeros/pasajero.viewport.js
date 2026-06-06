@@ -1,12 +1,23 @@
 const { redis } = require("../../../config/redis");
 
+const PASSENGER_NEARBY_DRIVERS_ENABLED =
+  process.env.PASSENGER_NEARBY_DRIVERS_ENABLED === "true";
+
 module.exports = (io, socket) => {
 
   let lastViewportTime = 0;
   let lastMotoristasSignature = "";
   let lastMotoristasEmitTime = 0;
+  let nearbyDisabledFlushSent = false;
 
   socket.on("viewport-motoristas", async (viewport) => {
+    if (!PASSENGER_NEARBY_DRIVERS_ENABLED) {
+      if (!nearbyDisabledFlushSent) {
+        socket.emit("motoristas:ubicacion", []);
+        nearbyDisabledFlushSent = true;
+      }
+      return;
+    }
 
     const now = Date.now();
     if (now - lastViewportTime < 500) return;

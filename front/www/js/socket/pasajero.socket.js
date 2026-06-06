@@ -1,7 +1,6 @@
 import { getSocket } from "./socket.js?v=20260606-monitoring";
 import { viajeState } from "../viaje/viaje.state.js";
 
-import { handleMotoristas } from "./handlers/motoristas.handler.js";
 import { handlePrecio } from "./handlers/precio.handler.js?v=20260605-price-premium-cancel";
 import { handleAsignado } from "./handlers/asignado.handler.js?v=20260605-price-premium-cancel";
 import { handleTrack } from "./handlers/track.handler.js?v=20260604-jacmel-gps";
@@ -25,7 +24,6 @@ let handlersActivos = {};
 const eventosRecientes = new Map();
 
 const MAPEO_EVENTOS = {
-  "motoristas:ubicacion": handleMotoristas,
   "precio-calculado": handlePrecio,
   "viaje-asignado": handleAsignado,
   "track:posicion": handleTrack,
@@ -62,13 +60,6 @@ export function initPasajeroSocket() {
       }
 
       if (
-        eventName === "motoristas:ubicacion" &&
-        viajeState.activo
-      ) {
-        return;
-      }
-
-      if (
         eventName === "track:posicion" &&
         (!viajeState.viajeId || !viajeState.activo)
       ) {
@@ -100,9 +91,8 @@ function esEventoDuplicado(eventName, data = {}) {
   const estado = data?.estado || "";
   const lat = data?.lat != null ? Number(data.lat).toFixed(6) : "";
   const lng = data?.lng != null ? Number(data.lng).toFixed(6) : "";
-  const listaSignature = Array.isArray(data) ? crearListaMotoristasSignature(data) : "";
   const source = data?.isReplay ? "replay" : data?.isSnapshot ? "snapshot" : "live";
-  const key = `${eventName}:${viajeId}:${estado}:${lat}:${lng}:${listaSignature}:${source}`;
+  const key = `${eventName}:${viajeId}:${estado}:${lat}:${lng}:${source}`;
   const now = Date.now();
   const last = eventosRecientes.get(key) || 0;
   const ventanaMs = eventName === "track:posicion" ? 900 : 1500;
@@ -123,18 +113,6 @@ function esEventoDuplicado(eventName, data = {}) {
   }
 
   return false;
-}
-
-function crearListaMotoristasSignature(motoristas) {
-  return motoristas
-    .map((m) => ({
-      id: String(m?.id || m?._id || ""),
-      lat: Number(m?.lat).toFixed(5),
-      lng: Number(m?.lng).toFixed(5)
-    }))
-    .sort((a, b) => a.id.localeCompare(b.id))
-    .map((m) => `${m.id}:${m.lat}:${m.lng}`)
-    .join("|");
 }
 
 export function destroyPasajeroSocket() {

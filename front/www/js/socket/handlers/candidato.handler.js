@@ -1,5 +1,4 @@
 import { viajeState } from "../../viaje/viaje.state.js";
-import { mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260604-jacmel-gps";
 import {
   mostrarBuscandoMotorista,
   actualizarMotoristaCandidato
@@ -22,5 +21,4 @@ export const handleMotoristaCandidato = (data = {}) => {
 
   mostrarBuscandoMotorista(true);
   actualizarMotoristaCandidato(data.motorista);
-  mostrarMotoristaEnMapa(data.motorista);
 };

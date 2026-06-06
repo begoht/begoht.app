@@ -12,6 +12,8 @@ const LOCATION_MIN_INTERVAL_MS = Math.max(
 );
 const LOCATION_MONGO_SNAPSHOT_ENABLED =
   process.env.LOCATION_MONGO_SNAPSHOT_ENABLED === "true";
+const PASSENGER_NEARBY_DRIVERS_ENABLED =
+  process.env.PASSENGER_NEARBY_DRIVERS_ENABLED === "true";
 
 module.exports = (io, socket, motoristaId) => {
   socket.on("motoristas:ubicacion", async (payload) => {
@@ -25,9 +27,12 @@ module.exports = (io, socket, motoristaId) => {
       // 2. Operaciones secundarias (Paralelizadas para mejor performance)
       const tasks = [
         tracking(io, motoristaId, payload),
-        broadcast(io, motoristaId, payload),
         reservado(io, motoristaId, payload)
       ];
+
+      if (PASSENGER_NEARBY_DRIVERS_ENABLED) {
+        tasks.push(broadcast(io, motoristaId, payload));
+      }
 
       if (LOCATION_MONGO_SNAPSHOT_ENABLED) {
         tasks.push(storeMongo(motoristaId, payload));

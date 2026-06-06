@@ -3,91 +3,38 @@ import { initSeleccionDestino } from "../map/map.destino.js?v=20260605-price-pre
 import { actualizarBotonViaje } from "../pasajero/pasajero.ui.js?v=20260605-price-premium-cancel";
 import { initToggleMenuDriver, seleccionarPago } from "./pasajero.ui.js?v=20260605-price-premium-cancel";
 import { getSocket } from "../socket/socket.js?v=20260606-monitoring";
-import { initPasajeroSocket } from "../socket/pasajero.socket.js?v=20260605-price-premium-cancel";
-import { viajeState } from "../viaje/viaje.state.js";
-import { setMapa } from "../map/map.motorista.js?v=20260604-jacmel-gps";
-import { cityConfig } from "../map/config/index.js";
+import { initPasajeroSocket } from "../socket/pasajero.socket.js?v=20260606-no-nearby-drivers";
+import { setMapa, limpiarMotoristas } from "../map/map.motorista.js?v=20260604-jacmel-gps";
 import { initSavedDestinations } from "../map/map.saved-destinations.js";
 import { initEnvioPaquete } from "./envio.paquete.js";
 import { initHomeOffers } from "../promos/passenger-offers.js?v=20260604-admin-offers";
 import { initWalletDiscountUI } from "./wallet-discount.js?v=20260605-price-premium-cancel";
 
-/***********************
- * 🧠 CONTROL GLOBAL SPA
- ***********************/
 let initIdGlobal = 0;
-let viewportHandler = null;
 
-/***********************
- * 🚀 INIT PRINCIPAL
- ***********************/
 export function initPasajero(map) {
   const currentInitId = ++initIdGlobal;
 
-  console.log("🚀 Init pasajero (modo PRO)");
+  console.log("Init pasajero (modo PRO)");
 
-  // ✅ Validar vista REAL
   if (!document.querySelector(".home-page")) {
-    console.warn("⛔ initPasajero cancelado (no es HOME real)");
+    console.warn("initPasajero cancelado (no es HOME real)");
     return;
   }
 
   if (!map) {
-    console.warn("⛔ mapa no recibido");
+    console.warn("mapa no recibido");
     return;
   }
 
   try {
-    /***********************
-     * 🗺️ MAPA GLOBAL
-     ***********************/
+    if (currentInitId !== initIdGlobal) return;
+
     setMapa(map);
+    limpiarMotoristas();
 
     const socket = getSocket();
 
-    /***********************
-     * 📡 VIEWPORT MOTORISTAS (ANTI DUPLICADOS PRO)
-     ***********************/
-    function enviarViewport() {
-      if (currentInitId !== initIdGlobal) return; // 🔥 anti race SPA
-      if (!map || typeof map.getBounds !== "function") return;
-
-      try {
-        const bounds = map.getBounds();
-
-        socket.emit("viewport-motoristas", {
-          city: cityConfig.id,
-          north: bounds.getNorth(),
-          south: bounds.getSouth(),
-          east: bounds.getEast(),
-          west: bounds.getWest()
-        });
-
-      } catch (e) {
-        console.error("💥 Error bounds:", e);
-      }
-    }
-
-    let viewportTimeout;
-
-    function enviarViewportOptimizado() {
-      clearTimeout(viewportTimeout);
-      viewportTimeout = setTimeout(enviarViewport, 300);
-    }
-
-    // 🔥 limpiar anterior (clave SPA)
-    if (viewportHandler) {
-      map.off("moveend", viewportHandler);
-    }
-
-    viewportHandler = enviarViewportOptimizado;
-    map.on("moveend", viewportHandler);
-
-    setTimeout(enviarViewport, 500);
-
-    /***********************
-     * 📍 GEO + DESTINO
-     ***********************/
     initGeo(map);
     initSeleccionDestino(map);
     initSavedDestinations(map);
@@ -95,17 +42,14 @@ export function initPasajero(map) {
     initWalletDiscountUI();
     initHomeOffers();
 
-    /***********************
-     * 🎛️ UI (ANTI DUPLICADOS HARD)
-     ***********************/
     initToggleMenuDriver();
     window.seleccionarPago = seleccionarPago;
 
     const bindClick = (el, handler) => {
       if (!el) return;
-      el.replaceWith(el.cloneNode(true)); // 🔥 elimina listeners viejos
+      el.replaceWith(el.cloneNode(true));
       const newEl = document.getElementById(el.id);
-      newEl.addEventListener("click", handler);
+      newEl?.addEventListener("click", handler);
     };
 
     bindClick(document.getElementById("btnPagoEfectivo"), (e) =>
@@ -116,24 +60,19 @@ export function initPasajero(map) {
       seleccionarPago("transferencia", e.currentTarget)
     );
 
-    /***********************
-     * 🔌 SOCKETS (ULTRA SEGURO)
-     ***********************/
     if (!window.pasajeroInicializado) {
-      initPasajeroSocket(); 
+      initPasajeroSocket();
 
       socket.off("connect");
       socket.on("connect", () => {
-        console.log("🔄 Socket listo (pasajero)");
+        console.log("Socket listo (pasajero)");
       });
 
-      window.pasajeroInicializado = true; // ✅ Marcamos como inicializado
+      window.pasajeroInicializado = true;
     }
 
-    // Actualizar UI inicial por si hay viajes activos
     actualizarBotonViaje();
-
   } catch (err) {
-    console.error("❌ Error crítico en initPasajero:", err);
+    console.error("Error critico en initPasajero:", err);
   }
-} 
+}
