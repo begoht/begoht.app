@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#07111f">
+  <title>BeGO Driver - Legal et confiance</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/main.css?v=20260606-legal-trust">
+  <style>
+    body {
+      min-height: 100vh;
+      margin: 0;
+      background:
+        radial-gradient(circle at 50% -8%, rgba(255, 122, 0, 0.2), transparent 30%),
+        radial-gradient(circle at 8% 18%, rgba(37, 99, 235, 0.2), transparent 30%),
+        linear-gradient(180deg, #07111f 0%, #0b1628 52%, #050b14 100%);
+    }
+
+    .public-legal-top {
+      width: min(980px, 100%);
+      margin: 0 auto;
+      padding: 14px 14px 0;
+    }
+
+    .public-legal-back {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 0 13px;
+      border-radius: 8px;
+      color: #dbeafe;
+      text-decoration: none;
+      font-weight: 900;
+      background: rgba(15, 23, 42, 0.78);
+      border: 1px solid rgba(148, 163, 184, 0.16);
+    }
+  </style>
+</head>
+<body>
+  <script src="./js/core/production-console.js?v=20260606-console-clean"></script>
+  <div class="public-legal-top">
+    <a class="public-legal-back" href="registro.html">
+      <i class="fa-solid fa-chevron-left"></i>
+      Retour
+    </a>
+  </div>
+  <main id="legalPublicRoot"></main>
+  <script type="module">
+    import { renderLegalConfianza } from "/paginas/legal-confianza.js?v=20260606-legal-trust";
+    document.getElementById("legalPublicRoot").innerHTML = renderLegalConfianza({ publicMode: true });
+  </script>
+</body>
+</html>

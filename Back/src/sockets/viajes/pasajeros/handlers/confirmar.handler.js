@@ -210,8 +210,10 @@ module.exports = async function confirmarViaje(socket, io, data) {
     if (error?.type === "paquete") {
       return socket.emit("viaje-error", {
         mensaje: error.message === "PESO_ENVIO_MAXIMO"
-          ? "El envio de paquete permite maximo 5 kg."
-          : "Completa los datos del paquete para continuar."
+          ? "L'envoi de colis permet maximum 5 kg."
+          : error.message === "PAQUETE_REGLAS_REQUERIDAS"
+            ? "Vous devez accepter les regles des colis pour continuer."
+            : "Completez les donnees du colis pour continuer."
       });
     }
 

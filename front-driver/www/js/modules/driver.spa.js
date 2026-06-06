@@ -14,7 +14,8 @@ const routes = {
   "/wallet": renderWallet,
   "/cuenta": renderCuenta,
   "/ajustes": renderAjustes,
-  "/soporte": renderSoporte
+  "/soporte": renderSoporte,
+  "/legal": renderLegal
 };
 
 export function initDriverSpa() {
@@ -252,6 +253,7 @@ function renderCuenta() {
       ${listItem("Creditos BeGO", "Preaprobado automatico desde 1000 viajes.", "fa-hand-holding-dollar", "#/creditos")}
       ${listItem("Reputacion", "Calificacion, puntualidad y comentarios.", "fa-star", "#/actividad")}
       ${listItem("Centro de seguridad", "PIN, huella y contactos de emergencia.", "fa-shield", "#/soporte")}
+      ${listItem("Legal et confiance", "Conditions, confidentialite et contact officiel.", "fa-scale-balanced", "#/legal")}
     </section>
   `);
 }
@@ -271,6 +273,26 @@ function renderAjustes() {
       ${toggleItem("Vibracion", true)}
       ${toggleItem("Aceptar reservas", true)}
       ${toggleItem("Modo bajo consumo", false)}
+      ${listItem("Legal et confiance", "Regles de service et confidentialite.", "fa-scale-balanced", "#/legal")}
+    </section>
+  `);
+}
+
+function renderLegal() {
+  return pageShell("Legal", "Confiance BeGO", `
+    <section class="driver-panel">
+      <div class="driver-panel-title">
+        <h2>Legal et confiance</h2>
+        <span>Officiel</span>
+      </div>
+      <p class="driver-muted">Conditions, confidentialite, support officiel et regles des colis sont disponibles dans le document public BeGO.</p>
+    </section>
+
+    <section class="driver-list">
+      ${listItem("Termes et conditions", "Utilisation de la plateforme, paiements et securite.", "fa-scale-balanced", "https://bego.com.ht/legal.html")}
+      ${listItem("Politique de confidentialite", "Donnees de compte, GPS, wallet, support et securite.", "fa-user-shield", "https://bego.com.ht/legal.html#confidentialite")}
+      ${listItem("Regles des colis", "Maximum 5 kg, objets interdits et code de livraison.", "fa-box", "https://bego.com.ht/legal.html#colis")}
+      ${listItem("Support officiel", "Chat, email et reseaux sociaux BeGO.", "fa-headset", "#/soporte")}
     </section>
   `);
 }
@@ -544,7 +566,12 @@ function kpi(label, value, caption, icon, valueId = "") {
 }
 
 function listItem(title, text, icon, route = "") {
-  const attrs = route ? `data-driver-route href="${route}"` : "";
+  const isExternal = /^https?:\/\//i.test(route) || /\.html(?:#.*)?$/i.test(route);
+  const attrs = route
+    ? isExternal
+      ? `href="${route}" target="_blank" rel="noopener"`
+      : `data-driver-route href="${route}"`
+    : "";
   const tag = route ? "a" : "article";
   return `
     <${tag} class="driver-list-item" ${attrs}>

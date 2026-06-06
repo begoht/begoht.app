@@ -15,7 +15,8 @@ const ROUTE_META = {
   "/familia": { title: "Familia PRO", subtitle: "Cuentas familiares", icon: "fa-people-roof" },
   "/pago": { title: "Pagos", subtitle: "Metodos disponibles", icon: "fa-credit-card" },
   "/seguimiento": { title: "Seguimiento", subtitle: "Viaje en vivo", icon: "fa-location-dot" },
-  "/promos": { title: "Promos", subtitle: "Beneficios activos", icon: "fa-gift" }
+  "/promos": { title: "Promos", subtitle: "Beneficios activos", icon: "fa-gift" },
+  "/legal-confianza": { title: "Legal", subtitle: "Confiance BeGO", icon: "fa-scale-balanced" }
 };
 
 function getRouteMeta(route) {

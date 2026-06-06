@@ -35,6 +35,7 @@ export function renderCuenta() {
           <i class="fa-solid fa-headset"></i>
           <span>Soporte</span>
         </a>
+
       </section>
 
       <section class="promos-cuenta">
@@ -90,6 +91,17 @@ export function renderCuenta() {
             <div>
               <span>Configuracion</span>
               <p>Personaliza tu experiencia</p>
+            </div>
+          </div>
+          <i class="fa-solid fa-chevron-right"></i>
+        </a>
+
+        <a class="ripple opcion" href="#/legal-confianza" data-link>
+          <div class="opcion-izq">
+            <i class="fa-solid fa-shield-heart"></i>
+            <div>
+              <span>Legal et confiance</span>
+              <p>Termes, confidentialite et regles des colis</p>
             </div>
           </div>
           <i class="fa-solid fa-chevron-right"></i>

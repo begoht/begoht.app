@@ -12,7 +12,7 @@ import { initViajeFinalizar } from "./viajeFinalizar.js?v=20260603-road-heading-
 import { initViajeControl } from "./viajeControl/viajeControl.js?v=20260603-road-heading-stable";
 import { initDriverChat } from "./chat/viajeChat.js";
 import { initDriverStatus } from "./driver.status.js?v=20260603-road-heading-stable";
-import { initDriverSpa } from "./driver.spa.js?v=20260604-live-support";
+import { initDriverSpa } from "./driver.spa.js?v=20260606-legal-trust";
 import { iniciarSonidoOfertaLoop } from "./oferta/oferta.ui.js?v=20260602-offer-ui-singleton";
 import { initLaunchCountdown } from "./launch-countdown.js?v=20260603-launch-gate";
 

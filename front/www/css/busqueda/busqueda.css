@@ -573,6 +573,39 @@
   line-height: 1.35;
 }
 
+.envio-rules-check {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  padding: 11px 12px;
+  border-radius: 14px;
+  color: var(--muted);
+  background: rgba(2, 6, 23, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  font-size: 0.78rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.envio-rules-check input {
+  width: 18px;
+  height: 18px;
+  margin: 1px 0 0;
+  accent-color: #2563eb;
+}
+
+.envio-rules-check span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.envio-rules-check a {
+  color: #93c5fd;
+  text-decoration: none;
+  font-weight: 950;
+}
+
 .envio-msg {
   min-height: 18px;
   margin: 0 2px;

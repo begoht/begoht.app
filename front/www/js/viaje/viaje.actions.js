@@ -1,7 +1,7 @@
 import { getSocket } from "../socket/socket.js?v=20260606-session-refresh";
 import { viajeState } from "./viaje.state.js";
 import { limpiarViajePasajero } from "../socket/viaje.limpieza.js";
-import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260606-payment-methods";
+import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260606-legal-trust";
 import { cerrarBuscandoMotorista } from "../pasajero/ui/overlays/buscandoMotorista.ui.js?v=20260605-price-premium-cancel";
 import { cityConfig } from "../map/config/index.js";
 
@@ -84,6 +84,11 @@ export function resolverCotizacionPendiente(quoteId = null) {
 export function pedirViaje() {
   if (viajeState.cotizando || viajeState.estado === "cotizando") return;
   if (viajeState.activo || !viajeState.origen || !viajeState.destino) return;
+
+  if (viajeState.tipoServicio === "envio" && !viajeState.paquete?.reglasAceptadas) {
+    alert("Vous devez accepter les regles des colis avant de continuer.");
+    return;
+  }
 
   const socket = getSafeSocket();
   if (!socket || socket.connected === false) {

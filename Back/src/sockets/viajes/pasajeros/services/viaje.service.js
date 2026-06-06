@@ -39,10 +39,18 @@ function validarPaquete(tipo, paquete = {}) {
     throw err;
   }
 
+  if (paquete.reglasAceptadas !== true) {
+    const err = new Error("PAQUETE_REGLAS_REQUERIDAS");
+    err.type = "paquete";
+    throw err;
+  }
+
   return {
     pesoKg: Number(pesoKg.toFixed(2)),
     descripcion: String(paquete.descripcion || "Paquete").trim().slice(0, 160),
-    instrucciones: String(paquete.instrucciones || "").trim().slice(0, 220)
+    instrucciones: String(paquete.instrucciones || "").trim().slice(0, 220),
+    reglasAceptadas: true,
+    reglasAceptadasAt: new Date()
   };
 }
 

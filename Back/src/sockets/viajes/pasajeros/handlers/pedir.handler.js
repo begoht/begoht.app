@@ -55,8 +55,10 @@ module.exports = async function pedirViaje(socket, io, data) {
       return socket.emit("viaje-error", {
         quoteId,
         mensaje: err.message === "PESO_ENVIO_MAXIMO"
-          ? "El envio de paquete permite maximo 5 kg."
-          : "Completa los datos del paquete para continuar."
+          ? "L'envoi de colis permet maximum 5 kg."
+          : err.message === "PAQUETE_REGLAS_REQUERIDAS"
+            ? "Vous devez accepter les regles des colis pour continuer."
+            : "Completez les donnees du colis pour continuer."
       });
     }
 

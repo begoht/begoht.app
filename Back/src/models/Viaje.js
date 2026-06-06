@@ -31,6 +31,8 @@ const PaqueteSchema = new mongoose.Schema(
     pesoKg: { type: Number, min: 0, max: 5, default: null },
     descripcion: { type: String, trim: true, maxlength: 160, default: "" },
     instrucciones: { type: String, trim: true, maxlength: 220, default: "" },
+    reglasAceptadas: { type: Boolean, default: false },
+    reglasAceptadasAt: { type: Date, default: null },
     codigoEntrega: { type: String, trim: true, maxlength: 4, default: null },
     codigoEntregaConfirmadoAt: { type: Date, default: null },
   },

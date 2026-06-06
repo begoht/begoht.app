@@ -136,6 +136,15 @@ export function renderConfiguracion() {
           </div>
           <i class="fa-solid fa-chevron-right"></i>
         </a>
+
+        <a class="config-row ripple" href="#/legal-confianza" data-link>
+          <i class="fa-solid fa-scale-balanced"></i>
+          <div>
+            <span>Legal et confiance</span>
+            <p>Conditions, confidentialite, contact officiel et regles colis.</p>
+          </div>
+          <i class="fa-solid fa-chevron-right"></i>
+        </a>
       </section>
 
       <button id="logoutBtn" class="config-logout ripple" type="button">

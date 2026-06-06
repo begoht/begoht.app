@@ -29,6 +29,10 @@ export function initEnvioPaquete() {
         </div>
         <input id="envioDescripcion" class="envio-input" type="text" maxlength="160" placeholder="Contenido del paquete">
         <textarea id="envioInstrucciones" class="envio-input envio-textarea" maxlength="220" rows="2" placeholder="Instrucciones para entregar"></textarea>
+        <label class="envio-rules-check" for="envioReglas">
+          <input id="envioReglas" type="checkbox">
+          <span>J'accepte les <a href="#/legal-confianza" data-link>regles des colis</a>: maximum 5 kg, contenu legal et code a la livraison.</span>
+        </label>
         <p id="envioMsg" class="envio-msg">Maximo 5 kg</p>
       </div>
     </section>
@@ -39,6 +43,7 @@ export function initEnvioPaquete() {
   const pesoInput = document.getElementById("envioPeso");
   const descripcionInput = document.getElementById("envioDescripcion");
   const instruccionesInput = document.getElementById("envioInstrucciones");
+  const reglasInput = document.getElementById("envioReglas");
   const msg = document.getElementById("envioMsg");
 
   const setServicio = (servicio) => {
@@ -71,10 +76,17 @@ export function initEnvioPaquete() {
     viajeState.paquete = {
       pesoKg,
       descripcion: descripcionInput.value.trim() || "Paquete",
-      instrucciones: instruccionesInput.value.trim()
+      instrucciones: instruccionesInput.value.trim(),
+      reglasAceptadas: Boolean(reglasInput?.checked)
     };
 
-    msg.textContent = pesoKg >= MAX_PESO_KG ? "Peso maximo permitido: 5 kg" : "Codigo de entrega al confirmar";
+    if (!viajeState.paquete.reglasAceptadas) {
+      msg.textContent = "Acceptez les regles des colis pour continuer.";
+      msg.classList.add("error");
+      return;
+    }
+
+    msg.textContent = pesoKg >= MAX_PESO_KG ? "Poids maximum autorise: 5 kg" : "Code de livraison apres confirmation";
     msg.classList.remove("error");
   }
 
@@ -82,7 +94,7 @@ export function initEnvioPaquete() {
     btn.addEventListener("click", () => setServicio(btn.dataset.servicio));
   });
 
-  [pesoInput, descripcionInput, instruccionesInput].forEach((input) => {
+  [pesoInput, descripcionInput, instruccionesInput, reglasInput].filter(Boolean).forEach((input) => {
     input.addEventListener("input", actualizarPaquete);
     input.addEventListener("change", actualizarPaquete);
   });

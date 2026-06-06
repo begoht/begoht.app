@@ -28,6 +28,7 @@ import { renderPromos } from "../../../paginas/promos.js?v=20260604-admin-offers
 import { initPromosPage } from "../../promos/passenger-offers.js?v=20260604-admin-offers";
 import { renderPago } from "../../../paginas/pago.js?v=20260605-payments-premium";
 import { initPago } from "../../pagos.js?v=20260606-payment-methods";
+import { renderLegalConfianza } from "../../../paginas/legal-confianza.js?v=20260606-legal-trust";
 
 // 🔥 Importa el render de actividad
 import { initActividad } from "../../pages/actividad.js";
@@ -81,6 +82,7 @@ export const routes = {
   "/pago": { render: renderPago, init: initPago, class: "pagos" },
   "/seguimiento": { render: renderSeguimiento, class: "seguimiento-page" },
   "/promos": { render: renderPromos, init: initPromosPage, class: "promos-page" },
+  "/legal-confianza": { render: renderLegalConfianza, class: "legal-page" },
   "/datos-motorista": { render: () => renderSimple("Datos del motorista", "Se mostraran cuando tengas un viaje asignado."), class: "simple-page" },
   "/verificar": { render: () => renderSimple("Verificar recibo", "Ingresa desde el recibo para validar su firma digital."), class: "simple-page" }
 };

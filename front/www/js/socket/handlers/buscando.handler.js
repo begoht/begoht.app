@@ -1,7 +1,7 @@
 import { viajeState } from "../../viaje/viaje.state.js";
 import { mostrarBuscandoMotorista } from "../../pasajero/pasajero.ui.js";
 import { guardarSesionViaje } from "../pasajero.utils.js";
-import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260606-payment-methods";
+import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260606-legal-trust";
 
 export const handleBuscando = (data = {}) => {
   Object.assign(viajeState, {

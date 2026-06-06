@@ -55,7 +55,7 @@ async function initHome(initId) {
     const map = getMap();
     if (!map) return;
 
-    const { initPasajero } = await import("../../pasajero/pasajero.main.js?v=20260606-payment-methods");
+    const { initPasajero } = await import("../../pasajero/pasajero.main.js?v=20260606-legal-trust");
 
     if (initId !== currentInitId) return;
 

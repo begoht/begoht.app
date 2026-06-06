@@ -53,6 +53,12 @@ export function renderSoporte() {
           <span>Compte</span>
           <p>Profil, acces et securite.</p>
         </a>
+
+        <a class="support-action-card ripple" href="#/legal-confianza" data-link>
+          <i class="fa-solid fa-scale-balanced"></i>
+          <span>Legal</span>
+          <p>Conditions et contact officiel.</p>
+        </a>
       </section>
 
       <section class="support-panel">
@@ -84,6 +90,15 @@ export function renderSoporte() {
           <div>
             <span>Guide d'utilisation</span>
             <p>Questions rapides sur BeGO.</p>
+          </div>
+          <i class="fa-solid fa-chevron-right"></i>
+        </a>
+
+        <a class="support-list-row ripple" href="#/legal-confianza" data-link>
+          <i class="fa-solid fa-box"></i>
+          <div>
+            <span>Regles des colis</span>
+            <p>Maximum 5 kg, objets interdits et code de livraison.</p>
           </div>
           <i class="fa-solid fa-chevron-right"></i>
         </a>
