@@ -7,6 +7,7 @@ const { sendMonitoringAlert } = require("./alert.service");
 
 const SOURCE_VALUES = new Set(["passenger", "driver", "admin", "tracking", "unknown"]);
 const LEVEL_VALUES = new Set(["info", "warning", "error", "critical"]);
+const INTERNAL_TEST_TYPES = new Set(["monitor_smoke_test", "codex_smoke"]);
 const BUCKET_MS = 60 * 1000;
 
 function redisTimeoutMs() {
@@ -52,6 +53,10 @@ function objectIdOrNull(value) {
   return mongoose.Types.ObjectId.isValid(value) ? value : null;
 }
 
+function socketIndividualAlertsEnabled() {
+  return String(process.env.MONITOR_SOCKET_INDIVIDUAL_ALERTS || "").toLowerCase() === "true";
+}
+
 async function incrementCounter(key, expireSeconds = 3600) {
   const timeoutMs = redisTimeoutMs();
   const count = await withTimeout(redis.incr(key), timeoutMs, `redis incr ${key}`);
@@ -74,7 +79,7 @@ async function recordSocketDisconnect({ role, reason, userId, socketId } = {}) {
     console.warn("Monitor socket counter failed:", err.message);
   }
 
-  if (["transport close", "ping timeout", "transport error"].includes(cleanReason)) {
+  if (socketIndividualAlertsEnabled() && ["transport close", "ping timeout", "transport error"].includes(cleanReason)) {
     await sendMonitoringAlert({
       type: "socket_disconnect",
       severity: "warning",
@@ -203,6 +208,7 @@ async function readCriticalAlerts(limit = 30) {
         };
       }
     })
+    .filter((alert) => !INTERNAL_TEST_TYPES.has(alert.type))
     .reverse();
 }
 
@@ -248,6 +254,10 @@ function buildHealth(lastCheck, frontendErrors10m, frontendCritical10m) {
 
 async function getMonitoringSnapshot() {
   const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
+  const realFrontendMatch = {
+    type: { $nin: [...INTERNAL_TEST_TYPES] },
+    createdAt: { $gte: tenMinutesAgo },
+  };
   const [
     recentFrontendErrors,
     frontendErrors10m,
@@ -258,15 +268,15 @@ async function getMonitoringSnapshot() {
     monitorState,
     criticalAlerts,
   ] = await Promise.all([
-    safeResolve(FrontendError.find().sort({ createdAt: -1 }).limit(40).lean(), []),
-    safeResolve(FrontendError.countDocuments({ level: { $in: ["error", "critical"] }, createdAt: { $gte: tenMinutesAgo } }), 0),
-    safeResolve(FrontendError.countDocuments({ level: "critical", createdAt: { $gte: tenMinutesAgo } }), 0),
+    safeResolve(FrontendError.find({ type: { $nin: [...INTERNAL_TEST_TYPES] } }).sort({ createdAt: -1 }).limit(40).lean(), []),
+    safeResolve(FrontendError.countDocuments({ ...realFrontendMatch, level: { $in: ["error", "critical"] } }), 0),
+    safeResolve(FrontendError.countDocuments({ ...realFrontendMatch, level: "critical" }), 0),
     safeResolve(FrontendError.aggregate([
-      { $match: { createdAt: { $gte: tenMinutesAgo } } },
+      { $match: realFrontendMatch },
       { $group: { _id: "$level", total: { $sum: 1 } } },
     ]), []),
     safeResolve(FrontendError.aggregate([
-      { $match: { createdAt: { $gte: tenMinutesAgo } } },
+      { $match: realFrontendMatch },
       { $group: { _id: "$source", total: { $sum: 1 } } },
     ]), []),
     safeResolve(sumCounterWindow("monitor:socket:disconnects", 10), null),
