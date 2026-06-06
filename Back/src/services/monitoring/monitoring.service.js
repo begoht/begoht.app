@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const fs = require("fs");
+const path = require("path");
 const FrontendError = require("../../models/FrontendError");
 const { redis } = require("../../config/redis");
 const { sendMonitoringAlert } = require("./alert.service");
@@ -22,6 +24,14 @@ function withTimeout(promise, timeoutMs, label) {
 
 function bucketNow(date = new Date()) {
   return Math.floor(date.getTime() / BUCKET_MS) * BUCKET_MS;
+}
+
+function monitorStatePath() {
+  return process.env.MONITOR_STATE_FILE || "/var/log/bego/monitor-state.json";
+}
+
+function criticalLogPath() {
+  return process.env.CRITICAL_LOG_PATH || "/var/log/bego/critical.log";
 }
 
 function safeString(value, max = 700) {
@@ -149,18 +159,141 @@ async function sumCounterWindow(prefix, minutes = 10) {
   return values.reduce((acc, value) => acc + Number(value || 0), 0);
 }
 
+async function readJsonFile(filePath) {
+  try {
+    return JSON.parse(await fs.promises.readFile(filePath, "utf8"));
+  } catch {
+    return null;
+  }
+}
+
+async function readLastBytes(filePath, maxBytes = 96 * 1024) {
+  let handle;
+  try {
+    const stats = await fs.promises.stat(filePath);
+    const length = Math.min(stats.size, maxBytes);
+    const start = Math.max(0, stats.size - length);
+    const buffer = Buffer.alloc(length);
+    handle = await fs.promises.open(filePath, "r");
+    await handle.read(buffer, 0, length, start);
+    const text = buffer.toString("utf8");
+    return start > 0 ? text.slice(text.indexOf("\n") + 1) : text;
+  } catch {
+    return "";
+  } finally {
+    await handle?.close().catch(() => {});
+  }
+}
+
+async function readCriticalAlerts(limit = 30) {
+  const text = await readLastBytes(criticalLogPath());
+  return text
+    .split(/\r?\n/)
+    .filter(Boolean)
+    .slice(-limit)
+    .map((line) => {
+      try {
+        return JSON.parse(line);
+      } catch {
+        return {
+          ts: null,
+          severity: "error",
+          type: "malformed_log_line",
+          message: line.slice(0, 700),
+        };
+      }
+    })
+    .reverse();
+}
+
+async function safeResolve(promise, fallback) {
+  try {
+    return await promise;
+  } catch {
+    return fallback;
+  }
+}
+
+function buildHealth(lastCheck, frontendErrors10m, frontendCritical10m) {
+  const servicesOk = Boolean(
+    lastCheck?.mongo?.ok &&
+    lastCheck?.redis?.ok &&
+    lastCheck?.pm2?.ok
+  );
+
+  if (!servicesOk || frontendCritical10m > 0) {
+    return {
+      level: "critical",
+      label: "Critico",
+      message: frontendCritical10m > 0
+        ? `${frontendCritical10m} error critico frontend en 10 min`
+        : "Un servicio de produccion requiere atencion",
+    };
+  }
+
+  if (frontendErrors10m > 0 || Number(lastCheck?.sockets?.count || 0) > 0) {
+    return {
+      level: "warning",
+      label: "Atencion",
+      message: "Hay eventos recientes para revisar",
+    };
+  }
+
+  return {
+    level: "ok",
+    label: "Estable",
+    message: "PM2, Mongo, Redis y Socket.IO responden",
+  };
+}
+
 async function getMonitoringSnapshot() {
   const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
-  const [recentFrontendErrors, frontendErrors10m, socketDisconnects] = await Promise.all([
-    FrontendError.find().sort({ createdAt: -1 }).limit(40).lean(),
-    FrontendError.countDocuments({ level: { $in: ["error", "critical"] }, createdAt: { $gte: tenMinutesAgo } }),
-    sumCounterWindow("monitor:socket:disconnects", 10),
+  const [
+    recentFrontendErrors,
+    frontendErrors10m,
+    frontendCritical10m,
+    frontendByLevel,
+    frontendBySource,
+    socketDisconnects,
+    monitorState,
+    criticalAlerts,
+  ] = await Promise.all([
+    safeResolve(FrontendError.find().sort({ createdAt: -1 }).limit(40).lean(), []),
+    safeResolve(FrontendError.countDocuments({ level: { $in: ["error", "critical"] }, createdAt: { $gte: tenMinutesAgo } }), 0),
+    safeResolve(FrontendError.countDocuments({ level: "critical", createdAt: { $gte: tenMinutesAgo } }), 0),
+    safeResolve(FrontendError.aggregate([
+      { $match: { createdAt: { $gte: tenMinutesAgo } } },
+      { $group: { _id: "$level", total: { $sum: 1 } } },
+    ]), []),
+    safeResolve(FrontendError.aggregate([
+      { $match: { createdAt: { $gte: tenMinutesAgo } } },
+      { $group: { _id: "$source", total: { $sum: 1 } } },
+    ]), []),
+    safeResolve(sumCounterWindow("monitor:socket:disconnects", 10), null),
+    readJsonFile(monitorStatePath()),
+    readCriticalAlerts(30),
   ]);
+  const lastCheck = monitorState?.lastCheck || null;
+  const socketCount = Number(socketDisconnects ?? lastCheck?.sockets?.count ?? 0);
 
   return {
     ok: true,
+    health: buildHealth(lastCheck, frontendErrors10m, frontendCritical10m),
+    monitorState: {
+      lastCheck,
+      stateFile: path.basename(monitorStatePath()),
+    },
     frontendErrors10m,
-    socketDisconnects,
+    frontendCritical10m,
+    frontendByLevel,
+    frontendBySource,
+    socketDisconnects: socketCount,
+    criticalAlerts,
+    thresholds: {
+      socketDisconnects: Number(process.env.MONITOR_SOCKET_DISCONNECT_THRESHOLD || 80),
+      frontendErrors: Number(process.env.MONITOR_FRONTEND_ERROR_THRESHOLD || 12),
+      pm2Restarts: Number(process.env.MONITOR_PM2_RESTART_THRESHOLD || 3),
+    },
     recentFrontendErrors,
     timestamp: new Date().toISOString(),
   };

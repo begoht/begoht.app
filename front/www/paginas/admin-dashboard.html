@@ -823,6 +823,75 @@
       background: #ffedd5;
     }
 
+    .status.ok {
+      color: #166534;
+      background: #dcfce7;
+    }
+
+    .status.warning,
+    .status.warn {
+      color: #9a3412;
+      background: #ffedd5;
+    }
+
+    .status.critical,
+    .status.error {
+      color: #b91c1c;
+      background: #fee2e2;
+    }
+
+    .monitor-health-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .monitor-health-card::after {
+      content: "";
+      position: absolute;
+      inset: auto 14px 14px auto;
+      width: 56px;
+      height: 56px;
+      border-radius: 999px;
+      background: rgba(37, 99, 235, 0.08);
+      pointer-events: none;
+    }
+
+    .monitor-alert-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .monitor-alert {
+      display: grid;
+      gap: 8px;
+      padding: 12px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .monitor-alert-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .monitor-alert strong,
+    .monitor-alert span {
+      overflow-wrap: anywhere;
+    }
+
+    .monitor-alert strong {
+      font-size: 0.86rem;
+    }
+
+    .monitor-alert p {
+      color: var(--muted);
+      font-size: 0.76rem;
+      line-height: 1.42;
+    }
+
     .money {
       font-weight: 900;
       white-space: nowrap;
@@ -1081,6 +1150,7 @@
         <button type="button" data-section-target="finance"><i class="fa-solid fa-building-columns"></i><span>Finanzas</span><small id="navFinance">0</small></button>
         <button type="button" data-section-target="credits"><i class="fa-solid fa-hand-holding-dollar"></i><span>Creditos</span><small id="navCredits">0</small></button>
         <button type="button" data-section-target="ops"><i class="fa-solid fa-satellite-dish"></i><span>Operaciones</span><small id="navOps">0</small></button>
+        <button type="button" data-section-target="monitor"><i class="fa-solid fa-heart-pulse"></i><span>Monitoreo</span><small id="navMonitor">OK</small></button>
         <button type="button" data-section-target="launch"><i class="fa-solid fa-rocket"></i><span>Lanzamiento</span><small id="navLaunch">OFF</small></button>
         <button type="button" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i><span>Salir</span></button>
       </nav>
@@ -1168,6 +1238,11 @@
             <i class="fa-solid fa-rocket"></i>
             <strong>Lanzamiento</strong>
             <span>Activar o pausar el contador que ven pasajero y motorista.</span>
+          </button>
+          <button class="command-card" type="button" data-section-jump="monitor">
+            <i class="fa-solid fa-heart-pulse"></i>
+            <strong>Monitoreo</strong>
+            <span>PM2, Mongo, Redis, Socket.IO y errores desde celulares reales.</span>
           </button>
           <button class="command-card" type="button" onclick="location.href='../Admin-html/admin-ofertas.html'">
             <i class="fa-solid fa-gift"></i>
@@ -1562,6 +1637,72 @@
         </section>
       </section>
 
+      <section class="section" id="section-monitor">
+        <div class="kpi-grid">
+          <article class="kpi-card monitor-health-card">
+            <div class="kpi-top"><span>Salud produccion</span><i class="fa-solid fa-heart-pulse"></i></div>
+            <strong id="mMonitorHealth">Sin datos</strong>
+            <span class="trend" id="mMonitorHealthText">Esperando lectura del monitor</span>
+          </article>
+          <article class="kpi-card">
+            <div class="kpi-top"><span>PM2</span><i class="fa-solid fa-server"></i></div>
+            <strong id="mMonitorPm2">0/0</strong>
+            <span class="trend" id="mMonitorPm2Text">Procesos supervisados</span>
+          </article>
+          <article class="kpi-card">
+            <div class="kpi-top"><span>Socket.IO</span><i class="fa-solid fa-plug-circle-bolt"></i></div>
+            <strong id="mMonitorSocket">0</strong>
+            <span class="trend" id="mMonitorSocketText">Desconexiones en 10 min</span>
+          </article>
+          <article class="kpi-card">
+            <div class="kpi-top"><span>Celulares</span><i class="fa-solid fa-mobile-screen-button"></i></div>
+            <strong id="mMonitorFrontend">0</strong>
+            <span class="trend" id="mMonitorFrontendText">Errores frontend en 10 min</span>
+          </article>
+        </div>
+
+        <div class="layout-2">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Servicios vivos</h2>
+                <p class="muted">Ultima lectura de PM2, MongoDB, Redis, Socket.IO y frontend.</p>
+              </div>
+              <span class="status" id="monitorUpdatedLabel">Sin sincronizar</span>
+            </div>
+            <div class="panel-body mini-list" id="monitorServiceList"></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Alertas recientes</h2>
+                <p class="muted">Eventos limpios desde /var/log/bego/critical.log.</p>
+              </div>
+              <button class="btn small secondary" id="refreshMonitorBtn" type="button"><i class="fa-solid fa-rotate"></i>Actualizar monitor</button>
+            </div>
+            <div class="panel-body monitor-alert-list" id="monitorAlertList"></div>
+          </section>
+        </div>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Errores frontend desde celulares</h2>
+              <p class="muted">Pasajero y motorista reportan fallos reales, ruta, version, dispositivo y hora.</p>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>App</th><th>Nivel</th><th>Tipo</th><th>Mensaje</th><th>Ruta</th><th>Dispositivo</th><th>Fecha</th></tr>
+              </thead>
+              <tbody id="monitorErrorRows"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
       <section class="section" id="section-launch">
         <div class="launch-admin-grid">
           <article class="launch-control-card">
@@ -1634,6 +1775,7 @@
       commission: null,
       walletDiscount: null,
       fares: null,
+      monitoring: null,
       filtroViajes: "todos",
       search: "",
       charts: {}
@@ -1644,6 +1786,7 @@
       bindUi();
       loadAll();
       setInterval(() => renderLaunchTime(state.launch?.launchAt), 1000);
+      setInterval(() => loadMonitoring({ silent: true }), 45000);
     });
 
     function protectAdmin() {
@@ -1665,6 +1808,7 @@
         btn.addEventListener("click", () => setSection(btn.dataset.sectionJump));
       });
       document.getElementById("refreshBtn").addEventListener("click", loadAll);
+      document.getElementById("refreshMonitorBtn")?.addEventListener("click", () => loadMonitoring());
       document.getElementById("logoutBtn").addEventListener("click", logout);
       document.getElementById("saveLaunchBtn")?.addEventListener("click", () => saveLaunch());
       document.getElementById("toggleLaunchBtn")?.addEventListener("click", toggleLaunch);
@@ -1702,14 +1846,15 @@
     async function loadAll() {
       setBusy(true);
       try {
-        const [resumen, usuarios, retiros, launch, commission, walletDiscount, fares] = await Promise.all([
+        const [resumen, usuarios, retiros, launch, commission, walletDiscount, fares, monitoring] = await Promise.all([
           api("/api/dashboard/resumen"),
           api("/api/admin/usuarios"),
           api("/api/admin/retiros").catch(() => []),
           api("/api/admin/launch").catch(() => null),
           api("/api/admin/commission").catch(() => null),
           api("/api/admin/wallet-discount").catch(() => null),
-          api("/api/admin/fares").catch(() => null)
+          api("/api/admin/fares").catch(() => null),
+          api("/api/monitor/status").catch(() => null)
         ]);
         state.resumen = resumen || {};
         state.usuarios = Array.isArray(usuarios) ? usuarios : [];
@@ -1718,6 +1863,7 @@
         state.commission = commission || state.resumen?.config?.commission || null;
         state.walletDiscount = walletDiscount || state.resumen?.config?.walletDiscount || null;
         state.fares = fares || state.resumen?.config?.fares || null;
+        state.monitoring = monitoring || null;
         state.viajes = state.resumen.ultimosViajes || [];
         renderAll();
         setText("lastSync", `Actualizado ${new Date().toLocaleTimeString()}`);
@@ -1740,6 +1886,18 @@
       }
     }
 
+    async function loadMonitoring({ silent = false } = {}) {
+      try {
+        state.monitoring = await api("/api/monitor/status");
+        renderMonitoring();
+        renderNavCounts();
+        if (!silent) showToast("Monitoreo actualizado");
+      } catch (err) {
+        console.error(err);
+        if (!silent) showToast("No se pudo cargar monitoreo");
+      }
+    }
+
     function renderAll() {
       renderMetrics();
       renderNavCounts();
@@ -1757,6 +1915,7 @@
       renderCredits();
       renderOps();
       renderReservations();
+      renderMonitoring();
       renderLaunch();
     }
 
@@ -1793,6 +1952,7 @@
       setText("navFinance", state.retiros.filter((r) => r.estado === "pendiente").length);
       setText("navCredits", state.resumen?.creditosMotoristas?.length || 0);
       setText("navOps", state.resumen?.reservasActivas?.length || 0);
+      setText("navMonitor", monitorNavBadge());
       setText("navLaunch", state.launch?.enabled ? "ON" : "OFF");
     }
 
@@ -1877,6 +2037,124 @@
     function renderReservations() {
       const rows = filterRows(state.resumen?.reservasActivas || [], tripSearchText);
       setRows("reservationRows", rows, 7, "No hay reservas activas", reservationRow);
+    }
+
+    function renderMonitoring() {
+      const monitoring = state.monitoring || {};
+      const health = monitoring.health || {
+        level: "warning",
+        label: "Sin datos",
+        message: "Esperando primera lectura del monitor"
+      };
+      const lastCheck = monitoring.monitorState?.lastCheck || {};
+      const pm2Apps = Object.entries(lastCheck.pm2?.apps || {});
+      const pm2Online = pm2Apps.filter(([, app]) => app.status === "online").length;
+      const pm2Restarts = pm2Apps.reduce((sum, [, app]) => sum + Number(app.restarts || 0), 0);
+      const pm2Delta = pm2Apps.reduce((sum, [, app]) => sum + Number(app.delta || 0), 0);
+      const frontendErrors = Number(monitoring.frontendErrors10m || 0);
+      const frontendCritical = Number(monitoring.frontendCritical10m || 0);
+      const socketDisconnects = Number(monitoring.socketDisconnects || 0);
+
+      setText("mMonitorHealth", health.label);
+      setText("mMonitorHealthText", health.message);
+      setText("mMonitorPm2", `${pm2Online}/${pm2Apps.length || 0}`);
+      setText("mMonitorPm2Text", `${pm2Restarts} reinicios acumulados, ${pm2Delta} nuevos`);
+      setText("mMonitorSocket", socketDisconnects);
+      setText("mMonitorSocketText", `Limite ${monitoring.thresholds?.socketDisconnects || 80} en ventana operativa`);
+      setText("mMonitorFrontend", frontendErrors);
+      setText("mMonitorFrontendText", frontendCritical ? `${frontendCritical} criticos en 10 min` : "Errores reales desde WebView/navegador");
+      setText("monitorUpdatedLabel", lastCheck.at ? `Lectura ${formatDate(lastCheck.at)}` : "Sin lectura");
+
+      const updated = document.getElementById("monitorUpdatedLabel");
+      if (updated) updated.className = `status ${monitorStatusClass(health.level)}`;
+
+      renderMonitorServices(monitoring);
+      renderMonitorAlerts(monitoring.criticalAlerts || []);
+      renderMonitorErrors();
+    }
+
+    function renderMonitorServices(monitoring) {
+      const target = document.getElementById("monitorServiceList");
+      if (!target) return;
+
+      const lastCheck = monitoring.monitorState?.lastCheck || {};
+      const pm2Apps = Object.entries(lastCheck.pm2?.apps || {});
+      const rows = [
+        {
+          icon: "fa-database",
+          title: "MongoDB",
+          text: lastCheck.mongo?.ok ? `Estado ${lastCheck.mongo.state || 1}` : (lastCheck.mongo?.error || "Sin lectura"),
+          status: lastCheck.mongo?.ok ? "ok" : "critical",
+          chip: lastCheck.mongo?.ok ? "OK" : "Falla",
+        },
+        {
+          icon: "fa-memory",
+          title: "Redis",
+          text: lastCheck.redis?.ok ? "PING respondio correctamente" : (lastCheck.redis?.error || "Sin lectura"),
+          status: lastCheck.redis?.ok ? "ok" : "critical",
+          chip: lastCheck.redis?.ok ? "OK" : "Falla",
+        },
+        {
+          icon: "fa-server",
+          title: "PM2",
+          text: pm2Apps.length
+            ? pm2Apps.map(([name, app]) => `${name}: ${app.status} (${app.delta || 0} nuevos)`).join(" | ")
+            : "Sin procesos reportados",
+          status: lastCheck.pm2?.ok ? "ok" : "critical",
+          chip: lastCheck.pm2?.ok ? "OK" : "Falla",
+        },
+        {
+          icon: "fa-plug-circle-bolt",
+          title: "Socket.IO",
+          text: `${monitoring.socketDisconnects || 0} desconexiones recientes`,
+          status: Number(monitoring.socketDisconnects || 0) >= Number(monitoring.thresholds?.socketDisconnects || 80) ? "warning" : "ok",
+          chip: monitoring.socketDisconnects || 0,
+        },
+        {
+          icon: "fa-mobile-screen-button",
+          title: "Frontend movil",
+          text: `${monitoring.frontendErrors10m || 0} errores, ${monitoring.frontendCritical10m || 0} criticos en 10 min`,
+          status: Number(monitoring.frontendCritical10m || 0) ? "critical" : Number(monitoring.frontendErrors10m || 0) ? "warning" : "ok",
+          chip: monitoring.frontendErrors10m || 0,
+        },
+      ];
+
+      target.innerHTML = rows.map((item) => `
+        <article class="mini-card">
+          <i class="mini-icon fa-solid ${item.icon}"></i>
+          <div><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.text)}</span></div>
+          <span class="status ${item.status}">${escapeHtml(item.chip)}</span>
+        </article>
+      `).join("");
+    }
+
+    function renderMonitorAlerts(alerts) {
+      const target = document.getElementById("monitorAlertList");
+      if (!target) return;
+
+      if (!alerts.length) {
+        target.innerHTML = `<div class="empty">No hay alertas recientes</div>`;
+        return;
+      }
+
+      target.innerHTML = alerts.slice(0, 8).map((alert) => {
+        const severity = monitorStatusClass(alert.severity);
+        return `
+          <article class="monitor-alert">
+            <div class="monitor-alert-head">
+              <strong>${escapeHtml(formatType(alert.type || "alerta"))}</strong>
+              <span class="status ${severity}">${escapeHtml(alert.severity || "info")}</span>
+            </div>
+            <p>${escapeHtml(alert.message || "Sin mensaje")}</p>
+            <span class="row-sub">${escapeHtml(formatDate(alert.ts))}</span>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderMonitorErrors() {
+      const rows = filterRows(state.monitoring?.recentFrontendErrors || [], monitorSearchText);
+      setRows("monitorErrorRows", rows, 7, "No hay errores frontend recientes", monitorErrorRow);
     }
 
     function renderLaunch() {
@@ -2461,6 +2739,57 @@
       return `${driver.nombre || ""} ${driver.telefono || ""} ${item.viajesFinalizados || ""}`;
     }
 
+    function monitorSearchText(item) {
+      return `${item.source || ""} ${item.level || ""} ${item.type || ""} ${item.message || ""} ${item.route || ""} ${item.release || ""} ${item.userAgent || ""}`;
+    }
+
+    function monitorErrorRow(item) {
+      return row([
+        cell("App", `<span class="row-main">${escapeHtml(formatType(item.source))}</span><span class="row-sub">${escapeHtml(item.release || "-")}</span>`),
+        cell("Nivel", `<span class="status ${monitorStatusClass(item.level)}">${escapeHtml(formatType(item.level))}</span>`),
+        cell("Tipo", `<span class="status">${escapeHtml(formatType(item.type))}</span>`),
+        cell("Mensaje", `<span class="row-main">${escapeHtml(item.message || "-")}</span><span class="row-sub">${escapeHtml(shortId(item._id))}</span>`),
+        cell("Ruta", `<span class="row-main">${escapeHtml(item.route || "-")}</span><span class="row-sub">${escapeHtml(item.url || "")}</span>`),
+        cell("Dispositivo", `<span class="row-main">${escapeHtml(deviceLabel(item.userAgent))}</span><span class="row-sub">${escapeHtml(viewportLabel(item.viewport))}</span>`),
+        cell("Fecha", formatDate(item.createdAt))
+      ]);
+    }
+
+    function monitorNavBadge() {
+      const health = state.monitoring?.health?.level;
+      if (health === "critical") return "!";
+      if (health === "warning") return "REV";
+      if (health === "ok") return "OK";
+      return "...";
+    }
+
+    function monitorStatusClass(value) {
+      const token = String(value || "").toLowerCase();
+      if (["ok", "online", "activo", "stable", "info"].includes(token)) return "ok";
+      if (["warning", "warn", "atencion", "pending"].includes(token)) return "warning";
+      if (["critical", "error", "danger", "failed", "down"].includes(token)) return "critical";
+      return cssToken(token || "warning");
+    }
+
+    function deviceLabel(userAgent = "") {
+      const ua = String(userAgent || "");
+      if (!ua) return "-";
+      const android = ua.match(/Android\s+([\d.]+)/i)?.[1];
+      const chrome = ua.match(/Chrome\/([\d.]+)/i)?.[1];
+      const webview = /wv\)/i.test(ua) || /; wv/i.test(ua);
+      if (android) return `Android ${android}${webview ? " WebView" : chrome ? " Chrome" : ""}`;
+      if (/iPhone|iPad/i.test(ua)) return "iOS Safari";
+      return ua.split(" ").slice(0, 3).join(" ");
+    }
+
+    function viewportLabel(viewport = {}) {
+      const width = Number(viewport.width || 0);
+      const height = Number(viewport.height || 0);
+      const dpr = Number(viewport.dpr || 1);
+      if (!width || !height) return "-";
+      return `${width}x${height} DPR ${trimNumber(dpr)}`;
+    }
+
     function personCell(user, fallback) {
       if (!user) return `<span class="row-main">-</span>`;
       return `<span class="row-main">${escapeHtml(fullName(user) || "Usuario")}</span><span class="row-sub">${escapeHtml(user.telefono || shortId(fallback || user._id))}</span>`;
@@ -2522,6 +2851,7 @@
     }
 
     function formatDate(value) {
+      if (!value) return "-";
       const date = new Date(value);
       return Number.isNaN(date.getTime()) ? "-" : date.toLocaleString();
     }
