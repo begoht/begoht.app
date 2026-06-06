@@ -2,7 +2,7 @@ import { AppState } from "./app.state.js";
 import { getSocket } from "../../socket/socket.js?v=20260606-monitoring";
 import { createMap } from "../../map/map.singleton.js";
 import { initRouter } from "../router/router.js?v=20260605-price-premium-cancel";
-import { initLaunchCountdown } from "../../launch-countdown.js?v=20260606-jacmel-launch-map";
+import { initLaunchCountdown } from "../../launch-countdown.js?v=20260606-global-launch-gate";
 
 function mostrarAppLista() {
     document.body.classList.add("app-ready");
