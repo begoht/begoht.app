@@ -1,6 +1,6 @@
 // pasajero/ui.js
 import { viajeState } from "../viaje/viaje.state.js";
-import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260605-price-premium-cancel";
+import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260606-payment-methods";
 import { cerrarBuscandoMotorista } from "../pasajero/pasajero.ui.js";
 import { limpiarViajePasajero } from "../socket/viaje.limpieza.js";
 import { limpiarRutas } from "../map/map.ruta.js?v=20260604-jacmel-gps";

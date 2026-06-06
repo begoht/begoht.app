@@ -1,4 +1,4 @@
-export function mostrarPagoNoDisponible({ metodo = "pago" } = {}) {
+export function mostrarPagoNoDisponible({ metodo = "pago", mensaje = "" } = {}) {
   document.getElementById("pagoNoDisponibleModal")?.remove();
 
   const metodoNormalizado = String(metodo || "pago").toLowerCase();
@@ -7,6 +7,7 @@ export function mostrarPagoNoDisponible({ metodo = "pago" } = {}) {
     natcash: "NatCash",
     pago: "Paiement"
   }[metodoNormalizado] || metodoNormalizado.replace(/^\w/, (letra) => letra.toUpperCase());
+  const copy = mensaje || "Vous pouvez associer votre compte reel dans Paiements. Les debits de voyage restent proteges jusqu'a l'activation fournisseur.";
 
   const modal = document.createElement("div");
   modal.id = "pagoNoDisponibleModal";
@@ -19,7 +20,7 @@ export function mostrarPagoNoDisponible({ metodo = "pago" } = {}) {
 
         <span class="pago-no-disponible-kicker">BeGO Paiement</span>
         <h2 id="pagoNoDisponibleTitulo">${nombre} en verification</h2>
-        <p>Vous pouvez associer votre compte reel dans Paiements. Les debits de voyage restent proteges jusqu'a l'activation fournisseur.</p>
+        <p>${escapeHtml(copy)}</p>
 
         <div class="pago-no-disponible-actions">
           <button id="btnPagoNoDisponibleAbrir" type="button">Associer un compte</button>
@@ -148,4 +149,14 @@ export function mostrarPagoNoDisponible({ metodo = "pago" } = {}) {
     modal.remove();
     window.location.hash = "#/pago";
   });
+}
+
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "\"": "&quot;",
+    "'": "&#039;"
+  }[char]));
 }

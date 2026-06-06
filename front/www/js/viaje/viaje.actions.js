@@ -1,7 +1,7 @@
 import { getSocket } from "../socket/socket.js?v=20260606-monitoring";
 import { viajeState } from "./viaje.state.js";
 import { limpiarViajePasajero } from "../socket/viaje.limpieza.js";
-import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260605-price-premium-cancel";
+import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260606-payment-methods";
 import { cerrarBuscandoMotorista } from "../pasajero/ui/overlays/buscandoMotorista.ui.js?v=20260605-price-premium-cancel";
 import { cityConfig } from "../map/config/index.js";
 
@@ -16,6 +16,14 @@ function getSafeSocket() {
 
 function crearQuoteId() {
   return `quote-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function metodoPagoDisponiblePorDefecto() {
+  const methods = window.__begoPaymentMethods || {};
+  const preferred = ["efectivo", "wallet", "moncash", "natcash"]
+    .find((id) => methods[id]?.enabled && methods[id]?.canPay);
+
+  return preferred || "efectivo";
 }
 
 export function clearCotizacionTimer() {
@@ -90,7 +98,7 @@ export function pedirViaje() {
     quoteId,
     origen: viajeState.origen,
     destino: viajeState.destino,
-    metodoPago: viajeState.metodoPago || "efectivo",
+    metodoPago: viajeState.metodoPago || metodoPagoDisponiblePorDefecto(),
     city: cityConfig.id,
     tipo: viajeState.tipoServicio || "viaje",
     paquete: viajeState.tipoServicio === "envio" ? viajeState.paquete : null

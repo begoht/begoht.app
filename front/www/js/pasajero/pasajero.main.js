@@ -1,7 +1,7 @@
 import { initGeo } from "../map/map.geo.js?v=20260605-passenger-dot";
 import { initSeleccionDestino } from "../map/map.destino.js?v=20260605-price-premium-cancel";
-import { actualizarBotonViaje } from "../pasajero/pasajero.ui.js?v=20260605-price-premium-cancel";
-import { initToggleMenuDriver, seleccionarPago } from "./pasajero.ui.js?v=20260605-price-premium-cancel";
+import { actualizarBotonViaje } from "../pasajero/pasajero.ui.js?v=20260606-payment-methods";
+import { initPaymentMethodSettings, initToggleMenuDriver, seleccionarPago } from "./pasajero.ui.js?v=20260606-payment-methods";
 import { getSocket } from "../socket/socket.js?v=20260606-monitoring";
 import { initPasajeroSocket } from "../socket/pasajero.socket.js?v=20260606-no-nearby-drivers";
 import { setMapa, limpiarMotoristas } from "../map/map.motorista.js?v=20260604-jacmel-gps";
@@ -40,6 +40,7 @@ export function initPasajero(map) {
     initSavedDestinations(map);
     initEnvioPaquete();
     initWalletDiscountUI();
+    initPaymentMethodSettings();
     initHomeOffers();
 
     initToggleMenuDriver();

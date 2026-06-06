@@ -57,8 +57,10 @@ function renderPaymentState() {
 function renderProviderCards() {
   ["moncash", "natcash"].forEach((provider) => {
     const method = state.methods.find((item) => item.provider === provider);
+    const providerConfig = getProviderConfig(provider);
     const stateEl = document.getElementById(`paymentState${capitalize(provider)}`);
-    const linkBtn = document.querySelector(`[data-payment-link="${provider}"] span`);
+    const linkButton = document.querySelector(`[data-payment-link="${provider}"]`);
+    const linkBtn = linkButton?.querySelector("span");
     const defaultBtn = document.querySelector(`[data-payment-default="${provider}"]`);
 
     if (method) {
@@ -71,10 +73,17 @@ function renderProviderCards() {
     } else {
       stateEl.innerHTML = `
         <strong>Non associe</strong>
-        <span>Ajoutez votre compte reel</span>
+        <span>${providerConfig?.canLink ? "Ajoutez votre compte reel" : "Indisponible pour le moment"}</span>
       `;
-      if (linkBtn) linkBtn.textContent = "Associer";
+      if (linkBtn) linkBtn.textContent = providerConfig?.canLink ? "Associer" : "Indisponible";
       if (defaultBtn) defaultBtn.disabled = true;
+    }
+
+    if (linkButton) {
+      linkButton.disabled = !providerConfig?.canLink;
+      linkButton.title = providerConfig?.canLink
+        ? ""
+        : (providerConfig?.unavailableMessage || "No disponible por ahora.");
     }
   });
 }
@@ -85,7 +94,7 @@ function renderProviderStatus() {
 
   target.innerHTML = state.providers.map((provider) => `
     <span class="${provider.canPay ? "ready" : "link-only"}">
-      ${escapeHtml(provider.label)}: ${provider.canPay ? "Debit reel actif" : "Association seulement"}
+      ${escapeHtml(provider.label)}: ${escapeHtml(paymentProviderStatusText(provider))}
     </span>
   `).join("");
 }
@@ -132,6 +141,12 @@ function renderMethodList() {
 }
 
 function openPaymentModal(provider) {
+  const providerConfig = getProviderConfig(provider);
+  if (!providerConfig?.canLink) {
+    showToast(providerConfig?.unavailableMessage || "No disponible por ahora.");
+    return;
+  }
+
   state.selectedProvider = provider;
   const method = state.methods.find((item) => item.provider === provider);
   const label = PROVIDER_LABEL[provider] || "Mobile money";
@@ -146,6 +161,16 @@ function openPaymentModal(provider) {
 
   document.getElementById("paymentModal")?.classList.remove("hidden");
   window.setTimeout(() => document.getElementById("paymentPhone")?.focus(), 80);
+}
+
+function getProviderConfig(provider) {
+  return state.providers.find((item) => item.id === provider) || null;
+}
+
+function paymentProviderStatusText(provider) {
+  if (provider.canPay) return "Debit reel actif";
+  if (provider.status === "disabled") return "Indisponible";
+  return "Association seulement";
 }
 
 function closePaymentModal() {

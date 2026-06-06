@@ -14,6 +14,7 @@ const {
   serializeMethod,
   serializeMethods,
 } = require("../services/paymentMethods.service");
+const { ensurePaymentMethodSettings } = require("../services/paymentMethodSettings.service");
 
 const router = express.Router();
 
@@ -30,11 +31,14 @@ router.get("/", auth, async (req, res) => {
     const methods = await PaymentMethod.find({ userId: req.user.id })
       .sort({ isDefault: -1, updatedAt: -1 })
       .lean();
+    const settings = await ensurePaymentMethodSettings();
+    const providers = allProviderConfig(settings.methods);
+    const providerMap = Object.fromEntries(providers.map((provider) => [provider.id, provider]));
 
     res.json({
       ok: true,
-      providers: allProviderConfig(),
-      methods: serializeMethods(methods),
+      providers,
+      methods: serializeMethods(methods, providerMap),
     });
   } catch (err) {
     console.error("payment-methods list:", err);
@@ -48,6 +52,14 @@ router.post("/", writeLimiter, auth, async (req, res) => {
 
   try {
     const provider = normalizeProvider(req.body.provider);
+    const settings = await ensurePaymentMethodSettings();
+    const providerConfig = settings.methods?.[provider];
+    if (!providerConfig?.canLink) {
+      return res.status(503).json({
+        error: providerConfig?.unavailableMessage || "Este metodo no esta disponible por ahora.",
+      });
+    }
+
     const phone = normalizeHaitiPhone(req.body.phone);
     const accountName = cleanAccountName(req.body.accountName);
     const phoneHash = hashPhone(phone.e164);

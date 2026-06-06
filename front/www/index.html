@@ -167,10 +167,10 @@
   <h3 class="titulo-pago">¿Cómo deseas pagar?</h3>
 
   <div class="pago-opciones">
-    <button class="btn-pago" onclick="seleccionarPago('efectivo', this)">💵 Efectivo</button>
-    <button class="btn-pago" onclick="seleccionarPago('wallet', this)">💳 Wallet BeGO</button>
-    <button class="btn-pago btn-pago-indisponible" aria-disabled="true" onclick="seleccionarPago('moncash', this)">📱 MonCash</button>
-    <button class="btn-pago btn-pago-indisponible" aria-disabled="true" onclick="seleccionarPago('natcash', this)">🏦 NatCash</button>
+    <button id="btnPagoEfectivo" class="btn-pago" data-payment-method="efectivo" onclick="seleccionarPago('efectivo', this)">💵 Efectivo</button>
+    <button id="btnPagoWallet" class="btn-pago" data-payment-method="wallet" onclick="seleccionarPago('wallet', this)">💳 Wallet BeGO</button>
+    <button id="btnPagoMoncash" class="btn-pago btn-pago-indisponible" data-payment-method="moncash" aria-disabled="true" onclick="seleccionarPago('moncash', this)">📱 MonCash</button>
+    <button id="btnPagoNatcash" class="btn-pago btn-pago-indisponible" data-payment-method="natcash" aria-disabled="true" onclick="seleccionarPago('natcash', this)">🏦 NatCash</button>
   </div>
 
 
@@ -426,7 +426,7 @@
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 <script type="module" src="./js/monitoring/frontend-monitor.js?v=20260606-monitoring"></script>
 <script type="module">
-  import { initApp } from "./js/core/app/app.js?v=20260606-monitoring";
+  import { initApp } from "./js/core/app/app.js?v=20260606-payment-methods";
   initApp();
 </script>
 

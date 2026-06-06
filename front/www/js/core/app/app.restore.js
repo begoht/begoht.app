@@ -1,4 +1,4 @@
-import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260605-price-premium-cancel";
+import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260606-payment-methods";
 import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260604-jacmel-gps";
 import { getMap } from "../../map/map.singleton.js";
 import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260604-jacmel-gps";

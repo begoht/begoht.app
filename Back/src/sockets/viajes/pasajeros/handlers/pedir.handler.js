@@ -65,7 +65,7 @@ module.exports = async function pedirViaje(socket, io, data) {
         quoteId,
         code: "PAGO_NO_DISPONIBLE",
         metodoPago: err.metodoPago,
-        mensaje: "Ce mode de paiement n'est pas disponible pour le moment."
+        mensaje: err.messageForUser || "Ce mode de paiement n'est pas disponible pour le moment."
       });
     }
 

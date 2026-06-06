@@ -15,6 +15,7 @@ const {
   providerConfig,
   providerUnavailableMessage,
 } = require("../services/paymentMethods.service");
+const { ensurePaymentMethodSettings } = require("../services/paymentMethodSettings.service");
 
 function getPublicApiUrl(req) {
   const configuredUrl = process.env.PUBLIC_API_URL || process.env.API_URL;
@@ -216,7 +217,8 @@ router.post("/wallet/iniciar", auth, async (req, res) => {
       });
     }
 
-    const cfg = providerConfig(metodo);
+    const settings = await ensurePaymentMethodSettings();
+    const cfg = providerConfig(metodo, settings.methods?.[metodo]);
     const checkoutUrl = process.env[`${metodo.toUpperCase()}_CHECKOUT_URL`];
 
     if (!cfg.canPay || !checkoutUrl) {

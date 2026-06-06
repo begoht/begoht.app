@@ -733,6 +733,22 @@
       min-height: 86px;
     }
 
+    .payment-method-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .payment-method-toggle {
+      align-items: flex-start;
+      min-height: 96px;
+      padding: 14px;
+    }
+
+    .payment-method-toggle span:first-child {
+      min-width: 0;
+    }
+
     .table-wrap {
       width: 100%;
       overflow: auto;
@@ -1039,7 +1055,8 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
-      .delay-reassign-grid {
+      .delay-reassign-grid,
+      .payment-method-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
@@ -1118,7 +1135,8 @@
 
       .kpi-grid,
       .command-grid,
-      .delay-reassign-grid {
+      .delay-reassign-grid,
+      .payment-method-grid {
         gap: 8px;
       }
 
@@ -1585,6 +1603,22 @@
         <section class="panel">
           <div class="panel-head">
             <div>
+              <h2>Metodos de pago</h2>
+              <p class="muted">Activa o pausa metodos de pago en pasajero, recargas y validacion backend.</p>
+            </div>
+            <span class="status activo" id="paymentMethodsStatus">2 activos</span>
+          </div>
+          <div class="panel-body launch-form-grid">
+            <div class="payment-method-grid" id="paymentMethodSwitches"></div>
+            <div class="launch-actions">
+              <button class="btn blue" id="savePaymentMethodsBtn" type="button"><i class="fa-solid fa-floppy-disk"></i>Guardar metodos</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
               <h2>Wallet BeGO</h2>
               <p class="muted">Cuenta interna @bego. Los pagos digitales entran automatico; efectivo queda por cobrar hasta que el motorista transfiera.</p>
             </div>
@@ -1827,6 +1861,7 @@
       launch: null,
       commission: null,
       walletDiscount: null,
+      paymentMethods: null,
       fares: null,
       monitoring: null,
       delayReassignment: null,
@@ -1876,6 +1911,7 @@
       document.getElementById("pricePerKmInput")?.addEventListener("input", renderBaseFarePreview);
       document.getElementById("baseFarePreviewKmInput")?.addEventListener("input", renderBaseFarePreview);
       document.getElementById("saveWalletDiscountBtn")?.addEventListener("click", saveWalletDiscount);
+      document.getElementById("savePaymentMethodsBtn")?.addEventListener("click", savePaymentMethods);
       document.getElementById("walletDiscountEnabledInput")?.addEventListener("change", renderWalletDiscountPreview);
       document.getElementById("walletDiscountPercentInput")?.addEventListener("input", renderWalletDiscountPreview);
       document.getElementById("walletDiscountLabelInput")?.addEventListener("input", renderWalletDiscountPreview);
@@ -1902,13 +1938,14 @@
     async function loadAll() {
       setBusy(true);
       try {
-        const [resumen, usuarios, retiros, launch, commission, walletDiscount, fares, monitoring, delayReassignment] = await Promise.all([
+        const [resumen, usuarios, retiros, launch, commission, walletDiscount, paymentMethods, fares, monitoring, delayReassignment] = await Promise.all([
           api("/api/dashboard/resumen"),
           api("/api/admin/usuarios"),
           api("/api/admin/retiros").catch(() => []),
           api("/api/admin/launch").catch(() => null),
           api("/api/admin/commission").catch(() => null),
           api("/api/admin/wallet-discount").catch(() => null),
+          api("/api/admin/payment-methods").catch(() => null),
           api("/api/admin/fares").catch(() => null),
           api("/api/monitor/status").catch(() => null),
           api("/api/admin/viajes/reasignacion-demora").catch(() => null)
@@ -1919,6 +1956,7 @@
         state.launch = launch || null;
         state.commission = commission || state.resumen?.config?.commission || null;
         state.walletDiscount = walletDiscount || state.resumen?.config?.walletDiscount || null;
+        state.paymentMethods = paymentMethods || null;
         state.fares = fares || state.resumen?.config?.fares || null;
         state.monitoring = monitoring || null;
         state.delayReassignment = delayReassignment || null;
@@ -1980,6 +2018,7 @@
       renderCommission();
       renderBaseFare();
       renderWalletDiscount();
+      renderPaymentMethods();
       renderWallets();
       renderWithdraws();
       renderCredits();
@@ -2482,6 +2521,87 @@
       } catch (err) {
         console.error(err);
         showToast("No se pudo guardar el descuento wallet");
+      }
+    }
+
+    function paymentMethodOrder() {
+      return ["efectivo", "wallet", "moncash", "natcash"];
+    }
+
+    function paymentMethodDefaults() {
+      return {
+        efectivo: { id: "efectivo", label: "Efectivo", enabled: true, canPay: true, configured: true, status: "ready", unavailableMessage: "Efectivo no disponible por ahora." },
+        wallet: { id: "wallet", label: "Wallet BeGO", enabled: true, canPay: true, configured: true, status: "ready", unavailableMessage: "Wallet BeGO no disponible por ahora." },
+        moncash: { id: "moncash", label: "MonCash", enabled: false, canPay: false, configured: false, status: "disabled", unavailableMessage: "MonCash no disponible por ahora." },
+        natcash: { id: "natcash", label: "NatCash", enabled: false, canPay: false, configured: false, status: "disabled", unavailableMessage: "NatCash no disponible por ahora." }
+      };
+    }
+
+    function currentPaymentMethods() {
+      return {
+        ...paymentMethodDefaults(),
+        ...(state.paymentMethods?.methods || {})
+      };
+    }
+
+    function renderPaymentMethods() {
+      const target = document.getElementById("paymentMethodSwitches");
+      if (!target) return;
+
+      const methods = currentPaymentMethods();
+      const rows = paymentMethodOrder().map((id) => paymentMethodSwitch(methods[id]));
+      const activeCount = paymentMethodOrder().filter((id) => methods[id]?.enabled).length;
+
+      setText("paymentMethodsStatus", `${activeCount} activos`);
+      const status = document.getElementById("paymentMethodsStatus");
+      if (status) status.className = activeCount ? "status activo" : "status apagado";
+
+      target.innerHTML = rows.join("");
+    }
+
+    function paymentMethodSwitch(method) {
+      const id = method.id;
+      const configuredText = method.configured ? "Proveedor configurado" : "Falta configurar proveedor";
+      const statusText = !method.enabled ? "Pausado" : method.canPay ? "Listo" : configuredText;
+      const statusClass = !method.enabled ? "apagado" : method.canPay ? "activo" : "warning";
+      const disabledNote = ["moncash", "natcash"].includes(id)
+        ? `<small>${escapeHtml(statusText)}. Si falla, apagalo y la app mostrara no disponible.</small>`
+        : `<small>${escapeHtml(statusText)} para nuevas cotizaciones.</small>`;
+
+      return `
+        <label class="admin-toggle-row payment-method-toggle" for="paymentMethod_${escapeHtml(id)}">
+          <span>
+            <span class="row-main">${escapeHtml(method.label || id)}</span>
+            ${disabledNote}
+            <span class="row-sub"><span class="status ${statusClass}">${escapeHtml(statusText)}</span></span>
+          </span>
+          <input id="paymentMethod_${escapeHtml(id)}" data-payment-method-toggle="${escapeHtml(id)}" type="checkbox" ${method.enabled ? "checked" : ""}>
+        </label>
+      `;
+    }
+
+    async function savePaymentMethods() {
+      const existing = currentPaymentMethods();
+      const methods = {};
+
+      paymentMethodOrder().forEach((id) => {
+        methods[id] = {
+          enabled: !!document.querySelector(`[data-payment-method-toggle="${id}"]`)?.checked,
+          label: existing[id]?.label,
+          unavailableMessage: existing[id]?.unavailableMessage || `${existing[id]?.label || id} no disponible por ahora.`
+        };
+      });
+
+      try {
+        state.paymentMethods = await api("/api/admin/payment-methods", {
+          method: "PUT",
+          body: { methods }
+        });
+        renderPaymentMethods();
+        showToast("Metodos de pago actualizados");
+      } catch (err) {
+        console.error(err);
+        showToast("No se pudieron guardar los metodos de pago");
       }
     }
 

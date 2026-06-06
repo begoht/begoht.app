@@ -18,14 +18,6 @@ module.exports = async function confirmarViaje(socket, io, data) {
     return socket.emit("error", { mensaje: "Metodo de pago invalido" });
   }
 
-  if (["moncash", "natcash"].includes(metodoPago)) {
-    return socket.emit("viaje-error", {
-      code: "PAGO_NO_DISPONIBLE",
-      metodoPago,
-      mensaje: "Ce mode de paiement n'est pas disponible pour le moment."
-    });
-  }
-
   data.metodoPago = metodoPago;
 
   const idemKey = `confirmar:${userId}`;
@@ -205,7 +197,7 @@ module.exports = async function confirmarViaje(socket, io, data) {
       return socket.emit("viaje-error", {
         code: "PAGO_NO_DISPONIBLE",
         metodoPago: error.metodoPago,
-        mensaje: "Ce mode de paiement n'est pas disponible pour le moment."
+        mensaje: error.messageForUser || "Ce mode de paiement n'est pas disponible pour le moment."
       });
     }
 

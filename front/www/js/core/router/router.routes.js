@@ -27,7 +27,7 @@ import { initRecarga } from "../../recarga.js";
 import { renderPromos } from "../../../paginas/promos.js?v=20260604-admin-offers";
 import { initPromosPage } from "../../promos/passenger-offers.js?v=20260604-admin-offers";
 import { renderPago } from "../../../paginas/pago.js?v=20260605-payments-premium";
-import { initPago } from "../../pagos.js?v=20260605-payments-premium";
+import { initPago } from "../../pagos.js?v=20260606-payment-methods";
 
 // 🔥 Importa el render de actividad
 import { initActividad } from "../../pages/actividad.js";

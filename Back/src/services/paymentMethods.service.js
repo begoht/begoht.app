@@ -102,17 +102,19 @@ function cleanAccountName(value) {
     .slice(0, 80);
 }
 
-function providerConfig(provider) {
+function providerConfig(provider, globalConfig = null) {
   const meta = PROVIDERS[provider];
-  const enabled = process.env[`${meta.envPrefix}_PAYMENTS_ENABLED`] === "true";
+  const globalEnabled = globalConfig ? Boolean(globalConfig.enabled) : true;
+  const enabled = globalEnabled && process.env[`${meta.envPrefix}_PAYMENTS_ENABLED`] === "true";
   const configured = meta.requiredEnv.every((name) => Boolean(process.env[name]));
 
   return {
     id: meta.id,
-    label: meta.label,
-    canLink: true,
+    label: globalConfig?.label || meta.label,
+    canLink: globalConfig ? Boolean(globalConfig.canLink) : true,
     canPay: enabled && configured,
-    status: enabled && configured ? "ready" : "link_only",
+    status: !globalEnabled ? "disabled" : enabled && configured ? "ready" : "link_only",
+    unavailableMessage: globalConfig?.unavailableMessage || `${meta.label} no esta disponible por ahora.`,
   };
 }
 
@@ -121,8 +123,8 @@ function providerUnavailableMessage(provider) {
   return `${PROVIDERS[normalized].label} no esta disponible por ahora.`;
 }
 
-function allProviderConfig() {
-  return Object.keys(PROVIDERS).map(providerConfig);
+function allProviderConfig(globalMethods = null) {
+  return Object.keys(PROVIDERS).map((provider) => providerConfig(provider, globalMethods?.[provider]));
 }
 
 function serializeMethod(method, configMap = null) {
@@ -148,8 +150,8 @@ function serializeMethod(method, configMap = null) {
   };
 }
 
-function serializeMethods(methods = []) {
-  const configs = Object.fromEntries(allProviderConfig().map((item) => [item.id, item]));
+function serializeMethods(methods = [], configMap = null) {
+  const configs = configMap || Object.fromEntries(allProviderConfig().map((item) => [item.id, item]));
   return methods.map((method) => serializeMethod(method, configs));
 }
 
