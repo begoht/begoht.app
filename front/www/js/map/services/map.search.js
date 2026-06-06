@@ -15,6 +15,54 @@ const SEARCH_LIMIT = 5;
 
 const RATE_LIMIT_MS = 800;
 
+function normalizarTexto(value = "") {
+  return String(value)
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+}
+
+function buscarPOILocales(query) {
+  const normalizedQuery = normalizarTexto(query);
+  const cityLabel = cityConfig?.map?.searchLabel || cityConfig?.name || "";
+
+  if (!normalizedQuery) return [];
+
+  return (cityConfig?.poi || [])
+    .filter((poi) => {
+      const haystack = normalizarTexto([
+        poi.nombre,
+        poi.categoria,
+        cityConfig?.name,
+        cityConfig?.country
+      ].filter(Boolean).join(" "));
+
+      return haystack.includes(normalizedQuery);
+    })
+    .filter((poi) => coordsInCity({ lat: Number(poi.lat), lng: Number(poi.lng) }))
+    .slice(0, SEARCH_LIMIT)
+    .map((poi) => ({
+      lat: String(poi.lat),
+      lon: String(poi.lng),
+      display_name: `${poi.nombre}, ${cityLabel}`,
+      class: "place",
+      type: poi.categoria || "poi",
+      source: "local-poi"
+    }));
+}
+
+function mergeResults(primary, secondary) {
+  const seen = new Set();
+
+  return [...primary, ...secondary].filter((item) => {
+    const key = `${Number(item.lat).toFixed(5)},${Number(item.lon).toFixed(5)}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  }).slice(0, SEARCH_LIMIT);
+}
+
 /*************************************************
  * 🔍 BUSCAR LUGARES
  *************************************************/
@@ -24,13 +72,15 @@ export async function buscarLugares(query) {
     return [];
   }
 
+  const resultadosLocales = buscarPOILocales(query);
+
   /*************************************************
    * 🧠 RATE LIMIT
    *************************************************/
   const now = Date.now();
 
   if (now - lastSearchTime < RATE_LIMIT_MS) {
-    return [];
+    return resultadosLocales;
   }
 
   lastSearchTime = now;
@@ -81,12 +131,14 @@ export async function buscarLugares(query) {
     /*************************************************
      * 🧹 NORMALIZAR RESPUESTA
      *************************************************/
-    return Array.isArray(data)
+    const resultadosRemotos = Array.isArray(data)
       ? data.filter((item) => coordsInCity({
           lat: Number(item.lat),
           lng: Number(item.lon)
         }))
       : [];
+
+    return mergeResults(resultadosLocales, resultadosRemotos);
 
   } catch (err) {
 
@@ -97,7 +149,7 @@ export async function buscarLugares(query) {
       );
     }
 
-    return [];
+    return resultadosLocales;
   }
 }
 
