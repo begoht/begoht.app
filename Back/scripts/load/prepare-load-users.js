@@ -9,6 +9,7 @@ const mongoose = require("mongoose");
 const User = require("../../src/models/User");
 const Wallet = require("../../src/models/Wallet");
 const Viaje = require("../../src/models/Viaje");
+const { redis } = require("../../src/config/redis");
 
 const args = parseArgs(process.argv.slice(2));
 const mode = args.mode || "create";
@@ -31,6 +32,7 @@ async function main() {
     const result = await cleanupRun(runId);
     console.log(JSON.stringify({ event: "cleanup_done", runId, ...result }));
     await mongoose.disconnect();
+    redis.disconnect();
     return;
   }
 
@@ -51,6 +53,7 @@ async function main() {
     }));
 
     await mongoose.disconnect();
+    redis.disconnect();
     return;
   }
 
@@ -66,6 +69,12 @@ async function cleanupRun(id) {
   const phonePrefix = phonePrefixFor(id);
   const users = await User.find({ telefono: { $regex: `^${escapeRegex(phonePrefix)}` } }).select("_id").lean();
   const userIds = users.map((user) => user._id);
+  const userIdStrings = userIds.map((value) => value.toString());
+  const viajesLoad = userIds.length
+    ? await Viaje.find({ $or: [{ pasajero: { $in: userIds } }, { motorista: { $in: userIds } }] }).select("_id").lean()
+    : [];
+  const viajeIds = viajesLoad.map((viaje) => viaje._id.toString());
+  const redisDeleted = await cleanupRedis(userIdStrings, viajeIds);
 
   const [viajes, wallets, deletedUsers] = await Promise.all([
     userIds.length
@@ -79,7 +88,63 @@ async function cleanupRun(id) {
     deletedUsers: deletedUsers.deletedCount || 0,
     deletedWallets: wallets.deletedCount || 0,
     deletedTrips: viajes.deletedCount || 0,
+    redisDeleted,
   };
+}
+
+async function cleanupRedis(userIds, viajeIds) {
+  if (!userIds.length && !viajeIds.length) return 0;
+
+  const cityGeoKeys = await scanKeys("motoristas:ubicacion:*", 200);
+  const pipeline = redis.pipeline();
+  let ops = 0;
+
+  userIds.forEach((id) => {
+    pipeline.zrem("motoristas:ubicacion", id);
+    ops += 1;
+    cityGeoKeys.forEach((key) => {
+      pipeline.zrem(key, id);
+      ops += 1;
+    });
+    [
+      `motorista:data:${id}`,
+      `motorista:pos:${id}`,
+      `motorista:online:${id}`,
+      `motorista:ubicacion:rate:${id}`,
+      `lock:cola:${id}`,
+    ].forEach((key) => {
+      pipeline.del(key);
+      ops += 1;
+    });
+  });
+
+  viajeIds.forEach((id) => {
+    [
+      `viaje:status:${id}`,
+      `viaje:data:${id}`,
+      `viaje:ctx:${id}`,
+      `viaje:ganador:${id}`,
+      `viaje:cancelado:${id}`,
+      `despacho:${id}`,
+    ].forEach((key) => {
+      pipeline.del(key);
+      ops += 1;
+    });
+  });
+
+  if (ops > 0) await pipeline.exec();
+  return ops;
+}
+
+async function scanKeys(pattern, count = 100) {
+  const keys = [];
+  let cursor = "0";
+  do {
+    const [nextCursor, batch] = await redis.scan(cursor, "MATCH", pattern, "COUNT", count);
+    cursor = nextCursor;
+    keys.push(...batch);
+  } while (cursor !== "0");
+  return keys;
 }
 
 async function createUsers(id, driverCount, passengerCount) {
