@@ -723,6 +723,16 @@
       font-size: 0.74rem;
     }
 
+    .delay-reassign-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .delay-reassign-grid .mini-card {
+      min-height: 86px;
+    }
+
     .table-wrap {
       width: 100%;
       overflow: auto;
@@ -1029,6 +1039,10 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
+      .delay-reassign-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
       .command-card {
         min-height: 112px;
         padding: 11px;
@@ -1103,7 +1117,8 @@
       }
 
       .kpi-grid,
-      .command-grid {
+      .command-grid,
+      .delay-reassign-grid {
         gap: 8px;
       }
 
@@ -1322,6 +1337,44 @@
       </section>
 
       <section class="section" id="section-trips">
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Reasignacion por demora</h2>
+              <p class="muted">Viajes y reservas que superaron el tiempo permitido sin llegada del motorista.</p>
+            </div>
+            <div class="launch-actions">
+              <button class="btn secondary small" type="button" id="refreshDelayedTripsBtn"><i class="fa-solid fa-rotate"></i>Actualizar</button>
+              <button class="btn warn small" type="button" id="executeDelayedReassignBtn"><i class="fa-solid fa-triangle-exclamation"></i>Reasignar demoras</button>
+            </div>
+          </div>
+          <div class="panel-body delay-reassign-grid">
+            <article class="mini-card">
+              <i class="mini-icon fa-solid fa-clock"></i>
+              <div><strong id="delayReassignTotal">0</strong><span>Viajes atrasados</span></div>
+              <span class="status warning" id="delayReassignStatus">OK</span>
+            </article>
+            <article class="mini-card">
+              <i class="mini-icon fa-solid fa-motorcycle"></i>
+              <div><strong id="delayAssignedThreshold">8 min</strong><span>Asignado sin llegar</span></div>
+              <span class="status">Viaje</span>
+            </article>
+            <article class="mini-card">
+              <i class="mini-icon fa-solid fa-calendar-check"></i>
+              <div><strong id="delayReservedThreshold">12 min</strong><span>Reserva sin llegada</span></div>
+              <span class="status reservado">Reserva</span>
+            </article>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Viaje</th><th>Estado</th><th>Pasajero</th><th>Motorista</th><th>Demora</th><th>Umbral</th><th>Accion</th></tr>
+              </thead>
+              <tbody id="delayReassignRows"></tbody>
+            </table>
+          </div>
+        </section>
+
         <section class="panel">
           <div class="panel-head">
             <div>
@@ -1776,6 +1829,7 @@
       walletDiscount: null,
       fares: null,
       monitoring: null,
+      delayReassignment: null,
       filtroViajes: "todos",
       search: "",
       charts: {}
@@ -1809,6 +1863,8 @@
       });
       document.getElementById("refreshBtn").addEventListener("click", loadAll);
       document.getElementById("refreshMonitorBtn")?.addEventListener("click", () => loadMonitoring());
+      document.getElementById("refreshDelayedTripsBtn")?.addEventListener("click", () => loadDelayReassignment());
+      document.getElementById("executeDelayedReassignBtn")?.addEventListener("click", executeDelayReassignment);
       document.getElementById("logoutBtn").addEventListener("click", logout);
       document.getElementById("saveLaunchBtn")?.addEventListener("click", () => saveLaunch());
       document.getElementById("toggleLaunchBtn")?.addEventListener("click", toggleLaunch);
@@ -1846,7 +1902,7 @@
     async function loadAll() {
       setBusy(true);
       try {
-        const [resumen, usuarios, retiros, launch, commission, walletDiscount, fares, monitoring] = await Promise.all([
+        const [resumen, usuarios, retiros, launch, commission, walletDiscount, fares, monitoring, delayReassignment] = await Promise.all([
           api("/api/dashboard/resumen"),
           api("/api/admin/usuarios"),
           api("/api/admin/retiros").catch(() => []),
@@ -1854,7 +1910,8 @@
           api("/api/admin/commission").catch(() => null),
           api("/api/admin/wallet-discount").catch(() => null),
           api("/api/admin/fares").catch(() => null),
-          api("/api/monitor/status").catch(() => null)
+          api("/api/monitor/status").catch(() => null),
+          api("/api/admin/viajes/reasignacion-demora").catch(() => null)
         ]);
         state.resumen = resumen || {};
         state.usuarios = Array.isArray(usuarios) ? usuarios : [];
@@ -1864,6 +1921,7 @@
         state.walletDiscount = walletDiscount || state.resumen?.config?.walletDiscount || null;
         state.fares = fares || state.resumen?.config?.fares || null;
         state.monitoring = monitoring || null;
+        state.delayReassignment = delayReassignment || null;
         state.viajes = state.resumen.ultimosViajes || [];
         renderAll();
         setText("lastSync", `Actualizado ${new Date().toLocaleTimeString()}`);
@@ -1898,12 +1956,24 @@
       }
     }
 
+    async function loadDelayReassignment({ silent = false } = {}) {
+      try {
+        state.delayReassignment = await api("/api/admin/viajes/reasignacion-demora");
+        renderDelayReassignment();
+        if (!silent) showToast("Demoras actualizadas");
+      } catch (err) {
+        console.error(err);
+        if (!silent) showToast("No se pudieron cargar demoras");
+      }
+    }
+
     function renderAll() {
       renderMetrics();
       renderNavCounts();
       renderCharts();
       renderActiveTrips();
       renderUsers();
+      renderDelayReassignment();
       renderTrips();
       renderPackages();
       renderPlatformWallet();
@@ -1996,6 +2066,24 @@
     function renderTrips() {
       const rows = filterRows(state.viajes || [], tripSearchText);
       setRows("tripRows", rows, 11, "No hay viajes para este filtro", (trip) => tripRow(trip, { full: true }));
+    }
+
+    function renderDelayReassignment() {
+      const data = state.delayReassignment || {};
+      const viajes = Array.isArray(data.viajes) ? data.viajes : [];
+      const rows = filterRows(viajes, tripSearchText);
+      const total = Number(data.total ?? viajes.length ?? 0);
+      const thresholds = data.thresholds || {};
+
+      setText("delayReassignTotal", total);
+      setText("delayAssignedThreshold", `${thresholds.asignado || 8} min`);
+      setText("delayReservedThreshold", `${thresholds.reservado || 12} min`);
+      setText("delayReassignStatus", total ? "Revisar" : "OK");
+
+      const status = document.getElementById("delayReassignStatus");
+      if (status) status.className = total ? "status warning" : "status ok";
+
+      setRows("delayReassignRows", rows, 7, "No hay viajes demorados para reasignar", delayReassignRow);
     }
 
     function renderPackages() {
@@ -2585,6 +2673,23 @@
       ]);
     }
 
+    function delayReassignRow(trip) {
+      const demora = trip.demora || {};
+      return row([
+        cell("Viaje", `<span class="row-main">${shortId(trip._id)}</span><span class="row-sub">${escapeHtml(routeText(trip))}</span>`),
+        cell("Estado", `<span class="status ${cssToken(trip.estado)}">${formatType(trip.estado)}</span>`),
+        cell("Pasajero", personCell(trip.pasajero)),
+        cell("Motorista", personCell(trip.motorista)),
+        cell("Demora", `<span class="row-main">${Number(demora.minutos || 0)} min</span><span class="row-sub">Exceso ${Number(demora.excesoMinutos || 0)} min</span>`),
+        cell("Umbral", `<span class="status warning">${Number(demora.umbralMinutos || 0)} min</span><span class="row-sub">${formatDate(demora.desde)}</span>`),
+        cell("Accion", `
+          <button class="btn small warn" type="button" onclick="reassignTrip('${trip._id}', 'Motorista demora en llegar')">
+            <i class="fa-solid fa-rotate"></i>Reasignar
+          </button>
+        `)
+      ]);
+    }
+
     function reassignAction(trip) {
       if (!["asignado", "llego", "reservado"].includes(trip.estado)) return "-";
       return `
@@ -2627,8 +2732,8 @@
       showToast("Retiro marcado como pagado");
     }
 
-    async function reassignTrip(id) {
-      const motivo = prompt("Motivo de reasignacion", "Motorista demora en llegar");
+    async function reassignTrip(id, defaultReason = "Motorista demora en llegar") {
+      const motivo = prompt("Motivo de reasignacion", defaultReason);
       if (motivo === null) return;
       if (!confirm("Reasignar este viaje a otro motorista? El motorista actual sera excluido de esta oferta.")) return;
 
@@ -2642,6 +2747,28 @@
       } catch (err) {
         console.error(err);
         showToast("No se pudo reasignar el viaje");
+      }
+    }
+
+    async function executeDelayReassignment() {
+      const total = Number(state.delayReassignment?.total || state.delayReassignment?.viajes?.length || 0);
+      if (!total) {
+        showToast("No hay demoras para reasignar");
+        return;
+      }
+
+      if (!confirm(`Reasignar ${total} viaje(s) demorados? Cada motorista actual sera excluido de su oferta.`)) return;
+
+      try {
+        const result = await api("/api/admin/viajes/reasignacion-demora/ejecutar", {
+          method: "POST",
+          body: { motivo: "demora_motorista", limit: 50 }
+        });
+        await loadAll();
+        showToast(`Reasignados ${result.reasignados || 0} de ${result.total || 0}`);
+      } catch (err) {
+        console.error(err);
+        showToast("No se pudo ejecutar la reasignacion por demora");
       }
     }
 
