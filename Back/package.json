@@ -10,7 +10,10 @@
     "load:socket": "node scripts/load/socket-load.js",
     "load:socket:500": "node scripts/load/socket-load.js --clients 500",
     "load:socket:1000": "node scripts/load/socket-load.js --clients 1000",
-    "load:socket:2000": "node scripts/load/socket-load.js --clients 2000"
+    "load:socket:2000": "node scripts/load/socket-load.js --clients 2000",
+    "load:prepare": "node scripts/load/prepare-load-users.js",
+    "load:production": "node scripts/load/production-scenario.js",
+    "load:metrics": "node scripts/load/collect-production-metrics.js"
   },
   "keywords": [],
   "author": "",
