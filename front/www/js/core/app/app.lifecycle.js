@@ -55,7 +55,7 @@ async function initHome(initId) {
     const map = getMap();
     if (!map) return;
 
-    const { initPasajero } = await import("../../pasajero/pasajero.main.js?v=20260606-recenter-map");
+    const { initPasajero } = await import("../../pasajero/pasajero.main.js?v=20260606-map-shell-controls");
 
     if (initId !== currentInitId) return;
 

@@ -312,12 +312,12 @@ body[class*="route-"]:not(.route-home) .home-map-shell {
 }
 
 .route-home .destinos-fab {
-  position: fixed;
-  right: 20px;
-  top: calc(var(--header-height, 76px) + env(safe-area-inset-top) + 38px);
-  z-index: 80;
-  width: 48px;
-  height: 48px;
+  position: absolute;
+  right: 14px;
+  top: 14px;
+  z-index: 34;
+  width: 46px;
+  height: 46px;
   border: 0;
   border-radius: 50%;
   display: grid;
@@ -330,6 +330,15 @@ body[class*="route-"]:not(.route-home) .home-map-shell {
     0 16px 30px rgba(0, 0, 0, 0.5),
     0 0 0 7px rgba(37, 99, 235, 0.1),
     inset 0 1px 1px rgba(255, 255, 255, 0.18);
+}
+
+@media (max-width: 380px) {
+  .route-home .destinos-fab {
+    right: 12px;
+    top: 12px;
+    width: 44px;
+    height: 44px;
+  }
 }
 
 .route-home .destinos-fab:active {

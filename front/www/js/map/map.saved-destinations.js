@@ -52,15 +52,25 @@ function samePlace(a, b) {
 }
 
 function createShell() {
-  if (document.getElementById("destinosFab")) return;
+  const mapShell = document.querySelector(".home-map-shell");
+  const fabHost = mapShell || document.body;
 
-  const fab = document.createElement("button");
-  fab.id = "destinosFab";
-  fab.className = "destinos-fab ripple";
-  fab.type = "button";
-  fab.setAttribute("aria-label", "Destinos guardados");
-  fab.title = "Destinos guardados";
-  fab.innerHTML = '<i class="fa-solid fa-bookmark"></i>';
+  let fab = document.getElementById("destinosFab");
+  if (!fab) {
+    fab = document.createElement("button");
+    fab.id = "destinosFab";
+    fab.className = "destinos-fab ripple";
+    fab.type = "button";
+    fab.setAttribute("aria-label", "Destinos guardados");
+    fab.title = "Destinos guardados";
+    fab.innerHTML = '<i class="fa-solid fa-bookmark"></i>';
+  }
+
+  if (fab.parentElement !== fabHost) {
+    fabHost.appendChild(fab);
+  }
+
+  if (document.getElementById("destinosPanel")) return;
 
   const panel = document.createElement("section");
   panel.id = "destinosPanel";
@@ -88,7 +98,6 @@ function createShell() {
     </div>
   `;
 
-  document.body.appendChild(fab);
   document.body.appendChild(panel);
 }
 
