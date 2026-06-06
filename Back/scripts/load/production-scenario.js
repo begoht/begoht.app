@@ -11,6 +11,7 @@ const passengerTrips = positiveInt(args.trips || process.env.LOAD_TRIPS, Math.ma
 const batchSize = positiveInt(args.batch || process.env.LOAD_SOCKET_BATCH, 50);
 const batchDelayMs = positiveInt(args.batchDelay || process.env.LOAD_SOCKET_BATCH_DELAY_MS, 250);
 const durationMs = positiveInt(args.duration || process.env.LOAD_SOCKET_DURATION_MS, 120000);
+const connectTimeoutMs = positiveInt(args.connectTimeout || process.env.LOAD_CONNECT_TIMEOUT_MS, 30000);
 const emitMinMs = positiveInt(args.emitMin || process.env.LOAD_LOCATION_EMIT_MIN_MS, 3000);
 const emitMaxMs = positiveInt(args.emitMax || process.env.LOAD_LOCATION_EMIT_MAX_MS, 5000);
 const reportEveryMs = positiveInt(args.reportEvery || process.env.LOAD_REPORT_EVERY_MS, 5000);
@@ -54,6 +55,7 @@ const metrics = {
   activeTripErrors: 0,
   offersReceived: 0,
   walletUpdates: 0,
+  connectErrorReasons: {},
 };
 
 console.log(JSON.stringify({
@@ -68,6 +70,7 @@ console.log(JSON.stringify({
   durationMs,
   emitMinMs,
   emitMaxMs,
+  connectTimeoutMs,
   city,
 }));
 
@@ -84,11 +87,27 @@ rampClients()
 
 async function rampClients() {
   const work = [];
-  for (let index = 0; index < driverCount; index += 1) {
-    work.push({ type: "driver", index });
-  }
-  for (let index = 0; index < passengerCount; index += 1) {
-    work.push({ type: "passenger", index });
+  let driverIndex = 0;
+  let passengerIndex = 0;
+  const passengerEvery = passengerCount > 0
+    ? Math.max(1, Math.floor(clientsTarget / passengerCount))
+    : Number.POSITIVE_INFINITY;
+
+  for (let slot = 0; slot < clientsTarget; slot += 1) {
+    const shouldPlacePassenger =
+      passengerIndex < passengerCount &&
+      (slot % passengerEvery === 0 || driverIndex >= driverCount);
+
+    if (shouldPlacePassenger) {
+      work.push({ type: "passenger", index: passengerIndex });
+      passengerIndex += 1;
+    } else if (driverIndex < driverCount) {
+      work.push({ type: "driver", index: driverIndex });
+      driverIndex += 1;
+    } else if (passengerIndex < passengerCount) {
+      work.push({ type: "passenger", index: passengerIndex });
+      passengerIndex += 1;
+    }
   }
 
   for (let index = 0; index < work.length; index += batchSize) {
@@ -169,14 +188,16 @@ function connectSocket(token, role) {
     auth: { token, role },
     transports: ["websocket"],
     reconnection: false,
-    timeout: 15000,
+    timeout: connectTimeoutMs,
     forceNew: true,
   });
 }
 
 function attachCommon(socket) {
-  socket.on("connect_error", () => {
+  socket.on("connect_error", (error) => {
     metrics.connectErrors += 1;
+    const reason = String(error?.message || "unknown").slice(0, 80);
+    metrics.connectErrorReasons[reason] = (metrics.connectErrorReasons[reason] || 0) + 1;
   });
 
   socket.on("disconnect", () => {
