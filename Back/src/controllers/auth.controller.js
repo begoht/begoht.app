@@ -11,8 +11,9 @@ const {
   requireInternationalPhone,
 } = require("../utils/phone");
 const {
-  verifyPhoneVerificationToken,
-} = require("../services/phoneVerification.service");
+  requireEmail,
+  verifyEmailVerificationToken,
+} = require("../services/emailVerification.service");
 const jwt = require("jsonwebtoken");
 
 function normalizeEmail(value = "") {
@@ -36,25 +37,21 @@ exports.register = async (req, res) => {
     const nombre = String(req.body?.nombre || "").trim();
     const apellido = String(req.body?.apellido || "").trim();
     const telefono = requireInternationalPhone(req.body?.telefono);
-    const email = normalizeEmail(req.body?.email);
+    const email = requireEmail(req.body?.email);
     const password = String(req.body?.password || "");
-    const phoneVerificationToken = String(req.body?.phoneVerificationToken || "");
+    const emailVerificationToken = String(req.body?.emailVerificationToken || "");
 
-    if (!nombre || !telefono || !password) {
+    if (!nombre || !telefono || !email || !password) {
       return res.status(400).json({ error: "Faltan datos obligatorios" });
-    }
-
-    if (email && !/^\S+@\S+\.\S+$/.test(email)) {
-      return res.status(400).json({ error: "Email invalido" });
     }
 
     if (password.length < 8) {
       return res.status(400).json({ error: "Contrasena minimo 8 caracteres" });
     }
 
-    verifyPhoneVerificationToken({
-      token: phoneVerificationToken,
-      telefono,
+    verifyEmailVerificationToken({
+      token: emailVerificationToken,
+      email,
       rol: "pasajero",
     });
 
@@ -79,10 +76,11 @@ exports.register = async (req, res) => {
       nombre,
       apellido,
       telefono,
-      email: email || undefined,
+      email,
       password: hash,
       rol: "pasajero",
-      telefonoVerificado: true,
+      emailVerificado: true,
+      telefonoVerificado: false,
     });
 
     await user.save({ session });
@@ -125,6 +123,10 @@ exports.register = async (req, res) => {
       return res.status(400).json({
         error: "Telefono invalido. Usa formato internacional, ejemplo +50937123456",
       });
+    }
+
+    if (err?.code === "EMAIL_INVALID") {
+      return res.status(400).json({ error: "Email invalido" });
     }
 
     if (err?.status) {

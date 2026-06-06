@@ -40,8 +40,24 @@ const phoneOtpVerifyLimiter = rateLimit({
   message: { msg: "Demasiados intentos de codigo. Intenta mas tarde." },
 });
 
+const emailOtpLimiter = rateLimit({
+  ...standard,
+  windowMs: 10 * 60 * 1000,
+  max: Number(process.env.EMAIL_OTP_RATE_LIMIT_MAX || 5),
+  message: { msg: "Demasiados codigos solicitados. Intenta mas tarde." },
+});
+
+const emailOtpVerifyLimiter = rateLimit({
+  ...standard,
+  windowMs: 10 * 60 * 1000,
+  max: Number(process.env.EMAIL_OTP_VERIFY_RATE_LIMIT_MAX || 20),
+  message: { msg: "Demasiados intentos de codigo. Intenta mas tarde." },
+});
+
 module.exports = {
   authLimiter,
+  emailOtpLimiter,
+  emailOtpVerifyLimiter,
   phoneOtpLimiter,
   phoneOtpVerifyLimiter,
   registerLimiter,

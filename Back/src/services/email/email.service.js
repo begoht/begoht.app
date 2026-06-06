@@ -411,6 +411,42 @@ async function enviarEmailPrueba(to) {
   });
 }
 
+async function enviarCodigoVerificacionEmail({ to, code, rol = "pasajero", idempotencyKey }) {
+  if (!to) throw new Error("Destino requerido");
+  if (!emailIsConfigured()) throw new Error(missingConfigMessage());
+
+  const perfil = rol === "motorista" ? "chauffeur" : "passager";
+
+  return sendEmail({
+    to,
+    subject: "Votre code de verification BeGO",
+    html: `
+      <div style="display:none;max-height:0;overflow:hidden;color:transparent;">Votre code BeGO est ${escapeHtml(code)}. Il expire dans 10 minutes.</div>
+      <div style="background:#f5f7fb;margin:0;padding:12px 8px;font-family:Arial,Helvetica,sans-serif;color:#0f172a;">
+        <div style="max-width:520px;margin:0 auto;background:#ffffff;border:1px solid #dbeafe;border-radius:20px;overflow:hidden;box-shadow:0 12px 28px rgba(15,23,42,.10);">
+          <div style="background:#07111f;padding:24px 20px;border-bottom:5px solid #2563eb;">
+            <div style="font-size:32px;line-height:1;font-weight:900;color:#ffffff;">BeGO</div>
+            <div style="margin-top:10px;color:#93c5fd;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;">Verification de compte ${escapeHtml(perfil)}</div>
+            <div style="margin-top:14px;color:#cbd5e1;font-size:14px;line-height:1.55;">Utilisez ce code pour terminer votre inscription BeGO.</div>
+          </div>
+          <div style="padding:24px 20px;">
+            <div style="background:#eef5ff;border:1px solid #bfdbfe;border-radius:18px;padding:20px;text-align:center;">
+              <div style="color:#2563eb;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;">Code de verification</div>
+              <div style="margin-top:12px;color:#0f172a;font-size:40px;line-height:1;font-weight:900;letter-spacing:.16em;">${escapeHtml(code)}</div>
+              <div style="margin-top:14px;color:#475569;font-size:13px;">Ce code expire dans 10 minutes.</div>
+            </div>
+            <p style="margin:18px 0 0;color:#64748b;font-size:13px;line-height:1.55;">Si vous n'avez pas demande cette inscription, ignorez cet email.</p>
+          </div>
+          <div style="background:#f8fafc;border-top:1px solid #e2e8f0;padding:16px 20px;text-align:center;color:#64748b;font-size:12px;line-height:1.5;">
+            BeGO Haiti
+          </div>
+        </div>
+      </div>
+    `,
+    idempotencyKey,
+  });
+}
+
 async function enviarAlertaMonitoreo({ to, subject, html, idempotencyKey }) {
   if (!to) throw new Error("Destino requerido");
   if (!emailIsConfigured()) throw new Error(missingConfigMessage());
@@ -424,6 +460,7 @@ async function enviarAlertaMonitoreo({ to, subject, html, idempotencyKey }) {
 }
 
 module.exports = {
+  enviarCodigoVerificacionEmail,
   enviarResumenViaje,
   enviarEmailPrueba,
   enviarAlertaMonitoreo,

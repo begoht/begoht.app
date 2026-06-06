@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnRegistro = document.getElementById("btnRegistro");
   const msgRegistro = document.getElementById("msgRegistro");
   const telefonoInput = document.getElementById("telefono");
+  const emailInput = document.getElementById("email");
   const phoneOtpBox = document.getElementById("phoneOtpBox");
   const phoneOtpHint = document.getElementById("phoneOtpHint");
   const phoneOtpCode = document.getElementById("phoneOtpCode");
@@ -52,6 +53,11 @@ document.addEventListener("DOMContentLoaded", () => {
       return false;
     }
 
+    if (!/^\S+@\S+\.\S+$/.test(String(data.email || "").trim())) {
+      showMsg("Email invalido");
+      return false;
+    }
+
     if (!telefonoInternacionalValido(data.telefono)) {
       showMsg("Telefono invalido. Usa formato internacional, ejemplo +50937123456");
       return false;
@@ -69,17 +75,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const data = getFormData();
     if (!validateForm(data)) return;
 
-    const telefono = normalizarTelefonoInternacional(data.telefono);
+    const email = String(data.email || "").trim().toLowerCase();
     btnRegistro.disabled = true;
     btnRegistro.innerText = "Enviando codigo...";
     showMsg("");
 
     try {
       const SERVER_URL = window.getServerUrl();
-      const res = await fetch(`${SERVER_URL}/api/driver/auth/phone/start`, {
+      const res = await fetch(`${SERVER_URL}/api/driver/auth/email/start`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ telefono }),
+        body: JSON.stringify({ email }),
       });
 
       const payload = await res.json().catch(() => ({}));
@@ -88,9 +94,9 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       phoneOtpBox.hidden = false;
-      phoneOtpHint.textContent = `Codigo enviado a ${payload.telefono || telefono}. Expira en 10 minutos.`;
+      phoneOtpHint.textContent = `Codigo enviado a ${payload.email || email}. Expira en 10 minutos.`;
       phoneOtpCode?.focus();
-      showMsg("Ingresa el codigo enviado a tu celular", "ok");
+      showMsg("Ingresa el codigo enviado a tu correo", "ok");
     } catch (err) {
       showMsg(err.message || "Error enviando codigo");
     } finally {
@@ -104,7 +110,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!validateForm(data)) return;
 
     const telefonoNormalizado = normalizarTelefonoInternacional(data.telefono);
-    if (!phoneVerificationToken || phoneVerificationPhone !== telefonoNormalizado) {
+    const emailNormalizado = String(data.email || "").trim().toLowerCase();
+    if (!phoneVerificationToken || phoneVerificationPhone !== emailNormalizado) {
       await enviarCodigoTelefono();
       return;
     }
@@ -125,7 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
           email: data.email,
           telefono: telefonoNormalizado,
           password: data.password,
-          phoneVerificationToken,
+          emailVerificationToken: phoneVerificationToken,
           vehiculoMarca: data.vehiculoMarca,
           vehiculoModelo: data.vehiculoModelo,
           placa: data.placa
@@ -150,13 +157,14 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   telefonoInput?.addEventListener("input", resetPhoneVerification);
+  emailInput?.addEventListener("input", resetPhoneVerification);
 
   btnRegistro.addEventListener("click", async (e) => {
     e.preventDefault();
     e.stopImmediatePropagation();
 
-    const telefonoNormalizado = normalizarTelefonoInternacional(getFormData().telefono);
-    if (phoneVerificationToken && phoneVerificationPhone === telefonoNormalizado) {
+    const emailNormalizado = String(getFormData().email || "").trim().toLowerCase();
+    if (phoneVerificationToken && phoneVerificationPhone === emailNormalizado) {
       await crearCuentaVerificada();
       return;
     }
@@ -174,7 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const data = getFormData();
     if (!validateForm(data)) return;
 
-    const telefonoNormalizado = normalizarTelefonoInternacional(data.telefono);
+    const emailNormalizado = String(data.email || "").trim().toLowerCase();
     const code = String(phoneOtpCode?.value || "").replace(/\D/g, "");
     if (!/^\d{6}$/.test(code)) {
       showMsg("Ingresa el codigo de 6 digitos");
@@ -187,10 +195,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       const SERVER_URL = window.getServerUrl();
-      const res = await fetch(`${SERVER_URL}/api/driver/auth/phone/verify`, {
+      const res = await fetch(`${SERVER_URL}/api/driver/auth/email/verify`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ telefono: telefonoNormalizado, code }),
+        body: JSON.stringify({ email: emailNormalizado, code }),
       });
 
       const payload = await res.json().catch(() => ({}));
@@ -198,9 +206,9 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error(payload.msg || payload.error || "Codigo invalido");
       }
 
-      phoneVerificationToken = payload.phoneVerificationToken;
-      phoneVerificationPhone = telefonoNormalizado;
-      showMsg("Telefono verificado. Creando cuenta...", "ok");
+      phoneVerificationToken = payload.emailVerificationToken;
+      phoneVerificationPhone = emailNormalizado;
+      showMsg("Email verificado. Creando cuenta...", "ok");
       await crearCuentaVerificada();
     } catch (err) {
       showMsg(err.message || "Error verificando codigo");

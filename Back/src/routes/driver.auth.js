@@ -9,11 +9,15 @@ const {
   requireInternationalPhone,
 } = require("../utils/phone");
 const {
-  verifyPhoneVerificationToken,
-} = require("../services/phoneVerification.service");
+  requireEmail,
+  verifyEmailVerificationToken,
+} = require("../services/emailVerification.service");
+const emailVerification = require("../controllers/emailVerification.controller");
 const phoneVerification = require("../controllers/phoneVerification.controller");
 const {
   authLimiter,
+  emailOtpLimiter,
+  emailOtpVerifyLimiter,
   phoneOtpLimiter,
   phoneOtpVerifyLimiter,
   registerLimiter,
@@ -21,6 +25,8 @@ const {
 
 const router = express.Router();
 
+router.post("/email/start", emailOtpLimiter, emailVerification.startDriverRegistration);
+router.post("/email/verify", emailOtpVerifyLimiter, emailVerification.verifyDriverRegistration);
 router.post("/phone/start", phoneOtpLimiter, phoneVerification.startDriverRegistration);
 router.post("/phone/verify", phoneOtpVerifyLimiter, phoneVerification.verifyDriverRegistration);
 
@@ -31,13 +37,13 @@ router.post("/register", registerLimiter, async (req, res) => {
       telefono,
       email,
       password,
-      phoneVerificationToken,
+      emailVerificationToken,
       vehiculoMarca,
       vehiculoModelo,
       placa,
     } = req.body;
 
-    if (!nombre || !telefono || !password) {
+    if (!nombre || !telefono || !email || !password) {
       return res.status(400).json({ msg: "Faltan datos obligatorios" });
     }
 
@@ -54,13 +60,13 @@ router.post("/register", registerLimiter, async (req, res) => {
       return res.status(400).json({ msg: "Contrasena minimo 8 caracteres" });
     }
 
-    verifyPhoneVerificationToken({
-      token: phoneVerificationToken,
-      telefono: telefonoNormalizado,
+    const emailNormalizado = requireEmail(email);
+
+    verifyEmailVerificationToken({
+      token: emailVerificationToken,
+      email: emailNormalizado,
       rol: "motorista",
     });
-
-    const emailNormalizado = String(email || "").trim().toLowerCase();
 
     const existeTelefono = await User.findOne({
       telefono: telefonoNormalizado,
@@ -90,7 +96,8 @@ router.post("/register", registerLimiter, async (req, res) => {
       email: emailNormalizado || null,
       password: hash,
       rol: "motorista",
-      telefonoVerificado: true,
+      emailVerificado: true,
+      telefonoVerificado: false,
       activo: true,
       saldoBloqueado: false,
       vehiculo: {

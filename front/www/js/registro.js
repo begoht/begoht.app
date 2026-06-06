@@ -137,7 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     limpiarMsg(msgRegistro);
 
-    if (!nombre.value.trim() || !apellido.value.trim() || !telefono.value.trim()) {
+    if (!nombre.value.trim() || !apellido.value.trim() || !telefono.value.trim() || !email.value.trim()) {
       mostrarMsg(msgRegistro, "Completa nombre, apellido y teléfono");
       return;
     }
@@ -147,7 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    if (email.value.trim() && !/^\S+@\S+\.\S+$/.test(email.value.trim())) {
+    if (!/^\S+@\S+\.\S+$/.test(email.value.trim())) {
       mostrarMsg(msgRegistro, "Email inválido");
       return;
     }
@@ -165,6 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   telefono?.addEventListener("input", resetPhoneVerification);
+  email?.addEventListener("input", resetPhoneVerification);
 
   // =============================
   // REGISTRO FINAL + OTP
@@ -192,9 +193,9 @@ document.addEventListener("DOMContentLoaded", () => {
   async function enviarCodigoTelefono() {
     limpiarMsg(msgRegistro);
 
-    const phone = registroTelefonoActual();
-    if (!telefonoInternacionalValido(telefono.value)) {
-      mostrarMsg(msgRegistro, "Telefono invalido. Usa formato internacional, ejemplo +50937123456");
+    const emailValue = email.value.trim().toLowerCase();
+    if (!emailValue || !/^\S+@\S+\.\S+$/.test(emailValue)) {
+      mostrarMsg(msgRegistro, "Email invalido");
       return;
     }
 
@@ -202,10 +203,10 @@ document.addEventListener("DOMContentLoaded", () => {
     btnRegistro.textContent = "Enviando codigo...";
 
     try {
-      const res = await fetch(`${SERVER_URL}/api/auth/phone/start`, {
+      const res = await fetch(`${SERVER_URL}/api/auth/email/start`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ telefono: phone }),
+        body: JSON.stringify({ email: emailValue }),
       });
 
       const data = await res.json().catch(() => null);
@@ -214,9 +215,9 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       phoneOtpBox.hidden = false;
-      phoneOtpHint.textContent = `Codigo enviado a ${data?.telefono || phone}. Expira en 10 minutos.`;
+      phoneOtpHint.textContent = `Codigo enviado a ${data?.email || emailValue}. Expira en 10 minutos.`;
       phoneOtpCode?.focus();
-      mostrarMsg(msgRegistro, "Ingresa el codigo enviado a tu celular", "ok");
+      mostrarMsg(msgRegistro, "Ingresa el codigo enviado a tu correo", "ok");
     } catch (err) {
       mostrarMsg(msgRegistro, err.message || "Error enviando codigo");
     } finally {
@@ -233,7 +234,7 @@ document.addEventListener("DOMContentLoaded", () => {
       email: email.value.trim().toLowerCase() || null,
       password: password.value.trim(),
       rol: rol.value,
-      phoneVerificationToken,
+      emailVerificationToken: phoneVerificationToken,
     };
 
     btnRegistro.disabled = true;
@@ -273,8 +274,8 @@ document.addEventListener("DOMContentLoaded", () => {
     limpiarMsg(msgRegistro);
     if (!validarSeguridadRegistro()) return;
 
-    const phone = registroTelefonoActual();
-    if (phoneVerificationToken && phoneVerificationPhone === phone) {
+    const emailValue = email.value.trim().toLowerCase();
+    if (phoneVerificationToken && phoneVerificationPhone === emailValue) {
       await crearCuentaVerificada();
       return;
     }
@@ -292,7 +293,7 @@ document.addEventListener("DOMContentLoaded", () => {
     limpiarMsg(msgRegistro);
     if (!validarSeguridadRegistro()) return;
 
-    const phone = registroTelefonoActual();
+    const emailValue = email.value.trim().toLowerCase();
     const code = String(phoneOtpCode?.value || "").replace(/\D/g, "");
     if (!/^\d{6}$/.test(code)) {
       mostrarMsg(msgRegistro, "Ingresa el codigo de 6 digitos");
@@ -303,10 +304,10 @@ document.addEventListener("DOMContentLoaded", () => {
     btnVerifyPhone.textContent = "Verificando...";
 
     try {
-      const res = await fetch(`${SERVER_URL}/api/auth/phone/verify`, {
+      const res = await fetch(`${SERVER_URL}/api/auth/email/verify`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ telefono: phone, code }),
+        body: JSON.stringify({ email: emailValue, code }),
       });
 
       const data = await res.json().catch(() => null);
@@ -314,9 +315,9 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error(data?.msg || data?.error || "Codigo invalido");
       }
 
-      phoneVerificationToken = data.phoneVerificationToken;
-      phoneVerificationPhone = phone;
-      mostrarMsg(msgRegistro, "Telefono verificado. Creando cuenta...", "ok");
+      phoneVerificationToken = data.emailVerificationToken;
+      phoneVerificationPhone = emailValue;
+      mostrarMsg(msgRegistro, "Email verificado. Creando cuenta...", "ok");
       await crearCuentaVerificada();
     } catch (err) {
       mostrarMsg(msgRegistro, err.message || "Error verificando codigo");
