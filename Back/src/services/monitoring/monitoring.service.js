@@ -220,7 +220,7 @@ async function safeResolve(promise, fallback) {
   }
 }
 
-function buildHealth(lastCheck, frontendErrors10m, frontendCritical10m) {
+function buildHealth(lastCheck, frontendErrors10m, frontendCritical10m, thresholds = {}) {
   const servicesOk = Boolean(
     lastCheck?.mongo?.ok &&
     lastCheck?.redis?.ok &&
@@ -237,7 +237,10 @@ function buildHealth(lastCheck, frontendErrors10m, frontendCritical10m) {
     };
   }
 
-  if (frontendErrors10m > 0 || Number(lastCheck?.sockets?.count || 0) > 0) {
+  if (
+    frontendErrors10m > 0 ||
+    Number(lastCheck?.sockets?.count || 0) >= Number(thresholds.socketDisconnects || 80)
+  ) {
     return {
       level: "warning",
       label: "Atencion",
@@ -285,10 +288,15 @@ async function getMonitoringSnapshot() {
   ]);
   const lastCheck = monitorState?.lastCheck || null;
   const socketCount = Number(socketDisconnects ?? lastCheck?.sockets?.count ?? 0);
+  const thresholds = {
+    socketDisconnects: Number(process.env.MONITOR_SOCKET_DISCONNECT_THRESHOLD || 80),
+    frontendErrors: Number(process.env.MONITOR_FRONTEND_ERROR_THRESHOLD || 12),
+    pm2Restarts: Number(process.env.MONITOR_PM2_RESTART_THRESHOLD || 3),
+  };
 
   return {
     ok: true,
-    health: buildHealth(lastCheck, frontendErrors10m, frontendCritical10m),
+    health: buildHealth(lastCheck, frontendErrors10m, frontendCritical10m, thresholds),
     monitorState: {
       lastCheck,
       stateFile: path.basename(monitorStatePath()),
@@ -299,11 +307,7 @@ async function getMonitoringSnapshot() {
     frontendBySource,
     socketDisconnects: socketCount,
     criticalAlerts,
-    thresholds: {
-      socketDisconnects: Number(process.env.MONITOR_SOCKET_DISCONNECT_THRESHOLD || 80),
-      frontendErrors: Number(process.env.MONITOR_FRONTEND_ERROR_THRESHOLD || 12),
-      pm2Restarts: Number(process.env.MONITOR_PM2_RESTART_THRESHOLD || 3),
-    },
+    thresholds,
     recentFrontendErrors,
     timestamp: new Date().toISOString(),
   };
