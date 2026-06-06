@@ -29,7 +29,9 @@ function startForRole(rol) {
 
       return res.json(result);
     } catch (err) {
-      console.error("Email OTP start error:", err);
+      if (!err?.status || err.status >= 500) {
+        console.error("Email OTP start error:", err);
+      }
       return sendError(res, err);
     }
   };
@@ -46,7 +48,9 @@ function verifyForRole(rol) {
 
       return res.json(result);
     } catch (err) {
-      console.error("Email OTP verify error:", err);
+      if (!err?.status || err.status >= 500) {
+        console.error("Email OTP verify error:", err);
+      }
       return sendError(res, err);
     }
   };
