@@ -10,6 +10,9 @@ const {
   phoneLoginCandidates,
   requireInternationalPhone,
 } = require("../utils/phone");
+const {
+  verifyPhoneVerificationToken,
+} = require("../services/phoneVerification.service");
 const jwt = require("jsonwebtoken");
 
 function normalizeEmail(value = "") {
@@ -35,6 +38,7 @@ exports.register = async (req, res) => {
     const telefono = requireInternationalPhone(req.body?.telefono);
     const email = normalizeEmail(req.body?.email);
     const password = String(req.body?.password || "");
+    const phoneVerificationToken = String(req.body?.phoneVerificationToken || "");
 
     if (!nombre || !telefono || !password) {
       return res.status(400).json({ error: "Faltan datos obligatorios" });
@@ -47,6 +51,12 @@ exports.register = async (req, res) => {
     if (password.length < 8) {
       return res.status(400).json({ error: "Contrasena minimo 8 caracteres" });
     }
+
+    verifyPhoneVerificationToken({
+      token: phoneVerificationToken,
+      telefono,
+      rol: "pasajero",
+    });
 
     session.startTransaction();
 
@@ -72,6 +82,7 @@ exports.register = async (req, res) => {
       email: email || undefined,
       password: hash,
       rol: "pasajero",
+      telefonoVerificado: true,
     });
 
     await user.save({ session });
@@ -110,10 +121,14 @@ exports.register = async (req, res) => {
 
     console.error("Register error:", err);
 
-    if (err?.status === 400 || err?.message === "PHONE_INVALID") {
+    if (err?.message === "PHONE_INVALID") {
       return res.status(400).json({
         error: "Telefono invalido. Usa formato internacional, ejemplo +50937123456",
       });
+    }
+
+    if (err?.status) {
+      return res.status(err.status).json({ error: err.message });
     }
 
     if (err?.code === 11000) {

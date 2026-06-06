@@ -403,6 +403,77 @@ select:focus {
   accent-color: var(--brand);
 }
 
+.phone-otp-card {
+  display: grid;
+  gap: 12px;
+  margin: 6px 0 14px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfe;
+}
+
+.phone-otp-card[hidden] {
+  display: none;
+}
+
+.phone-otp-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.phone-otp-icon {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: #ecfdf5;
+  color: var(--success);
+  font-weight: 950;
+}
+
+.phone-otp-head strong {
+  display: block;
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.phone-otp-head p {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.phone-otp-field {
+  margin-bottom: 0;
+}
+
+.phone-otp-field input {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 950;
+  letter-spacing: 0.18em;
+}
+
+.phone-otp-actions {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+}
+
+.phone-otp-actions .secondary-action {
+  margin-top: 0;
+}
+
+.phone-otp-actions .compact {
+  width: auto;
+  min-width: 116px;
+  padding: 0 14px;
+}
+
 .download-block,
 .social-block {
   display: grid;
@@ -527,6 +598,14 @@ select:focus {
   .auth-panel {
     padding-inline: 16px;
   }
+
+  .phone-otp-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .phone-otp-actions .compact {
+    width: 100%;
+  }
 }
 
 /* App premium skin: matches BeGO dark background and footer material. */
@@ -573,6 +652,7 @@ body {
 .form-heading h3,
 .field span,
 .check,
+.phone-otp-head strong,
 .switch,
 .download-title,
 .social-title {
@@ -580,6 +660,7 @@ body {
 }
 
 .form-heading p,
+.phone-otp-head p,
 .switch,
 .social-title,
 .download-title {
@@ -593,7 +674,8 @@ body {
 }
 
 .auth-tabs,
-.check {
+.check,
+.phone-otp-card {
   background: rgba(15, 23, 42, 0.84);
   border-color: rgba(148, 163, 184, 0.16);
 }
@@ -656,7 +738,8 @@ select:focus {
 }
 
 .social-link span,
-.download-link span {
+.download-link span,
+.phone-otp-icon {
   background: rgba(255, 122, 0, 0.16);
   color: #ffb36b;
 }

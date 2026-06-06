@@ -39,6 +39,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const btnRegistro = document.getElementById("btnRegistro");
   const msgRegistro = document.getElementById("msgRegistro");
+  const phoneOtpBox = document.getElementById("phoneOtpBox");
+  const phoneOtpHint = document.getElementById("phoneOtpHint");
+  const phoneOtpCode = document.getElementById("phoneOtpCode");
+  const btnVerifyPhone = document.getElementById("btnVerifyPhone");
+  const btnResendPhone = document.getElementById("btnResendPhone");
+  let phoneVerificationToken = "";
+  let phoneVerificationPhone = "";
 
   // =============================
   // LOGIN ELEMENTOS
@@ -74,6 +81,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function telefonoInternacionalValido(value = "") {
     return /^\+\d{8,15}$/.test(normalizarTelefonoInternacional(value));
+  }
+
+  function resetPhoneVerification() {
+    phoneVerificationToken = "";
+    phoneVerificationPhone = "";
+    if (phoneOtpCode) phoneOtpCode.value = "";
+    if (phoneOtpBox) phoneOtpBox.hidden = true;
+  }
+
+  function registroTelefonoActual() {
+    return normalizarTelefonoInternacional(telefono.value);
   }
 
   // =============================
@@ -144,6 +162,172 @@ document.addEventListener("DOMContentLoaded", () => {
   btnBack?.addEventListener("click", () => {
     slider.style.transform = "translateX(0%)";
     limpiarMsg(msgRegistro);
+  });
+
+  telefono?.addEventListener("input", resetPhoneVerification);
+
+  // =============================
+  // REGISTRO FINAL + OTP
+  // =============================
+
+  function validarSeguridadRegistro() {
+    if (!password.value || password.value.length < 8) {
+      mostrarMsg(msgRegistro, "La contrasena debe tener minimo 8 caracteres");
+      return false;
+    }
+
+    if (password.value !== confirmPassword.value) {
+      mostrarMsg(msgRegistro, "Las contrasenas no coinciden");
+      return false;
+    }
+
+    if (!terminos.checked) {
+      mostrarMsg(msgRegistro, "Debes aceptar los terminos");
+      return false;
+    }
+
+    return true;
+  }
+
+  async function enviarCodigoTelefono() {
+    limpiarMsg(msgRegistro);
+
+    const phone = registroTelefonoActual();
+    if (!telefonoInternacionalValido(telefono.value)) {
+      mostrarMsg(msgRegistro, "Telefono invalido. Usa formato internacional, ejemplo +50937123456");
+      return;
+    }
+
+    btnRegistro.disabled = true;
+    btnRegistro.textContent = "Enviando codigo...";
+
+    try {
+      const res = await fetch(`${SERVER_URL}/api/auth/phone/start`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ telefono: phone }),
+      });
+
+      const data = await res.json().catch(() => null);
+      if (!res.ok) {
+        throw new Error(data?.msg || data?.error || "No se pudo enviar el codigo");
+      }
+
+      phoneOtpBox.hidden = false;
+      phoneOtpHint.textContent = `Codigo enviado a ${data?.telefono || phone}. Expira en 10 minutos.`;
+      phoneOtpCode?.focus();
+      mostrarMsg(msgRegistro, "Ingresa el codigo enviado a tu celular", "ok");
+    } catch (err) {
+      mostrarMsg(msgRegistro, err.message || "Error enviando codigo");
+    } finally {
+      btnRegistro.disabled = false;
+      btnRegistro.textContent = "Verificar y crear cuenta";
+    }
+  }
+
+  async function crearCuentaVerificada() {
+    const usuario = {
+      nombre: nombre.value.trim(),
+      apellido: apellido.value.trim(),
+      telefono: registroTelefonoActual(),
+      email: email.value.trim().toLowerCase() || null,
+      password: password.value.trim(),
+      rol: rol.value,
+      phoneVerificationToken,
+    };
+
+    btnRegistro.disabled = true;
+    btnRegistro.textContent = "Creando cuenta...";
+
+    try {
+      const res = await fetch(`${SERVER_URL}/api/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(usuario),
+      });
+
+      const data = await res.json().catch(() => null);
+      if (!res.ok) {
+        throw new Error(data?.error || data?.msg || "Error en registro");
+      }
+
+      mostrarMsg(msgRegistro, "Cuenta creada correctamente", "ok");
+
+      setTimeout(() => {
+        registroBox?.classList.remove("active");
+        loginBox?.classList.add("active");
+        slider.style.transform = "translateX(0%)";
+        resetPhoneVerification();
+        limpiarMsg(msgRegistro);
+      }, 1200);
+    } catch (err) {
+      mostrarMsg(msgRegistro, err.message || "Error de conexion");
+    } finally {
+      btnRegistro.disabled = false;
+      btnRegistro.textContent = "Verificar y crear cuenta";
+    }
+  }
+
+  btnRegistro?.addEventListener("click", async (event) => {
+    event.stopImmediatePropagation();
+    limpiarMsg(msgRegistro);
+    if (!validarSeguridadRegistro()) return;
+
+    const phone = registroTelefonoActual();
+    if (phoneVerificationToken && phoneVerificationPhone === phone) {
+      await crearCuentaVerificada();
+      return;
+    }
+
+    await enviarCodigoTelefono();
+  });
+
+  btnResendPhone?.addEventListener("click", async () => {
+    phoneVerificationToken = "";
+    phoneVerificationPhone = "";
+    await enviarCodigoTelefono();
+  });
+
+  btnVerifyPhone?.addEventListener("click", async () => {
+    limpiarMsg(msgRegistro);
+    if (!validarSeguridadRegistro()) return;
+
+    const phone = registroTelefonoActual();
+    const code = String(phoneOtpCode?.value || "").replace(/\D/g, "");
+    if (!/^\d{6}$/.test(code)) {
+      mostrarMsg(msgRegistro, "Ingresa el codigo de 6 digitos");
+      return;
+    }
+
+    btnVerifyPhone.disabled = true;
+    btnVerifyPhone.textContent = "Verificando...";
+
+    try {
+      const res = await fetch(`${SERVER_URL}/api/auth/phone/verify`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ telefono: phone, code }),
+      });
+
+      const data = await res.json().catch(() => null);
+      if (!res.ok) {
+        throw new Error(data?.msg || data?.error || "Codigo invalido");
+      }
+
+      phoneVerificationToken = data.phoneVerificationToken;
+      phoneVerificationPhone = phone;
+      mostrarMsg(msgRegistro, "Telefono verificado. Creando cuenta...", "ok");
+      await crearCuentaVerificada();
+    } catch (err) {
+      mostrarMsg(msgRegistro, err.message || "Error verificando codigo");
+    } finally {
+      btnVerifyPhone.disabled = false;
+      btnVerifyPhone.textContent = "Confirmar codigo";
+    }
+  });
+
+  phoneOtpCode?.addEventListener("input", () => {
+    phoneOtpCode.value = phoneOtpCode.value.replace(/\D/g, "").slice(0, 6);
   });
 
   // =============================

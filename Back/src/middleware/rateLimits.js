@@ -26,8 +26,24 @@ const refreshLimiter = rateLimit({
   message: { msg: "Demasiadas renovaciones de sesion. Intenta mas tarde." },
 });
 
+const phoneOtpLimiter = rateLimit({
+  ...standard,
+  windowMs: 10 * 60 * 1000,
+  max: Number(process.env.PHONE_OTP_RATE_LIMIT_MAX || 5),
+  message: { msg: "Demasiados codigos solicitados. Intenta mas tarde." },
+});
+
+const phoneOtpVerifyLimiter = rateLimit({
+  ...standard,
+  windowMs: 10 * 60 * 1000,
+  max: Number(process.env.PHONE_OTP_VERIFY_RATE_LIMIT_MAX || 20),
+  message: { msg: "Demasiados intentos de codigo. Intenta mas tarde." },
+});
+
 module.exports = {
   authLimiter,
+  phoneOtpLimiter,
+  phoneOtpVerifyLimiter,
   registerLimiter,
   refreshLimiter,
 };

@@ -9,11 +9,20 @@ const {
   requireInternationalPhone,
 } = require("../utils/phone");
 const {
+  verifyPhoneVerificationToken,
+} = require("../services/phoneVerification.service");
+const phoneVerification = require("../controllers/phoneVerification.controller");
+const {
   authLimiter,
+  phoneOtpLimiter,
+  phoneOtpVerifyLimiter,
   registerLimiter,
 } = require("../middleware/rateLimits");
 
 const router = express.Router();
+
+router.post("/phone/start", phoneOtpLimiter, phoneVerification.startDriverRegistration);
+router.post("/phone/verify", phoneOtpVerifyLimiter, phoneVerification.verifyDriverRegistration);
 
 router.post("/register", registerLimiter, async (req, res) => {
   try {
@@ -22,6 +31,7 @@ router.post("/register", registerLimiter, async (req, res) => {
       telefono,
       email,
       password,
+      phoneVerificationToken,
       vehiculoMarca,
       vehiculoModelo,
       placa,
@@ -43,6 +53,12 @@ router.post("/register", registerLimiter, async (req, res) => {
     if (password.length < 8) {
       return res.status(400).json({ msg: "Contrasena minimo 8 caracteres" });
     }
+
+    verifyPhoneVerificationToken({
+      token: phoneVerificationToken,
+      telefono: telefonoNormalizado,
+      rol: "motorista",
+    });
 
     const emailNormalizado = String(email || "").trim().toLowerCase();
 
@@ -74,6 +90,7 @@ router.post("/register", registerLimiter, async (req, res) => {
       email: emailNormalizado || null,
       password: hash,
       rol: "motorista",
+      telefonoVerificado: true,
       activo: true,
       saldoBloqueado: false,
       vehiculo: {
@@ -105,6 +122,10 @@ router.post("/register", registerLimiter, async (req, res) => {
     });
   } catch (err) {
     console.error("Driver register error:", err);
+
+    if (err?.status) {
+      return res.status(err.status).json({ msg: err.message });
+    }
 
     if (err?.code === 11000) {
       return res.status(409).json({ msg: "Ya existe una cuenta motorista con esos datos" });

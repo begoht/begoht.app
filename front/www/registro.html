@@ -135,7 +135,25 @@
                   <span>Acepto terminos y condiciones</span>
                 </label>
 
-                <button id="btnRegistro" class="primary-action" type="button">Crear cuenta</button>
+                <div class="phone-otp-card" id="phoneOtpBox" hidden>
+                  <div class="phone-otp-head">
+                    <span class="phone-otp-icon">#</span>
+                    <div>
+                      <strong>Verificar telefono</strong>
+                      <p id="phoneOtpHint">Te enviaremos un codigo de 6 digitos.</p>
+                    </div>
+                  </div>
+                  <label class="field phone-otp-field">
+                    <span>Codigo SMS</span>
+                    <input type="text" id="phoneOtpCode" inputmode="numeric" maxlength="6" placeholder="000000" autocomplete="one-time-code">
+                  </label>
+                  <div class="phone-otp-actions">
+                    <button type="button" class="secondary-action" id="btnVerifyPhone">Confirmar codigo</button>
+                    <button type="button" class="secondary-action compact" id="btnResendPhone">Reenviar</button>
+                  </div>
+                </div>
+
+                <button id="btnRegistro" class="primary-action" type="button">Verificar y crear cuenta</button>
                 <button type="button" class="secondary-action" id="btnBack">Atras</button>
                 <div id="msgRegistro" class="msg" role="status" aria-live="polite"></div>
               </div>
@@ -173,7 +191,7 @@
     </section>
   </main>
 
-  <script type="module" src="./js/registro.js?v=20260606-phone-role"></script>
+  <script type="module" src="./js/registro.js?v=20260606-phone-otp"></script>
   <script type="module" src="./js/modules/huellas/huellas.login.js?v=20260601-huella-user"></script>
   <script src="./js/i18n/fr.visual.js?v=20260601-fr"></script>
 </body>

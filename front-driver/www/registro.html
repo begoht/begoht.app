@@ -70,6 +70,24 @@
             <input type="password" id="password" placeholder="Minimo 8 caracteres" autocomplete="new-password">
           </div>
 
+          <div class="phone-otp-card" id="phoneOtpBox" hidden>
+            <div class="phone-otp-head">
+              <span class="phone-otp-icon">#</span>
+              <div>
+                <strong>Verificar telefono</strong>
+                <p id="phoneOtpHint">Te enviaremos un codigo de 6 digitos.</p>
+              </div>
+            </div>
+            <div class="form-row phone-otp-field">
+              <label for="phoneOtpCode">Codigo SMS</label>
+              <input type="text" id="phoneOtpCode" inputmode="numeric" maxlength="6" placeholder="000000" autocomplete="one-time-code">
+            </div>
+            <div class="phone-otp-actions">
+              <button type="button" class="btn secondary" id="btnVerifyPhone">Confirmar codigo</button>
+              <button type="button" class="btn secondary compact" id="btnResendPhone">Reenviar</button>
+            </div>
+          </div>
+
           <div class="form-grid">
             <div class="form-row">
               <label for="marca">Marca del vehiculo</label>
@@ -87,7 +105,7 @@
             <input type="text" id="placa" placeholder="Numero de placa">
           </div>
 
-          <button class="btn" id="btnRegistro" type="button">Crear cuenta</button>
+          <button class="btn" id="btnRegistro" type="button">Verificar y crear cuenta</button>
           <div id="msgRegistro" class="driver-msg" role="status" aria-live="polite"></div>
 
           <div class="driver-note">
@@ -131,7 +149,7 @@
   </main>
 
   <script src="./js/core/conexion.js"></script>
-  <script src="./js/auth/registro.js?v=20260606-phone-role"></script>
+  <script src="./js/auth/registro.js?v=20260606-phone-otp"></script>
   <script src="./js/i18n/fr.visual.js?v=20260601-fr"></script>
 </body>
 </html>

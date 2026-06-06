@@ -4,9 +4,18 @@ const router = express.Router();
 const authController = require("../controllers/auth.controller");
 const {
   authLimiter,
+  phoneOtpLimiter,
+  phoneOtpVerifyLimiter,
   registerLimiter,
   refreshLimiter,
 } = require("../middleware/rateLimits");
+const phoneVerification = require("../controllers/phoneVerification.controller");
+
+/*************************************************
+ * PHONE VERIFICATION
+ *************************************************/
+router.post("/phone/start", phoneOtpLimiter, phoneVerification.startPassengerRegistration);
+router.post("/phone/verify", phoneOtpVerifyLimiter, phoneVerification.verifyPassengerRegistration);
 
 /*************************************************
  * REGISTER
