@@ -411,4 +411,21 @@ async function enviarEmailPrueba(to) {
   });
 }
 
-module.exports = { enviarResumenViaje, enviarEmailPrueba, verificarConexionEmail };
+async function enviarAlertaMonitoreo({ to, subject, html, idempotencyKey }) {
+  if (!to) throw new Error("Destino requerido");
+  if (!emailIsConfigured()) throw new Error(missingConfigMessage());
+
+  return sendEmail({
+    to,
+    subject,
+    html,
+    idempotencyKey,
+  });
+}
+
+module.exports = {
+  enviarResumenViaje,
+  enviarEmailPrueba,
+  enviarAlertaMonitoreo,
+  verificarConexionEmail,
+};

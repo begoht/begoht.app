@@ -1,4 +1,4 @@
-import { getSocket } from "../socket/socket.js";
+import { getSocket } from "../socket/socket.js?v=20260606-monitoring";
 import { viajeState } from "./viaje.state.js";
 import { limpiarViajePasajero } from "../socket/viaje.limpieza.js";
 import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260605-price-premium-cancel";

@@ -17,6 +17,8 @@ export function initSocket(serverUrl, token) {
     timeout: 30000
   });
 
+  window.begoMonitorSocket?.(socketInstance, { source: "driver", channel: "main" });
+
   /*************************************************
    * 🔌 CONEXIÓN
    *************************************************/

@@ -32,6 +32,8 @@ export function getSocket() {
     timeout: 30000,
   });
 
+  window.begoMonitorSocket?.(socketInstance, { source: "passenger", channel: "main" });
+
   /*************************************************
    * 🔌 ESTADOS
    *************************************************/

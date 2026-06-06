@@ -3,7 +3,7 @@ import { viajeState } from "../viaje/viaje.state.js";
 import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260605-price-premium-cancel";
 import { eliminarMotoristaDelMapa } from "../map/map.motorista.js?v=20260604-jacmel-gps";
 import { getMap } from "../map/map.singleton.js";
-import { getSocket } from "../socket/socket.js";
+import { getSocket } from "../socket/socket.js?v=20260606-monitoring";
 import { destroyPasajeroSocket } from "./pasajero.socket.js";
 
 /**

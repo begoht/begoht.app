@@ -1,4 +1,4 @@
-import socket from "./conexionSocket.js";
+import socket from "./conexionSocket.js?v=20260606-monitoring";
 
 const chatBody = document.getElementById("chatBody");
 const input = document.getElementById("mensajeInput");

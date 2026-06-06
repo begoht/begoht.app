@@ -20,6 +20,8 @@ const socket = io(getServerUrl(), {
   timeout: 30000,
 });
 
+window.begoMonitorSocket?.(socket, { source: "passenger", channel: "support" });
+
 socket.on("connect", () => {
   console.log(`🟢 Socket conectado: ${socket.id}`);
 });

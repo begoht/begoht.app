@@ -18,6 +18,26 @@ const limpiarEstadosHuerfanos = require("./utils/startupCleanup");
 const securityHeaders = require("./middleware/securityHeaders");
 const { buildCorsOptions } = require("./utils/corsOptions");
 const { getReadiness } = require("./utils/readiness");
+const { recordSocketDisconnect } = require("./services/monitoring/monitoring.service");
+const { logCritical } = require("./services/monitoring/criticalLogger");
+
+process.on("uncaughtExceptionMonitor", (error) => {
+  logCritical({
+    type: "uncaught_exception",
+    severity: "critical",
+    message: error?.message || "Uncaught exception",
+    meta: { stack: error?.stack },
+  }).catch(() => {});
+});
+
+process.on("unhandledRejection", (reason) => {
+  logCritical({
+    type: "unhandled_rejection",
+    severity: "critical",
+    message: reason?.message || String(reason || "Unhandled rejection"),
+    meta: { stack: reason?.stack },
+  }).catch(() => {});
+});
 
 // 🔹 BullBoard
 const { createBullBoard } = require("@bull-board/api");
@@ -200,6 +220,7 @@ app.use("/api/driver/creditos", require("./routes/driver.creditos"));
 app.use("/api/pagos", shareRoutes);
 app.use("/api/viajes", require("./routes/actividad"));
 app.use("/api/viajes", require("./routes/ratings"));
+app.use("/api/monitor", require("./routes/monitoring"));
 app.use("/api/cities", require("./routes/cities"));
 app.use("/api/ruta", require("./routes/ruta"));
 app.use("/api", require("./routes/launch"));
@@ -588,8 +609,15 @@ if (user.rol === "motorista") {
   // ============================
   // 🔹 DISCONNECT
   // ============================
-  socket.on("disconnect", async () => {
+  socket.on("disconnect", async (reason) => {
     console.log(`🔌 Usuario desconectado: ${userId}`);
+
+    recordSocketDisconnect({
+      role: socket.data?.role || socket.user?.rol || socket.handshake.auth?.role || "unknown",
+      reason,
+      userId,
+      socketId: socket.id,
+    }).catch(() => {});
 
     User.findByIdAndUpdate(userId, {
       socketId: null,

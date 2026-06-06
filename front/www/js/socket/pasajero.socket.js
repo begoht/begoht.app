@@ -1,4 +1,4 @@
-import { getSocket } from "./socket.js";
+import { getSocket } from "./socket.js?v=20260606-monitoring";
 import { viajeState } from "../viaje/viaje.state.js";
 
 import { handleMotoristas } from "./handlers/motoristas.handler.js";

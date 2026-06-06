@@ -18,4 +18,6 @@ const socket = io(getServerUrl(), {
   autoConnect: true
 });
 
+window.begoMonitorSocket?.(socket, { source: "passenger", channel: "legacy" });
+
 export default socket;

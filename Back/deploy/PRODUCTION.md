@@ -48,6 +48,13 @@ pm2 save
 pm2 startup
 ```
 
+The ecosystem starts two processes:
+
+- `bego-api`: public API and Socket.IO.
+- `bego-monitor`: production monitor for PM2 restarts, MongoDB, Redis, Socket.IO disconnect spikes, and mobile frontend errors.
+
+Set `MONITOR_ALERT_EMAIL` in `Back/.env` to receive alerts. Critical JSON logs are written to `/var/log/bego/critical.log`.
+
 ## Nginx
 
 ```bash

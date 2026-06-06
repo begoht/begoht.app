@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
+    "monitor:production": "node scripts/monitor/production-monitor.js",
     "load:socket": "node scripts/load/socket-load.js",
     "load:socket:500": "node scripts/load/socket-load.js --clients 500",
     "load:socket:1000": "node scripts/load/socket-load.js --clients 1000",
