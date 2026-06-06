@@ -1,4 +1,4 @@
-import { getSocket } from "./socket.js?v=20260606-monitoring";
+import { getSocket } from "./socket.js?v=20260606-session-refresh";
 import { viajeState } from "../viaje/viaje.state.js";
 
 import { handlePrecio } from "./handlers/precio.handler.js?v=20260605-price-premium-cancel";

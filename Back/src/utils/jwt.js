@@ -1,5 +1,9 @@
 const jwt = require("jsonwebtoken");
 
+function accessTokenTtl() {
+  return process.env.JWT_ACCESS_TTL || "12h";
+}
+
 const generarAccessToken = (user) => {
   return jwt.sign(
     {
@@ -9,7 +13,7 @@ const generarAccessToken = (user) => {
       tokenVersion: user.tokenVersion, 
     },
     process.env.JWT_SECRET,
-    { expiresIn: "15m" }
+    { expiresIn: accessTokenTtl() }
   );
 };
 

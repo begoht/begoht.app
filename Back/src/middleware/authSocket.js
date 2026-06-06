@@ -53,8 +53,7 @@ module.exports = async (socket, next) => {
 
         if (!tokenInsideGrace(expiredPayload)) {
           console.warn("Token expirado fuera del margen de gracia");
-          socket.emit("auth-expired");
-          return socket.disconnect(true);
+          return next(new Error("Token expired"));
         }
         
         if (expiredPayload && expiredPayload.id) {
@@ -67,8 +66,7 @@ module.exports = async (socket, next) => {
             decoded = expiredPayload;
           } else {
             console.warn("⛔ Token expirado y usuario no está activo");
-            socket.emit("auth-expired");
-            return socket.disconnect(true);
+            return next(new Error("Token expired"));
           }
         } else {
           return next(new Error("Invalid token payload"));

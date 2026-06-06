@@ -1,42 +1,31 @@
-/*************************************************
- * 🔐 TOKEN HELPERS - BeGO
- *************************************************/
+import {
+  clearSessionTokens,
+  getStoredAccessToken,
+  hasRefreshToken,
+  isJwtExpired,
+} from "./session.js";
 
 function redirigirLogin() {
-  localStorage.removeItem("token");
-  localStorage.removeItem("BeGO_user");
-
+  clearSessionTokens();
   window.location.replace("registro.html");
 }
 
 export function validarToken() {
-  let token = localStorage.getItem("token");
+  const token = getStoredAccessToken();
 
   if (!token) {
     redirigirLogin();
     return null;
   }
 
-  if (token.startsWith('"') && token.endsWith('"')) {
-    token = token.slice(1, -1);
-  }
-
-  try {
-    const payload = JSON.parse(atob(token.split(".")[1]));
-
-    const ahora = Date.now() / 1000; // tiempo actual en segundos
-
-    if (payload.exp && payload.exp < ahora) {
-      console.warn("⏳ Token vencido");
+  if (isJwtExpired(token)) {
+    if (!hasRefreshToken()) {
       redirigirLogin();
       return null;
     }
 
-    return token;
-
-  } catch (err) {
-    console.error("❌ Token inválido o corrupto");
-    redirigirLogin();
-    return null;
+    console.warn("Access token vencido. Se renovara automaticamente.");
   }
+
+  return token;
 }

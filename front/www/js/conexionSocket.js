@@ -1,16 +1,37 @@
-// conexionSocket.js
 import { getServerUrl } from "./conexion.js";
+import {
+  clearSessionTokens,
+  getStoredAccessToken,
+  refreshAccessToken,
+} from "./auth/session.js";
 
-let token = localStorage.getItem("token");
+let refreshInFlight = false;
 
-// Quitar comillas si existieran
-if (token?.startsWith('"') && token.endsWith('"')) {
-  token = token.slice(1, -1);
+function isAuthError(message = "") {
+  return String(message || "").includes("token") ||
+    String(message || "").includes("Token") ||
+    String(message || "").includes("authentication");
 }
 
-// Inicializar socket
+async function refreshSocketAuth(socket) {
+  if (!socket || refreshInFlight) return;
+  refreshInFlight = true;
+
+  try {
+    const token = await refreshAccessToken();
+    socket.auth = { ...(socket.auth || {}), token };
+    if (!socket.connected) socket.connect();
+  } catch (err) {
+    console.warn("No se pudo renovar la sesion:", err?.message || err);
+    clearSessionTokens();
+    window.location.replace("registro.html");
+  } finally {
+    refreshInFlight = false;
+  }
+}
+
 const socket = io(getServerUrl(), {
-  auth: { token },
+  auth: { token: getStoredAccessToken() },
   transports: ["websocket"],
   reconnection: true,
   reconnectionAttempts: Infinity,
@@ -23,11 +44,16 @@ const socket = io(getServerUrl(), {
 window.begoMonitorSocket?.(socket, { source: "passenger", channel: "support" });
 
 socket.on("connect", () => {
-  console.log(`🟢 Socket conectado: ${socket.id}`);
+  console.log(`Socket conectado: ${socket.id}`);
 });
 
 socket.on("connect_error", (err) => {
-  console.error("❌ Error socket:", err.message);
+  console.error("Error socket:", err?.message || err);
+  if (isAuthError(err?.message)) refreshSocketAuth(socket);
+});
+
+socket.on("disconnect", (reason) => {
+  if (reason === "io server disconnect") refreshSocketAuth(socket);
 });
 
 export default socket;

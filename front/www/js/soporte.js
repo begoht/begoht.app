@@ -1,4 +1,4 @@
-import socket from "./conexionSocket.js?v=20260606-monitoring";
+import socket from "./conexionSocket.js?v=20260606-session-refresh";
 
 const chatBody = document.getElementById("chatBody");
 const input = document.getElementById("mensajeInput");
