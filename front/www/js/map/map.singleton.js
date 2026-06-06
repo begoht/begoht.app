@@ -119,19 +119,11 @@ export function createMap(container) {
     preferCanvas: true,
     tap: true,
     touchZoom: true,
-    inertia: true,
-    inertiaDeceleration: 2400,
-    inertiaMaxSpeed: 1600,
-    easeLinearity: 0.25,
-    zoomAnimation: true,
-    markerZoomAnimation: true,
-    fadeAnimation: true,
-    bounceAtZoomLimits: false,
     minZoom: minZoom || 12,
 
     // 🔒 limitar navegación
     maxBounds: bounds,
-    maxBoundsViscosity: 0.65
+    maxBoundsViscosity: 1.0
 
   }).setView(center, zoom);
 
@@ -142,11 +134,9 @@ export function createMap(container) {
     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     {
       attribution: "&copy; OpenStreetMap",
-      detectRetina: false,
-      updateWhenIdle: false,
-      updateWhenZooming: false,
-      updateInterval: 150,
-      keepBuffer: 5
+      detectRetina: true,
+      updateWhenIdle: true,
+      keepBuffer: 3
     }
   ).addTo(mapInstance);
 

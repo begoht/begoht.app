@@ -4,7 +4,7 @@
 
 // Asegúrate de que estos archivos existan en estas rutas exactas
 import { initSocket } from "./socket.js?v=20260606-monitoring";
-import { initMap } from "./map.js?v=20260606-map-smooth-pan";
+import { initMap } from "./map.js?v=20260606-recenter-map";
 import { initGPS } from "./gps.js?v=20260606-recenter-map";
 import { initOferta } from "./oferta/oferta.index.js?v=20260606-recenter-map";
 import { initViajeInicio } from "./viajeInicio/viajeInicio.js?v=20260606-recenter-map";
