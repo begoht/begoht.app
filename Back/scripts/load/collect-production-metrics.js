@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-require("dotenv").config();
+require("dotenv").config({ quiet: true });
 
 const os = require("os");
 const { execFile } = require("child_process");
@@ -9,6 +9,10 @@ const { redis } = require("../../src/config/redis");
 
 const args = parseArgs(process.argv.slice(2));
 const label = args.label || process.env.LOAD_METRICS_LABEL || "snapshot";
+
+redis.removeAllListeners("connect");
+redis.removeAllListeners("error");
+redis.on("error", () => {});
 
 main().catch((error) => {
   console.log(JSON.stringify({
@@ -94,14 +98,16 @@ async function mongoSnapshot() {
   await mongoose.connect(process.env.MONGO_URI, { serverSelectionTimeoutMS: 5000 });
   const admin = mongoose.connection.db.admin();
   const [serverStatus, dbStats] = await Promise.all([
-    admin.serverStatus(),
+    admin.serverStatus().catch((error) => ({ ok: false, error: error.message })),
     mongoose.connection.db.stats(),
   ]);
   return {
     ok: true,
-    connections: serverStatus.connections,
-    opcounters: serverStatus.opcounters,
-    mem: serverStatus.mem,
+    serverStatusAllowed: serverStatus.ok !== false,
+    serverStatusError: serverStatus.ok === false ? serverStatus.error : null,
+    connections: serverStatus.connections || null,
+    opcounters: serverStatus.opcounters || null,
+    mem: serverStatus.mem || null,
     db: {
       collections: dbStats.collections,
       objects: dbStats.objects,
