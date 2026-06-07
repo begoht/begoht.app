@@ -3,7 +3,11 @@ import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motoris
 import { getMap } from "../../map/map.singleton.js";
 import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260604-jacmel-gps";
 import { viajeState } from "../../viaje/viaje.state.js";
-import { actualizarUIDriver } from "../../socket/pasajero.utils.js";
+import { actualizarUIDriver, mostrarModalFinalizado } from "../../socket/pasajero.utils.js?v=20260607-finalized-guard";
+import {
+  obtenerFinalizacionPendiente,
+  viajeFueFinalizado
+} from "../../viaje/viaje.finalizado.local.js?v=20260607-finalized-guard";
 
 let restoring = false;
 const ESTADOS_ACTIVOS = ["buscando", "asignado", "reservado", "llego", "en_curso"];
@@ -17,6 +21,17 @@ export async function restoreViajeUI() {
   window.isRestoringViaje = true;
 
   try {
+    const finalizacionPendiente = obtenerFinalizacionPendiente();
+    if (finalizacionPendiente) {
+      localStorage.removeItem("viajeActivo");
+      sessionStorage.removeItem("viajeActivo");
+      await new Promise(requestAnimationFrame);
+      if (!document.getElementById("modalFinalizado")) {
+        mostrarModalFinalizado(finalizacionPendiente.total, finalizacionPendiente);
+      }
+      return true;
+    }
+
     const raw = localStorage.getItem("viajeActivo");
     if (!raw) return false;
 
@@ -28,6 +43,7 @@ export async function restoreViajeUI() {
     if (
       !data ||
       !data.estado ||
+      (data.viajeId && viajeFueFinalizado(data.viajeId)) ||
       (data.estado === "buscando" && !data.precioConfirmado) ||
       !ESTADOS_ACTIVOS.includes(data.estado)
     ) {

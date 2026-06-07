@@ -3,8 +3,14 @@ import { handleAsignado } from "./asignado.handler.js";
 import { handleIniciado } from "./iniciado.handler.js";
 import { handleLlego } from "./llego.handler.js";
 import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260604-jacmel-gps";
+import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260607-finalized-guard";
 
 export const handleEstado = (data) => {
+  if (data?.viajeId && viajeFueFinalizado(data.viajeId)) {
+    console.warn("Estado ignorado: viaje ya finalizado", data.viajeId);
+    return;
+  }
+
   if (!data || !data.estado) return;
   const { estado } = data;
 

@@ -4,7 +4,7 @@ import { initWalletUI } from "../../wallet.js";
 import { initLogout } from "../../logout.js";
 import { initHeader } from "../../components/header.init.js?v=20260601-huella-user";
 import { getMap } from "../../map/map.singleton.js";
-import { restoreViajeUI } from "./app.restore.js?v=20260605-price-premium-cancel";
+import { restoreViajeUI } from "./app.restore.js?v=20260607-finalized-guard";
 import { viajeState } from "../../viaje/viaje.state.js";
 
 let currentInitId = 0;
@@ -55,7 +55,7 @@ async function initHome(initId) {
     const map = getMap();
     if (!map) return;
 
-    const { initPasajero } = await import("../../pasajero/pasajero.main.js?v=20260606-map-shell-controls");
+    const { initPasajero } = await import("../../pasajero/pasajero.main.js?v=20260607-finalized-guard");
 
     if (initId !== currentInitId) return;
 

@@ -3,8 +3,9 @@ import { cerrarBuscandoMotorista, animarMotoristaEncontrado } from "../../pasaje
 import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260606-legal-trust";
 import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260604-jacmel-gps";
 import { mostrarDestinoEnMapa } from "../../map/map.destino.js";
-import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js";
+import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260607-finalized-guard";
 import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260604-jacmel-gps";
+import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260607-finalized-guard";
 
 const ORDEN_ESTADO = {
   asignado: 1,
@@ -19,6 +20,11 @@ export const handleAsignado = (data = {}) => {
   console.log("Motorista asignado:", data);
 
   const estadoEntrante = data.estado || "asignado";
+
+  if (data.viajeId && viajeFueFinalizado(data.viajeId)) {
+    console.warn("Asignacion ignorada: viaje ya finalizado", data.viajeId);
+    return;
+  }
 
   if (
     data.viajeId &&

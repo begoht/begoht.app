@@ -4,11 +4,17 @@ import {
   actualizarEstadoLlegada,
   reproducirSonidoLlegada
 } from "../../pasajero/pasajero.ui.js";
-import { actualizarUIDriver } from "../pasajero.utils.js";
+import { actualizarUIDriver } from "../pasajero.utils.js?v=20260607-finalized-guard";
 import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260604-jacmel-gps";
+import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260607-finalized-guard";
 
 export const handleLlego = (data = {}) => {
   console.log("Motorista llego:", data);
+
+  if (data.viajeId && viajeFueFinalizado(data.viajeId)) {
+    console.warn("Llegada ignorada: viaje ya finalizado", data.viajeId);
+    return;
+  }
 
   if (!viajeState.viajeId) {
     console.warn("Evento llego ignorado: no hay viaje");

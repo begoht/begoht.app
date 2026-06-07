@@ -8,6 +8,11 @@ import { initDriverMinimize } from "../ui/driver.minimize.js";
 import { resetRutaController } from "../map/map.route.flow.js?v=20260604-jacmel-gps";
 import { actualizarETA, resetETA } from "../pasajero/pasajero.eta.js";
 import { queuePendingRating, submitViajeRating } from "../rating/rating.api.js?v=20260605-rating-premium";
+import {
+  confirmarFinalizacionPendiente,
+  guardarFinalizacionPendiente,
+  getViajeIdFromPayload
+} from "../viaje/viaje.finalizado.local.js?v=20260607-finalized-guard";
 
 /**
  * Guarda la sesión del viaje actual en localStorage de forma segura
@@ -365,20 +370,42 @@ function mostrarModalFinalizadoLegacy(total) {
 }
 
 export function mostrarModalFinalizado(total, payload = {}) {
+  const viajeId = getViajeIdFromPayload(payload) || String(viajeState.viajeId || "").trim();
+  const snapshot = {
+    ...payload,
+    viajeId,
+    estado: "finalizado",
+    total: total ?? payload.total ?? payload.precio ?? viajeState.precio ?? 0,
+    precio: total ?? payload.precio ?? viajeState.precio ?? 0,
+    origen: payload.origen || payload.viaje?.origen || viajeState.origen || null,
+    destino: payload.destino || payload.viaje?.destino || viajeState.destino || null,
+    motorista: payload.motorista || payload.viaje?.motorista || viajeState.motorista || null,
+    tipoServicio: payload.tipoServicio || payload.tipo || payload.viaje?.tipo || viajeState.tipoServicio || "viaje",
+    paquete: payload.paquete || payload.viaje?.paquete || viajeState.paquete || null,
+    metodoPago: payload.metodoPago || viajeState.metodoPago || null,
+    estadoPago: payload.estadoPago || viajeState.estadoPago || "pagado"
+  };
+
+  if (viajeId) {
+    guardarFinalizacionPendiente(snapshot);
+  }
+
+  manejarCancelacionOLimpieza(false);
   document.getElementById("modalFinalizado")?.remove();
 
-  const motorista = viajeState.motorista || {};
+  const motorista = snapshot.motorista || {};
   const modal = document.createElement("div");
   modal.id = "modalFinalizado";
 
-  const esEnvio = viajeState.tipoServicio === "envio" || viajeState.tipo === "envio";
+  const esEnvio = snapshot.tipoServicio === "envio" || snapshot.tipo === "envio";
   const titulo = esEnvio ? "Entrega completada" : "Viaje completado";
   const subtitulo = esEnvio
     ? "Tu paquete fue entregado correctamente."
     : "Gracias por viajar con BeGO.";
-  const totalTexto = Number.isFinite(Number(total))
-    ? `${Math.round(Number(total)).toLocaleString("es-PY")} G`
-    : `${total || 0} G`;
+  const totalFinal = snapshot.total ?? total ?? 0;
+  const totalTexto = Number.isFinite(Number(totalFinal))
+    ? `${Math.round(Number(totalFinal)).toLocaleString("es-PY")} G`
+    : `${totalFinal || 0} G`;
 
   const formatearUbicacion = (ubicacion) => {
     if (ubicacion?.direccion) return ubicacion.direccion;
@@ -393,12 +420,11 @@ export function mostrarModalFinalizado(total, payload = {}) {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
 
-  const origen = escapeHtml(formatearUbicacion(viajeState.origen));
-  const destino = escapeHtml(formatearUbicacion(viajeState.destino));
+  const origen = escapeHtml(formatearUbicacion(snapshot.origen));
+  const destino = escapeHtml(formatearUbicacion(snapshot.destino));
   const conductor = escapeHtml(
     `${motorista.nombre || ""} ${motorista.apellido || ""}`.trim() || "Motorista BeGO"
   );
-  const viajeId = viajeState.viajeId || payload.viajeId || payload.viaje?._id || null;
 
   modal.innerHTML = `
   <div class="finalizado-overlay">
@@ -766,8 +792,8 @@ export function mostrarModalFinalizado(total, payload = {}) {
 
       viajes.unshift({
         estado: "completado",
-        origen: viajeState.origen,
-        destino: viajeState.destino,
+        origen: snapshot.origen,
+        destino: snapshot.destino,
         fecha: new Date().toLocaleString(),
         motorista: {
           id: motorista.id,
@@ -775,8 +801,8 @@ export function mostrarModalFinalizado(total, payload = {}) {
           apellido: motorista.apellido,
           foto: motorista.foto
         },
-        precio: total,
-        tipoServicio: viajeState.tipoServicio || "viaje",
+        precio: totalFinal,
+        tipoServicio: snapshot.tipoServicio || "viaje",
         rating: {
           score: rating,
           comentario: feedback,
@@ -791,6 +817,7 @@ export function mostrarModalFinalizado(total, payload = {}) {
     } catch (err) {
       console.error("Error persistiendo historico de viajes:", err);
     } finally {
+      confirmarFinalizacionPendiente(viajeId);
       manejarCancelacionOLimpieza(true);
       modal.remove();
     }

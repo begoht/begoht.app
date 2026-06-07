@@ -2,15 +2,23 @@ import { viajeState } from "../../viaje/viaje.state.js";
 import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260606-legal-trust";
 import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260604-jacmel-gps";
 import { mostrarDestinoEnMapa } from "../../map/map.destino.js";
-import { limpiarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js";
+import { limpiarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260607-finalized-guard";
 import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260604-jacmel-gps";
+import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260607-finalized-guard";
 
 export const handleSync = (data) => {
+
+  if (data?.activo && data?.viajeId && viajeFueFinalizado(data.viajeId)) {
+    console.warn("Sync ignorado: viaje ya finalizado", data.viajeId);
+    limpiarSesionViaje();
+    actualizarBotonViaje();
+    return;
+  }
 
   /*************************************************
    * 🛑 NO HAY VIAJE ACTIVO
    *************************************************/
-  if (!data.activo) {
+  if (!data?.activo) {
     console.warn("🧹 Backend dice: no hay viaje activo");
 
     // 🔥 reset total

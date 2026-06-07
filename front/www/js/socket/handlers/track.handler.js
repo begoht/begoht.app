@@ -2,8 +2,9 @@ import { viajeState } from "../../viaje/viaje.state.js";
 import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260604-jacmel-gps";
 import { mostrarDestinoEnMapa } from "../../map/map.destino.js";
 import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260604-jacmel-gps";
-import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js";
+import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260607-finalized-guard";
 import { getMap } from "../../map/map.singleton.js";
+import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260607-finalized-guard";
 
 let lastEstadoPersistido = null;
 let rutaInicialRenderizada = false;
@@ -28,6 +29,11 @@ const ESTADOS_TRACK = [
 ];
 
 export const handleTrack = (data) => {
+  if (data?.viajeId && viajeFueFinalizado(data.viajeId)) {
+    console.warn("Track ignorado: viaje ya finalizado", data.viajeId);
+    return;
+  }
+
   if (viajeState.finalizado) {
     console.warn("⚠️ Track ignorado: finalizado");
     return;

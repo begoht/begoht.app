@@ -1,13 +1,19 @@
 // handlers/precio.handler.js
 import { viajeState } from "../../viaje/viaje.state.js";
 import { mostrarModalPrecio, mostrarBuscandoMotorista } from "../../pasajero/pasajero.ui.js";
-import { guardarSesionViaje, limpiarSesionViaje } from "../pasajero.utils.js";
+import { guardarSesionViaje, limpiarSesionViaje } from "../pasajero.utils.js?v=20260607-finalized-guard";
 import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260606-legal-trust";
 import { cityConfig } from "../../map/config/index.js";
 import { resolverCotizacionPendiente } from "../../viaje/viaje.actions.js?v=20260606-legal-trust";
+import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260607-finalized-guard";
 
 // ✅ Agregamos 'rutaGeometria' desestructurada del backend
 export const handlePrecio = ({ quoteId, viajeId, precio, precioBase, descuentoWallet, descuentoWalletRate, walletDiscount, distanciaKm, metodoPago, rutaGeometria, tipo, paquete }, socket) => {
+  if (viajeId && viajeFueFinalizado(viajeId)) {
+    console.warn("Precio ignorado: viaje ya finalizado", viajeId);
+    return;
+  }
+
   if (!resolverCotizacionPendiente(quoteId)) {
     console.warn("Cotizacion vieja ignorada:", quoteId);
     return;

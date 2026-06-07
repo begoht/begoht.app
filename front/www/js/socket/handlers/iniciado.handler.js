@@ -1,12 +1,18 @@
 import { viajeState } from "../../viaje/viaje.state.js";
 import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260604-jacmel-gps";
 import { mostrarDestinoEnMapa } from "../../map/map.destino.js";
-import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js";
+import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260607-finalized-guard";
+import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260607-finalized-guard";
 
 let lastIniciadoViajeId = null;
 
 export const handleIniciado = (data = {}) => {
   console.log("Motorista en camino al destino:", data);
+
+  if (data.viajeId && viajeFueFinalizado(data.viajeId)) {
+    console.warn("Inicio ignorado: viaje ya finalizado", data.viajeId);
+    return;
+  }
 
   if (
     data.viajeId &&
