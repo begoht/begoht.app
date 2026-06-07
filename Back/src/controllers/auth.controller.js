@@ -20,6 +20,11 @@ function normalizeEmail(value = "") {
   return String(value).trim().toLowerCase();
 }
 
+function normalizeAlias(value = "") {
+  const alias = String(value).trim().toLowerCase().replace(/^@+/, "");
+  return /^[a-z0-9._-]{3,40}$/.test(alias) && /[a-z]/.test(alias) ? alias : "";
+}
+
 function publicUser(user) {
   return {
     id: user._id,
@@ -153,9 +158,15 @@ exports.login = async (req, res) => {
     }
 
     const email = normalizeEmail(identificador);
+    const alias = email.includes("@") ? "" : normalizeAlias(identificador);
     const search = [];
     phoneLoginCandidates(identificador).forEach((phone) => search.push({ telefono: phone }));
     if (email.includes("@")) search.push({ email });
+    if (alias) search.push({ alias });
+
+    if (!search.length) {
+      return res.status(400).json({ msg: "Credenciales invalidas" });
+    }
 
     const user = await User.findOne({
       rol: { $in: ["pasajero", "admin"] },
