@@ -1,4 +1,4 @@
-import { stopGeo } from "../../map/map.geo.js?v=20260606-recenter-map";
+import { stopGeo } from "../../map/map.geo.js?v=20260607-jacmel-reference-icons";
 
 // ===============================
 // 🌍 BASE PATH ROBUSTO

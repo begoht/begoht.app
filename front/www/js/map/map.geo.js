@@ -9,7 +9,7 @@ import {
   layerReferencias
 } from "./layers/map.layers.js";
 
-import { renderPOILayer } from "./layers/map.poi.layer.js";
+import { renderPOILayer } from "./layers/map.poi.layer.js?v=20260607-jacmel-reference-icons";
 
 import {
   getCurrentPosition,

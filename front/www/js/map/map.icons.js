@@ -1,6 +1,7 @@
 const MOTORISTA_SIZE = 44;
 const SIMPLE_SIZE = 38;
 const PASSENGER_LOCATION_SIZE = 56;
+const POI_SIZE = 26;
 
 function svgDataUrl(svg) {
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
@@ -81,25 +82,53 @@ export const motoIcon = makeIcon({
 });
 
 export function createPOIIcon(categoria = "default") {
-  const colors = {
-    mercado: "#f59e0b",
-    hospital: "#ef4444",
-    turismo: "#8b5cf6",
-    plaza: "#16a34a",
-    default: "#64748b"
+  const styles = {
+    mercado: {
+      bg: "#f59e0b",
+      icon: "🛒"
+    },
+    hospital: {
+      bg: "#ef4444",
+      icon: "🏥"
+    },
+    turismo: {
+      bg: "#8b5cf6",
+      icon: "📸"
+    },
+    plaza: {
+      bg: "#22c55e",
+      icon: "🌳"
+    },
+    default: {
+      bg: "#64748b",
+      icon: "📍"
+    }
   };
-  const color = colors[categoria] || colors.default;
-  const svg = `
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-    <path d="M32 58s18-19.5 18-34C50 13.5 42 6 32 6S14 13.5 14 24c0 14.5 18 34 18 34z" fill="#fff" fill-opacity=".92" stroke="${color}" stroke-width="4.2" stroke-linejoin="round"/>
-    <circle cx="32" cy="24" r="7" fill="${color}"/>
-  </svg>`;
 
-  return makeIcon({
-    svg,
-    size: 32,
-    anchorY: 32,
-    className: "bego-map-icon bego-map-icon-poi"
+  const config = styles[categoria] || styles.default;
+
+  return L.divIcon({
+    className: "icon-poi",
+    html: `
+      <div style="
+        width:${POI_SIZE}px;
+        height:${POI_SIZE}px;
+        border-radius:12px;
+        background:${config.bg};
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        color:white;
+        font-size:16px;
+        font-weight:bold;
+        border:2px solid white;
+        box-shadow:0 4px 12px rgba(0,0,0,0.25);
+      ">
+        ${config.icon}
+      </div>
+    `,
+    iconSize: [POI_SIZE, POI_SIZE],
+    iconAnchor: [POI_SIZE / 2, POI_SIZE]
   });
 }
 

@@ -1,14 +1,14 @@
 export const jacmelPOI = [
   {
     id: "marche-jacmel",
-    nombre: "Marche de Jacmel",
+    nombre: "Marché de Jacmel",
     categoria: "mercado",
     lat: 18.2348,
     lng: -72.5361
   },
   {
     id: "hopital-saint-michel",
-    nombre: "Hopital Saint-Michel",
+    nombre: "Hôpital Saint-Michel",
     categoria: "hospital",
     lat: 18.2331,
     lng: -72.5339
