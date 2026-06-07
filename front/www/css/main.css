@@ -34,10 +34,10 @@
 @import "./pages/configuracion.css?v=20260603-mobile-support";
 @import "./pages/perfil.css";
 @import "./pages/ganancias.css?v=20260605-earnings-page";
-@import "./pages/seguridad.css?v=20260607-mobile-pages-2x2";
+@import "./pages/seguridad.css?v=20260607-support-grid-fix";
 @import "./pages/familia.css";
-@import "./pages/ayuda.css?v=20260607-mobile-pages-2x2";
-@import "./pages/soporte.css?v=20260607-mobile-pages-2x2";
+@import "./pages/ayuda.css?v=20260607-support-grid-fix";
+@import "./pages/soporte.css?v=20260607-support-grid-fix";
 @import "./pages/recarga.css?v=20260602-recarga-premium";
 @import "./pages/recibo.css";
 @import "./pages/legal.css?v=20260606-legal-trust";

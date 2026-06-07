@@ -126,6 +126,23 @@
   min-width: 0;
 }
 
+.route-ayuda #appMain .support-quick-grid,
+.route-soporte #appMain .support-quick-grid,
+.route-seguridad #appMain .security-command-grid {
+  display: grid;
+  padding: 0;
+}
+
+.route-ayuda #appMain .support-panel {
+  display: block;
+  padding: 14px;
+}
+
+.route-soporte #appMain .support-priority-card {
+  display: grid;
+  padding: 15px;
+}
+
 .support-action-card {
   min-height: 132px;
   display: flex;
@@ -355,6 +372,9 @@
 }
 
 @media (max-width: 720px) {
+  .route-ayuda #appMain .support-quick-grid,
+  .route-soporte #appMain .support-quick-grid,
+  .route-seguridad #appMain .security-command-grid,
   .support-quick-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
@@ -431,6 +451,7 @@
     height: 40px;
   }
 
+  .route-ayuda #appMain .support-panel,
   .support-panel {
     padding: 12px;
   }
@@ -446,6 +467,9 @@
 }
 
 @media (max-width: 360px) {
+  .route-ayuda #appMain .support-quick-grid,
+  .route-soporte #appMain .support-quick-grid,
+  .route-seguridad #appMain .security-command-grid,
   .support-quick-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;

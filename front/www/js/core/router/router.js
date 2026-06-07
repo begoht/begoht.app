@@ -1,4 +1,4 @@
-import { routes } from "./router.routes.js?v=20260606-legal-trust";
+import { routes } from "./router.routes.js?v=20260607-support-grid-fix";
 import { renderLayout } from "./router.render.js?v=20260606-legal-trust";
 import { runCleanup, setCleanup } from "./router.cleanup.js";
 import { afterRender, pushURL, actualizarLinksActivos } from "./router.utils.js";

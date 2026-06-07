@@ -81,7 +81,33 @@
   font: inherit;
 }
 
+.route-seguridad #appMain .security-command-grid {
+  display: grid;
+  padding: 0;
+}
+
+.route-seguridad #appMain .security-active-trip {
+  display: grid;
+  padding: 12px;
+}
+
+.route-seguridad #appMain .security-command-grid .security-command {
+  display: flex;
+  padding: 14px;
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.82);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.26);
+}
+
 .security-command.emergency {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(239, 68, 68, 0.22), transparent 32%),
+    rgba(15, 23, 42, 0.9);
+  border-color: rgba(239, 68, 68, 0.22);
+}
+
+.route-seguridad #appMain .security-command-grid .security-command.emergency {
   background:
     radial-gradient(circle at 100% 0%, rgba(239, 68, 68, 0.22), transparent 32%),
     rgba(15, 23, 42, 0.9);
@@ -133,6 +159,11 @@
     padding: 12px;
   }
 
+  .route-seguridad #appMain .security-command-grid .security-command {
+    min-height: 116px;
+    padding: 12px;
+  }
+
   .security-command span {
     font-size: 0.88rem;
   }
@@ -149,6 +180,12 @@
   }
 
   .security-command {
+    min-height: 106px;
+    padding: 10px;
+    gap: 8px;
+  }
+
+  .route-seguridad #appMain .security-command-grid .security-command {
     min-height: 106px;
     padding: 10px;
     gap: 8px;
@@ -173,6 +210,10 @@
     gap: 8px;
     padding: 10px;
     min-height: 66px;
+  }
+
+  .route-seguridad #appMain .security-active-trip {
+    padding: 10px;
   }
 
   .security-active-trip > i {

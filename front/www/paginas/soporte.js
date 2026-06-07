@@ -54,11 +54,6 @@ export function renderSoporte() {
           <p>Profil, acces et securite.</p>
         </a>
 
-        <a class="support-action-card ripple" href="#/legal-confianza" data-link>
-          <i class="fa-solid fa-scale-balanced"></i>
-          <span>Legal</span>
-          <p>Conditions et contact officiel.</p>
-        </a>
       </section>
 
       <section class="support-panel">
