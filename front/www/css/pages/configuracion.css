@@ -7,7 +7,7 @@
 .css-config .config-main {
   width: min(980px, 100%);
   margin: 0 auto;
-  padding: 12px 14px calc(var(--footer-height, 76px) + env(safe-area-inset-bottom, 0px) + 22px);
+  padding: 12px 14px 18px;
   display: grid;
   gap: 14px;
   min-width: 0;
@@ -155,6 +155,27 @@
   gap: 14px;
 }
 
+.route-configuracion #appMain.config-page,
+.route-configuracion #appMain .css-config {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+.route-configuracion #appMain .config-profile-card {
+  display: grid;
+  padding: 14px;
+}
+
+.route-configuracion #appMain .config-grid {
+  display: grid;
+  padding: 0;
+}
+
+.route-configuracion #appMain .config-panel {
+  display: grid;
+}
+
 .config-panel {
   padding: 14px;
   display: grid;
@@ -196,6 +217,25 @@
   font: inherit;
 }
 
+.route-configuracion #appMain .config-row,
+.route-configuracion #appMain .config-toggle-row {
+  min-height: 68px;
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  color: #e5e7eb;
+  text-align: left;
+  text-decoration: none;
+  background: rgba(2, 6, 23, 0.55);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  box-shadow: none;
+  font: inherit;
+}
+
 .config-row > i:first-child,
 .config-toggle-row > i:first-child {
   width: 40px;
@@ -222,6 +262,24 @@
   font-size: 0.78rem;
   line-height: 1.3;
   overflow-wrap: anywhere;
+}
+
+.route-configuracion #appMain .config-row div > span,
+.route-configuracion #appMain .config-toggle-row div > span {
+  display: block;
+  margin: 0;
+  color: #e5e7eb;
+  font-size: 0.92rem;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.route-configuracion #appMain .config-row p,
+.route-configuracion #appMain .config-toggle-row p {
+  margin: 3px 0 0;
+  color: #94a3b8;
+  font-size: 0.78rem;
+  line-height: 1.3;
 }
 
 .config-row > i:last-child {
@@ -287,6 +345,148 @@
   font-weight: 950;
 }
 
+.config-action-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1700;
+  display: grid;
+  place-items: end center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.58);
+}
+
+.config-action-modal.hidden {
+  display: none;
+}
+
+.config-action-card {
+  width: min(420px, 100%);
+  max-height: calc(100dvh - 28px);
+  overflow: auto;
+  position: relative;
+  padding: 18px;
+  border-radius: 8px;
+  color: #f8fafc;
+  background:
+    radial-gradient(circle at 90% 0%, rgba(37, 99, 235, 0.16), transparent 28%),
+    #050b16;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+}
+
+.config-action-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  color: #e5e7eb;
+  background: rgba(15, 23, 42, 0.9);
+}
+
+.config-action-card h2 {
+  margin: 12px 46px 6px 0;
+  color: #f8fafc;
+  font-size: 1.22rem;
+  line-height: 1.1;
+  letter-spacing: 0;
+}
+
+.config-action-card p {
+  margin: 0 0 12px;
+  color: #a8b4c7;
+  line-height: 1.45;
+  font-size: 0.9rem;
+}
+
+.config-action-fields {
+  display: grid;
+  gap: 11px;
+}
+
+.config-field {
+  display: grid;
+  gap: 7px;
+}
+
+.config-field span {
+  color: #cbd5e1;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.config-field input {
+  min-height: 48px;
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  color: #f8fafc;
+  background: rgba(15, 23, 42, 0.86);
+  padding: 0 12px;
+  font-size: 1rem;
+  outline: none;
+}
+
+.config-field input:focus {
+  border-color: rgba(96, 165, 250, 0.55);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.16);
+}
+
+.config-action-error {
+  min-height: 20px;
+  margin: 10px 0 !important;
+  color: #fecaca !important;
+  font-weight: 850;
+}
+
+.config-action-submit {
+  min-height: 48px;
+  width: 100%;
+  border: 0;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #2563eb, #0f172a);
+  box-shadow: 0 12px 22px rgba(37, 99, 235, 0.22);
+  font-weight: 950;
+}
+
+.config-action-submit:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.config-toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--footer-height, 76px) + env(safe-area-inset-bottom, 0px) + 16px);
+  z-index: 1800;
+  width: min(360px, calc(100vw - 28px));
+  transform: translateX(-50%);
+  padding: 12px 14px;
+  border-radius: 8px;
+  color: #f8fafc;
+  background: rgba(15, 23, 42, 0.96);
+  border: 1px solid rgba(96, 165, 250, 0.22);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.38);
+  font-size: 0.88rem;
+  font-weight: 850;
+  text-align: center;
+}
+
+.config-toast[data-type="error"] {
+  border-color: rgba(248, 113, 113, 0.3);
+}
+
+.config-toast.hidden {
+  display: none;
+}
+
 @media (max-width: 760px) {
   .config-grid {
     grid-template-columns: 1fr;
@@ -319,6 +519,14 @@
     padding: 10px;
   }
 
+  .route-configuracion #appMain .config-row,
+  .route-configuracion #appMain .config-toggle-row {
+    min-height: 66px;
+    grid-template-columns: 38px minmax(0, 1fr) auto;
+    gap: 10px;
+    padding: 10px;
+  }
+
   .config-row > i:first-child,
   .config-toggle-row > i:first-child {
     width: 36px;
@@ -339,7 +547,8 @@
 
 @media (max-width: 430px) {
   .css-config .config-main {
-    padding: 10px 12px calc(var(--footer-height, 76px) + env(safe-area-inset-bottom, 0px) + 22px);
+    width: min(390px, 100%);
+    padding: 8px 12px 14px;
     gap: 12px;
   }
 
@@ -376,6 +585,19 @@
     min-height: 78px;
     padding: 12px;
   }
+
+  .route-configuracion #appMain .config-profile-card,
+  .route-configuracion #appMain .config-panel {
+    padding: 12px;
+  }
+
+  .config-action-modal {
+    padding: 12px;
+  }
+
+  .config-action-card {
+    padding: 16px;
+  }
 }
 
 @media (max-width: 360px) {
@@ -396,6 +618,13 @@
 
   .config-row,
   .config-toggle-row {
+    grid-template-columns: 34px minmax(0, 1fr) auto;
+    gap: 8px;
+    padding: 9px;
+  }
+
+  .route-configuracion #appMain .config-row,
+  .route-configuracion #appMain .config-toggle-row {
     grid-template-columns: 34px minmax(0, 1fr) auto;
     gap: 8px;
     padding: 9px;

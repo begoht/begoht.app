@@ -41,7 +41,7 @@ export function renderConfiguracion() {
             <i class="fa-solid fa-chevron-right"></i>
           </a>
 
-          <button class="config-row ripple" type="button">
+          <button class="config-row ripple" type="button" data-config-action="phone">
             <i class="fa-solid fa-phone"></i>
             <div>
               <span>Changer le numero</span>
@@ -50,7 +50,7 @@ export function renderConfiguracion() {
             <i class="fa-solid fa-chevron-right"></i>
           </button>
 
-          <button class="config-row ripple" type="button">
+          <button class="config-row ripple" type="button" data-config-action="password">
             <i class="fa-solid fa-lock"></i>
             <div>
               <span>Changer le mot de passe</span>
@@ -119,7 +119,7 @@ export function renderConfiguracion() {
           <i class="fa-solid fa-chevron-right"></i>
         </a>
 
-        <button class="config-row ripple" type="button">
+        <button class="config-row ripple" type="button" data-config-action="location">
           <i class="fa-solid fa-location-dot"></i>
           <div>
             <span>Partager la position</span>
@@ -151,6 +151,27 @@ export function renderConfiguracion() {
         <i class="fa-solid fa-right-from-bracket"></i>
         <span>Se deconnecter</span>
       </button>
+
+      <div id="configActionModal" class="config-action-modal hidden" role="dialog" aria-modal="true" aria-labelledby="configActionTitle">
+        <div class="config-action-card">
+          <button class="config-action-close ripple" type="button" data-config-modal-close aria-label="Fermer">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+          <span class="config-kicker" id="configActionKicker">Compte</span>
+          <h2 id="configActionTitle">Action BeGO</h2>
+          <p id="configActionCopy">Confirmez l'action pour proteger votre compte.</p>
+          <form id="configActionForm" novalidate>
+            <div id="configActionFields" class="config-action-fields"></div>
+            <p id="configActionError" class="config-action-error" aria-live="polite"></p>
+            <button id="configActionSubmit" class="config-action-submit ripple" type="submit">
+              <i class="fa-solid fa-shield-check"></i>
+              <span>Confirmer</span>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div id="configToast" class="config-toast hidden" role="status" aria-live="polite"></div>
     </section>
   </div>
   `;
