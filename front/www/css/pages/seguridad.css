@@ -129,7 +129,7 @@
   }
 
   .security-command {
-    min-height: 122px;
+    min-height: 116px;
     padding: 12px;
   }
 
@@ -149,7 +149,7 @@
   }
 
   .security-command {
-    min-height: 114px;
+    min-height: 106px;
     padding: 10px;
     gap: 8px;
   }
@@ -172,6 +172,7 @@
     grid-template-columns: 38px minmax(0, 1fr) 24px;
     gap: 8px;
     padding: 10px;
+    min-height: 66px;
   }
 
   .security-active-trip > i {

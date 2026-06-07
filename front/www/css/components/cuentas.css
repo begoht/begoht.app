@@ -254,17 +254,74 @@ body.modo-pro [data-simple="true"] {
   display: none !important;
 }
 
+@media (max-width: 640px) {
+  .css-cuenta {
+    width: 100%;
+    padding: 6px 0 10px;
+  }
+
+  .css-cuenta .cuenta-page {
+    gap: 12px;
+  }
+
+  .css-cuenta .cuenta-hero {
+    margin: 6px 12px 0;
+    min-height: 82px;
+    border-radius: 20px;
+  }
+
+  .css-cuenta .menu {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    padding: 0 12px;
+  }
+
+  .css-cuenta .menu a {
+    min-height: 88px;
+    padding: 13px 8px;
+    border-radius: 18px;
+    font-size: 0.78rem;
+  }
+
+  .css-cuenta .menu a i {
+    font-size: 22px;
+  }
+
+  .css-cuenta .promos-cuenta,
+  .css-cuenta .opciones-cuenta {
+    padding: 0 12px;
+    gap: 10px;
+  }
+
+  .css-cuenta .promo,
+  .css-cuenta .opcion {
+    min-height: 66px;
+    padding: 13px;
+    border-radius: 18px;
+  }
+}
+
 @media (max-width: 360px) {
   .css-cuenta .menu {
     gap: 8px;
   }
 
   .css-cuenta .menu a {
-    min-height: 68px;
-    font-size: 0.68rem;
+    min-height: 82px;
+    font-size: 0.74rem;
   }
 
   .css-cuenta .cuenta-hero {
     padding: 12px;
+  }
+
+  .css-cuenta .opcion-izq span,
+  .css-cuenta .promo-izq span {
+    font-size: 0.84rem;
+  }
+
+  .css-cuenta .opcion-izq p,
+  .css-cuenta .promo-izq p {
+    font-size: 0.72rem;
   }
 }

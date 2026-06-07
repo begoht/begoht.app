@@ -11,7 +11,7 @@
 .css-seguridad .seguridad {
   width: min(960px, 100%);
   margin: 0 auto;
-  padding: 12px 14px calc(var(--footer-height, 76px) + env(safe-area-inset-bottom, 0px) + 22px);
+  padding: 12px 14px 18px;
   display: grid;
   gap: 14px;
   min-width: 0;
@@ -359,40 +359,89 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
   }
+
+  .support-action-card {
+    min-height: 124px;
+  }
+
+  .support-quick-grid > .support-action-card:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    min-height: 96px;
+  }
 }
 
 @media (max-width: 420px) {
   .ayuda-container,
   .soporte-container,
   .css-seguridad .seguridad {
-    padding: 10px 12px calc(var(--footer-height, 76px) + env(safe-area-inset-bottom, 0px) + 22px);
+    padding: 8px 12px 14px;
     gap: 12px;
   }
 
   .support-hero {
-    min-height: 128px;
+    min-height: 116px;
     align-items: flex-start;
-    padding: 16px;
+    padding: 15px;
+    gap: 12px;
   }
 
   .support-hero h1 {
-    font-size: 1.55rem;
+    font-size: 1.45rem;
   }
 
   .support-hero p {
-    font-size: 0.86rem;
-    line-height: 1.38;
+    font-size: 0.82rem;
+    line-height: 1.34;
   }
 
   .support-action-card {
-    min-height: 122px;
-    padding: 12px;
+    min-height: 116px;
+    padding: 11px;
+    gap: 8px;
+  }
+
+  .support-action-card i {
+    width: 34px;
+    height: 34px;
+  }
+
+  .support-action-card span {
+    font-size: 0.86rem;
+  }
+
+  .support-action-card p {
+    font-size: 0.72rem;
+    line-height: 1.25;
   }
 
   .support-hero-action,
   .security-sos-fab {
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
+  }
+
+  .support-priority-card {
+    min-height: 86px;
+    padding: 12px;
+    grid-template-columns: minmax(0, 1fr) 42px;
+  }
+
+  .support-priority-card a {
+    width: 40px;
+    height: 40px;
+  }
+
+  .support-panel {
+    padding: 12px;
+  }
+
+  .support-section-title {
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .support-section-title small {
+    white-space: nowrap;
   }
 }
 
@@ -400,10 +449,6 @@
   .support-quick-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
-  }
-
-  .support-hero {
-    gap: 12px;
   }
 
   .support-search {
@@ -423,7 +468,7 @@
   }
 
   .support-action-card {
-    min-height: 116px;
+    min-height: 108px;
     padding: 10px;
     gap: 8px;
   }
