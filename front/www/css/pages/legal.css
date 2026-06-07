@@ -4,10 +4,18 @@
   overflow-x: hidden;
 }
 
+#legalPublicRoot,
+.route-legal-confianza #appMain.legal-page {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
 .legal-container {
   width: min(980px, 100%);
+  max-width: 100vw;
   margin: 0 auto;
-  padding: 12px 14px calc(var(--footer-height, 76px) + env(safe-area-inset-bottom, 0px) + 24px);
+  padding: 12px 14px 18px;
   display: grid;
   gap: 14px;
   min-width: 0;
@@ -116,6 +124,8 @@
 .legal-trust-grid article,
 .legal-contact-card,
 .legal-rules-grid article {
+  width: 100%;
+  max-width: 100%;
   min-height: 132px;
   display: grid;
   align-content: start;
@@ -208,6 +218,78 @@
 
 .legal-contact-grid {
   grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.route-legal-confianza #appMain .legal-trust-grid,
+.route-legal-confianza #appMain .legal-contact-grid,
+.route-legal-confianza #appMain .legal-rules-grid,
+#legalPublicRoot .legal-trust-grid,
+#legalPublicRoot .legal-contact-grid,
+#legalPublicRoot .legal-rules-grid {
+  display: grid;
+  padding: 0;
+}
+
+.route-legal-confianza #appMain .legal-panel,
+#legalPublicRoot .legal-panel {
+  display: grid;
+  padding: 14px;
+}
+
+.route-legal-confianza #appMain .legal-trust-grid span,
+.route-legal-confianza #appMain .legal-contact-card span,
+.route-legal-confianza #appMain .legal-rules-grid span,
+.route-legal-confianza #appMain .legal-final-card span,
+#legalPublicRoot .legal-trust-grid span,
+#legalPublicRoot .legal-contact-card span,
+#legalPublicRoot .legal-rules-grid span,
+#legalPublicRoot .legal-final-card span {
+  color: #f8fafc;
+  font-size: 0.94rem;
+  font-weight: 950;
+  line-height: 1.15;
+  margin: 0;
+}
+
+.route-legal-confianza #appMain .legal-trust-grid p,
+.route-legal-confianza #appMain .legal-contact-card p,
+.route-legal-confianza #appMain .legal-rules-grid p,
+.route-legal-confianza #appMain .legal-final-card p,
+.route-legal-confianza #appMain .legal-package-card p,
+.route-legal-confianza #appMain .legal-support-note p,
+#legalPublicRoot .legal-trust-grid p,
+#legalPublicRoot .legal-contact-card p,
+#legalPublicRoot .legal-rules-grid p,
+#legalPublicRoot .legal-final-card p,
+#legalPublicRoot .legal-package-card p,
+#legalPublicRoot .legal-support-note p {
+  color: #94a3b8;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.route-legal-confianza #appMain .legal-copy p,
+#legalPublicRoot .legal-copy p {
+  color: #cbd5e1;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.route-legal-confianza #appMain .legal-section-title span,
+#legalPublicRoot .legal-section-title span {
+  color: #f8fafc;
+  font-size: 1rem;
+  font-weight: 950;
+  margin: 0;
+}
+
+.route-legal-confianza #appMain .legal-section-title small,
+#legalPublicRoot .legal-section-title small {
+  color: #94a3b8;
+  font-size: 0.76rem;
+  font-weight: 850;
 }
 
 .legal-support-note {
@@ -304,11 +386,18 @@
   .legal-rules-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .legal-trust-grid > article:last-child:nth-child(odd),
+  .legal-contact-grid > .legal-contact-card:last-child:nth-child(odd),
+  .legal-rules-grid > article:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
 }
 
 @media (max-width: 520px) {
   .legal-container {
-    padding: 10px 12px calc(var(--footer-height, 76px) + env(safe-area-inset-bottom, 0px) + 22px);
+    width: min(390px, 100%);
+    padding: 8px 12px 14px;
     gap: 12px;
   }
 
@@ -341,6 +430,38 @@
     padding: 10px;
   }
 
+  .legal-panel {
+    padding: 12px;
+  }
+
+  .route-legal-confianza #appMain .legal-panel,
+  #legalPublicRoot .legal-panel {
+    padding: 12px;
+  }
+
+  .legal-section-title {
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .legal-copy {
+    gap: 8px;
+  }
+
+  .legal-copy p {
+    font-size: 0.82rem;
+    line-height: 1.42;
+  }
+
+  .legal-support-note {
+    grid-template-columns: 32px minmax(0, 1fr);
+    padding: 10px;
+  }
+
+  .legal-package-card > div {
+    padding: 12px;
+  }
+
   .legal-trust-grid i,
   .legal-contact-card i,
   .legal-rules-grid i {
@@ -354,11 +475,36 @@
     font-size: 0.84rem;
   }
 
+  .route-legal-confianza #appMain .legal-trust-grid span,
+  .route-legal-confianza #appMain .legal-contact-card span,
+  .route-legal-confianza #appMain .legal-rules-grid span,
+  #legalPublicRoot .legal-trust-grid span,
+  #legalPublicRoot .legal-contact-card span,
+  #legalPublicRoot .legal-rules-grid span {
+    font-size: 0.84rem;
+  }
+
   .legal-trust-grid p,
   .legal-contact-card p,
   .legal-rules-grid p {
     font-size: 0.72rem;
     line-height: 1.28;
+  }
+
+  .route-legal-confianza #appMain .legal-trust-grid p,
+  .route-legal-confianza #appMain .legal-contact-card p,
+  .route-legal-confianza #appMain .legal-rules-grid p,
+  #legalPublicRoot .legal-trust-grid p,
+  #legalPublicRoot .legal-contact-card p,
+  #legalPublicRoot .legal-rules-grid p {
+    font-size: 0.72rem;
+    line-height: 1.28;
+  }
+
+  .route-legal-confianza #appMain .legal-copy p,
+  #legalPublicRoot .legal-copy p {
+    font-size: 0.82rem;
+    line-height: 1.42;
   }
 
   .legal-final-card {
