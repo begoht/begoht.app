@@ -6,7 +6,17 @@ const RELEASE =
 
 const PROD_URL = "https://bego.com.ht";
 const DEDUPE_MS = 60_000;
+const FETCH_TIMEOUT_MS = 6_000;
 const sentAt = new Map();
+let pageSuspending = false;
+
+window.addEventListener("pagehide", () => {
+  pageSuspending = true;
+});
+
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") pageSuspending = false;
+});
 
 function apiBase() {
   try {
@@ -97,15 +107,37 @@ function shouldSend(payload) {
   return true;
 }
 
+function isNetworkSuspended() {
+  return (
+    pageSuspending ||
+    document.visibilityState === "hidden" ||
+    navigator.onLine === false
+  );
+}
+
+function tryBeacon(endpoint, body) {
+  if (!navigator.sendBeacon) return false;
+  try {
+    const blob = new Blob([body], { type: "application/json" });
+    return navigator.sendBeacon(endpoint, blob);
+  } catch {
+    return false;
+  }
+}
+
 function postPayload(payload) {
   const body = JSON.stringify(payload);
   const endpoint = `${apiBase().replace(/\/$/, "")}/api/monitor/frontend-error`;
 
-  if (navigator.sendBeacon) {
-    try {
-      const blob = new Blob([body], { type: "application/json" });
-      if (navigator.sendBeacon(endpoint, blob)) return;
-    } catch {}
+  if (tryBeacon(endpoint, body)) return;
+  if (isNetworkSuspended()) return;
+
+  let controller = null;
+  let timeout = null;
+
+  if (typeof AbortController === "function") {
+    controller = new AbortController();
+    timeout = window.setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
   }
 
   fetch(endpoint, {
@@ -113,7 +145,12 @@ function postPayload(payload) {
     headers: { "Content-Type": "application/json" },
     body,
     keepalive: true,
-  }).catch(() => {});
+    signal: controller?.signal,
+  })
+    .catch(() => {})
+    .then(() => {
+      if (timeout) window.clearTimeout(timeout);
+    });
 }
 
 function report(input = {}) {
