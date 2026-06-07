@@ -1,6 +1,6 @@
 export function renderPago() {
   return `
-    <main class="payments-page-shell">
+    <section class="payments-page-shell">
       <section class="payments-hero" aria-labelledby="paymentsTitle">
         <div>
           <span class="payments-kicker">BeGO Paiements</span>
@@ -135,6 +135,6 @@ export function renderPago() {
       </div>
 
       <div id="paymentToast" class="payment-toast hidden" role="status" aria-live="polite"></div>
-    </main>
+    </section>
   `;
 }

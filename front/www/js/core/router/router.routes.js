@@ -26,8 +26,8 @@ import { renderRecarga } from "../../../paginas/recarga.js";
 import { initRecarga } from "../../recarga.js";
 import { renderPromos } from "../../../paginas/promos.js?v=20260604-admin-offers";
 import { initPromosPage } from "../../promos/passenger-offers.js?v=20260604-admin-offers";
-import { renderPago } from "../../../paginas/pago.js?v=20260605-payments-premium";
-import { initPago } from "../../pagos.js?v=20260606-payment-methods";
+import { renderPago } from "../../../paginas/pago.js?v=20260607-payments-mobile";
+import { initPago } from "../../pagos.js?v=20260607-payments-mobile";
 import { renderLegalConfianza } from "../../../paginas/legal-confianza.js?v=20260607-legal-mobile-grid";
 
 // 🔥 Importa el render de actividad

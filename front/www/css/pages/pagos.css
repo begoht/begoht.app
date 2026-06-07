@@ -2,10 +2,12 @@
   background:
     radial-gradient(circle at 12% 0, rgba(37, 99, 235, 0.16), transparent 28rem),
     linear-gradient(180deg, #020616 0%, #07111f 54%, #020616 100%);
+  overflow-x: hidden;
 }
 
 .pagos .payments-page-shell {
   width: min(100%, 720px);
+  max-width: 100vw;
   margin: 0 auto;
   padding: 0 14px 4px;
   display: flex;
@@ -86,7 +88,14 @@
   gap: 10px;
 }
 
+.route-pago #appMain .payments-summary,
+.route-pago #appMain .payments-provider-grid {
+  display: grid;
+  padding: 0;
+}
+
 .payments-summary article {
+  min-width: 0;
   min-height: 92px;
   padding: 12px;
   border-radius: 8px;
@@ -123,6 +132,7 @@
 }
 
 .payment-provider-card {
+  min-width: 0;
   padding: 12px;
   display: grid;
   gap: 11px;
@@ -158,6 +168,31 @@
 .payment-provider-card p {
   min-height: 80px;
   font-size: 0.84rem;
+}
+
+.route-pago #appMain .payments-summary span,
+.route-pago #appMain .payment-provider-top span {
+  display: block;
+  margin: 0;
+  color: #94a3b8;
+  font-size: 0.76rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.route-pago #appMain .payments-summary strong {
+  display: block;
+  margin: 0;
+  color: #f8fafc;
+  font-size: 0.88rem;
+  line-height: 1.2;
+}
+
+.route-pago #appMain .payment-provider-card p {
+  margin: 0;
+  color: #a8b4c7;
+  font-size: 0.84rem;
+  line-height: 1.48;
 }
 
 .payment-method-state {
@@ -219,6 +254,63 @@
 .payment-submit:disabled {
   opacity: 0.55;
   cursor: not-allowed;
+}
+
+.payment-primary:disabled {
+  color: #94a3b8;
+  background: rgba(15, 23, 42, 0.74);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.route-pago #appMain .payment-primary,
+.route-pago #appMain .payment-secondary,
+.route-pago #appMain .payment-submit {
+  min-height: 46px;
+  width: 100%;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 12px;
+  text-align: center;
+  font-size: 0.88rem;
+  font-weight: 900;
+  box-shadow: none;
+}
+
+.route-pago #appMain .payment-primary,
+.route-pago #appMain .payment-submit {
+  color: #ffffff;
+  background: linear-gradient(135deg, #2563eb, #0f172a);
+  box-shadow: 0 12px 22px rgba(37, 99, 235, 0.22);
+}
+
+.route-pago #appMain .payment-secondary {
+  color: #dbeafe;
+  background: rgba(15, 23, 42, 0.82);
+  border: 1px solid rgba(96, 165, 250, 0.2);
+}
+
+.route-pago #appMain .payment-primary:disabled {
+  color: #94a3b8;
+  background: rgba(15, 23, 42, 0.74);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  box-shadow: none;
+}
+
+.route-pago #appMain .payment-primary span,
+.route-pago #appMain .payment-secondary span,
+.route-pago #appMain .payment-submit span,
+.route-pago #appMain .payments-wallet-link span {
+  display: inline;
+  margin: 0;
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: 1;
 }
 
 .payments-status-panel {
@@ -493,6 +585,90 @@
 
   .payment-method-actions {
     grid-column: auto;
+  }
+}
+
+@media (max-width: 520px) {
+  .pagos .payments-page-shell {
+    width: min(390px, 100%);
+    padding-inline: 12px;
+    gap: 12px;
+  }
+
+  .payments-hero {
+    padding: 14px;
+  }
+
+  .payments-hero h1 {
+    margin: 10px 0 7px;
+    font-size: 1.5rem;
+  }
+
+  .payments-hero p {
+    font-size: 0.84rem;
+  }
+
+  .payments-wallet-link {
+    min-height: 44px;
+  }
+
+  .payments-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .payments-summary article {
+    min-height: 84px;
+    padding: 10px;
+  }
+
+  .payments-provider-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .payment-provider-card {
+    padding: 12px;
+  }
+
+  .payment-provider-card p {
+    min-height: auto;
+    font-size: 0.82rem;
+  }
+
+  .payment-provider-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .payment-primary,
+  .payment-secondary,
+  .payment-submit,
+  .route-pago #appMain .payment-primary,
+  .route-pago #appMain .payment-secondary,
+  .route-pago #appMain .payment-submit {
+    min-height: 42px;
+    padding-inline: 8px;
+    font-size: 0.8rem;
+  }
+
+  .payments-status-panel,
+  .payments-method-list {
+    padding: 12px;
+  }
+
+  .payments-provider-status {
+    gap: 6px;
+  }
+
+  .payments-provider-status span {
+    min-height: 28px;
+    font-size: 0.7rem;
+  }
+
+  .payment-empty {
+    padding: 13px;
+    font-size: 0.82rem;
   }
 }
 
