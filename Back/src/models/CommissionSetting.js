@@ -14,6 +14,11 @@ const CommissionSettingSchema = new mongoose.Schema(
       min: 0,
       max: 0.5,
     },
+    debtLimit: {
+      type: Number,
+      default: 1000,
+      min: 0,
+    },
     updatedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

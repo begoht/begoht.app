@@ -16,6 +16,8 @@ const {
   providerUnavailableMessage,
 } = require("../services/paymentMethods.service");
 const { ensurePaymentMethodSettings } = require("../services/paymentMethodSettings.service");
+const { getCommissionRate, calculateCommission } = require("../services/commission.service");
+const { ensurePlatformAccount } = require("../services/platformAccount.service");
 
 function getPublicApiUrl(req) {
   const configuredUrl = process.env.PUBLIC_API_URL || process.env.API_URL;
@@ -303,10 +305,21 @@ router.post("/wallet/callback/:firma", async (req, res) => {
     // 💰 Acreditar
     const wallet = await Wallet.findOneAndUpdate(
       { userId: recarga.userId },
-      { $setOnInsert: { userId: recarga.userId, saldo: 0, saldoBloqueado: 0 } },
+      {
+        $setOnInsert: {
+          userId: recarga.userId,
+          saldo: 0,
+          saldoBloqueado: 0,
+          gananciaEfectivo: 0,
+          comisionPendiente: 0
+        }
+      },
       { upsert: true, new: true, session }
     );
 
+    if (typeof wallet.normalizarDeudaLegacy === "function") {
+      wallet.normalizarDeudaLegacy();
+    }
     wallet.recargar(recarga.monto, `recarga_${recarga.metodoPago}`, recarga.firmaBeGO);
     await wallet.save({ session });
 
@@ -344,16 +357,29 @@ router.post("/finalizar/:id", auth, async (req, res) => {
 
     const walletPasajero = await Wallet.findOne({ userId: viaje.pasajero }).session(session);
     const walletMotorista = await Wallet.findOne({ userId: viaje.motorista }).session(session);
+    const { wallet: walletPlataforma } = await ensurePlatformAccount(session);
+    const total = Number(viaje.precio || 0);
+    const commissionRate = await getCommissionRate({ session });
+    const comision = calculateCommission(total, commissionRate);
+    const pagoMotorista = Math.max(0, total - comision);
 
     // 💸 pagar al motorista
-    walletPasajero.capturar(viaje.precio, viaje._id);
-    walletMotorista.recargar(viaje.precio, "pago_viaje", viaje._id);
+    walletPasajero.capturar(total, viaje._id);
+    if (typeof walletMotorista.normalizarDeudaLegacy === "function") {
+      walletMotorista.normalizarDeudaLegacy();
+    }
+    walletMotorista.recargar(pagoMotorista, "pago_viaje", viaje._id);
+    walletPlataforma.recargar(comision, "comision_viaje", viaje._id);
 
     await walletPasajero.save({ session });
     await walletMotorista.save({ session });
+    await walletPlataforma.save({ session });
 
     viaje.estado = "finalizado";
     viaje.estadoPago = "pagado";
+    viaje.comision = comision;
+    viaje.pagoMotorista = pagoMotorista;
+    viaje.paBeGOrista = pagoMotorista;
     await viaje.save({ session });
 
     await session.commitTransaction();

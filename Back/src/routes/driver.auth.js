@@ -114,6 +114,8 @@ router.post("/register", registerLimiter, async (req, res) => {
           userId: user._id,
           saldo: 0,
           saldoBloqueado: 0,
+          gananciaEfectivo: 0,
+          comisionPendiente: 0,
         },
       },
       { upsert: true, new: true }

@@ -3,8 +3,9 @@ const router = express.Router();
 const auth = require("../middleware/authHttp");
 const Viaje = require("../models/Viaje");
 const Wallet = require("../models/Wallet");
-const User = require("../models/User");
 const { getCommissionRate, calculateCommission } = require("../services/commission.service");
+const { ensurePlatformAccount } = require("../services/platformAccount.service");
+const { normalizeLegacyWalletDebt } = require("../services/driverCommission.service");
 const {
   normalizeProvider,
   providerConfig,
@@ -137,9 +138,20 @@ router.post("/finalizar", auth, async (req, res) => {
 
     // Wallets
     const walletPasajero = await Wallet.findOne({ userId: viaje.pasajero });
-    const walletMotorista = await Wallet.findOne({ userId: viaje.motorista });
-    const BeGO = await User.findOne({ email: "sistema@BeGO.app" });
-    const walletBeGO = await Wallet.findOne({ userId: BeGO._id });
+    const walletMotorista = await Wallet.findOneAndUpdate(
+      { userId: viaje.motorista },
+      {
+        $setOnInsert: {
+          userId: viaje.motorista,
+          saldo: 0,
+          saldoBloqueado: 0,
+          gananciaEfectivo: 0,
+          comisionPendiente: 0,
+        },
+      },
+      { upsert: true, new: true }
+    );
+    const { wallet: walletBeGO } = await ensurePlatformAccount();
 
     const total = viaje.escrow;
     const commissionRate = await getCommissionRate();
@@ -151,21 +163,12 @@ router.post("/finalizar", auth, async (req, res) => {
     await walletPasajero.save();
 
     // 🛵 Pagar motorista
-    walletMotorista.saldo += pagoMotorista;
-    walletMotorista.movimientos.push({
-      tipo: "pago_viaje",
-      monto: pagoMotorista,
-      referencia: viaje._id,
-    });
+    await normalizeLegacyWalletDebt(walletMotorista);
+    walletMotorista.recargar(pagoMotorista, "pago_viaje", `VIAJE-${viaje._id}`);
     await walletMotorista.save();
 
     // 💰 Pagar BeGO
-    walletBeGO.saldo += comision;
-    walletBeGO.movimientos.push({
-      tipo: "pago_viaje",
-      monto: comision,
-      referencia: viaje._id,
-    });
+    walletBeGO.recargar(comision, "comision_viaje", `VIAJE-${viaje._id}`);
     await walletBeGO.save();
 
     viaje.escrow = 0;

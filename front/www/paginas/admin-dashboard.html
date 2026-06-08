@@ -1472,6 +1472,10 @@
                   <span>Motorista recibe</span>
                   <b id="commissionPreviewDriver">850 HTG</b>
                 </div>
+                <div class="commission-mini">
+                  <span>Limite deuda</span>
+                  <b id="commissionDebtLimitDisplay">1,000 HTG</b>
+                </div>
               </div>
             </article>
 
@@ -1484,6 +1488,11 @@
               <label class="admin-field" for="commissionPreviewTotalInput">
                 Simular con total de viaje
                 <input id="commissionPreviewTotalInput" type="number" min="0" step="50" inputmode="numeric" value="1000">
+              </label>
+
+              <label class="admin-field" for="commissionDebtLimitInput">
+                Limite de comision pendiente por motorista
+                <input id="commissionDebtLimitInput" type="number" min="0" max="1000000" step="50" inputmode="numeric" placeholder="1000">
               </label>
 
               <div class="launch-actions">
@@ -1646,7 +1655,7 @@
             <div class="table-wrap">
               <table>
                 <thead>
-                  <tr><th>Usuario</th><th>Rol</th><th>Saldo</th><th>Retenido</th><th>Estado</th><th>Ultimo movimiento</th></tr>
+                  <tr><th>Usuario</th><th>Rol</th><th>Ganancia</th><th>Retenido</th><th>Comision</th><th>Estado</th><th>Ultimo movimiento</th></tr>
                 </thead>
                 <tbody id="walletRows"></tbody>
               </table>

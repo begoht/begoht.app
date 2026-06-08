@@ -58,7 +58,9 @@ async function ensurePlatformAccount(session = null) {
       $setOnInsert: {
         userId: PLATFORM_USER_ID,
         saldo: 0,
-        saldoBloqueado: 0
+        saldoBloqueado: 0,
+        gananciaEfectivo: 0,
+        comisionPendiente: 0
       }
     },
     { upsert: true, new: true, ...queryOptions }

@@ -67,14 +67,21 @@
 
     function walletRow(wallet) {
       const user = wallet.userId || {};
-      const saldo = Number(wallet.saldo || 0);
+      const saldoRaw = Number(wallet.saldo || 0);
+      const deudaLegacy = saldoRaw < 0 ? Math.abs(saldoRaw) : 0;
+      const saldo = Math.max(0, saldoRaw);
+      const comisionPendiente = Number(wallet.comisionPendiente || 0) + deudaLegacy;
+      const gananciaEfectivo = Number(wallet.gananciaEfectivo || 0);
       const last = [...(wallet.movimientos || [])].sort((a, b) => new Date(b.fecha) - new Date(a.fecha))[0];
       return row([
         cell("Usuario", personCell(user, wallet._id)),
         cell("Rol", escapeHtml(user.rol || "-")),
-        cell("Saldo", `<span class="money ${saldo < 0 ? "bad" : "good"}">${money(saldo)}</span>`),
+        cell("Ganancia", `<span class="money good">${money(saldo)}</span><span class="row-sub">Efectivo ${money(gananciaEfectivo)}</span>`),
         cell("Retenido", `<span class="money warn">${money(wallet.saldoBloqueado)}</span>`),
-        cell("Estado", saldo < 0 ? `<span class="status deuda">Deuda</span>` : `<span class="status activo">Al dia</span>`),
+        cell("Comision", comisionPendiente > 0
+          ? `<span class="money bad">${money(comisionPendiente)}</span><span class="row-sub">Pendiente BeGO</span>`
+          : `<span class="status activo">Al dia</span>`),
+        cell("Estado", comisionPendiente > 0 ? `<span class="status deuda">Por cobrar</span>` : `<span class="status activo">Al dia</span>`),
         cell("Movimiento", last ? `${escapeHtml(formatType(last.tipo))}<span class="row-sub">${formatDate(last.fecha)}</span>` : "-")
       ]);
     }

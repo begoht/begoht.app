@@ -4,6 +4,8 @@ const {
 const Wallet = require("../models/Wallet");
 const Viaje = require("../models/Viaje");
 const { getCommissionRate, calculateCommission } = require("../services/commission.service");
+const { ensurePlatformAccount } = require("../services/platformAccount.service");
+const { normalizeLegacyWalletDebt } = require("../services/driverCommission.service");
 
 exports.finalizarViaje = async (req, res) => {
   try {
@@ -19,6 +21,7 @@ exports.finalizarViaje = async (req, res) => {
 
     const walletPasajero = await Wallet.findOne({ userId: viaje.pasajero });
     const walletMotorista = await Wallet.findOne({ userId: viaje.motorista });
+    const { wallet: walletPlataforma } = await ensurePlatformAccount();
     if (!walletPasajero || !walletMotorista) {
       return res.status(400).json({ error: "Wallet no encontrada" });
     }
@@ -30,7 +33,9 @@ exports.finalizarViaje = async (req, res) => {
     const pagoMotorista = total - comision;
 
     walletPasajero.capturar(total, `VIAJE-${viaje._id}`);
+    await normalizeLegacyWalletDebt(walletMotorista);
     walletMotorista.recargar(pagoMotorista, "ingreso_viaje", `VIAJE-${viaje._id}`);
+    walletPlataforma.recargar(comision, "comision_viaje", `VIAJE-${viaje._id}`);
 
     viaje.estado = "finalizado";
     viaje.estadoPago = "pagado";
@@ -38,7 +43,7 @@ exports.finalizarViaje = async (req, res) => {
     viaje.pagoMotorista = pagoMotorista;
     viaje.paBeGOrista = pagoMotorista;
 
-    await Promise.all([walletPasajero.save(), walletMotorista.save(), viaje.save()]);
+    await Promise.all([walletPasajero.save(), walletMotorista.save(), walletPlataforma.save(), viaje.save()]);
 
     // 🧠 Reactivar motorista
     if (global.motoristasActivos?.has(viaje.motorista.toString())) {

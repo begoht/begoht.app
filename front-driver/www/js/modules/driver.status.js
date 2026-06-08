@@ -69,8 +69,8 @@ export function setDriverAvailability(nextOnline, { silent = false } = {}) {
   if (!silent) {
     showToast(
       online
-        ? "Vous etes connecte et disponible pour les courses."
-        : "Vous etes hors ligne. Vous ne recevrez pas de nouvelles offres.",
+        ? "Mode ONLINE actif. Vous pouvez recevoir des courses."
+        : "Mode OFFLINE actif. Les nouvelles offres sont en pause.",
       online ? "#16a34a" : "#f59e0b"
     );
   }
@@ -126,6 +126,16 @@ function bindSocketEvents() {
     renderAvailability();
     notifySubscribers();
   });
+
+  socketRef.on("driver:commission-blocked", (status = {}) => {
+    online = false;
+    localStorage.setItem(STORAGE_KEY, "0");
+    renderAvailability();
+    notifySubscribers();
+    const deuda = Number(status.comisionPendiente || 0).toLocaleString("fr-HT");
+    const limite = Number(status.comisionLimite || status.commissionDebtLimit || 0).toLocaleString("fr-HT");
+    showToast(`Commission BeGO pendiente: ${deuda} G / limite ${limite} G. Paga en Wallet.`, "#dc2626");
+  });
 }
 
 function renderAvailability() {
@@ -135,13 +145,13 @@ function renderAvailability() {
   const pageStatus = document.getElementById("driverPageStatus");
 
   const connected = !!socketRef?.connected;
-  const label = !connected ? "Reconnexion" : online ? "Connecte" : "Hors ligne";
+  const label = !connected ? "SYNC" : online ? "ONLINE" : "OFFLINE";
   const mode = !connected ? "syncing" : online ? "online" : "offline";
 
   document.body.dataset.driverAvailability = mode;
 
   if (status) status.textContent = label;
-  if (pageStatus) pageStatus.textContent = label;
+  if (pageStatus) pageStatus.textContent = !connected ? "Connexion..." : "Compte BeGO";
   if (dot) dot.className = `driver-status-dot ${mode}`;
 
   if (btn) {
@@ -157,22 +167,16 @@ function renderAvailability() {
           <span class="driver-switch-knob"><i class="fa-solid fa-power-off" aria-hidden="true"></i></span>
         </span>
         <span class="driver-switch-copy">
-          <small>Motorista</small>
-          <strong id="onlineStatus">${mode === "online" ? "ONLINE" : mode === "syncing" ? "SYNC" : "OFFLINE"}</strong>
+          <strong id="onlineStatus">${label}</strong>
         </span>
       `;
     }
 
     const switchLabel = btn.querySelector(".driver-switch-copy strong");
-    const switchMeta = btn.querySelector(".driver-switch-copy small");
     const switchIcon = btn.querySelector(".driver-switch-knob i");
 
     if (switchLabel) {
-      switchLabel.textContent = mode === "online" ? "ONLINE" : mode === "syncing" ? "SYNC" : "OFFLINE";
-    }
-
-    if (switchMeta) {
-      switchMeta.textContent = mode === "online" ? "Disponible" : mode === "syncing" ? "Reconnexion" : "Hors ligne";
+      switchLabel.textContent = label;
     }
 
     if (switchIcon) {

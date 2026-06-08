@@ -33,6 +33,18 @@ const WalletSchema = new mongoose.Schema(
       min: 0,
     },
 
+    gananciaEfectivo: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+
+    comisionPendiente: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+
     movimientos: [MovimientoSchema],
   },
   { timestamps: true }
@@ -55,6 +67,64 @@ WalletSchema.methods.recargar = function (monto, tipo = "recarga", ref = null) {
     tipo,
     monto: valor,
     descripcion: tipo.replace(/_/g, " "), // Mejora la lectura en el historial
+    ref,
+  });
+};
+
+WalletSchema.methods.registrarViajeEfectivo = function ({ ganancia, comision, ref = null }) {
+  const neto = Number(ganancia);
+  const deuda = Number(comision);
+
+  if (!Number.isFinite(neto) || neto < 0) {
+    throw new Error("Ganancia invalida para viaje en efectivo");
+  }
+
+  if (!Number.isFinite(deuda) || deuda < 0) {
+    throw new Error("Comision invalida para viaje en efectivo");
+  }
+
+  if (neto > 0) {
+    this.gananciaEfectivo += neto;
+    this.movimientos.push({
+      tipo: "ganancia_efectivo",
+      monto: neto,
+      descripcion: "Ganancia recibida en efectivo",
+      ref,
+    });
+  }
+
+  if (deuda > 0) {
+    this.comisionPendiente += deuda;
+    this.movimientos.push({
+      tipo: "comision_pendiente",
+      monto: -deuda,
+      descripcion: "Comision BeGO pendiente por efectivo",
+      ref,
+    });
+  }
+};
+
+WalletSchema.methods.pagarComisionPendiente = function (monto, ref = null) {
+  const valor = Number(monto);
+
+  if (!Number.isFinite(valor) || valor <= 0) {
+    throw new Error("Monto invalido para pagar comision");
+  }
+
+  if (this.saldo < valor) {
+    throw new Error("Saldo disponible insuficiente");
+  }
+
+  if (this.comisionPendiente < valor) {
+    throw new Error("El monto supera la comision pendiente");
+  }
+
+  this.saldo -= valor;
+  this.comisionPendiente -= valor;
+  this.movimientos.push({
+    tipo: "pago_comision_enviada",
+    monto: -valor,
+    descripcion: "Pago de comision pendiente a BeGO",
     ref,
   });
 };
@@ -116,12 +186,44 @@ WalletSchema.methods.capturar = function (monto, ref = null) {
    🔒 GARANTÍA EXTRA: NUNCA SALDOS NEGATIVOS
 ===================================================== */
 
+function redondear(valor) {
+  return Math.round(Number(valor || 0) * 100) / 100;
+}
+
+WalletSchema.methods.normalizarDeudaLegacy = function () {
+  const saldoActual = redondear(this.saldo);
+  if (saldoActual >= 0) return false;
+
+  const deudaLegacy = Math.abs(saldoActual);
+  this.saldo = 0;
+  this.comisionPendiente = redondear(Number(this.comisionPendiente || 0) + deudaLegacy);
+  this.movimientos.push({
+    tipo: "migracion_comision_pendiente",
+    monto: -deudaLegacy,
+    descripcion: "Saldo negativo migrado a comision pendiente",
+    ref: "MIGRACION-COMISION",
+  });
+
+  return true;
+};
+
 WalletSchema.pre("save", function () {
+  this.normalizarDeudaLegacy();
   this.saldo = Math.round(Number(this.saldo || 0) * 100) / 100;
   this.saldoBloqueado = Math.round(Number(this.saldoBloqueado || 0) * 100) / 100;
+  this.gananciaEfectivo = Math.round(Number(this.gananciaEfectivo || 0) * 100) / 100;
+  this.comisionPendiente = Math.round(Number(this.comisionPendiente || 0) * 100) / 100;
 
   if (this.saldoBloqueado < 0) {
     throw new Error("saldoBloqueado no puede ser negativo");
+  }
+
+  if (this.gananciaEfectivo < 0) {
+    throw new Error("gananciaEfectivo no puede ser negativa");
+  }
+
+  if (this.comisionPendiente < 0) {
+    throw new Error("comisionPendiente no puede ser negativa");
   }
 });
 

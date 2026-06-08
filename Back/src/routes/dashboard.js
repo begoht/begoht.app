@@ -161,14 +161,34 @@ router.get("/resumen", authAdmin, async (req, res) => {
         {
           $group: {
             _id: null,
-            saldoWallets: { $sum: "$saldo" },
+            saldoWallets: {
+              $sum: {
+                $cond: [{ $lt: ["$saldo", 0] }, 0, "$saldo"]
+              }
+            },
             saldoRetenido: { $sum: "$saldoBloqueado" },
+            gananciaEfectivo: { $sum: { $ifNull: ["$gananciaEfectivo", 0] } },
           },
         },
       ]),
       Wallet.aggregate([
-        { $match: { saldo: { $lt: 0 } } },
-        { $group: { _id: null, total: { $sum: { $abs: "$saldo" } } } },
+        {
+          $project: {
+            deuda: {
+              $add: [
+                { $ifNull: ["$comisionPendiente", 0] },
+                {
+                  $cond: [
+                    { $lt: ["$saldo", 0] },
+                    { $abs: "$saldo" },
+                    0
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        { $group: { _id: null, total: { $sum: "$deuda" } } },
       ]),
       User.countDocuments({ online: true }),
       User.countDocuments({ rol: "motorista", disponible: true }),
@@ -252,6 +272,7 @@ router.get("/resumen", authAdmin, async (req, res) => {
         deudaComisiones: deudaComisionesAgg[0]?.total || 0,
         saldoWallets: walletStats[0]?.saldoWallets || 0,
         saldoRetenido: walletStats[0]?.saldoRetenido || 0,
+        gananciaEfectivo: walletStats[0]?.gananciaEfectivo || 0,
         walletPlataforma: plataformaWallet?.saldo || 0,
         walletPlataformaRetenido: plataformaWallet?.saldoBloqueado || 0,
         usuariosOnline,

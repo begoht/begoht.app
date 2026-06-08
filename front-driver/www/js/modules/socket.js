@@ -67,9 +67,19 @@ export function initSocket(serverUrl, token) {
 
     const saldoBox = document.getElementById("saldo");
     const saldoBloqueadoBox = document.getElementById("saldoBloqueado");
+    const driverBalance = document.getElementById("driverWalletBalance");
+    const driverCash = document.getElementById("driverWalletCashGain");
+    const driverDebt = document.getElementById("driverWalletCommissionDebt");
+    const driverLimit = document.getElementById("driverWalletCommissionLimit");
 
     saldoBox && (saldoBox.textContent = (w.saldo || 0).toFixed(2));
     saldoBloqueadoBox && (saldoBloqueadoBox.textContent = (w.saldoBloqueado || 0).toFixed(2));
+    driverBalance && (driverBalance.textContent = `${Number(w.gananciaDisponible ?? w.saldo ?? 0).toFixed(2)} G`);
+    driverCash && (driverCash.textContent = `${Number(w.gananciaEfectivo || 0).toFixed(2)} G`);
+    driverDebt && (driverDebt.textContent = `${Number(w.comisionPendiente || 0).toFixed(2)} G`);
+    driverLimit && (driverLimit.textContent = w.bloqueadoPorComision
+      ? `Limite alcanzado: ${Number(w.comisionLimite || 0).toFixed(2)} G`
+      : `Limite ${Number(w.comisionLimite || 0).toFixed(2)} G`);
     window.dispatchEvent(new CustomEvent("wallet:update", { detail: w }));
   });
 

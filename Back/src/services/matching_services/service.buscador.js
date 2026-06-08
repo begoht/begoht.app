@@ -3,6 +3,7 @@ const { inferCityFromPoint } = require("../../config/cities");
 const {
   evaluarElegibilidadReserva
 } = require("./reservaEligibility.service");
+const { filterDriversByCommissionLimit } = require("../driverCommission.service");
 
 const GEO_KEY = "motoristas:ubicacion";
 const DEBUG = true;
@@ -166,11 +167,12 @@ async function obtenerCandidatos(viaje, radioKm = DISTANCIA_MAX_KM) {
       candidatosScored.push({ id, score, dist, kmRestantes, tipo });
     }
 
-    const [bloq, rech, excl, ofert] = await Promise.all([
+    const [bloq, rech, excl, ofert, habilitadosPorComision] = await Promise.all([
       redis.smembers(`viaje:saldoBloqueados:${viaje._id}`),
       redis.smembers(`viaje:rechazados:${viaje._id}`),
       redis.smembers(`viaje:excluidos:${viaje._id}`),
-      redis.smembers(`viaje:ofertandos:${viaje._id}`)
+      redis.smembers(`viaje:ofertandos:${viaje._id}`),
+      filterDriversByCommissionLimit(candidatosScored.map((c) => c.id))
     ]);
 
     const excluidos = new Set([
@@ -181,7 +183,7 @@ async function obtenerCandidatos(viaje, radioKm = DISTANCIA_MAX_KM) {
     ]);
 
     return candidatosScored
-      .filter((c) => !excluidos.has(c.id))
+      .filter((c) => habilitadosPorComision.has(c.id) && !excluidos.has(c.id))
       .sort((a, b) => a.score - b.score)
       .slice(0, MAX_POOL);
   } catch (err) {

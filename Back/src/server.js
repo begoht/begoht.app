@@ -50,6 +50,7 @@ const Wallet = require("./models/Wallet");
 const User = require("./models/User");
 const Viaje = require("./models/Viaje");
 const { serializeWallet } = require("./services/wallet.presenter");
+const { getDriverCommissionStatus } = require("./services/driverCommission.service");
 
 const shareRoutes = require("./routes/pagos.share.route");
 const trackSocket = require("./sockets/viajes/track.socket");
@@ -108,9 +109,11 @@ global.io = io;
 
 global.emitWalletUpdate = async (userId) => {
   try {
+    await redis.del(`motorista:commission-status:${userId}`).catch(() => {});
     const wallet = await Wallet.findOne({ userId }).lean();
     if (!wallet) return;
-    io.to(`user:${userId}`).emit("wallet:update", serializeWallet(wallet));
+    const commissionStatus = await getDriverCommissionStatus(userId, { wallet, lean: true });
+    io.to(`user:${userId}`).emit("wallet:update", serializeWallet(wallet, commissionStatus));
   } catch (err) {
     console.error("❌ Error emitWalletUpdate:", err);
   }
@@ -603,8 +606,10 @@ if (user.rol === "motorista") {
   // ============================
   Wallet.findOne({ userId })
     .lean()
-    .then((wallet) => {
-      if (wallet) socket.emit("wallet:update", serializeWallet(wallet));
+    .then(async (wallet) => {
+      if (!wallet) return;
+      const commissionStatus = await getDriverCommissionStatus(userId, { wallet, lean: true });
+      socket.emit("wallet:update", serializeWallet(wallet, commissionStatus));
     })
     .catch(() => {});
 

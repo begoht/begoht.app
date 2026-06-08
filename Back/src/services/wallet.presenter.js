@@ -28,14 +28,36 @@ function serializeMovements(movements = [], limit = DEFAULT_MOVEMENT_LIMIT) {
 
 function serializeWallet(wallet, options = {}) {
   const source = typeof wallet?.toObject === "function" ? wallet.toObject() : wallet;
-  const saldo = toMoney(source?.saldo);
+  const saldoLegacy = toMoney(source?.saldo);
+  const deudaLegacy = saldoLegacy < 0 ? Math.abs(saldoLegacy) : 0;
+  const saldo = Math.max(0, saldoLegacy);
   const saldoBloqueado = toMoney(source?.saldoBloqueado);
+  const gananciaEfectivo = toMoney(source?.gananciaEfectivo);
+  const comisionPendiente = toMoney(
+    options.comisionPendiente ??
+    Number(source?.comisionPendiente || 0) + deudaLegacy
+  );
+  const comisionLimite = toMoney(
+    options.comisionLimite ??
+    options.commissionDebtLimit ??
+    source?.comisionLimite ??
+    source?.commissionDebtLimit ??
+    0
+  );
 
   const payload = {
     id: source?._id?.toString?.() || null,
     userId: source?.userId?.toString?.() || null,
     saldo,
     saldoBloqueado,
+    gananciaDisponible: saldo,
+    gananciaEfectivo,
+    gananciaTotalRegistrada: toMoney(saldo + gananciaEfectivo),
+    comisionPendiente,
+    comisionLimite,
+    commissionDebtLimit: comisionLimite,
+    comisionRestante: toMoney(Math.max(0, comisionLimite - comisionPendiente)),
+    bloqueadoPorComision: comisionLimite > 0 && comisionPendiente >= comisionLimite,
     saldoDisponible: saldo,
     movimientos: serializeMovements(source?.movimientos || [], options.movementsLimit || 8),
     updatedAt: source?.updatedAt || null,

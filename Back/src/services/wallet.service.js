@@ -3,6 +3,7 @@ const Wallet = require("../models/Wallet");
 const Viaje = require("../models/Viaje");
 const { PLATFORM_WALLET_ID } = require("../config/constants");
 const { getCommissionRate, calculateCommission } = require("./commission.service");
+const { normalizeLegacyWalletDebt } = require("./driverCommission.service");
 
 class WalletService {
 
@@ -97,6 +98,7 @@ class WalletService {
       pasajeroWallet.capturar(total, `VIAJE-${viaje._id}`);
 
       // 🛵 Paga motorista
+      await normalizeLegacyWalletDebt(motoristaWallet, { session });
       motoristaWallet.recargar(
         ganaMotorista,
         "pago_viaje",

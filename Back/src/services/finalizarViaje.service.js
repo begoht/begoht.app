@@ -9,6 +9,7 @@ const { PLATFORM_ALIAS } = require("../config/constants");
 const { ensurePlatformAccount } = require("./platformAccount.service");
 const { enviarResumenViaje } = require("./email/email.service");
 const { getCommissionRate, calculateCommission } = require("./commission.service");
+const { normalizeLegacyWalletDebt } = require("./driverCommission.service");
 const crypto = require("crypto");
 
 const LOCK_TTL = 30000;
@@ -161,7 +162,15 @@ async function liquidarWallet({ viaje, motoristaId, neto, comision, session }) {
     const pasajeroId = viaje.pasajero._id || viaje.pasajero;
     const walletMotorista = await Wallet.findOneAndUpdate(
       { userId: motoristaId },
-      { $setOnInsert: { userId: motoristaId, saldo: 0, saldoBloqueado: 0 } },
+      {
+        $setOnInsert: {
+          userId: motoristaId,
+          saldo: 0,
+          saldoBloqueado: 0,
+          gananciaEfectivo: 0,
+          comisionPendiente: 0
+        }
+      },
       { upsert: true, new: true, session }
     );
 
@@ -193,6 +202,7 @@ async function liquidarWallet({ viaje, motoristaId, neto, comision, session }) {
       }
     }
 
+    await normalizeLegacyWalletDebt(walletMotorista, { session });
     walletMotorista.recargar(neto, "pago_viaje", `VIAJE-${viaje._id}`);
     walletPlataforma.recargar(comision, "comision_viaje", `VIAJE-${viaje._id}`);
 
@@ -204,42 +214,38 @@ async function liquidarWallet({ viaje, motoristaId, neto, comision, session }) {
     return;
   }
 
-  await Promise.all([
-    Wallet.updateOne(
-      { userId: motoristaId },
-      {
-        $setOnInsert: { userId: motoristaId, saldoBloqueado: 0 },
-        $inc: { saldo: -comision },
-        $push: {
-          movimientos: {
-            tipo: "comision_viaje",
-            monto: -comision,
-            descripcion: `Comision viaje en efectivo por pagar a @${PLATFORM_ALIAS}`,
-            ref: `VIAJE-${viaje._id}`,
-            metadata: { aliasPago: PLATFORM_ALIAS, metodoPago: "efectivo" },
-            fecha: new Date()
-          }
-        }
-      },
-      { upsert: true, session }
-    ),
-    Wallet.updateOne(
-      { _id: walletPlataforma._id },
-      {
-        $push: {
-          movimientos: {
-            tipo: "comision_pendiente_efectivo",
-            monto: 0,
-            descripcion: "Comision en efectivo pendiente de transferencia",
-            ref: `VIAJE-${viaje._id}`,
-            metadata: { motoristaId, montoPendiente: comision, aliasPago: PLATFORM_ALIAS },
-            fecha: new Date()
-          }
-        }
-      },
-      { session }
-    )
-  ]);
+  const walletMotorista = await Wallet.findOneAndUpdate(
+    { userId: motoristaId },
+    {
+      $setOnInsert: {
+        userId: motoristaId,
+        saldo: 0,
+        saldoBloqueado: 0,
+        gananciaEfectivo: 0,
+        comisionPendiente: 0
+      }
+    },
+    { upsert: true, new: true, session }
+  );
+
+  await normalizeLegacyWalletDebt(walletMotorista, { session });
+  walletMotorista.registrarViajeEfectivo({
+    ganancia: neto,
+    comision,
+    ref: `VIAJE-${viaje._id}`
+  });
+
+  walletPlataforma.movimientos.push({
+    tipo: "comision_pendiente_efectivo",
+    monto: 0,
+    descripcion: "Comision en efectivo pendiente de transferencia",
+    ref: `VIAJE-${viaje._id}`,
+    metadata: { motoristaId, montoPendiente: comision, aliasPago: PLATFORM_ALIAS },
+    fecha: new Date()
+  });
+
+  await walletMotorista.save({ session });
+  await walletPlataforma.save({ session });
 }
 
 async function liberarMotorista(motoristaId) {

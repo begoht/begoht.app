@@ -10,6 +10,10 @@ const WalletService = require("../services/wallet.service");
 const { PLATFORM_ALIAS } = require("../config/constants");
 const { ensurePlatformAccount } = require("../services/platformAccount.service");
 const { serializeWallet, serializeMovements } = require("../services/wallet.presenter");
+const {
+  getDriverCommissionStatus,
+  normalizeLegacyWalletDebt,
+} = require("../services/driverCommission.service");
 
 const router = express.Router();
 const TRANSFER_MAX = Number(process.env.WALLET_TRANSFER_MAX || 1000000);
@@ -115,11 +119,17 @@ router.get("/", auth, async (req, res) => {
       wallet = await Wallet.create({ userId });
     }
 
+    await normalizeLegacyWalletDebt(wallet);
+
     // 🔎 Buscamos si el usuario tiene pinHash configurado
     const usuario = await User.findById(userId).select("+pinHash");
+    const commissionStatus = await getDriverCommissionStatus(userId, { wallet });
     
     // Convertimos a objeto para añadirle la propiedad virtual
-    res.json(serializeWallet(wallet, { tienePin: !!(usuario && usuario.pinHash) }));
+    res.json(serializeWallet(wallet, {
+      ...commissionStatus,
+      tienePin: !!(usuario && usuario.pinHash)
+    }));
 
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -151,6 +161,7 @@ router.post("/recarga", walletWriteLimiter, auth, async (req, res) => {
       wallet = new Wallet({ userId });
     }
 
+    await normalizeLegacyWalletDebt(wallet);
     wallet.recargar(MONTO, "recarga_wallet", referencia || null);
     await wallet.save();
 
@@ -432,14 +443,17 @@ async function pagarComisionPendiente({
   req,
   session
 }) {
+  const walletActual = await Wallet.findOne({ userId }).session(session);
+  if (!walletActual) {
+    throw new Error("Wallet no encontrada");
+  }
+
+  await normalizeLegacyWalletDebt(walletActual, { session });
+
   const origenQuery = {
     userId,
-    $expr: {
-      $and: [
-        { $lt: ["$saldo", 0] },
-        { $gte: [{ $abs: "$saldo" }, monto] }
-      ]
-    }
+    saldo: { $gte: monto },
+    comisionPendiente: { $gte: monto }
   };
 
   if (idempotencyKey) {
@@ -449,11 +463,14 @@ async function pagarComisionPendiente({
   const walletOrigen = await Wallet.findOneAndUpdate(
     origenQuery,
     {
-      $inc: { saldo: monto },
+      $inc: {
+        saldo: -monto,
+        comisionPendiente: -monto,
+      },
       $push: {
         movimientos: {
           tipo: "pago_comision_enviada",
-          monto,
+          monto: -monto,
           descripcion: `Pago de comision a @${usuarioDestino.alias}`,
           ref: transferRef,
           metadata: getClientFingerprint(req),
@@ -474,12 +491,31 @@ async function pagarComisionPendiente({
       if (yaProcesada) return;
     }
 
-    throw new Error("No tienes esa comision pendiente o el monto supera la deuda");
+    const walletEstado = await Wallet.findOne({ userId })
+      .select("saldo comisionPendiente")
+      .lean()
+      .session(session);
+
+    if (Number(walletEstado?.comisionPendiente || 0) < monto) {
+      throw new Error("El monto supera la comision pendiente");
+    }
+
+    if (Number(walletEstado?.saldo || 0) < monto) {
+      throw new Error("Saldo disponible insuficiente para pagar la comision");
+    }
+
+    throw new Error("No se pudo pagar la comision pendiente");
   }
 
   await Wallet.findOneAndUpdate(
     { userId: usuarioDestino._id },
     {
+      $setOnInsert: {
+        userId: usuarioDestino._id,
+        saldoBloqueado: 0,
+        gananciaEfectivo: 0,
+        comisionPendiente: 0,
+      },
       $inc: { saldo: monto },
       $push: {
         movimientos: {

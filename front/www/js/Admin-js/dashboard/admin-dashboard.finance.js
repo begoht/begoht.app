@@ -3,13 +3,20 @@
       const percent = currentCommissionPercent();
       const active = document.activeElement;
       const percentInput = document.getElementById("commissionPercentInput");
+      const debtLimitInput = document.getElementById("commissionDebtLimitInput");
+      const debtLimit = currentCommissionDebtLimit();
 
       setText("commissionPercentDisplay", formatPercent(percent));
-      setText("commissionUpdatedLabel", `${formatPercent(percent)} activo`);
+      setText("commissionDebtLimitDisplay", money(debtLimit));
+      setText("commissionUpdatedLabel", `${formatPercent(percent)} activo - limite ${money(debtLimit)}`);
       setText("mCommissionRateLabel", `${formatPercent(percent)} activo`);
 
       if (percentInput && active?.id !== "commissionPercentInput") {
         percentInput.value = trimNumber(percent);
+      }
+
+      if (debtLimitInput && active?.id !== "commissionDebtLimitInput") {
+        debtLimitInput.value = Math.round(Number(debtLimit || 0));
       }
 
       renderCommissionPreview();
@@ -22,32 +29,40 @@
       const total = Math.max(0, Number(totalInput?.value || 0));
       const safePercent = Number.isFinite(percent) ? Math.min(50, Math.max(0, percent)) : currentCommissionPercent();
       const fee = Math.round(total * (safePercent / 100));
+      const debtLimit = Number(document.getElementById("commissionDebtLimitInput")?.value ?? currentCommissionDebtLimit());
 
       setText("commissionPreviewFee", money(fee));
       setText("commissionPreviewDriver", money(Math.max(0, total - fee)));
       setText("commissionPercentDisplay", formatPercent(safePercent));
+      setText("commissionDebtLimitDisplay", money(Number.isFinite(debtLimit) ? debtLimit : currentCommissionDebtLimit()));
     }
 
     async function saveCommission() {
       const input = document.getElementById("commissionPercentInput");
       const percentage = Number(input?.value);
+      const debtLimit = Number(document.getElementById("commissionDebtLimitInput")?.value);
 
       if (!Number.isFinite(percentage) || percentage < 0 || percentage > 50) {
         showToast("La comision debe estar entre 0% y 50%");
         return;
       }
 
+      if (!Number.isFinite(debtLimit) || debtLimit < 0 || debtLimit > 1000000) {
+        showToast("El limite de comision pendiente debe estar entre 0 y 1,000,000 HTG");
+        return;
+      }
+
       try {
         state.commission = await api("/api/admin/commission", {
           method: "PUT",
-          body: { percentage }
+          body: { percentage, debtLimit }
         });
 
         if (!state.resumen) state.resumen = {};
         if (!state.resumen.config) state.resumen.config = {};
         state.resumen.config.commission = state.commission;
         renderCommission();
-        showToast(`Comision actualizada a ${formatPercent(state.commission.percentage)}`);
+        showToast(`Comision actualizada a ${formatPercent(state.commission.percentage)}, limite ${money(state.commission.debtLimit)}`);
       } catch (err) {
         console.error(err);
         showToast("No se pudo guardar la comision");
@@ -56,6 +71,16 @@
 
     function currentCommissionPercent() {
       return Number(state.commission?.percentage ?? state.resumen?.config?.commission?.percentage ?? 15);
+    }
+
+    function currentCommissionDebtLimit() {
+      return Number(
+        state.commission?.debtLimit ??
+        state.commission?.commissionDebtLimit ??
+        state.resumen?.config?.commission?.debtLimit ??
+        state.resumen?.config?.commission?.commissionDebtLimit ??
+        1000
+      );
     }
 
     function currentFareConfig() {

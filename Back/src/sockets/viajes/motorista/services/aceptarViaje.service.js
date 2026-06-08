@@ -14,6 +14,9 @@ const {
     evaluarElegibilidadReserva
 } = require("../../../../services/matching_services/reservaEligibility.service");
 const {
+    ensureDriverCanReceiveTrips
+} = require("../../../../services/driverCommission.service");
+const {
     getOfferKey,
     getOfferLockKey,
     releaseOfferLock
@@ -42,6 +45,20 @@ module.exports = async ({
 
         if (!data || Object.keys(data).length === 0) {
             data = {};
+        }
+
+        try {
+            await ensureDriverCanReceiveTrips(motoristaId);
+        } catch (err) {
+            if (err.code === "COMMISSION_LIMIT_REACHED") {
+                return {
+                    success: false,
+                    error: "commission_limit_reached",
+                    commissionStatus: err.status
+                };
+            }
+
+            throw err;
         }
 
         const enViajeActivo =

@@ -35,6 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("saveCommissionBtn")?.addEventListener("click", saveCommission);
       document.getElementById("commissionPercentInput")?.addEventListener("input", renderCommissionPreview);
       document.getElementById("commissionPreviewTotalInput")?.addEventListener("input", renderCommissionPreview);
+      document.getElementById("commissionDebtLimitInput")?.addEventListener("input", renderCommissionPreview);
       document.getElementById("saveBaseFareBtn")?.addEventListener("click", saveBaseFare);
       document.getElementById("baseFareInput")?.addEventListener("input", renderBaseFarePreview);
       document.getElementById("pricePerKmInput")?.addEventListener("input", renderBaseFarePreview);

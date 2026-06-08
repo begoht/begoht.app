@@ -1,4 +1,4 @@
-import { getDriverAvailability, onDriverAvailabilityChange } from "./driver.status.js?v=20260608-profile-switch";
+import { getDriverAvailability, onDriverAvailabilityChange } from "./driver.status.js?v=20260608-switch-clean";
 import { initDriverSupportChat } from "./support/supportChat.js?v=20260604-live-support";
 
 let pageView = null;
@@ -218,9 +218,47 @@ function renderWallet() {
   const saldo = document.getElementById("saldo")?.textContent || "0.00";
   return pageShell("Billetera", "Pagos y balance", `
     <section class="driver-wallet-hero">
-      <span>Balance disponible</span>
+      <span>Ganancia disponible</span>
       <strong id="driverWalletBalance">${saldo}</strong>
-      <small id="driverWalletBlocked">Actualizado por wallet en tiempo real</small>
+      <small id="driverWalletBlocked">Wallet BeGO para pagos digitales y retiros</small>
+    </section>
+
+    <section class="driver-wallet-split">
+      <article class="driver-wallet-metric">
+        <i class="fa-solid fa-money-bill-wave"></i>
+        <span>Ganancia efectivo</span>
+        <strong id="driverWalletCashGain">0 G</strong>
+        <small>No retirable: ya fue cobrada en mano.</small>
+      </article>
+      <article class="driver-wallet-metric is-debt">
+        <i class="fa-solid fa-file-invoice-dollar"></i>
+        <span>Comision pendiente</span>
+        <strong id="driverWalletCommissionDebt">0 G</strong>
+        <small id="driverWalletCommissionLimit">Limite 0 G</small>
+      </article>
+    </section>
+
+    <section class="driver-panel driver-commission-pay-panel">
+      <div class="driver-panel-title">
+        <h2>Pagar BeGO</h2>
+        <span id="driverCommissionPayStatus">Al dia</span>
+      </div>
+      <p class="driver-muted">Usa saldo disponible para pagar la comision pendiente al alias oficial @bego.</p>
+      <div class="driver-wallet-pay-grid">
+        <label>
+          Monto
+          <input id="driverCommissionPayAmount" type="number" min="0" step="1" inputmode="numeric" placeholder="0">
+        </label>
+        <label>
+          PIN wallet
+          <input id="driverCommissionPayPin" type="password" maxlength="4" inputmode="numeric" placeholder="4 digitos">
+        </label>
+      </div>
+      <button class="driver-pay-commission-btn" id="driverPayCommissionBtn" type="button">
+        <i class="fa-solid fa-shield-halved"></i>
+        Pagar comision
+      </button>
+      <small id="driverCommissionPayHint">Si alcanzas el limite, no recibiras nuevas ofertas hasta pagar.</small>
     </section>
 
     <section class="driver-action-grid">
@@ -388,6 +426,12 @@ async function loadDriverActivity(filter = "todos") {
 async function loadDriverWallet() {
   const balance = document.getElementById("driverWalletBalance");
   const blocked = document.getElementById("driverWalletBlocked");
+  const cashGain = document.getElementById("driverWalletCashGain");
+  const commissionDebt = document.getElementById("driverWalletCommissionDebt");
+  const commissionLimit = document.getElementById("driverWalletCommissionLimit");
+  const payStatus = document.getElementById("driverCommissionPayStatus");
+  const payHint = document.getElementById("driverCommissionPayHint");
+  const payAmount = document.getElementById("driverCommissionPayAmount");
   const movements = document.getElementById("driverWalletMovements");
   if (!balance && !movements) return;
 
@@ -397,8 +441,31 @@ async function loadDriverWallet() {
       fetchJson("/api/wallet/movimientos")
     ]);
 
-    if (balance) balance.textContent = `${formatMoney(wallet?.saldo || 0)} G`;
-    if (blocked) blocked.textContent = `Saldo retenido: ${formatMoney(wallet?.saldoBloqueado || 0)} G`;
+    const saldo = Number(wallet?.gananciaDisponible ?? wallet?.saldo ?? 0);
+    const efectivo = Number(wallet?.gananciaEfectivo || 0);
+    const deuda = Number(wallet?.comisionPendiente || 0);
+    const limite = Number(wallet?.comisionLimite || wallet?.commissionDebtLimit || 0);
+    const restante = Math.max(0, limite - deuda);
+    const bloqueado = !!wallet?.bloqueadoPorComision;
+
+    if (balance) balance.textContent = `${formatMoney(saldo)} G`;
+    if (blocked) blocked.textContent = `Retenido: ${formatMoney(wallet?.saldoBloqueado || 0)} G`;
+    if (cashGain) cashGain.textContent = `${formatMoney(efectivo)} G`;
+    if (commissionDebt) commissionDebt.textContent = `${formatMoney(deuda)} G`;
+    if (commissionLimit) commissionLimit.textContent = bloqueado
+      ? `Limite alcanzado: ${formatMoney(limite)} G`
+      : `Limite ${formatMoney(limite)} G - margen ${formatMoney(restante)} G`;
+    if (payStatus) {
+      payStatus.textContent = bloqueado ? "Bloqueado" : deuda > 0 ? "Pendiente" : "Al dia";
+      payStatus.className = bloqueado ? "is-danger" : deuda > 0 ? "is-warning" : "is-ok";
+    }
+    if (payHint) payHint.textContent = deuda > 0
+      ? `Puedes pagar hasta ${formatMoney(Math.min(saldo, deuda))} G con tu saldo disponible.`
+      : "No tienes comision pendiente.";
+    if (payAmount && !payAmount.value) {
+      payAmount.value = deuda > 0 ? String(Math.round(Math.min(saldo, deuda))) : "";
+    }
+    bindDriverCommissionPay(wallet);
 
     if (movements) {
       const list = Array.isArray(items) ? items.slice(0, 6) : [];
@@ -410,6 +477,59 @@ async function loadDriverWallet() {
     console.error(err);
     if (movements) movements.innerHTML = emptyState("No pudimos cargar la billetera.");
   }
+}
+
+function bindDriverCommissionPay(wallet = {}) {
+  const btn = document.getElementById("driverPayCommissionBtn");
+  if (!btn) return;
+
+  const deuda = Number(wallet?.comisionPendiente || 0);
+  const saldo = Number(wallet?.gananciaDisponible ?? wallet?.saldo ?? 0);
+  btn.disabled = deuda <= 0 || saldo <= 0;
+  if (btn.dataset.bound === "1") return;
+
+  btn.dataset.bound = "1";
+  btn.addEventListener("click", async () => {
+    const amountEl = document.getElementById("driverCommissionPayAmount");
+    const pinEl = document.getElementById("driverCommissionPayPin");
+    const amount = Number(amountEl?.value || 0);
+    const pin = String(pinEl?.value || "").replace(/\D/g, "").slice(0, 4);
+
+    if (!Number.isFinite(amount) || amount <= 0) {
+      notifyDriverWallet("Ingresa un monto valido.", true);
+      return;
+    }
+
+    if (!/^\d{4}$/.test(pin)) {
+      notifyDriverWallet("Ingresa tu PIN wallet de 4 digitos.", true);
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Procesando`;
+
+    try {
+      await fetchJson("/api/wallet/enviar", {
+        method: "POST",
+        body: {
+          aliasDestino: "bego",
+          monto: amount,
+          pin,
+          idempotencyKey: `driver-commission-${Date.now()}`
+        }
+      });
+      if (pinEl) pinEl.value = "";
+      if (amountEl) amountEl.value = "";
+      notifyDriverWallet("Comision pagada correctamente.");
+      await loadDriverWallet();
+    } catch (err) {
+      notifyDriverWallet(err.message || "No se pudo pagar la comision.", true);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = `<i class="fa-solid fa-shield-halved"></i> Pagar comision`;
+    }
+  });
+
 }
 
 async function loadDriverEarnings() {
@@ -665,26 +785,40 @@ function refrescarPaginaDriver() {
   }
 }
 
-async function fetchJson(path) {
+async function fetchJson(path, options = {}) {
   const serverUrl = typeof window.getServerUrl === "function" ? window.getServerUrl() : "";
   const token = localStorage.getItem("token");
   const res = await fetch(`${serverUrl}${path}`, {
+    method: options.method || "GET",
     headers: {
       Authorization: `Bearer ${token}`,
-      "ngrok-skip-browser-warning": "true"
-    }
+      "ngrok-skip-browser-warning": "true",
+      ...(options.body ? { "Content-Type": "application/json" } : {})
+    },
+    body: options.body ? JSON.stringify(options.body) : undefined
   });
 
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return res.json();
+  let data = null;
+  try {
+    data = await res.json();
+  } catch {}
+
+  if (!res.ok) throw new Error(data?.error || data?.msg || `HTTP ${res.status}`);
+  return data;
+}
+
+function notifyDriverWallet(message, isError = false) {
+  const hint = document.getElementById("driverCommissionPayHint");
+  if (hint) {
+    hint.textContent = message;
+    hint.classList.toggle("is-error", !!isError);
+  }
 }
 
 function updateAvailabilityCopy(state) {
   const pageStatus = document.getElementById("driverPageStatus");
   if (!pageStatus || !state) return;
-  pageStatus.textContent = state.socketConnected
-    ? state.online ? "Conectado" : "Desconectado"
-    : "Reconectando";
+  pageStatus.textContent = state.socketConnected ? "Compte BeGO" : "Connexion...";
 }
 
 function normalizeRoute(value) {

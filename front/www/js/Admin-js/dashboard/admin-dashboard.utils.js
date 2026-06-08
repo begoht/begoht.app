@@ -61,7 +61,7 @@
 
     function walletSearchText(wallet) {
       const user = wallet.userId || {};
-      return `${user.nombre || ""} ${user.telefono || ""} ${user.rol || ""}`;
+      return `${user.nombre || ""} ${user.telefono || ""} ${user.rol || ""} ${wallet.saldo || ""} ${wallet.gananciaEfectivo || ""} ${wallet.comisionPendiente || ""}`;
     }
 
     function platformMovementSearchText(movimiento) {

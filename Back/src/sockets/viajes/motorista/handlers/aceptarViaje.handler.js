@@ -44,6 +44,17 @@ module.exports = (io, socket) => {
                     return socket.emit("viaje:oferta-cerrada", { viajeId });
                 }
 
+                if (result.error === "commission_limit_reached") {
+                    socket.emit("driver:commission-blocked", {
+                        viajeId,
+                        ...(result.commissionStatus || {})
+                    });
+                    return socket.emit("error-operacion", {
+                        code: "COMMISSION_LIMIT_REACHED",
+                        msg: "Commission BeGO pendiente. Paga tu comision para recibir nuevos viajes."
+                    });
+                }
+
                 return socket.emit(
                     result.error === "YA_TOMADO"
                         ? "viaje-ya-tomado"

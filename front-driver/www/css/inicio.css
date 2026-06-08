@@ -790,6 +790,128 @@ body {
   font-size: 2rem;
 }
 
+.driver-wallet-split {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.driver-wallet-metric {
+  min-width: 0;
+  display: grid;
+  gap: 7px;
+  padding: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 8px;
+  color: #f8fafc;
+  background: rgba(15, 23, 42, 0.94);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.22);
+}
+
+.driver-wallet-metric i {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: #dbeafe;
+  background: rgba(37, 99, 235, 0.22);
+}
+
+.driver-wallet-metric span,
+.driver-wallet-metric small,
+.driver-commission-pay-panel small {
+  color: #9ca3af;
+  line-height: 1.35;
+}
+
+.driver-wallet-metric strong {
+  font-size: 1.35rem;
+  line-height: 1;
+  overflow-wrap: anywhere;
+}
+
+.driver-wallet-metric.is-debt i {
+  color: #fed7aa;
+  background: rgba(249, 115, 22, 0.18);
+}
+
+.driver-wallet-metric.is-debt strong {
+  color: #fdba74;
+}
+
+.driver-wallet-pay-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 12px 0;
+}
+
+.driver-wallet-pay-grid label {
+  display: grid;
+  gap: 6px;
+  color: #cbd5e1;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.driver-wallet-pay-grid input {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 8px;
+  padding: 0 12px;
+  color: #f8fafc;
+  background: rgba(2, 6, 23, 0.45);
+  outline: 0;
+  font-weight: 900;
+}
+
+.driver-pay-commission-btn {
+  width: 100%;
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  background: linear-gradient(135deg, #2563eb, #0f766e);
+  font-weight: 1000;
+}
+
+.driver-pay-commission-btn:disabled {
+  opacity: 0.52;
+}
+
+#driverCommissionPayStatus {
+  padding: 6px 10px;
+  border-radius: 999px;
+  color: #bbf7d0;
+  background: rgba(22, 163, 74, 0.14);
+  font-size: 0.74rem;
+  font-weight: 1000;
+}
+
+#driverCommissionPayStatus.is-warning {
+  color: #fed7aa;
+  background: rgba(249, 115, 22, 0.16);
+}
+
+#driverCommissionPayStatus.is-danger,
+#driverCommissionPayHint.is-error {
+  color: #fecaca;
+  background: rgba(220, 38, 38, 0.16);
+}
+
+@media (max-width: 360px) {
+  .driver-wallet-pay-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .driver-action-tile {
   min-height: 92px;
   color: #f9fafb;
@@ -2004,7 +2126,7 @@ body[data-driver-availability="offline"] .oferta-panel {
 .panel-superior.driver-home-topbar {
   left: calc(max(12px, env(safe-area-inset-left)) + 68px);
   right: auto;
-  width: min(238px, calc(100vw - 92px - env(safe-area-inset-right)));
+  width: min(188px, calc(100vw - 92px - env(safe-area-inset-right)));
   display: flex;
   grid-template-columns: none;
   align-items: center;
@@ -2014,7 +2136,7 @@ body[data-driver-availability="offline"] .oferta-panel {
 .driver-online-switch.driver-availability-toggle {
   width: 100%;
   min-width: 0;
-  min-height: 56px;
+  min-height: 52px;
   justify-content: flex-start;
   gap: 12px;
   padding: 7px 12px;
@@ -2063,14 +2185,13 @@ body[data-driver-availability="offline"] .oferta-panel {
 
 .driver-switch-copy {
   min-width: 0;
-  display: grid !important;
-  align-content: center;
-  gap: 1px;
+  display: flex !important;
+  align-items: center;
   text-align: left;
 }
 
 .driver-switch-copy small {
-  display: block !important;
+  display: none !important;
   color: rgba(255, 255, 255, 0.76);
   font-size: 0.66rem;
   font-weight: 900;
@@ -2119,7 +2240,7 @@ body[data-driver-availability="offline"] .oferta-panel {
   .panel-superior.driver-home-topbar {
     left: 84px;
     right: auto;
-    width: 238px;
+    width: 188px;
     max-width: none;
     margin-left: 0;
   }
@@ -2129,7 +2250,7 @@ body[data-driver-availability="offline"] .oferta-panel {
   .panel-superior.driver-home-topbar {
     left: calc(max(10px, env(safe-area-inset-left)) + 64px);
     right: auto;
-    width: min(222px, calc(100vw - 88px - env(safe-area-inset-right)));
+    width: min(178px, calc(100vw - 88px - env(safe-area-inset-right)));
     top: max(10px, env(safe-area-inset-top));
     display: flex;
     grid-template-columns: none;
@@ -2137,7 +2258,7 @@ body[data-driver-availability="offline"] .oferta-panel {
 
   .driver-online-switch.driver-availability-toggle {
     width: 100%;
-    min-height: 54px;
+    min-height: 52px;
     padding: 7px 10px;
   }
 
@@ -2169,7 +2290,7 @@ body[data-driver-availability="offline"] .oferta-panel {
 
 @media (max-width: 370px) {
   .panel-superior.driver-home-topbar {
-    width: min(206px, calc(100vw - 84px - env(safe-area-inset-right)));
+    width: min(168px, calc(100vw - 84px - env(safe-area-inset-right)));
   }
 
   .driver-switch-copy strong {

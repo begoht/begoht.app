@@ -1,5 +1,6 @@
 const { redis } = require("../../../../config/redis");
 const { inferCityFromPoint } = require("../../../../config/cities");
+const { getDriverCommissionStatus } = require("../../../../services/driverCommission.service");
 
 const TTL_ONLINE_SECONDS = 60;
 const GPS_TIMEOUT_MS = 120000;
@@ -11,7 +12,7 @@ module.exports = async (socket, motoristaId, payload) => {
     const heading = payload.heading == null || payload.heading === ""
       ? null
       : Number(payload.heading);
-    const disponible =
+    let disponible =
       payload.disponible !== undefined ? payload.disponible : true;
 
     if (Number.isNaN(lat) || Number.isNaN(lng)) {
@@ -25,6 +26,14 @@ module.exports = async (socket, motoristaId, payload) => {
     const headingValue = heading != null && Number.isFinite(heading) ? heading : null;
 
     const dataPrev = await redis.hgetall(`motorista:data:${motoristaId}`);
+
+    if (disponible) {
+      const commissionStatus = await disponibilidadPorComision(motoristaId);
+      if (commissionStatus?.bloqueadoPorComision) {
+        disponible = false;
+        socket.emit("driver:commission-blocked", commissionStatus);
+      }
+    }
 
     if (dataPrev?.lastUpdate) {
       const diff = now - parseInt(dataPrev.lastUpdate, 10);
@@ -81,3 +90,18 @@ module.exports = async (socket, motoristaId, payload) => {
     console.error(`[storeRedis] Error critico para ${motoristaId}:`, error);
   }
 };
+
+async function disponibilidadPorComision(motoristaId) {
+  const cacheKey = `motorista:commission-status:${motoristaId}`;
+  const cached = await redis.get(cacheKey);
+
+  if (cached) {
+    try {
+      return JSON.parse(cached);
+    } catch {}
+  }
+
+  const status = await getDriverCommissionStatus(motoristaId, { lean: true });
+  await redis.set(cacheKey, JSON.stringify(status), "EX", 30);
+  return status;
+}
