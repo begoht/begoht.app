@@ -1,4 +1,4 @@
-import { isDriverOnline, updateDriverPosition } from "./driver.status.js?v=20260608-driver-home-premium";
+import { isDriverOnline, updateDriverPosition } from "./driver.status.js?v=20260608-gps-accept";
 
 let socketInstance = null;
 

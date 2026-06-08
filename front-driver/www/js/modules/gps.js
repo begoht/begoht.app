@@ -1,11 +1,12 @@
 import { map, getRutaActualCoords } from "./map.js?v=20260606-recenter-map";
-import { isDriverOnline, updateDriverPosition } from "./driver.status.js?v=20260608-driver-home-premium";
+import { isDriverOnline, updateDriverPosition } from "./driver.status.js?v=20260608-gps-accept";
 import { motoIcon } from "./map.icons.js?v=20260603-road-heading-stable";
 import {
   setMotorcycleMarkerPose
 } from "./map.motion.js?v=20260603-road-heading-stable";
 
 let ultimaPosicion = null;
+let ultimaLectura = null;
 let motoristaMarker = null;
 let ultimaEmisionTime = 0;
 
@@ -19,7 +20,8 @@ export function initGPS(socket) {
       const { latitude: lat, longitude: lng } = pos.coords;
       const heading = Number.isFinite(pos.coords.heading) ? pos.coords.heading : null;
       const ahora = Date.now();
-      updateDriverPosition({ lat, lng, heading });
+      ultimaLectura = { lat, lng, heading };
+      updateDriverPosition(ultimaLectura);
 
       if (map) {
         if (!motoristaMarker) {
@@ -66,5 +68,17 @@ export function initGPS(socket) {
 }
 
 export function getUltimaPosicion() {
-  return ultimaPosicion;
+  return ultimaLectura || ultimaPosicion;
+}
+
+export function setUltimaPosicion(posicion) {
+  const lat = Number(posicion?.lat ?? posicion?.latitude);
+  const lng = Number(posicion?.lng ?? posicion?.longitude);
+  const heading = Number.isFinite(Number(posicion?.heading)) ? Number(posicion.heading) : null;
+
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+
+  ultimaLectura = { lat, lng, heading };
+  updateDriverPosition(ultimaLectura);
+  return ultimaLectura;
 }

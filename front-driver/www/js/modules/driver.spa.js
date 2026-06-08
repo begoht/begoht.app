@@ -1,4 +1,4 @@
-import { getDriverAvailability, onDriverAvailabilityChange } from "./driver.status.js?v=20260608-driver-home-premium";
+import { getDriverAvailability, onDriverAvailabilityChange } from "./driver.status.js?v=20260608-gps-accept";
 import { initDriverSupportChat } from "./support/supportChat.js?v=20260604-live-support";
 
 let pageView = null;
