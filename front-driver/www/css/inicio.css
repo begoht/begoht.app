@@ -1907,20 +1907,23 @@ body[data-driver-availability="syncing"] .status {
 }
 
 .viaje-control {
-  bottom: calc(env(safe-area-inset-bottom) + 88px);
-  width: min(480px, calc(100% - 24px));
-  padding: 14px;
+  bottom: calc(env(safe-area-inset-bottom) + 82px);
+  width: min(460px, calc(100% - 20px));
+  padding: 10px;
   border: 1px solid var(--driver-border);
-  border-radius: 8px;
+  border-radius: 12px;
   background:
-    radial-gradient(circle at 14% 0%, rgba(34, 197, 94, 0.18), transparent 34%),
-    rgba(8, 13, 24, 0.94);
-  box-shadow: 0 22px 54px rgba(0, 0, 0, 0.46);
+    linear-gradient(135deg, rgba(37, 99, 235, 0.16), rgba(20, 184, 166, 0.1)),
+    rgba(8, 13, 24, 0.96);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.42);
   -webkit-backdrop-filter: blur(22px);
   backdrop-filter: blur(22px);
 }
 
 .info-pasajero-mini {
+  display: flex;
+  justify-content: center;
+  min-height: 28px;
   text-align: center;
 }
 
@@ -1928,27 +1931,37 @@ body[data-driver-availability="syncing"] .status {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 12px;
+  max-width: 100%;
+  min-height: 28px;
+  margin-bottom: 8px;
+  padding: 5px 10px;
   border: 1px solid rgba(134, 239, 172, 0.24);
   border-radius: 999px;
   color: #dcfce7;
   background: rgba(22, 101, 52, 0.2);
+  font-size: 0.76rem;
+  font-weight: 950;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .viaje-actions {
-  display: grid;
-  gap: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .btn-cobrar-efectivo {
   width: 100%;
-  min-height: 58px;
+  min-height: 46px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  margin: 0 0 10px;
-  padding: 10px 12px;
+  gap: 10px;
+  margin: 0 0 8px;
+  padding: 8px 10px;
   border: 1px solid rgba(147, 197, 253, 0.24);
   border-radius: 8px;
   color: #ffffff;
@@ -1959,20 +1972,41 @@ body[data-driver-availability="syncing"] .status {
 }
 
 .btn-cobrar-efectivo span {
+  flex: 1 1 auto;
   min-width: 0;
   display: inline-flex;
   align-items: center;
   gap: 8px;
   color: #dbeafe;
-  font-size: 0.88rem;
+  font-size: 0.78rem;
   font-weight: 850;
+  line-height: 1.15;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .btn-cobrar-efectivo strong {
   flex: 0 0 auto;
+  min-width: max-content;
   color: #ffffff;
-  font-size: clamp(1.1rem, 5vw, 1.45rem);
+  font-size: clamp(1rem, 4vw, 1.18rem);
   font-weight: 1000;
+}
+
+.viaje-actions > button {
+  flex: 1 1 132px;
+  min-width: 0;
+  min-height: 44px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  line-height: 1.12;
+  overflow: hidden;
+}
+
+.viaje-actions > button i {
+  font-size: 0.95rem;
 }
 
 .btn-llegue {

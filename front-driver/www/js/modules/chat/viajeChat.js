@@ -87,7 +87,7 @@ function ensureWidget() {
       btn.id = "btnDriverViajeChat";
       btn.className = "btn-chat-viaje";
       btn.type = "button";
-      btn.innerHTML = '<i class="fa-solid fa-comments"></i> CHAT <span id="driverViajeChatBadge" class="chat-badge hidden">0</span>';
+      btn.innerHTML = '<i class="fa-solid fa-comments"></i><span>Chat</span><span id="driverViajeChatBadge" class="chat-badge hidden">0</span>';
       btn.addEventListener("click", openChat);
       actions.prepend(btn);
     }
@@ -100,15 +100,15 @@ function ensureWidget() {
     panel.innerHTML = `
       <div class="viaje-chat-card">
         <div class="viaje-chat-header">
-          <strong>Chat con pasajero</strong>
+          <strong>Chat passager</strong>
           <button id="btnCerrarDriverViajeChat" type="button" aria-label="Cerrar chat">
             <i class="fa-solid fa-xmark"></i>
           </button>
         </div>
-        <div id="driverViajeChatStatus" class="viaje-chat-status">Conectado con el pasajero</div>
+        <div id="driverViajeChatStatus" class="viaje-chat-status">Connecte avec le passager</div>
         <div id="driverViajeChatBody" class="viaje-chat-body"></div>
         <form id="driverViajeChatForm" class="viaje-chat-form">
-          <input id="driverViajeChatInput" type="text" maxlength="500" autocomplete="off" placeholder="Escribe un mensaje">
+          <input id="driverViajeChatInput" type="text" maxlength="500" autocomplete="off" placeholder="Ecrire un message">
           <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
         </form>
       </div>
@@ -214,12 +214,21 @@ function injectStyles() {
     .btn-chat-viaje {
       position: relative;
       width: 100%;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
       border: 0;
-      border-radius: 14px;
-      padding: 14px;
-      background: #111827;
+      border-radius: 8px;
+      padding: 8px 10px;
+      background:
+        linear-gradient(135deg, rgba(37, 99, 235, 0.24), rgba(15, 118, 110, 0.22)),
+        #111827;
       color: white;
-      font-weight: 800;
+      font-size: 0.78rem;
+      font-weight: 950;
+      line-height: 1.12;
       letter-spacing: 0;
     }
     .chat-badge {
@@ -241,21 +250,25 @@ function injectStyles() {
       position: fixed;
       inset: 0;
       z-index: 5000;
-      background: rgba(0, 0, 0, 0.42);
+      background: rgba(2, 6, 23, 0.46);
       display: flex;
       align-items: flex-end;
       justify-content: center;
-      padding: 14px;
+      padding: 12px;
       box-sizing: border-box;
+      -webkit-backdrop-filter: blur(4px);
+      backdrop-filter: blur(4px);
     }
     .viaje-chat-card {
       width: min(440px, 100%);
-      height: min(520px, 76vh);
-      background: #0f172a;
+      height: min(430px, 64vh);
+      background:
+        linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(20, 184, 166, 0.08)),
+        #0b1220;
       color: white;
       border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 18px;
-      box-shadow: 0 22px 70px rgba(0,0,0,0.45);
+      border-radius: 14px;
+      box-shadow: 0 22px 58px rgba(0,0,0,0.46);
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -264,37 +277,40 @@ function injectStyles() {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 14px 16px 8px;
+      padding: 12px 14px 6px;
+    }
+    .viaje-chat-header strong {
+      font-size: 0.94rem;
     }
     .viaje-chat-header button {
       border: 0;
       background: rgba(255,255,255,0.08);
       color: white;
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
     }
     .viaje-chat-status {
-      padding: 0 16px 10px;
+      padding: 0 14px 8px;
       color: #94a3b8;
       font-size: 12px;
     }
     .viaje-chat-body {
       flex: 1;
       overflow-y: auto;
-      padding: 12px 14px;
+      padding: 10px 12px;
       background: #020617;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 7px;
     }
     .viaje-chat-msg {
       max-width: 78%;
-      padding: 10px 12px;
-      border-radius: 14px;
+      padding: 8px 10px;
+      border-radius: 12px;
       line-height: 1.35;
       word-break: break-word;
-      font-size: 14px;
+      font-size: 13px;
     }
     .viaje-chat-msg.own {
       align-self: flex-end;
@@ -311,7 +327,7 @@ function injectStyles() {
     .viaje-chat-form {
       display: flex;
       gap: 8px;
-      padding: 12px;
+      padding: 10px;
       background: #0f172a;
     }
     .viaje-chat-form input {
@@ -320,15 +336,15 @@ function injectStyles() {
       border: 1px solid rgba(255,255,255,0.1);
       background: #020617;
       color: white;
-      border-radius: 12px;
-      padding: 12px;
+      border-radius: 8px;
+      padding: 10px;
       outline: none;
     }
     .viaje-chat-form button {
-      width: 44px;
+      width: 42px;
       border: 0;
-      border-radius: 12px;
-      background: #276ef1;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #2563eb, #0f766e);
       color: white;
       font-weight: 800;
     }

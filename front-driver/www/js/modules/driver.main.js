@@ -10,7 +10,7 @@ import { initOferta } from "./oferta/oferta.index.js?v=20260608-gps-accept";
 import { initViajeInicio } from "./viajeInicio/viajeInicio.js?v=20260608-offer-net-cash";
 import { initViajeFinalizar } from "./viajeFinalizar.js?v=20260608-offer-net-cash";
 import { initViajeControl } from "./viajeControl/viajeControl.js?v=20260608-offer-net-cash";
-import { initDriverChat } from "./chat/viajeChat.js";
+import { initDriverChat } from "./chat/viajeChat.js?v=20260608-trip-panel-compact";
 import { initDriverStatus } from "./driver.status.js?v=20260608-wallet-pin";
 import { initDriverSpa } from "./driver.spa.js?v=20260608-wallet-pin";
 import { iniciarSonidoOfertaLoop } from "./oferta/oferta.ui.js?v=20260608-offer-net-cash";
