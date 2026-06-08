@@ -22,7 +22,7 @@ export function reconstruirUIDesdeEstado() {
         if (btnIniciar) btnIniciar.style.display = "none";
         if (btnFinalizar) btnFinalizar.style.display = "none";
         if (panel) panel.style.display = "none";
-        if (estadoBox) estadoBox.innerText = "Esperando viajes";
+        if (estadoBox) estadoBox.innerText = "En attente de courses";
         return;
     }
 
@@ -31,24 +31,24 @@ export function reconstruirUIDesdeEstado() {
 
     switch (estado) {
         case "reservado":
-            estadoBox && (estadoBox.innerText = "Tienes un viaje en cola");
+            estadoBox && (estadoBox.innerText = "Course en file");
             if (btnIniciar) btnIniciar.style.display = "none";
             if (btnFinalizar) btnFinalizar.style.display = "none";
             break;
 
         case "ofertando":
-            if (estadoBox) estadoBox.innerText = "Tienes una oferta pendiente...";
+            if (estadoBox) estadoBox.innerText = "Offre en attente...";
             if (panel) panel.style.display = "block";
             if (btnIniciar) btnIniciar.style.display = "none";
             if (btnFinalizar) btnFinalizar.style.display = "none";
             break;
 
         case "asignado":
-            estadoBox && (estadoBox.innerText = "En camino al pasajero");
+            estadoBox && (estadoBox.innerText = "En route vers le passager");
             if (btnIniciar) {
                 btnIniciar.style.display = "block";
                 btnIniciar.disabled = false;
-                btnIniciar.innerText = "AVISAR LLEGADA";
+                btnIniciar.innerText = "Aviser l'arrivee";
                 btnIniciar.classList.remove("btn-success");
                 btnIniciar.classList.add("btn-warning");
             }
@@ -56,11 +56,11 @@ export function reconstruirUIDesdeEstado() {
             break;
 
         case "llego":
-            estadoBox && (estadoBox.innerText = "Esperando pasajero...");
+            estadoBox && (estadoBox.innerText = "Passager en attente...");
             if (btnIniciar) {
                 btnIniciar.style.display = "block";
                 btnIniciar.disabled = false;
-                btnIniciar.innerText = "INICIAR TRAYECTO";
+                btnIniciar.innerText = "Demarrer le trajet";
                 btnIniciar.classList.remove("btn-warning");
                 btnIniciar.classList.add("btn-success");
             }
@@ -70,11 +70,11 @@ export function reconstruirUIDesdeEstado() {
         case "en_curso": {
             const viajeActual = Array.from(viajesActivos.values()).find(viaje => viaje?.estado === "en_curso") || null;
             const esEnvio = viajeActual?.tipo === "envio";
-            estadoBox && (estadoBox.innerText = esEnvio ? "Entrega en curso - pide el codigo" : "Viaje en curso al destino");
+            estadoBox && (estadoBox.innerText = esEnvio ? "Livraison en cours - demandez le code" : "Course en cours vers destination");
             if (btnIniciar) btnIniciar.style.display = "none";
             if (btnFinalizar) {
                 btnFinalizar.style.display = "block";
-                btnFinalizar.innerText = esEnvio ? "CONFIRMAR ENTREGA" : "FINALIZAR VIAJE";
+                btnFinalizar.innerText = esEnvio ? "Confirmer livraison" : "Finaliser la course";
             }
             break;
         }
@@ -110,6 +110,6 @@ export function limpiarViajeMain(ui = {}) {
     }
 
     if (ui.estadoBox) {
-        ui.estadoBox.innerText = "Esperando viajes";
+        ui.estadoBox.innerText = "En attente de courses";
     }
 }

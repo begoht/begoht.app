@@ -6,7 +6,7 @@ import { registrarViaje } from "../viajeControl/viajeControl.js?v=20260606-recen
 import { setViajeEnCurso } from "../viajeControl/viajeEstado.js";
 import { dibujarRutaPremium } from "../map.js?v=20260606-recenter-map";
 import { getUltimaPosicion } from "../gps.js?v=20260606-recenter-map";
-import { isDriverOnline } from "../driver.status.js?v=20260603-road-heading-stable";
+import { isDriverOnline } from "../driver.status.js?v=20260608-driver-home-premium";
 
 const viajesTomadosProcesados = new Set();
 

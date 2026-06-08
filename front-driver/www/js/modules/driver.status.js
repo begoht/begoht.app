@@ -69,8 +69,8 @@ export function setDriverAvailability(nextOnline, { silent = false } = {}) {
   if (!silent) {
     showToast(
       online
-        ? "Estas conectado y disponible para viajes."
-        : "Estas desconectado. No recibiras nuevas ofertas.",
+        ? "Vous etes connecte et disponible pour les courses."
+        : "Vous etes hors ligne. Vous ne recevrez pas de nouvelles offres.",
       online ? "#16a34a" : "#f59e0b"
     );
   }
@@ -135,7 +135,7 @@ function renderAvailability() {
   const pageStatus = document.getElementById("driverPageStatus");
 
   const connected = !!socketRef?.connected;
-  const label = !connected ? "Reconectando" : online ? "Conectado" : "Desconectado";
+  const label = !connected ? "Reconnexion" : online ? "Connecte" : "Hors ligne";
   const mode = !connected ? "syncing" : online ? "online" : "offline";
 
   document.body.dataset.driverAvailability = mode;
@@ -149,8 +149,8 @@ function renderAvailability() {
     btn.classList.toggle("is-offline", !online);
     btn.setAttribute("aria-pressed", online ? "true" : "false");
     btn.innerHTML = online
-      ? '<i class="fa-solid fa-power-off"></i><span>Desconectar</span>'
-      : '<i class="fa-solid fa-signal"></i><span>Conectar</span>';
+      ? '<i class="fa-solid fa-power-off"></i><span>Se deconnecter</span>'
+      : '<i class="fa-solid fa-signal"></i><span>Se connecter</span>';
   }
 }
 

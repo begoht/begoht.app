@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="color-scheme" content="light dark" />
-  <title>Riders App - Driver</title>
+  <title>BeGO Driver</title>
   <link rel="icon" type="image/svg+xml" href="./assets/icons/moto-transparent.svg?v=20260603-road-heading-stable">
 
   <script>
@@ -23,8 +23,7 @@
   </script>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-  <link rel="stylesheet" href="./css/inicio.css?v=20260606-recenter-map" />
+  <link rel="stylesheet" href="./css/inicio.css?v=20260608-driver-home-premium" />
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -33,13 +32,6 @@
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
   <style>
-    /* 🎨 ESTILOS PREMIUM UBER-STYLE */
-    :root {
-      --uber-black: #000000;
-      --uber-blue: #276ef1;
-      --uber-white: #ffffff;
-    }
-
     html.driver-booting main,
     html.driver-booting #sidebar,
     html.driver-booting #backdrop,
@@ -73,7 +65,7 @@
       height: 44px;
       border-radius: 50%;
       border: 4px solid rgba(255, 255, 255, 0.16);
-      border-top-color: var(--uber-blue);
+      border-top-color: #2563eb;
       margin: 0 auto 16px;
       animation: bootSpin 0.9s linear infinite;
     }
@@ -93,128 +85,21 @@
     @keyframes bootSpin {
       to { transform: rotate(360deg); }
     }
-
-    /* Panel de Oferta Flotante */
-    .oferta-panel {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      z-index: 2000;
-      padding: 15px;
-      box-sizing: border-box;
-      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    .oferta-panel.hidden {
-      transform: translateY(100%);
-      display: block !important; /* Mantenemos el DOM pero fuera de vista */
-    }
-
-    .oferta-card-premium {
-      background: var(--uber-black);
-      color: white;
-      border-radius: 24px 24px 24px 24px;
-      padding: 20px;
-      box-shadow: 0 -5px 30px rgba(0,0,0,0.4);
-      text-align: center;
-    }
-
-    /* Círculo de progreso */
-    .timer-container {
-      position: relative;
-      width: 80px;
-      height: 80px;
-      margin: 0 auto 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .progress-ring {
-      position: absolute;
-      transform: rotate(-90deg);
-    }
-
-    .progress-ring__circle {
-      transition: stroke-dashoffset 0.35s;
-      transform-origin: 50% 50%;
-      stroke: var(--uber-blue);
-    }
-
-    .contador-texto {
-      font-size: 1.5rem;
-      font-weight: bold;
-    }
-
-    /* Detalles del Viaje */
-    .precio-valor {
-      font-size: 2.2rem;
-      font-weight: 800;
-      display: block;
-      margin-bottom: 5px;
-    }
-
-    .info-secundaria {
-      display: flex;
-      justify-content: space-around;
-      margin: 15px 0;
-      font-size: 0.9rem;
-      color: #cbcbcb;
-    }
-
-    .destino-box {
-      background: #1f1f1f;
-      padding: 12px;
-      border-radius: 12px;
-      margin-bottom: 20px;
-      text-align: left;
-    }
-
-    /* Botones */
-    .btn-aceptar {
-      background: var(--uber-blue);
-      color: white;
-      border: none;
-      width: 100%;
-      padding: 18px;
-      border-radius: 15px;
-      font-size: 1.2rem;
-      font-weight: bold;
-      cursor: pointer;
-      transition: filter 0.2s;
-    }
-
-    .btn-rechazar-mini {
-      position: absolute;
-      top: 10px;
-      right: 25px;
-      background: none;
-      border: none;
-      color: #666;
-      font-size: 1.5rem;
-      padding: 10px;
-    }
-
-    /* Animación de entrada */
-    @keyframes slideIn {
-      from { transform: translateY(100%); }
-      to { transform: translateY(0); }
-    }
   </style>
 </head>
 
 <body class="theme-auto">
-
   <div id="driverBootScreen" class="boot-screen">
     <div class="boot-box">
       <div class="boot-spinner"></div>
-      <div class="boot-title">Conectando GoMoto Driver</div>
-      <div id="driverBootStatus" class="boot-status">Verificando sesion y ubicacion...</div>
+      <div class="boot-title">Connexion BeGO Driver</div>
+      <div id="driverBootStatus" class="boot-status">Verification de la session et de la position...</div>
     </div>
   </div>
 
-  <button id="menuBtn" class="menu-btn" onclick="toggleMenu()">☰</button>
+  <button id="menuBtn" class="menu-btn" onclick="toggleMenu()" aria-label="Ouvrir le menu" title="Menu">
+    <i class="fa-solid fa-bars" aria-hidden="true"></i>
+  </button>
   <div id="backdrop" onclick="toggleMenu()"></div>
 
   <div id="sidebar" class="sidebar">
@@ -222,116 +107,171 @@
       <span class="driver-status-dot offline" id="driverAvailabilityDot"></span>
       <div>
         <strong>BeGO Driver</strong>
-        <small id="driverPageStatus">Desconectado</small>
+        <small id="driverPageStatus">Hors ligne</small>
       </div>
     </div>
     <div class="menu-arreglo">
-      <a href="#/" class="item" data-driver-route><i class="fa-solid fa-map-location-dot"></i><span>Inicio</span></a>
-      <a href="#/ganancias" class="item" data-driver-route><i class="fa-solid fa-chart-line"></i><span>Ganancias</span></a>
-      <a href="#/actividad" class="item" data-driver-route><i class="fa-solid fa-clock-rotate-left"></i><span>Actividad</span></a>
+      <a href="#/" class="item" data-driver-route><i class="fa-solid fa-map-location-dot"></i><span>Accueil</span></a>
+      <a href="#/ganancias" class="item" data-driver-route><i class="fa-solid fa-chart-line"></i><span>Gains</span></a>
+      <a href="#/actividad" class="item" data-driver-route><i class="fa-solid fa-clock-rotate-left"></i><span>Activite</span></a>
       <a href="#/creditos" class="item" data-driver-route><i class="fa-solid fa-hand-holding-dollar"></i><span>Creditos</span></a>
-      <a href="#/wallet" class="item billeteras" data-driver-route><i class="fa-solid fa-wallet"></i><span>Billetera</span> <span id="walletBadge" class="badge hidden">0</span></a>
-      <a href="#/soporte" class="item horas" data-driver-route><i class="fa-solid fa-headset"></i><span>Soporte</span></a>
+      <a href="#/wallet" class="item billeteras" data-driver-route><i class="fa-solid fa-wallet"></i><span>Wallet</span> <span id="walletBadge" class="badge hidden">0</span></a>
+      <a href="#/soporte" class="item horas" data-driver-route><i class="fa-solid fa-headset"></i><span>Support</span></a>
     </div>
-    <a href="#/cuenta" data-driver-route><i class="fa-solid fa-user-shield"></i><span>Cuenta</span></a>
-    <a href="#/ajustes" data-driver-route><i class="fa-solid fa-sliders"></i><span>Ajustes</span></a>
-    <a href="#"><i class="fa-solid fa-gear"></i><span>Configuración</span></a>
+    <a href="#/cuenta" data-driver-route><i class="fa-solid fa-user-shield"></i><span>Compte</span></a>
+    <a href="#/ajustes" data-driver-route><i class="fa-solid fa-sliders"></i><span>Reglages</span></a>
+    <a href="#/legal" data-driver-route><i class="fa-solid fa-scale-balanced"></i><span>Legal</span></a>
   </div>
-  
+
   <main id="driverAppShell" class="driver-shell">
     <section id="driverHomeView" class="driver-home-view">
-    <section class="panel-superior">
-      <button class="estado-btn">
-        <h3 id="driverName">Motorista</h3>
-        <p class="status" id="onlineStatus">Offline</p>
-      </button>
-      <button id="driverAvailabilityToggle" class="driver-availability-toggle is-offline" type="button" aria-pressed="false">
-        <i class="fa-solid fa-signal"></i><span>Conectar</span>
-      </button>
-      <div class="wallet-mini">
-        <span id="saldo">$0.00</span>
-      </div>
-    </section>
-    <span id="reservaBadge" class="hidden bg-blue-500 text-white text-xs px-2 py-1 rounded-full animate-bounce">
-      1 VIAJE EN ESPERA
-    </span>
-    
-    <section class="mapa-container">
-      <div id="map"></div>
-      <button id="driverRecenterMap" class="driver-map-recenter" type="button" aria-label="Recentrer la carte" title="Recentrer la carte">
-        <i class="fa-solid fa-location-crosshairs" aria-hidden="true"></i>
-      </button>
-    </section>
-    <div id="panelOferta" class="oferta-panel hidden">
-      <div class="oferta-card-premium">
-        <button id="btnRechazar" class="btn-rechazar-mini">✕</button>
-        
-        <div class="timer-container">
-          <svg class="progress-ring" width="80" height="80">
-            <circle class="progress-ring__circle" stroke-width="6" fill="transparent" r="34" cx="40" cy="40"/>
-          </svg>
-          <span class="contador-texto" id="contadorOferta">15</span>
+      <section class="mapa-container" aria-label="Carte BeGO Driver">
+        <div id="map"></div>
+        <div class="driver-map-vignette" aria-hidden="true"></div>
+        <button id="driverRecenterMap" class="driver-map-recenter" type="button" aria-label="Recentrer la carte" title="Recentrer la carte">
+          <i class="fa-solid fa-location-crosshairs" aria-hidden="true"></i>
+        </button>
+      </section>
+
+      <section class="panel-superior driver-home-topbar" aria-label="Etat du motorista">
+        <button class="estado-btn driver-profile-pill" type="button">
+          <span class="driver-avatar-chip"><i class="fa-solid fa-motorcycle" aria-hidden="true"></i></span>
+          <span class="driver-profile-copy">
+            <small>Motorista</small>
+            <strong id="driverName">BeGO Driver</strong>
+            <span class="status" id="onlineStatus">Hors ligne</span>
+          </span>
+        </button>
+
+        <button id="driverAvailabilityToggle" class="driver-availability-toggle is-offline" type="button" aria-pressed="false">
+          <i class="fa-solid fa-signal"></i><span>Se connecter</span>
+        </button>
+
+        <a href="#/wallet" class="wallet-mini" data-driver-route aria-label="Ouvrir le wallet">
+          <span>Wallet</span>
+          <strong id="saldo">0.00</strong>
+        </a>
+      </section>
+
+      <span id="reservaBadge" class="reserva-badge hidden">
+        <i class="fa-solid fa-calendar-check" aria-hidden="true"></i>
+        1 course en attente
+      </span>
+
+      <section class="driver-command-panel" aria-label="Centre operationnel">
+        <div class="driver-command-copy">
+          <span class="driver-eyebrow">Production</span>
+          <h1>Accueil motorista</h1>
+          <p>Carte active, GPS en temps reel et offres BeGO controlees depuis votre statut.</p>
         </div>
-        
-        <div id="miniMapaOferta" class="mini-mapa"></div>
-        <div class="oferta-body">
-          <span class="precio-valor" id="ofertaPrecio">0 G</span>
-          
-          <div class="info-secundaria">
-            <span><i class="fa-solid fa-person-walking"></i> <span id="ofertaDistanciaPasajero">--</span> min</span>
-            <span><i class="fa-solid fa-wallet"></i> <span id="ofertaMetodo">Efectivo</span></span>
+
+        <div class="driver-home-metrics" aria-label="Resume rapide">
+          <div class="driver-home-metric">
+            <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+            <span>Zone</span>
+            <strong>Jacmel</strong>
           </div>
-          
-          <div class="rutas-box">
-            <div class="ruta-item">
-              <small style="color: #22c55e;">RECOGER EN:</small>
-              <div id="ofertaOrigenNombre" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500;">
-                Buscando origen...
+          <div class="driver-home-metric">
+            <i class="fa-solid fa-satellite-dish" aria-hidden="true"></i>
+            <span>GPS</span>
+            <strong>Actif</strong>
+          </div>
+          <div class="driver-home-metric">
+            <i class="fa-solid fa-bolt" aria-hidden="true"></i>
+            <span>Offres</span>
+            <strong>Live</strong>
+          </div>
+        </div>
+
+        <div class="driver-home-actions">
+          <a href="#/actividad" data-driver-route>
+            <i class="fa-solid fa-route" aria-hidden="true"></i>
+            <span>Activite</span>
+          </a>
+          <a href="#/ganancias" data-driver-route>
+            <i class="fa-solid fa-chart-simple" aria-hidden="true"></i>
+            <span>Gains</span>
+          </a>
+          <a href="#/soporte" data-driver-route>
+            <i class="fa-solid fa-headset" aria-hidden="true"></i>
+            <span>Support</span>
+          </a>
+        </div>
+      </section>
+
+      <div id="panelOferta" class="oferta-panel hidden">
+        <div class="oferta-card-premium">
+          <button id="btnRechazar" class="btn-rechazar-mini" type="button" aria-label="Refuser l'offre">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+          </button>
+
+          <div class="timer-container">
+            <svg class="progress-ring" width="80" height="80">
+              <circle class="progress-ring__circle" stroke-width="6" fill="transparent" r="34" cx="40" cy="40"/>
+            </svg>
+            <span class="contador-texto" id="contadorOferta">15</span>
+          </div>
+
+          <div id="miniMapaOferta" class="mini-mapa"></div>
+          <div class="oferta-body">
+            <span class="precio-valor" id="ofertaPrecio">0 G</span>
+
+            <div class="info-secundaria">
+              <span><i class="fa-solid fa-person-walking"></i> <span id="ofertaDistanciaPasajero">--</span> min</span>
+              <span><i class="fa-solid fa-wallet"></i> <span id="ofertaMetodo">Cash</span></span>
+            </div>
+
+            <div class="rutas-box">
+              <div class="ruta-item">
+                <small>Prise en charge</small>
+                <div id="ofertaOrigenNombre">Recherche origine...</div>
+              </div>
+              <div class="ruta-item">
+                <small>Destination</small>
+                <div id="ofertaDestinoNombre">Recherche destination...</div>
               </div>
             </div>
-            <div class="ruta-item" style="margin-top: 8px;">
-              <small style="color: #ef4444;">DESTINO FINAL:</small>
-              <div id="ofertaDestinoNombre" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500;">
-                Buscando destino...
-              </div>
-            </div>
+          </div>
+          <button id="btnAceptar" class="btn-aceptar" type="button">Accepter</button>
+        </div>
+      </div>
+
+      <div id="panelViajeControl" class="viaje-control hidden">
+        <div class="info-pasajero-mini">
+          <div id="estadoViaje" class="estado-tag">
+            <i class="fa-solid fa-circle-dot" aria-hidden="true"></i>
+            En route
           </div>
         </div>
-        <button id="btnAceptar" class="btn-aceptar">ACEPTAR</button>
+
+        <div class="viaje-actions">
+          <button id="btnLlegue" class="btn-llegue" type="button" style="display: none;">
+            <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+            Arrive au point
+          </button>
+
+          <button id="btnIniciarViaje" class="btn-iniciar" type="button" style="display:none;">
+            <i class="fa-solid fa-play" aria-hidden="true"></i>
+            Demarrer la course
+          </button>
+
+          <button id="btnFinalizar" class="btn-finalizar" type="button" style="display:none;">
+            <i class="fa-solid fa-flag-checkered" aria-hidden="true"></i>
+            Finaliser
+          </button>
+        </div>
       </div>
-    </div>
-  
-    <div id="panelViajeControl" class="viaje-control hidden">
-      <div class="info-pasajero-mini">
-        <div id="estadoViaje" class="estado-tag">🟡 En camino</div>
-      </div>
-      
-      <div class="viaje-actions">
-        <button id="btnLlegue" class="btn-llegue" style="display: none;" >
-          📍 LLEGUÉ AL PUNTO
-        </button>
-        
-        <button id="btnIniciarViaje" class="btn-iniciar" style="display:none;">
-          🚀 INICIAR VIAJE
-        </button>
-        
-        <button id="btnFinalizar" class="btn-finalizar" style="display:none;">
-          🏁 FINALIZAR
-        </button>
-      </div>
-    </div>
     </section>
 
     <section id="driverPageView" class="driver-page-view hidden"></section>
 
-    <nav class="driver-bottom-nav" aria-label="Navegacion motorista">
-      <a href="#/" data-driver-route><i class="fa-solid fa-map"></i><span>Inicio</span></a>
-      <a href="#/ganancias" data-driver-route><i class="fa-solid fa-chart-simple"></i><span>Ganancias</span></a>
-      <a href="#/actividad" data-driver-route><i class="fa-solid fa-route"></i><span>Actividad</span></a>
+    <nav class="driver-bottom-nav" aria-label="Navigation motorista">
+      <a href="#/" data-driver-route><i class="fa-solid fa-map"></i><span>Accueil</span></a>
+      <a href="#/ganancias" data-driver-route><i class="fa-solid fa-chart-simple"></i><span>Gains</span></a>
+      <a href="#/actividad" data-driver-route><i class="fa-solid fa-route"></i><span>Activite</span></a>
       <a href="#/creditos" data-driver-route><i class="fa-solid fa-hand-holding-dollar"></i><span>Creditos</span></a>
       <a href="#/wallet" data-driver-route><i class="fa-solid fa-wallet"></i><span>Wallet</span></a>
     </nav>
-
   </main>
 
   <audio id="sonidoOferta" src="./assets/sounds/bego-offer.wav?v=20260602-bego-offer-persistent" preload="auto"></audio>
@@ -340,16 +280,14 @@
   <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
   <script src="./js/core/conexion.js"></script>
   <script type="module" src="./js/monitoring/frontend-monitor.js?v=20260607-monitor-suspend"></script>
-  <script type="module" src="js/modules/driver.main.js?v=20260606-recenter-map"></script>
+  <script type="module" src="js/modules/driver.main.js?v=20260608-driver-home-premium"></script>
   <script src="./js/i18n/fr.visual.js?v=20260601-fr"></script>
 
   <script>
-    // Configuración de tema
     document.documentElement.setAttribute(
       "data-theme",
       window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
     );
   </script>
-
 </body>
 </html>

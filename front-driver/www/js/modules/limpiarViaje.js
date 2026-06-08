@@ -64,13 +64,13 @@ export function limpiarViaje({
   if (btnFinalizar) {
     btnFinalizar.style.display = "none";
     btnFinalizar.disabled = false;
-    btnFinalizar.innerText = "Finalizar viaje";
+    btnFinalizar.innerText = "Finaliser la course";
   }
 
   if (btnIniciar) {
     btnIniciar.style.display = "none";
     btnIniciar.disabled = false;
-    btnIniciar.innerText = "Iniciar viaje";
+    btnIniciar.innerText = "Demarrer la course";
   }
 
   if (btnLlegue) {
@@ -90,7 +90,7 @@ export function limpiarViaje({
    * 5️⃣ RESET ESTADO VISUAL
    *************************************************/
   if (estadoBox) {
-    estadoBox.innerText = "🟢 Disponible / Esperando viajes";
+    estadoBox.innerText = "Disponible / En attente de courses";
     estadoBox.classList.remove("viaje-en-curso", "alerta", "activo");
   }
 

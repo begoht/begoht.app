@@ -1,4 +1,4 @@
-import { getDriverAvailability, onDriverAvailabilityChange } from "./driver.status.js?v=20260603-road-heading-stable";
+import { getDriverAvailability, onDriverAvailabilityChange } from "./driver.status.js?v=20260608-driver-home-premium";
 import { initDriverSupportChat } from "./support/supportChat.js?v=20260604-live-support";
 
 let pageView = null;

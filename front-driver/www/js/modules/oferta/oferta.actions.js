@@ -23,7 +23,7 @@ export function aceptarViaje(socket) {
   
   if (UI.btnAceptar) {
     UI.btnAceptar.disabled = true;
-    UI.btnAceptar.innerHTML = "Procesando...";
+    UI.btnAceptar.innerHTML = "Traitement...";
   }
 
   ofertaState.failSafeTimer = setTimeout(() => {

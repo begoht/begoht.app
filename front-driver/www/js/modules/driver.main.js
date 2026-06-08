@@ -5,14 +5,14 @@
 // Asegúrate de que estos archivos existan en estas rutas exactas
 import { initSocket } from "./socket.js?v=20260606-monitoring";
 import { initMap } from "./map.js?v=20260606-recenter-map";
-import { initGPS } from "./gps.js?v=20260606-recenter-map";
+import { initGPS } from "./gps.js?v=20260608-driver-home-premium";
 import { initOferta } from "./oferta/oferta.index.js?v=20260606-recenter-map";
 import { initViajeInicio } from "./viajeInicio/viajeInicio.js?v=20260606-recenter-map";
 import { initViajeFinalizar } from "./viajeFinalizar.js?v=20260606-recenter-map";
 import { initViajeControl } from "./viajeControl/viajeControl.js?v=20260606-recenter-map";
 import { initDriverChat } from "./chat/viajeChat.js";
-import { initDriverStatus } from "./driver.status.js?v=20260603-road-heading-stable";
-import { initDriverSpa } from "./driver.spa.js?v=20260606-legal-trust";
+import { initDriverStatus } from "./driver.status.js?v=20260608-driver-home-premium";
+import { initDriverSpa } from "./driver.spa.js?v=20260608-driver-home-premium";
 import { iniciarSonidoOfertaLoop } from "./oferta/oferta.ui.js?v=20260602-offer-ui-singleton";
 import { initLaunchCountdown } from "./launch-countdown.js?v=20260603-launch-gate";
 
@@ -63,9 +63,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         : window.location.origin;
 
     console.log("🌐 Conectando Socket a:", serverUrl);
-    setBootStatus("Verificando lanzamiento...");
+    setBootStatus("Verification du lancement...");
     await initLaunchCountdown();
-    setBootStatus("Conectando con el servidor...");
+    setBootStatus("Connexion au serveur...");
 
     /*************************************************
      * 🔌 SOCKET INICIALIZADO
@@ -78,12 +78,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     socket.once("connect", () => {
-        setBootStatus("Conectado.");
+        setBootStatus("Connecte.");
         mostrarAppConectada();
     });
 
     socket.on("connect_error", (err) => {
-        setBootStatus("No se pudo conectar. Reintentando...");
+        setBootStatus("Connexion indisponible. Nouvelle tentative...");
         console.error("Error de conexion inicial:", err?.message || err);
     });
 
@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (socket.connected) {
             mostrarAppConectada();
         } else {
-            setBootStatus("La conexion esta tardando. Seguimos reintentando...");
+            setBootStatus("La connexion prend du temps. Nouvelle tentative...");
         }
     }, 12000);
 

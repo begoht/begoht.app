@@ -17,7 +17,7 @@ function normalizarId(id) {
 }
 
 function labelFinalizar(esEnvio) {
-  return esEnvio ? "CONFIRMAR ENTREGA" : "FINALIZAR VIAJE";
+  return esEnvio ? "Confirmer livraison" : "Finaliser la course";
 }
 
 function limpiarTimerFinalizacion(viajeId) {
@@ -82,18 +82,18 @@ function onClickFinalizar(e) {
     let codigoEntrega = null;
 
     if (esEnvio) {
-        codigoEntrega = window.prompt("Codigo de entrega de 4 digitos");
+        codigoEntrega = window.prompt("Code de livraison a 4 chiffres");
         codigoEntrega = String(codigoEntrega || "").replace(/\D/g, "").slice(0, 4);
         if (!/^\d{4}$/.test(codigoEntrega)) {
-            alert("Ingresa el codigo de entrega de 4 digitos.");
+            alert("Entrez le code de livraison a 4 chiffres.");
             return;
         }
-    } else if (!confirm("Deseas finalizar el viaje actual y cobrar?")) {
+    } else if (!confirm("Voulez-vous finaliser la course et encaisser?")) {
         return;
     }
 
     target.disabled = true;
-    target.textContent = "Procesando...";
+    target.textContent = "Traitement...";
 
     const timerGuard = setTimeout(() => {
         const pendiente = finalizacionesPendientes.get(viajeId);
@@ -144,7 +144,7 @@ function onViajeFinalizado(data = {}) {
     if (typeof Toastify !== "undefined") {
         const esEnvio = data?.viaje?.tipo === "envio";
         Toastify({
-            text: `${esEnvio ? "Entrega finalizada" : "Viaje finalizado"}\nCobrar: ${data.total || 0} G`,
+            text: `${esEnvio ? "Livraison finalisee" : "Course finalisee"}\nA encaisser: ${data.total || 0} G`,
             duration: 5000,
             gravity: "top",
             position: "center",
@@ -171,7 +171,7 @@ function onViajeFinalizado(data = {}) {
 }
 
 function onErrorFinalizar(err = {}) {
-    alert("Error: " + (err.msg || "No se pudo finalizar el viaje"));
+    alert("Erreur: " + (err.msg || "Impossible de finaliser la course"));
 
     const id = normalizarId(err.viajeId || getViajeEnCursoId());
     if (id) {

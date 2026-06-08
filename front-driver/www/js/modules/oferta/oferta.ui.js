@@ -72,7 +72,7 @@ export function resetBotonAceptar() {
   if (!UI.btnAceptar) return;
   UI.btnAceptar.disabled = false;
   UI.btnAceptar.style.pointerEvents = "auto";
-  UI.btnAceptar.innerHTML = "ACEPTAR";
+  UI.btnAceptar.innerHTML = "Accepter";
 }
 
 export function notificar(msj, color = "#22c55e") {
