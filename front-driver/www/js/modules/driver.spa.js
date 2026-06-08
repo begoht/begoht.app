@@ -1,4 +1,4 @@
-import { getDriverAvailability, onDriverAvailabilityChange } from "./driver.status.js?v=20260608-wallet-status-fix";
+import { getDriverAvailability, onDriverAvailabilityChange } from "./driver.status.js?v=20260608-wallet-pin";
 import { initDriverSupportChat } from "./support/supportChat.js?v=20260604-live-support";
 
 let pageView = null;
@@ -238,6 +238,29 @@ function renderWallet() {
       </article>
     </section>
 
+    <section class="driver-panel driver-wallet-pin-panel" id="driverWalletPinPanel">
+      <div class="driver-panel-title">
+        <h2>PIN Wallet</h2>
+        <span id="driverWalletPinStatus">A configurar</span>
+      </div>
+      <p class="driver-muted">Crea un PIN privado de 4 digitos para proteger pagos, retiros y comisiones.</p>
+      <div class="driver-wallet-pay-grid">
+        <label>
+          Nuevo PIN
+          <input id="driverWalletNewPin" type="password" maxlength="4" inputmode="numeric" autocomplete="new-password" placeholder="4 digitos">
+        </label>
+        <label>
+          Confirmar PIN
+          <input id="driverWalletConfirmPin" type="password" maxlength="4" inputmode="numeric" autocomplete="new-password" placeholder="Repetir">
+        </label>
+      </div>
+      <button class="driver-pay-commission-btn" id="driverCreateWalletPinBtn" type="button">
+        <i class="fa-solid fa-lock"></i>
+        Crear PIN wallet
+      </button>
+      <small id="driverWalletPinHint">No compartas este PIN con pasajeros ni soporte.</small>
+    </section>
+
     <section class="driver-panel driver-commission-pay-panel">
       <div class="driver-panel-title">
         <h2>Pagar BeGO</h2>
@@ -462,9 +485,11 @@ async function loadDriverWallet() {
     if (payHint) payHint.textContent = deuda > 0
       ? `Puedes pagar hasta ${formatMoney(Math.min(saldo, deuda))} G con tu saldo disponible.`
       : "No tienes comision pendiente.";
+    payHint?.classList.remove("is-error");
     if (payAmount && !payAmount.value) {
       payAmount.value = deuda > 0 ? String(Math.round(Math.min(saldo, deuda))) : "";
     }
+    bindDriverWalletPinSetup(wallet);
     bindDriverCommissionPay(wallet);
 
     if (movements) {
@@ -485,7 +510,9 @@ function bindDriverCommissionPay(wallet = {}) {
 
   const deuda = Number(wallet?.comisionPendiente || 0);
   const saldo = Number(wallet?.gananciaDisponible ?? wallet?.saldo ?? 0);
-  btn.disabled = deuda <= 0 || saldo <= 0;
+  const hasPin = wallet?.tienePin !== false;
+  btn.disabled = !hasPin || deuda <= 0 || saldo <= 0;
+  if (!hasPin) notifyDriverWallet("Crea tu PIN wallet antes de pagar comisiones.", true);
   if (btn.dataset.bound === "1") return;
 
   btn.dataset.bound = "1";
@@ -530,6 +557,74 @@ function bindDriverCommissionPay(wallet = {}) {
     }
   });
 
+}
+
+function bindDriverWalletPinSetup(wallet = {}) {
+  const panel = document.getElementById("driverWalletPinPanel");
+  const status = document.getElementById("driverWalletPinStatus");
+  const btn = document.getElementById("driverCreateWalletPinBtn");
+  const first = document.getElementById("driverWalletNewPin");
+  const confirm = document.getElementById("driverWalletConfirmPin");
+  if (!panel || !btn) return;
+
+  const hasPin = wallet?.tienePin !== false;
+  panel.hidden = hasPin;
+  if (status) {
+    status.textContent = hasPin ? "PIN activo" : "A configurar";
+    status.className = hasPin ? "is-ok" : "is-warning";
+  }
+  if (hasPin) return;
+
+  if (panel.dataset.inputBound !== "1") {
+    panel.dataset.inputBound = "1";
+    [first, confirm].forEach((input) => {
+      input?.addEventListener("input", () => {
+        input.value = String(input.value || "").replace(/\D/g, "").slice(0, 4);
+        notifyDriverPin("No compartas este PIN con pasajeros ni soporte.");
+      });
+    });
+  }
+
+  if (btn.dataset.bound === "1") return;
+  btn.dataset.bound = "1";
+  btn.addEventListener("click", async () => {
+    const pin = String(first?.value || "").replace(/\D/g, "").slice(0, 4);
+    const repeated = String(confirm?.value || "").replace(/\D/g, "").slice(0, 4);
+
+    if (!/^\d{4}$/.test(pin)) {
+      notifyDriverPin("El PIN debe tener 4 digitos.", true);
+      return;
+    }
+
+    if (pin !== repeated) {
+      notifyDriverPin("Los PIN no coinciden.", true);
+      return;
+    }
+
+    if (isWeakWalletPin(pin)) {
+      notifyDriverPin("Elige un PIN mas seguro.", true);
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Guardando`;
+
+    try {
+      await fetchJson("/api/wallet/configurar-pin", {
+        method: "POST",
+        body: { pin }
+      });
+      if (first) first.value = "";
+      if (confirm) confirm.value = "";
+      notifyDriverPin("PIN wallet creado correctamente.");
+      await loadDriverWallet();
+    } catch (err) {
+      notifyDriverPin(err.message || "No se pudo crear el PIN wallet.", true);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = `<i class="fa-solid fa-lock"></i> Crear PIN wallet`;
+    }
+  });
 }
 
 async function loadDriverEarnings() {
@@ -813,6 +908,20 @@ function notifyDriverWallet(message, isError = false) {
     hint.textContent = message;
     hint.classList.toggle("is-error", !!isError);
   }
+}
+
+function notifyDriverPin(message, isError = false) {
+  const hint = document.getElementById("driverWalletPinHint");
+  if (hint) {
+    hint.textContent = message;
+    hint.classList.toggle("is-error", !!isError);
+  }
+}
+
+function isWeakWalletPin(pin) {
+  if (!/^\d{4}$/.test(pin)) return true;
+  if (/^(\d)\1{3}$/.test(pin)) return true;
+  return ["0123", "1234", "4321", "0000"].includes(pin);
 }
 
 function updateAvailabilityCopy(state) {
