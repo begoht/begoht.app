@@ -9,6 +9,7 @@ const {
     getOfferKey,
     getOfferSetKey
 } = require("../offerLock.service");
+const { getDriverEarningsForViaje } = require("../../driverEarnings.service");
 
 const GPS_TIMEOUT_MS = 120000;
 
@@ -30,6 +31,7 @@ async function enviarWave({
     if (!lista.length) return validos;
 
     await redis.sadd(intentoSet, ...lista);
+    const driverEarnings = await getDriverEarningsForViaje(viajeActual);
 
     const pipe = redis.multi();
     lista.forEach(id => {
@@ -124,6 +126,11 @@ async function enviarWave({
                 origen: viajeActual.origen,
                 destino: viajeActual.destino,
                 precio: viajeActual.precio,
+                metodoPago: viajeActual.metodoPago,
+                estadoPago: viajeActual.estadoPago,
+                distanciaKm: viajeActual.distanciaKm,
+                duracionMin: viajeActual.duracionMin,
+                ...driverEarnings,
                 tipo: viajeActual.tipo || "viaje",
                 paquete: prepararPaqueteMotorista(viajeActual),
                 isReserva: enViaje,

@@ -5,7 +5,7 @@ import {
     setViajeReservadoId,
     viajesActivos 
 } from "../viajeControl/viajeEstado.js";
-import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js";
+import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260608-offer-net-cash";
 import { getUltimaPosicion } from "../gps.js?v=20260606-recenter-map";
 import { redibujarRutaRecovery } from "./viajeInicioUI.js?v=20260606-recenter-map";
 let ultimoSyncProcesado = null;

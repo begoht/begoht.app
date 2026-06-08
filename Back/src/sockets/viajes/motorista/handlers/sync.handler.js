@@ -4,6 +4,7 @@ const { redis } = require("../../../../config/redis");
 const snapshotMotorista = require(
     "../services/motoristaSnapshot.service"
 );
+const { getDriverEarningsForViaje } = require("../../../../services/driverEarnings.service");
 
 module.exports = (io, socket) => {
     return async () => {
@@ -31,7 +32,7 @@ module.exports = (io, socket) => {
                           snapshot.viajeActualId
                       ).lean();
 
-                socket.emit("sync-viaje", sanitizarViajeMotorista(viaje));
+                socket.emit("sync-viaje", await sanitizarViajeMotorista(viaje));
             }
 
             if (
@@ -48,13 +49,22 @@ module.exports = (io, socket) => {
     };
 };
 
-function sanitizarViajeMotorista(viaje) {
-    if (!viaje || (viaje.tipo || "viaje") !== "envio" || !viaje.paquete) {
+async function sanitizarViajeMotorista(viaje) {
+    if (!viaje) {
         return viaje;
+    }
+
+    const earnings = await getDriverEarningsForViaje(viaje);
+    if ((viaje.tipo || "viaje") !== "envio" || !viaje.paquete) {
+        return {
+            ...viaje,
+            ...earnings
+        };
     }
 
     return {
         ...viaje,
+        ...earnings,
         paquete: {
             pesoKg: viaje.paquete.pesoKg,
             descripcion: viaje.paquete.descripcion || "",

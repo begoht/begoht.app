@@ -9,12 +9,13 @@ import {
   ocultarPanel, 
   resetBotonAceptar,
   actualizarCirculoProgreso
-} from "./oferta.ui.js?v=20260602-offer-ui-singleton";
+} from "./oferta.ui.js?v=20260608-offer-net-cash";
 
 import { setViajeActual, ofertaState, getViajeId } from "./oferta.state.js";
 import { initMiniMapa, renderMiniRuta } from "./oferta.miniMap.js";
 import { siguienteDeCola } from "./oferta.queue.js";
 import { isDriverOnline } from "../driver.status.js";
+import { formatGourdes, getPaymentLabel, getTripMoney } from "./oferta.money.js?v=20260608-offer-net-cash";
 
 /*************************************************
  * 🧹 LIMPIAR OFERTA
@@ -109,13 +110,23 @@ export async function renderOferta(viaje, opts = {}) {
     /*************************************************
      * 🧾 UI TEXTO
      *************************************************/
+    const money = getTripMoney(viaje);
+
+    if (UI.precioLabel) {
+      UI.precioLabel.textContent = viaje.tipo === "envio" ? "Gain net livraison" : "Gain net course";
+    }
+
     if (UI.precio) {
-      UI.precio.textContent = `${viaje.precio?.toLocaleString() || 0} G`;
+      UI.precio.textContent = formatGourdes(money.netoMotorista);
+    }
+
+    if (UI.netoHint) {
+      UI.netoHint.textContent = "Montant net pour vous";
     }
 
     if (UI.metodo) {
-      const metodo = (viaje.metodoPago || "Efectivo").toUpperCase();
-      UI.metodo.textContent = viaje.tipo === "envio" ? `ENVIO - ${metodo}` : metodo;
+      const metodo = getPaymentLabel(money.metodoPago);
+      UI.metodo.textContent = viaje.tipo === "envio" ? `Livraison - ${metodo}` : metodo;
     }
 
     if (UI.origenNombre) {

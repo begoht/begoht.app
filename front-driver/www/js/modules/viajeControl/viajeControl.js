@@ -6,7 +6,7 @@ import {
     setViajeReservadoId,
     setEstadoViaje
 } from "./viajeEstado.js";
-import { reconstruirUIDesdeEstado } from "./viajeUI.js?v=20260606-recenter-map";
+import { reconstruirUIDesdeEstado } from "./viajeUI.js?v=20260608-offer-net-cash";
 
 const offerSound = new Audio(new URL("../../../assets/sounds/bego-offer.wav?v=20260602-bego-offer-persistent", import.meta.url));
 offerSound.preload = "auto";

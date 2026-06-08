@@ -6,14 +6,14 @@
 import { initSocket } from "./socket.js?v=20260606-monitoring";
 import { initMap } from "./map.js?v=20260606-recenter-map";
 import { initGPS } from "./gps.js?v=20260608-driver-home-premium";
-import { initOferta } from "./oferta/oferta.index.js?v=20260606-recenter-map";
-import { initViajeInicio } from "./viajeInicio/viajeInicio.js?v=20260606-recenter-map";
-import { initViajeFinalizar } from "./viajeFinalizar.js?v=20260606-recenter-map";
-import { initViajeControl } from "./viajeControl/viajeControl.js?v=20260606-recenter-map";
+import { initOferta } from "./oferta/oferta.index.js?v=20260608-offer-net-cash";
+import { initViajeInicio } from "./viajeInicio/viajeInicio.js?v=20260608-offer-net-cash";
+import { initViajeFinalizar } from "./viajeFinalizar.js?v=20260608-offer-net-cash";
+import { initViajeControl } from "./viajeControl/viajeControl.js?v=20260608-offer-net-cash";
 import { initDriverChat } from "./chat/viajeChat.js";
-import { initDriverStatus } from "./driver.status.js?v=20260608-driver-home-premium";
+import { initDriverStatus } from "./driver.status.js?v=20260608-offer-net-cash";
 import { initDriverSpa } from "./driver.spa.js?v=20260608-driver-home-premium";
-import { iniciarSonidoOfertaLoop } from "./oferta/oferta.ui.js?v=20260602-offer-ui-singleton";
+import { iniciarSonidoOfertaLoop } from "./oferta/oferta.ui.js?v=20260608-offer-net-cash";
 import { initLaunchCountdown } from "./launch-countdown.js?v=20260603-launch-gate";
 
 document.addEventListener("DOMContentLoaded", async () => {

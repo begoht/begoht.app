@@ -1596,10 +1596,18 @@ body[data-driver-availability="syncing"] .status {
 .oferta-panel {
   z-index: 7000;
   padding: 14px;
+  max-height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .oferta-card-premium {
   width: min(500px, 100%);
+  max-height: calc(100dvh - 28px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  overflow-x: hidden;
+  overflow-y: auto;
   padding: 18px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
@@ -1607,6 +1615,11 @@ body[data-driver-availability="syncing"] .status {
     radial-gradient(circle at 14% 0%, rgba(37, 99, 235, 0.24), transparent 34%),
     linear-gradient(180deg, #0b1220, #05070a);
   box-shadow: 0 -18px 54px rgba(0, 0, 0, 0.5);
+}
+
+.oferta-card-premium::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }
 
 .btn-rechazar-mini {
@@ -1650,6 +1663,32 @@ body[data-driver-availability="syncing"] .status {
   color: #ffffff;
   font-size: clamp(2rem, 9vw, 2.65rem);
   line-height: 1;
+}
+
+.oferta-money-block {
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  border: 1px solid rgba(96, 165, 250, 0.2);
+  border-radius: 8px;
+  text-align: center;
+  background:
+    linear-gradient(135deg, rgba(37, 99, 235, 0.18), rgba(20, 184, 166, 0.1)),
+    rgba(15, 23, 42, 0.72);
+}
+
+.oferta-money-label {
+  color: #93c5fd;
+  font-size: 0.72rem;
+  font-weight: 950;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.oferta-money-note {
+  color: #b6c5d8;
+  font-size: 0.8rem;
+  font-weight: 750;
 }
 
 .info-secundaria,
@@ -1739,6 +1778,41 @@ body[data-driver-availability="syncing"] .status {
 .viaje-actions {
   display: grid;
   gap: 10px;
+}
+
+.btn-cobrar-efectivo {
+  width: 100%;
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 10px;
+  padding: 10px 12px;
+  border: 1px solid rgba(147, 197, 253, 0.24);
+  border-radius: 8px;
+  color: #ffffff;
+  background:
+    linear-gradient(135deg, rgba(37, 99, 235, 0.28), rgba(15, 118, 110, 0.28)),
+    rgba(15, 23, 42, 0.9);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.btn-cobrar-efectivo span {
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #dbeafe;
+  font-size: 0.88rem;
+  font-weight: 850;
+}
+
+.btn-cobrar-efectivo strong {
+  flex: 0 0 auto;
+  color: #ffffff;
+  font-size: clamp(1.1rem, 5vw, 1.45rem);
+  font-weight: 1000;
 }
 
 .btn-llegue {
@@ -1853,6 +1927,59 @@ body[data-driver-availability="offline"] .oferta-panel {
 
   .leaflet-control-zoom {
     display: none;
+  }
+}
+
+@media (max-height: 720px) {
+  .oferta-panel {
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+  }
+
+  .oferta-card-premium {
+    padding: 12px;
+  }
+
+  .timer-container {
+    width: 58px;
+    height: 58px;
+    margin-bottom: 8px;
+  }
+
+  .progress-ring {
+    width: 58px;
+    height: 58px;
+  }
+
+  .contador-texto {
+    font-size: 1.12rem;
+  }
+
+  #miniMapaOferta,
+  .mini-mapa {
+    height: 108px;
+    margin-bottom: 10px;
+  }
+
+  .oferta-money-block {
+    padding: 10px;
+  }
+
+  .precio-valor {
+    font-size: clamp(1.85rem, 8vw, 2.2rem);
+  }
+
+  .info-secundaria {
+    margin: 10px 0;
+    padding: 10px;
+  }
+
+  .rutas-box {
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+
+  .btn-aceptar {
+    min-height: 50px;
   }
 }
 

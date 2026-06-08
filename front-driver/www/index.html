@@ -23,7 +23,7 @@
   </script>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="./css/inicio.css?v=20260608-driver-home-no-panel" />
+  <link rel="stylesheet" href="./css/inicio.css?v=20260608-offer-net-cash" />
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -173,7 +173,11 @@
 
           <div id="miniMapaOferta" class="mini-mapa"></div>
           <div class="oferta-body">
-            <span class="precio-valor" id="ofertaPrecio">0 G</span>
+            <div class="oferta-money-block">
+              <span class="oferta-money-label" id="ofertaPrecioLabel">Gain net</span>
+              <span class="precio-valor" id="ofertaPrecio">0 G</span>
+              <span class="oferta-money-note" id="ofertaNetoHint">Montant net pour vous</span>
+            </div>
 
             <div class="info-secundaria">
               <span><i class="fa-solid fa-person-walking"></i> <span id="ofertaDistanciaPasajero">--</span> min</span>
@@ -202,6 +206,14 @@
             En route
           </div>
         </div>
+
+        <button id="btnCobrarEfectivo" class="btn-cobrar-efectivo hidden" type="button">
+          <span>
+            <i class="fa-solid fa-money-bill-wave" aria-hidden="true"></i>
+            Encaisser au passager
+          </span>
+          <strong id="montoCobrarEfectivo">0 G</strong>
+        </button>
 
         <div class="viaje-actions">
           <button id="btnLlegue" class="btn-llegue" type="button" style="display: none;">
@@ -239,7 +251,7 @@
   <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
   <script src="./js/core/conexion.js"></script>
   <script type="module" src="./js/monitoring/frontend-monitor.js?v=20260607-monitor-suspend"></script>
-  <script type="module" src="js/modules/driver.main.js?v=20260608-driver-home-premium"></script>
+  <script type="module" src="js/modules/driver.main.js?v=20260608-offer-net-cash"></script>
   <script src="./js/i18n/fr.visual.js?v=20260601-fr"></script>
 
   <script>

@@ -20,6 +20,7 @@ const { buildCorsOptions } = require("./utils/corsOptions");
 const { getReadiness } = require("./utils/readiness");
 const { recordSocketDisconnect } = require("./services/monitoring/monitoring.service");
 const { logCritical } = require("./services/monitoring/criticalLogger");
+const { getDriverEarningsForViaje } = require("./services/driverEarnings.service");
 
 process.on("uncaughtExceptionMonitor", (error) => {
   logCritical({
@@ -526,6 +527,7 @@ if (user.rol === "motorista") {
        console.log("♻️ Recovery viaje activo:", viajeActualId, "Estado:", viaje.estado);
        
        socket.join(`viaje:${viajeActualId}`);
+       const driverEarnings = await getDriverEarningsForViaje(viaje);
        
        socket.emit("sync-viaje", {
          viajeId: viaje._id,
@@ -533,7 +535,12 @@ if (user.rol === "motorista") {
          origen: viaje.origen,
          destino: viaje.destino,
          precio: viaje.precio,
+         metodoPago: viaje.metodoPago,
+         estadoPago: viaje.estadoPago,
+         distanciaKm: viaje.distanciaKm,
+         duracionMin: viaje.duracionMin,
          pasajero: viaje.pasajero,
+         ...driverEarnings,
         });
         // ... resto del código de ubicación
       } else {

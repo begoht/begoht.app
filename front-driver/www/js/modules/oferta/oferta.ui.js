@@ -1,6 +1,8 @@
 export const UI = {
   panel: null, 
+  precioLabel: null,
   precio: null, 
+  netoHint: null,
   metodo: null, 
   contador: null,
   sonido: null, 
@@ -15,7 +17,9 @@ export const UI = {
 
 export function initUI() {
   UI.panel = document.getElementById("panelOferta");
+  UI.precioLabel = document.getElementById("ofertaPrecioLabel");
   UI.precio = document.getElementById("ofertaPrecio");
+  UI.netoHint = document.getElementById("ofertaNetoHint");
   UI.metodo = document.getElementById("ofertaMetodo");
   UI.contador = document.getElementById("contadorOferta");
   UI.sonido = document.getElementById("sonidoOferta");

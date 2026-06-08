@@ -6,6 +6,7 @@ const { viajesPendientes } = require("../state/viaje.state");
 const limpiarMatching = require("../services/limpiar.service");
 const { actualizarSnapshotMotorista } = require("../../motorista/motoristaSnapshot.service");
 const { eliminarSnapshotPasajero } = require("../services/snapshotPasajero.service");
+const { getDriverEarningsForViaje } = require("../../../../services/driverEarnings.service");
 
 const ESTADOS_BUSQUEDA = ["buscando", "ofertando"];
 const ESTADOS_CANCELABLES = ["buscando", "ofertando", "aceptado", "asignado", "reservado"];
@@ -266,6 +267,7 @@ async function cancelarViaje(socket, io, { viajeId }) {
                     const motoristaRoom = `motorista:${motoristaId}`;
                     io.in(motoristaRoom).socketsJoin(`viaje:${reserva._id.toString()}`);
                     io.in(motoristaRoom).socketsLeave(`viaje:${viajeId}`);
+                    const driverEarnings = await getDriverEarningsForViaje(reserva);
 
                     io.to(`pasajero:${reserva.pasajero.toString()}`).emit("viaje-asignado", { 
                         viajeId: reserva._id.toString(),
@@ -282,7 +284,13 @@ async function cancelarViaje(socket, io, { viajeId }) {
                         estado: "asignado",
                         activadoDesdeReserva: true,
                         origen: reserva.origen,
-                        destino: reserva.destino
+                        destino: reserva.destino,
+                        precio: reserva.precio,
+                        metodoPago: reserva.metodoPago,
+                        estadoPago: reserva.estadoPago,
+                        distanciaKm: reserva.distanciaKm,
+                        duracionMin: reserva.duracionMin,
+                        ...driverEarnings
                     });
 
                 } else {

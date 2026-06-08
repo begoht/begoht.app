@@ -3,6 +3,7 @@ const { redis } = require("../config/redis");
 const { calcularDistanciaMetros } = require("../utils/geo");
 const crypto = require("crypto");
 const mongoose = require("mongoose");
+const { getDriverEarningsForViaje } = require("./driverEarnings.service");
 
 const RADIO_CERCANIA_DESTINO = 800;
 
@@ -78,9 +79,11 @@ module.exports = async function reservaInteligente({ io, motoristaId, nuevoViaje
                 const payload = reservado.toObject
                     ? reservado.toObject()
                     : reservado;
+                const driverEarnings = await getDriverEarningsForViaje(payload);
 
                 io.to(mData.socketId).emit("viaje:oferta", {
                     ...payload,
+                    ...driverEarnings,
                     viajeId: reservado._id,
                     esReserva: true
                 });

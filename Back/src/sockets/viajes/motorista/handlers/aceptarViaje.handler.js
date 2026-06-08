@@ -4,6 +4,7 @@ const aceptarViajeService = require("../services/aceptarViaje.service");
 const obtenerMotoristaInfo = require("../services/motoristaInfo.service");
 const snapshotMotorista = require("../services/motoristaSnapshot.service");
 const calcularETA = require("../../pasajeros/services/tracking/calcularETA");
+const { getDriverEarningsForViaje } = require("../../../../services/driverEarnings.service");
 
 module.exports = (io, socket) => {
     return async ({ viajeId }) => {
@@ -61,11 +62,13 @@ module.exports = (io, socket) => {
                 motoristaInfo.lng = Number(snapshot.lng);
             }
 
+            const viajeMotorista = await prepararViajeMotorista(result.viaje);
+
             if (result.estadoAsignado === "asignado") {
                 socket.join(`viaje:${viajeId}`);
 
                 socket.emit("viaje-confirmado-motorista", {
-                    viaje: prepararViajeMotorista(result.viaje)
+                    viaje: viajeMotorista
                 });
 
                 io.to(`pasajero:${result.viaje.pasajero}`).emit(
@@ -90,7 +93,7 @@ module.exports = (io, socket) => {
                 emitirTrackInicialPasajero(io, result.viaje, motoristaInfo, "asignado");
             } else {
                 socket.emit("viaje-siguiente-confirmado", {
-                    viaje: prepararViajeMotorista(result.viaje)
+                    viaje: viajeMotorista
                 });
 
                 io.to(`pasajero:${result.viaje.pasajero}`).emit(
@@ -165,10 +168,12 @@ function prepararPaquetePasajero(viaje) {
     };
 }
 
-function prepararViajeMotorista(viaje) {
+async function prepararViajeMotorista(viaje) {
     const raw = typeof viaje.toObject === "function" ? viaje.toObject() : { ...viaje };
+    const earnings = await getDriverEarningsForViaje(raw);
     return {
         ...raw,
+        ...earnings,
         paquete: prepararPaqueteMotorista(viaje)
     };
 }

@@ -3,6 +3,7 @@ const User = require("../models/User");
 const { redis } = require("../config/redis");
 const { actualizarSnapshotMotorista } = require("../sockets/viajes/motorista/motoristaSnapshot.service");
 const actualizarContextoViaje = require("../sockets/viajes/motorista/services/viajeContext.service");
+const { getDriverEarningsForViaje } = require("./driverEarnings.service");
 
 const activarSiguienteViaje = async (io, socket, motoristaId) => {
     let lockAcquired = false;
@@ -71,6 +72,7 @@ const activarSiguienteViaje = async (io, socket, motoristaId) => {
         }
 
         const motoristaDB = await User.findById(motoristaId).select("nombre telefono vehiculo rating foto").lean();
+        const driverEarnings = await getDriverEarningsForViaje(siguiente);
 
         const payload = {
             viajeId: siguiente._id.toString(),
@@ -78,6 +80,7 @@ const activarSiguienteViaje = async (io, socket, motoristaId) => {
             origen: siguiente.origen,
             destino: siguiente.destino,
             precio: siguiente.precio,
+            ...driverEarnings,
             distanciaKm: siguiente.distanciaKm,
             duracionMin: siguiente.duracionMin,
             metodoPago: siguiente.metodoPago,

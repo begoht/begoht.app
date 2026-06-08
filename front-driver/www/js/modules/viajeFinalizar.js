@@ -4,7 +4,7 @@ import {
     setViajeEnCurso
 } from "./viajeControl/viajeEstado.js";
 
-import { limpiarViajeMain } from "./viajeControl/viajeUI.js";
+import { limpiarViajeMain } from "./viajeControl/viajeUI.js?v=20260608-offer-net-cash";
 import { borrarRuta } from "./map.js?v=20260606-recenter-map";
 
 const viajesFinalizadosProcesados = new Set();

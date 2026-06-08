@@ -1,8 +1,8 @@
 import { ofertaState, setLastDecision, getViajeId, CONFIG } from "./oferta.state.js";
-import { UI, notificar } from "./oferta.ui.js?v=20260602-offer-ui-singleton";
+import { UI, notificar } from "./oferta.ui.js?v=20260608-offer-net-cash";
 import { getUltimaPosicion } from "../gps.js?v=20260606-recenter-map";
-import { limpiarOferta } from "./oferta.render.js?v=20260602-offer-ui-singleton";
-import { isDriverOnline } from "../driver.status.js";
+import { limpiarOferta } from "./oferta.render.js?v=20260608-offer-net-cash";
+import { isDriverOnline } from "../driver.status.js?v=20260608-offer-net-cash";
 
 export function aceptarViaje(socket) {
   if (!isDriverOnline()) {

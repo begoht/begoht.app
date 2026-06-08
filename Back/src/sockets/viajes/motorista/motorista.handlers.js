@@ -8,6 +8,7 @@ const {
     getOfferLockKey,
     scanKeys
 } = require("../../../services/matching_services/offerLock.service");
+const { getDriverEarningsForViaje } = require("../../../services/driverEarnings.service");
 
 module.exports = (io, socket) => {
     const motoristaId = socket.user.id.toString();
@@ -64,6 +65,8 @@ module.exports = (io, socket) => {
                         principalEncontrado = true;
                     }
 
+                    const earnings = await getDriverEarningsForViaje(viaje);
+
                     // Enviamos el sync con toda la data necesaria
                     socket.emit("sync-viaje", {
                         viajeId: viaje._id.toString(),
@@ -72,7 +75,12 @@ module.exports = (io, socket) => {
                         origen: viaje.origen,
                         destino: viaje.destino,
                         precio: viaje.precio,
-                        pasajero: viaje.pasajero
+                        metodoPago: viaje.metodoPago,
+                        estadoPago: viaje.estadoPago,
+                        distanciaKm: viaje.distanciaKm,
+                        duracionMin: viaje.duracionMin,
+                        pasajero: viaje.pasajero,
+                        ...earnings
                     });
 
                     // Actualizar Redis para que el resto del sistema sepa que el motorista está en este viaje
