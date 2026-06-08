@@ -11,8 +11,8 @@ import { initViajeInicio } from "./viajeInicio/viajeInicio.js?v=20260608-offer-n
 import { initViajeFinalizar } from "./viajeFinalizar.js?v=20260608-offer-net-cash";
 import { initViajeControl } from "./viajeControl/viajeControl.js?v=20260608-offer-net-cash";
 import { initDriverChat } from "./chat/viajeChat.js";
-import { initDriverStatus } from "./driver.status.js?v=20260608-gps-accept";
-import { initDriverSpa } from "./driver.spa.js?v=20260608-gps-accept";
+import { initDriverStatus } from "./driver.status.js?v=20260608-profile-switch";
+import { initDriverSpa } from "./driver.spa.js?v=20260608-profile-switch";
 import { iniciarSonidoOfertaLoop } from "./oferta/oferta.ui.js?v=20260608-offer-net-cash";
 import { initLaunchCountdown } from "./launch-countdown.js?v=20260603-launch-gate";
 

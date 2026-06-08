@@ -23,7 +23,7 @@
   </script>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="./css/inicio.css?v=20260608-offer-net-cash" />
+  <link rel="stylesheet" href="./css/inicio.css?v=20260608-profile-switch" />
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -134,23 +134,15 @@
       </section>
 
       <section class="panel-superior driver-home-topbar" aria-label="Etat du motorista">
-        <button class="estado-btn driver-profile-pill" type="button">
-          <span class="driver-avatar-chip"><i class="fa-solid fa-motorcycle" aria-hidden="true"></i></span>
-          <span class="driver-profile-copy">
+        <button id="driverAvailabilityToggle" class="driver-availability-toggle driver-online-switch is-offline" type="button" aria-pressed="false">
+          <span class="driver-switch-track" aria-hidden="true">
+            <span class="driver-switch-knob"><i class="fa-solid fa-power-off" aria-hidden="true"></i></span>
+          </span>
+          <span class="driver-switch-copy">
             <small>Motorista</small>
-            <strong id="driverName">BeGO Driver</strong>
-            <span class="status" id="onlineStatus">Hors ligne</span>
+            <strong id="onlineStatus">OFFLINE</strong>
           </span>
         </button>
-
-        <button id="driverAvailabilityToggle" class="driver-availability-toggle is-offline" type="button" aria-pressed="false">
-          <i class="fa-solid fa-signal"></i><span>Se connecter</span>
-        </button>
-
-        <a href="#/wallet" class="wallet-mini" data-driver-route aria-label="Ouvrir le wallet">
-          <span>Wallet</span>
-          <strong id="saldo">0.00</strong>
-        </a>
       </section>
 
       <span id="reservaBadge" class="reserva-badge hidden">
@@ -251,7 +243,7 @@
   <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
   <script src="./js/core/conexion.js"></script>
   <script type="module" src="./js/monitoring/frontend-monitor.js?v=20260607-monitor-suspend"></script>
-  <script type="module" src="js/modules/driver.main.js?v=20260608-gps-accept"></script>
+  <script type="module" src="js/modules/driver.main.js?v=20260608-profile-switch"></script>
   <script src="./js/i18n/fr.visual.js?v=20260601-fr"></script>
 
   <script>

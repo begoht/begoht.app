@@ -147,10 +147,41 @@ function renderAvailability() {
   if (btn) {
     btn.classList.toggle("is-online", online);
     btn.classList.toggle("is-offline", !online);
+    btn.classList.toggle("is-syncing", !connected);
     btn.setAttribute("aria-pressed", online ? "true" : "false");
-    btn.innerHTML = online
-      ? '<i class="fa-solid fa-power-off"></i><span>Se deconnecter</span>'
-      : '<i class="fa-solid fa-signal"></i><span>Se connecter</span>';
+    btn.setAttribute("aria-label", `Etat motorista: ${label}`);
+
+    if (!btn.querySelector(".driver-switch-track")) {
+      btn.innerHTML = `
+        <span class="driver-switch-track" aria-hidden="true">
+          <span class="driver-switch-knob"><i class="fa-solid fa-power-off" aria-hidden="true"></i></span>
+        </span>
+        <span class="driver-switch-copy">
+          <small>Motorista</small>
+          <strong id="onlineStatus">${mode === "online" ? "ONLINE" : mode === "syncing" ? "SYNC" : "OFFLINE"}</strong>
+        </span>
+      `;
+    }
+
+    const switchLabel = btn.querySelector(".driver-switch-copy strong");
+    const switchMeta = btn.querySelector(".driver-switch-copy small");
+    const switchIcon = btn.querySelector(".driver-switch-knob i");
+
+    if (switchLabel) {
+      switchLabel.textContent = mode === "online" ? "ONLINE" : mode === "syncing" ? "SYNC" : "OFFLINE";
+    }
+
+    if (switchMeta) {
+      switchMeta.textContent = mode === "online" ? "Disponible" : mode === "syncing" ? "Reconnexion" : "Hors ligne";
+    }
+
+    if (switchIcon) {
+      switchIcon.className = mode === "online"
+        ? "fa-solid fa-bolt"
+        : mode === "syncing"
+          ? "fa-solid fa-rotate"
+          : "fa-solid fa-power-off";
+    }
   }
 }
 
@@ -164,8 +195,8 @@ function showToast(text, color) {
   if (typeof Toastify === "function") {
     Toastify({
       text,
-      duration: 2600,
-      gravity: "top",
+      duration: 1800,
+      gravity: "bottom",
       position: "center",
       style: { background: color, color: "#fff" }
     }).showToast();
