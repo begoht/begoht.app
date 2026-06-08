@@ -1,4 +1,4 @@
-import { getDriverAvailability, onDriverAvailabilityChange } from "./driver.status.js?v=20260608-switch-clean";
+import { getDriverAvailability, onDriverAvailabilityChange } from "./driver.status.js?v=20260608-wallet-status-fix";
 import { initDriverSupportChat } from "./support/supportChat.js?v=20260604-live-support";
 
 let pageView = null;

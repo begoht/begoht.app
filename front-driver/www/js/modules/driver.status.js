@@ -129,7 +129,7 @@ function bindSocketEvents() {
 
   socketRef.on("driver:commission-blocked", (status = {}) => {
     online = false;
-    localStorage.setItem(STORAGE_KEY, "0");
+    localStorage.setItem(AVAILABILITY_KEY, "0");
     renderAvailability();
     notifySubscribers();
     const deuda = Number(status.comisionPendiente || 0).toLocaleString("fr-HT");
@@ -207,5 +207,31 @@ function showToast(text, color) {
     return;
   }
 
-  console.log(text);
+  let toast = document.getElementById("driverStatusToast");
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.id = "driverStatusToast";
+    toast.style.cssText = [
+      "position:fixed",
+      "left:14px",
+      "right:14px",
+      "bottom:94px",
+      "z-index:99999",
+      "border-radius:8px",
+      "padding:14px 16px",
+      "color:#fff",
+      "font-weight:900",
+      "line-height:1.25",
+      "box-shadow:0 18px 40px rgba(0,0,0,.3)"
+    ].join(";");
+    document.body.appendChild(toast);
+  }
+
+  toast.textContent = text;
+  toast.style.background = color || "#111827";
+  toast.hidden = false;
+  clearTimeout(toast._hideTimer);
+  toast._hideTimer = setTimeout(() => {
+    toast.hidden = true;
+  }, 2200);
 }
