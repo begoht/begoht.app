@@ -1,5 +1,5 @@
 import { viajeState } from "../../viaje/viaje.state.js";
-import { mostrarBuscandoMotorista } from "../../pasajero/pasajero.ui.js";
+import { mostrarBuscandoMotorista } from "../../pasajero/pasajero.ui.js?v=20260608-search-modal";
 import { guardarSesionViaje } from "../pasajero.utils.js?v=20260607-finalized-guard";
 import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260606-legal-trust";
 import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260607-finalized-guard";

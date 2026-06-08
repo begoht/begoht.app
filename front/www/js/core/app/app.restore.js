@@ -105,7 +105,7 @@ export async function restoreViajeUI() {
         !document.getElementById("modalPrecio") &&
         !document.getElementById("buscandoMotorista")
       ) {
-        import("../../pasajero/ui/overlays/buscandoMotorista.ui.js?v=20260605-price-premium-cancel")
+        import("../../pasajero/ui/overlays/buscandoMotorista.ui.js?v=20260608-search-modal")
           .then(m => m.mostrarBuscandoMotorista?.(true))
           .catch(err => console.error("❌ Error importando modal:", err));
       }

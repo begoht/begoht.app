@@ -9,8 +9,9 @@ export { actualizarBotonViaje };
 export {
   mostrarBuscandoMotorista,
   cerrarBuscandoMotorista,
-  actualizarMotoristaCandidato
-} from "./ui/overlays/buscandoMotorista.ui.js?v=20260605-price-premium-cancel";
+  actualizarMotoristaCandidato,
+  mostrarBusquedaSinMotorista
+} from "./ui/overlays/buscandoMotorista.ui.js?v=20260608-search-modal";
 
 export { mostrarModalConfirmacion } from "./ui/modales/modalConfirmacion.ui.js";
 export { mostrarModalPrecio } from "./ui/modales/modalPrecio.ui.js?v=20260605-price-premium-cancel";

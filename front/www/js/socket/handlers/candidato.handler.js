@@ -2,7 +2,7 @@ import { viajeState } from "../../viaje/viaje.state.js";
 import {
   mostrarBuscandoMotorista,
   actualizarMotoristaCandidato
-} from "../../pasajero/pasajero.ui.js";
+} from "../../pasajero/pasajero.ui.js?v=20260608-search-modal";
 
 export const handleMotoristaCandidato = (data = {}) => {
   if (!data.motorista) return;
@@ -20,5 +20,5 @@ export const handleMotoristaCandidato = (data = {}) => {
   }
 
   mostrarBuscandoMotorista(true);
-  actualizarMotoristaCandidato(data.motorista);
+  actualizarMotoristaCandidato(data.motorista, { ttl: data.ttl });
 };

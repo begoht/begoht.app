@@ -62,6 +62,18 @@ async function asignarViaje(viajeId, radioKm = 2) {
 
                 await redis.set(`viaje:status:${viajeId}`, "sin_motorista", "EX", 300);
 
+                if (viaje.pasajero && global.io) {
+                    global.io
+                        .to(`pasajero:${viaje.pasajero.toString()}`)
+                        .emit("no-motorista", {
+                            viajeId: viajeId.toString(),
+                            estado: "sin_motorista",
+                            mensaje: "Aucun motorista disponible pour le moment. Vous pouvez reessayer dans quelques minutes.",
+                            radioKm: RADIO_MAX_KM,
+                            timestamp: Date.now()
+                        });
+                }
+
                 await serviceLock.liberarLock(viajeId, lockId);
                 return;
             }
