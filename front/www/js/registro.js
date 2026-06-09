@@ -129,6 +129,11 @@ document.addEventListener("DOMContentLoaded", () => {
     showLogin();
   });
 
+  const initialMode = new URLSearchParams(window.location.search).get("mode");
+  if (["registro", "register", "signup"].includes(String(initialMode || "").toLowerCase())) {
+    showRegistro();
+  }
+
   // =============================
   // PASO 1 → PASO 2
   // =============================

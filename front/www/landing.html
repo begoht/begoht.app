@@ -3,249 +3,451 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#f6f8fb">
-  <title>BeGO</title>
+  <meta name="theme-color" content="#120715">
+  <meta name="description" content="Inscription officielle BeGO Haiti pour passagers et motoristes. Telechargez l'application Android et creez votre compte en toute securite.">
+  <title>BeGO Haiti - Inscription officielle</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      color-scheme: light;
-      --page: #f6f8fb;
-      --panel: #ffffff;
-      --ink: #101828;
-      --muted: #667085;
-      --line: #d8e1ea;
-      --brand: #0f766e;
-      --brand-dark: #0b5f59;
-      --road: #111827;
-      --gold: #c7902e;
-      --shadow: 0 22px 64px rgba(16, 24, 40, 0.15);
+      color-scheme: dark;
+      --bg: #120715;
+      --bg-deep: #07090f;
+      --panel: rgba(18, 22, 30, 0.82);
+      --panel-strong: rgba(30, 35, 45, 0.92);
+      --line: rgba(202, 240, 255, 0.16);
+      --text: #f8fbff;
+      --muted: #b7c3d4;
+      --soft: #7f8ea3;
+      --cyan: #12f7ff;
+      --green: #00ff88;
+      --orange: #ff8b1a;
+      --rose: #ff3b7d;
+      --shadow-cyan: 0 0 18px rgba(18, 247, 255, 0.32);
+      --shadow-panel: 0 24px 72px rgba(0, 0, 0, 0.48);
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      text-decoration: none;
+      list-style: none;
       -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
     }
 
     body {
       min-height: 100dvh;
-      font-family: Inter, "Segoe UI", system-ui, -apple-system, sans-serif;
-      color: var(--ink);
+      font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
       background:
-        linear-gradient(135deg, rgba(15, 118, 110, 0.12), transparent 34%),
-        linear-gradient(315deg, rgba(199, 144, 46, 0.14), transparent 30%),
-        var(--page);
-      display: grid;
-      place-items: center;
-      padding: 24px;
+        linear-gradient(115deg, rgba(18, 247, 255, 0.12) 0%, transparent 26%),
+        linear-gradient(245deg, rgba(255, 139, 26, 0.13) 0%, transparent 30%),
+        linear-gradient(180deg, var(--bg) 0%, var(--bg-deep) 100%);
+      overflow-x: hidden;
     }
 
-    .entry-shell {
-      width: min(1040px, 100%);
-      min-height: 620px;
-      display: grid;
-      grid-template-columns: minmax(300px, 0.95fr) minmax(360px, 1.05fr);
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      box-shadow: var(--shadow);
-      overflow: hidden;
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.42;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+      background-size: 54px 54px;
+      mask-image: linear-gradient(180deg, #000 0%, transparent 82%);
     }
 
-    .brand-panel {
-      background:
-        linear-gradient(160deg, rgba(17, 24, 39, 0.98), rgba(15, 118, 110, 0.96)),
-        var(--road);
-      color: #ffffff;
-      padding: 38px;
+    .site-shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      min-height: 84px;
       display: flex;
-      flex-direction: column;
+      align-items: center;
       justify-content: space-between;
-      gap: 30px;
+      gap: 18px;
+      position: relative;
+      z-index: 2;
     }
 
-    .brand-mark {
-      width: fit-content;
-      min-height: 50px;
+    .brand {
       display: inline-flex;
       align-items: center;
       gap: 12px;
-      padding: 0 14px;
-      border: 1px solid rgba(255, 255, 255, 0.22);
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.1);
-      font-weight: 950;
-    }
-
-    .brand-mark img {
-      width: 34px;
-      height: 34px;
-      object-fit: cover;
-      border-radius: 8px;
-      background: #ffffff;
-    }
-
-    .brand-copy {
-      display: grid;
-      gap: 14px;
-    }
-
-    .eyebrow {
-      color: #d8b36d;
-      font-size: 12px;
-      font-weight: 950;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .brand-copy h1 {
-      max-width: 11ch;
-      font-size: clamp(40px, 5vw, 60px);
-      line-height: 0.98;
+      color: var(--text);
+      font-weight: 900;
       letter-spacing: 0;
     }
 
-    .brand-copy p {
-      max-width: 35ch;
-      color: #d8e2ef;
-      line-height: 1.6;
-      font-size: 15px;
+    .brand img {
+      width: 42px;
+      height: 42px;
+      object-fit: cover;
+      border-radius: 8px;
+      background: #ffffff;
+      box-shadow: var(--shadow-cyan);
     }
 
-    .brand-metrics {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
+    .brand strong {
+      font-size: 1.25rem;
+    }
+
+    .brand span {
+      color: var(--cyan);
+      text-shadow: var(--shadow-cyan);
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
       gap: 10px;
     }
 
-    .brand-metrics div {
-      padding: 14px 10px;
+    .menu-toggle {
+      display: none;
+      min-height: 42px;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 12px;
+      border: 1px solid var(--line);
       border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.06);
+      font: inherit;
+      font-size: 0.82rem;
+      font-weight: 800;
+      cursor: pointer;
     }
 
-    .brand-metrics strong,
-    .brand-metrics span {
+    .menu-toggle-bars {
+      width: 18px;
+      display: grid;
+      gap: 4px;
+    }
+
+    .menu-toggle-bars span {
+      height: 2px;
+      border-radius: 99px;
+      background: var(--cyan);
+      box-shadow: var(--shadow-cyan);
+    }
+
+    .top-link {
+      min-height: 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.04);
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .hero {
+      min-height: calc(100dvh - 84px);
+      display: grid;
+      grid-template-columns: minmax(0, 1.02fr) minmax(330px, 0.98fr);
+      align-items: center;
+      gap: clamp(24px, 5vw, 70px);
+      padding: 28px 0 72px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-copy {
+      display: grid;
+      gap: 22px;
+      min-width: 0;
+    }
+
+    .kicker {
+      width: fit-content;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      min-height: 32px;
+      padding: 0 12px;
+      border: 1px solid rgba(18, 247, 255, 0.26);
+      border-radius: 999px;
+      color: var(--cyan);
+      background: rgba(18, 247, 255, 0.08);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      font-size: 0.76rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .kicker::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--green);
+      box-shadow: 0 0 14px rgba(0, 255, 136, 0.8);
+    }
+
+    h1 {
+      max-width: 10ch;
+      font-size: clamp(3rem, 8vw, 6.5rem);
+      line-height: 0.92;
+      font-weight: 900;
+      letter-spacing: 0;
+      overflow-wrap: anywhere;
+    }
+
+    h1 span {
+      color: var(--cyan);
+      text-shadow:
+        0 0 12px rgba(18, 247, 255, 0.45),
+        0 0 32px rgba(18, 247, 255, 0.26);
+    }
+
+    .hero-copy p {
+      max-width: 58ch;
+      color: var(--muted);
+      font-size: clamp(1rem, 2vw, 1.18rem);
+      line-height: 1.65;
+    }
+
+    .primary-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    .cta {
+      min-height: 54px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 0 18px;
+      border: 2px solid var(--cyan);
+      border-radius: 8px;
+      color: var(--bg-deep);
+      background: var(--cyan);
+      box-shadow: var(--shadow-cyan);
+      font-size: 0.95rem;
+      font-weight: 900;
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .cta::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      width: 0;
+      background: var(--bg);
+      transition: width 0.22s ease;
+      z-index: -1;
+    }
+
+    .cta:hover {
+      color: var(--cyan);
+    }
+
+    .cta:hover::before {
+      width: 100%;
+    }
+
+    .cta.secondary {
+      color: var(--cyan);
+      background: transparent;
+    }
+
+    .cta.secondary::before {
+      background: var(--cyan);
+    }
+
+    .cta.secondary:hover {
+      color: var(--bg-deep);
+    }
+
+    .trust-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      max-width: 620px;
+      margin-top: 6px;
+    }
+
+    .trust-row div {
+      min-height: 78px;
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.045);
+    }
+
+    .trust-row strong,
+    .trust-row span {
       display: block;
     }
 
-    .brand-metrics strong {
-      font-size: 18px;
+    .trust-row strong {
+      color: var(--text);
+      font-size: 1rem;
     }
 
-    .brand-metrics span {
+    .trust-row span {
       margin-top: 4px;
-      color: #c7d2df;
-      font-size: 12px;
-      font-weight: 800;
+      color: var(--soft);
+      font-size: 0.78rem;
+      line-height: 1.35;
     }
 
-    .entry-panel {
-      padding: 42px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 24px;
+    .signup-panel {
+      display: grid;
+      gap: 16px;
+      min-width: 0;
+      padding: clamp(18px, 3vw, 28px);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.035)),
+        var(--panel);
+      box-shadow: var(--shadow-panel);
+      backdrop-filter: blur(22px);
     }
 
-    .entry-head {
+    .panel-head {
       display: grid;
       gap: 8px;
     }
 
-    .entry-head h2 {
-      font-size: clamp(30px, 4vw, 38px);
-      line-height: 1.05;
+    .panel-head h2 {
+      font-size: clamp(1.55rem, 3vw, 2.25rem);
+      line-height: 1.08;
       letter-spacing: 0;
     }
 
-    .entry-head p {
+    .panel-head p {
       color: var(--muted);
       line-height: 1.55;
+      font-size: 0.94rem;
     }
 
-    .entry-actions {
+    .signup-options {
       display: grid;
       gap: 12px;
     }
 
-    .entry-card {
-      min-height: 92px;
+    .signup-card {
+      min-height: 112px;
       display: grid;
-      grid-template-columns: 52px 1fr auto;
+      grid-template-columns: 54px 1fr auto;
       align-items: center;
       gap: 14px;
-      padding: 16px;
-      border: 1px solid var(--line);
+      padding: 15px;
+      border: 1px solid rgba(18, 247, 255, 0.16);
       border-radius: 8px;
-      background: #fbfcfe;
-      color: var(--ink);
-      text-decoration: none;
-      transition: border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+      color: var(--text);
+      background:
+        linear-gradient(90deg, rgba(18, 247, 255, 0.09), rgba(255, 255, 255, 0.025)),
+        var(--panel-strong);
+      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
     }
 
-    .entry-card:hover {
-      border-color: var(--brand);
-      transform: translateY(-1px);
-      box-shadow: 0 14px 26px rgba(15, 118, 110, 0.12);
+    .signup-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(18, 247, 255, 0.5);
+      box-shadow: 0 14px 30px rgba(18, 247, 255, 0.1);
     }
 
-    .entry-icon {
-      width: 52px;
-      height: 52px;
+    .signup-card.driver {
+      border-color: rgba(255, 139, 26, 0.22);
+      background:
+        linear-gradient(90deg, rgba(255, 139, 26, 0.12), rgba(255, 255, 255, 0.025)),
+        var(--panel-strong);
+    }
+
+    .signup-card.driver:hover {
+      border-color: rgba(255, 139, 26, 0.55);
+      box-shadow: 0 14px 30px rgba(255, 139, 26, 0.11);
+    }
+
+    .icon-box {
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(18, 247, 255, 0.28);
+      border-radius: 8px;
+      background: rgba(18, 247, 255, 0.11);
+    }
+
+    .icon-box img {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+    }
+
+    .signup-card.driver .icon-box {
+      border-color: rgba(255, 139, 26, 0.32);
+      background: rgba(255, 139, 26, 0.12);
+    }
+
+    .signup-card strong,
+    .signup-card span {
+      display: block;
+    }
+
+    .signup-card strong {
+      font-size: 1rem;
+      line-height: 1.1;
+    }
+
+    .signup-card span {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.38;
+    }
+
+    .arrow {
+      width: 34px;
+      height: 34px;
       display: grid;
       place-items: center;
       border-radius: 8px;
-      background: #e7f7f4;
-      color: var(--brand);
-      font-weight: 950;
-    }
-
-    .entry-card.driver .entry-icon {
-      background: #fff6e5;
-      color: #9a6417;
-    }
-
-    .entry-card strong {
-      display: block;
-      font-size: 17px;
-    }
-
-    .entry-card span {
-      display: block;
-      margin-top: 4px;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.35;
-    }
-
-    .entry-arrow {
-      color: var(--brand);
-      font-size: 22px;
+      color: var(--cyan);
+      background: rgba(18, 247, 255, 0.08);
       font-weight: 900;
     }
 
-    .entry-note {
-      padding: 12px;
-      border-radius: 8px;
-      background: #eef3f7;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.45;
+    .signup-card.driver .arrow {
+      color: var(--orange);
+      background: rgba(255, 139, 26, 0.1);
     }
 
-    .download-block,
-    .social-block {
+    .download-zone {
       display: grid;
       gap: 10px;
+      padding-top: 4px;
     }
 
-    .download-title,
-    .social-title {
-      color: var(--muted);
-      font-size: 13px;
-      font-weight: 900;
+    .zone-title {
+      color: var(--soft);
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
     }
 
     .download-links,
@@ -255,319 +457,311 @@
       gap: 8px;
     }
 
-    .download-link,
-    .social-link {
-      min-height: 38px;
+    .pill {
+      min-height: 40px;
       display: inline-flex;
       align-items: center;
       gap: 8px;
       padding: 0 12px;
       border: 1px solid var(--line);
       border-radius: 999px;
-      background: #ffffff;
-      color: var(--ink);
-      text-decoration: none;
-      font-size: 13px;
-      font-weight: 900;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+      font-size: 0.78rem;
+      font-weight: 800;
     }
 
-    .download-link {
-      background: var(--brand);
-      color: #ffffff;
-      border-color: var(--brand);
+    .pill.download-passenger {
+      color: var(--bg-deep);
+      background: var(--green);
+      border-color: rgba(0, 255, 136, 0.5);
+      box-shadow: 0 0 18px rgba(0, 255, 136, 0.18);
     }
 
-    .download-link.driver {
-      background: var(--road);
-      border-color: var(--road);
+    .pill.download-driver {
+      color: #1a0b00;
+      background: var(--orange);
+      border-color: rgba(255, 139, 26, 0.52);
+      box-shadow: 0 0 18px rgba(255, 139, 26, 0.18);
     }
 
-    .download-link span,
-    .social-link span {
-      width: 22px;
-      height: 22px;
-      display: grid;
-      place-items: center;
-      border-radius: 999px;
-      background: #eef3f7;
-      color: var(--brand);
-      font-size: 11px;
+    .notice {
+      padding: 12px;
+      border: 1px solid rgba(18, 247, 255, 0.15);
+      border-radius: 8px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.045);
+      font-size: 0.8rem;
+      line-height: 1.5;
     }
 
-    .download-link span {
-      background: rgba(255, 255, 255, 0.18);
-      color: #ffffff;
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18px;
+      padding: 0 0 28px;
+      color: var(--soft);
+      font-size: 0.78rem;
+      position: relative;
+      z-index: 1;
     }
 
-    /* App premium skin: matches BeGO dark background and footer material. */
-    body {
-      background:
-        radial-gradient(circle at 50% -8%, rgba(255, 122, 0, 0.18), transparent 28%),
-        radial-gradient(circle at 8% 18%, rgba(37, 99, 235, 0.2), transparent 30%),
-        radial-gradient(circle at 92% 70%, rgba(34, 197, 94, 0.12), transparent 28%),
-        #020616;
-      color: #e5e7eb;
+    .footer a {
+      color: var(--cyan);
+      font-weight: 800;
     }
 
-    .entry-shell {
-      background:
-        linear-gradient(180deg, rgba(15, 23, 42, 0.9), rgba(2, 6, 23, 0.96));
-      border-color: rgba(148, 163, 184, 0.16);
-      box-shadow:
-        0 24px 70px rgba(0, 0, 0, 0.62),
-        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 10px;
     }
 
-    .brand-panel {
-      background:
-        radial-gradient(circle at 42% 0%, rgba(255, 122, 0, 0.2), transparent 31%),
-        linear-gradient(160deg, rgba(15, 23, 42, 0.98), rgba(2, 6, 23, 0.98));
-      border-right: 1px solid rgba(148, 163, 184, 0.12);
-    }
-
-    .brand-mark,
-    .brand-metrics div {
-      background:
-        linear-gradient(180deg, rgba(31, 41, 55, 0.78), rgba(15, 23, 42, 0.86));
-      border-color: rgba(148, 163, 184, 0.16);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
-    }
-
-    .entry-panel {
-      background:
-        radial-gradient(circle at 100% 0%, rgba(56, 189, 248, 0.12), transparent 26%),
-        rgba(2, 6, 23, 0.72);
-    }
-
-    .entry-head h2,
-    .entry-card strong,
-    .download-title,
-    .social-title {
-      color: #e5e7eb;
-    }
-
-    .entry-head p,
-    .entry-card span,
-    .entry-note,
-    .download-title,
-    .social-title {
-      color: #94a3b8;
-    }
-
-    .entry-card {
-      background:
-        linear-gradient(180deg, rgba(15, 23, 42, 0.92), rgba(2, 6, 23, 0.88));
-      border-color: rgba(148, 163, 184, 0.16);
-      box-shadow:
-        0 12px 26px rgba(0, 0, 0, 0.32),
-        inset 0 1px 0 rgba(255, 255, 255, 0.04);
-    }
-
-    .entry-card:hover {
-      border-color: rgba(255, 122, 0, 0.34);
-      box-shadow:
-        0 16px 30px rgba(255, 106, 0, 0.12),
-        inset 0 1px 0 rgba(255, 255, 255, 0.04);
-    }
-
-    .entry-icon {
-      background: rgba(255, 122, 0, 0.14);
-      color: #ffb36b;
-    }
-
-    .entry-card.driver .entry-icon {
-      background: rgba(37, 99, 235, 0.18);
-      color: #93c5fd;
-    }
-
-    .entry-arrow {
-      color: #ff7a00;
-    }
-
-    .entry-note {
-      background: rgba(15, 23, 42, 0.84);
-      border: 1px solid rgba(148, 163, 184, 0.16);
-    }
-
-    .download-link {
-      background:
-        radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.28), transparent 16%),
-        linear-gradient(180deg, #ff8b1a 0%, #ff6a00 62%, #d94d00 100%);
-      border-color: rgba(255, 122, 0, 0.34);
-      box-shadow:
-        0 14px 28px rgba(255, 106, 0, 0.22),
-        inset 0 2px 2px rgba(255, 255, 255, 0.18),
-        inset 0 -9px 14px rgba(139, 45, 0, 0.22);
-    }
-
-    .download-link.driver {
-      background:
-        linear-gradient(180deg, rgba(37, 99, 235, 0.95), rgba(15, 23, 42, 0.98));
-      border-color: rgba(56, 189, 248, 0.24);
-    }
-
-    .social-link {
-      background:
-        linear-gradient(180deg, rgba(31, 31, 35, 0.98), rgba(12, 13, 17, 0.98));
-      border-color: rgba(148, 163, 184, 0.14);
-      color: #d5d7dc;
-      box-shadow:
-        0 12px 24px rgba(0, 0, 0, 0.36),
-        inset 0 8px 18px rgba(255, 255, 255, 0.035);
-    }
-
-    @media (max-width: 820px) {
-      body {
-        padding: 0;
-        place-items: stretch;
+    @media (max-width: 900px) {
+      .site-shell {
+        width: min(100% - 24px, 680px);
       }
 
-      .entry-shell {
-        min-height: 100dvh;
+      .hero {
+        min-height: auto;
         grid-template-columns: 1fr;
-        border: 0;
-        border-radius: 0;
+        padding-top: 18px;
       }
 
-      .brand-panel {
-        min-height: 250px;
-        padding: 26px 22px;
-      }
-
-      .brand-copy h1 {
+      h1 {
         max-width: 12ch;
-        font-size: 36px;
-      }
-
-      .brand-copy p {
-        font-size: 14px;
-      }
-
-      .brand-metrics {
-        display: none;
-      }
-
-      .entry-panel {
-        justify-content: flex-start;
-        padding: 30px 20px 36px;
       }
     }
 
-    @media (max-width: 430px) {
-      .brand-panel {
-        min-height: 220px;
+    @media (max-width: 560px) {
+      .site-shell {
+        width: min(calc(100% - 24px), 366px);
+        margin-left: 12px;
+        margin-right: auto;
       }
 
-      .brand-copy h1 {
-        font-size: 32px;
+      .topbar {
+        min-height: 72px;
       }
 
-      .entry-panel {
-        padding-inline: 16px;
+      .menu-toggle {
+        display: inline-flex;
       }
 
-      .entry-card {
-        grid-template-columns: 46px 1fr;
-      }
-
-      .entry-icon {
-        width: 46px;
-        height: 46px;
-      }
-
-      .entry-arrow {
+      .top-actions {
+        position: fixed;
+        top: 72px;
+        left: 12px;
+        right: 12px;
+        z-index: 20;
         display: none;
+        grid-template-columns: 1fr;
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background:
+          linear-gradient(180deg, rgba(18, 22, 30, 0.98), rgba(7, 9, 15, 0.98));
+        box-shadow: var(--shadow-panel);
+      }
+
+      .top-actions.is-open {
+        display: grid;
+      }
+
+      .top-link {
+        width: 100%;
+        min-height: 46px;
+        justify-content: flex-start;
+      }
+
+      .hero {
+        padding-bottom: 38px;
+        gap: 18px;
+      }
+
+      h1 {
+        max-width: 100%;
+        font-size: clamp(2.35rem, 12vw, 3.35rem);
+        line-height: 0.96;
+      }
+
+      .hero-copy p {
+        max-width: 100%;
+        font-size: 0.96rem;
+      }
+
+      .trust-row {
+        grid-template-columns: 1fr;
+      }
+
+      .signup-panel {
+        padding: 16px;
+      }
+
+      .signup-card {
+        grid-template-columns: 48px 1fr;
+        min-height: 104px;
+      }
+
+      .icon-box {
+        width: 48px;
+        height: 48px;
+      }
+
+      .arrow {
+        display: none;
+      }
+
+      .primary-row,
+      .download-links,
+      .social-links,
+      .footer {
+        flex-direction: column;
+      }
+
+      .footer-links {
+        justify-content: flex-start;
+      }
+
+      .cta,
+      .pill {
+        width: 100%;
       }
     }
   </style>
 </head>
 <body>
-  <main class="entry-shell">
-    <section class="brand-panel" aria-label="BeGO">
-      <div class="brand-mark">
-        <img src="/assets/logo_primcial.png" alt="">
-        <span>BeGO</span>
+  <header class="topbar site-shell" aria-label="BeGO Haiti">
+    <a class="brand" href="/" aria-label="BeGO Haiti">
+      <img src="/assets/logo_primcial.png" alt="">
+      <strong>Be<span>GO</span></strong>
+    </a>
+
+    <button class="menu-toggle" id="menuToggle" type="button" aria-controls="publicMenu" aria-expanded="false">
+      <span class="menu-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span>
+      Menu
+    </button>
+
+    <nav class="top-actions" id="publicMenu" aria-label="Navigation publique">
+      <a class="top-link" href="#inscription">Inscription</a>
+      <a class="top-link" href="#telechargement">Telecharger</a>
+      <a class="top-link" href="#droits">Droits</a>
+      <a class="top-link" href="/legal.html">Legal</a>
+    </nav>
+  </header>
+
+  <main class="hero site-shell">
+    <section class="hero-copy" aria-label="Inscription BeGO">
+      <p class="kicker">Lancement officiel Jacmel</p>
+      <h1>Inscription <span>BeGO</span></h1>
+      <p>
+        Creez votre compte passager ou motorista depuis le portail officiel BeGO Haiti.
+        Cette page est reservee a l'inscription et au telechargement des applications.
+      </p>
+
+      <div class="primary-row" aria-label="Actions principales">
+        <a class="cta" href="/registro.html?mode=registro">S'inscrire comme passager</a>
+        <a class="cta secondary" href="/driver/registro.html">Devenir motorista</a>
       </div>
 
-      <div class="brand-copy">
-        <p class="eyebrow">Entrada oficial</p>
-        <h1>Elige como quieres entrar.</h1>
-        <p>La misma plataforma para pedir viajes o trabajar como motorista.</p>
-      </div>
-
-      <div class="brand-metrics" aria-hidden="true">
+      <div class="trust-row" aria-label="Confiance BeGO">
         <div>
           <strong>GPS</strong>
-          <span>En vivo</span>
-        </div>
-        <div>
-          <strong>24/7</strong>
-          <span>Activo</span>
+          <span>Position utile pour les courses et la securite.</span>
         </div>
         <div>
           <strong>PIN</strong>
-          <span>Seguro</span>
+          <span>Wallet protege pour paiements et commissions.</span>
+        </div>
+        <div>
+          <strong>5 kg</strong>
+          <span>Regles colis claires pour petites livraisons.</span>
         </div>
       </div>
     </section>
 
-    <section class="entry-panel">
-      <div class="entry-head">
-        <p class="eyebrow">bego.com.ht</p>
-        <h2>Acceso BeGO</h2>
-        <p>Selecciona tu perfil para abrir la experiencia correcta.</p>
+    <section class="signup-panel" id="inscription" aria-label="Choisir une inscription">
+      <div class="panel-head">
+        <p class="kicker">Compte BeGO</p>
+        <h2>Choisissez votre application.</h2>
+        <p>Chaque profil a son propre formulaire securise. Aucun acces de connexion n'est affiche depuis cette page publique.</p>
       </div>
 
-      <div class="entry-actions">
-        <a class="entry-card passenger" href="/registro.html">
-          <span class="entry-icon">P</span>
-          <span>
-            <strong>Pasajero</strong>
-            <span>Pedir viaje, gestionar pagos y ver tu cuenta.</span>
+      <div class="signup-options">
+        <a class="signup-card passenger" href="/registro.html?mode=registro" aria-label="Inscription passager BeGO">
+          <span class="icon-box">
+            <img src="/assets/icons/pasajero-transparent.svg" alt="">
           </span>
-          <span class="entry-arrow" aria-hidden="true">›</span>
+          <span>
+            <strong>Passager</strong>
+            <span>Creer un compte pour demander une course, payer et suivre votre trajet.</span>
+          </span>
+          <span class="arrow" aria-hidden="true">&rsaquo;</span>
         </a>
 
-        <a class="entry-card driver" href="/driver/login.html">
-          <span class="entry-icon">M</span>
+        <a class="signup-card driver" href="/driver/registro.html" aria-label="Inscription motorista BeGO">
+          <span class="icon-box">
+            <img src="/assets/icons/moto-transparent.svg" alt="">
+          </span>
           <span>
             <strong>Motorista</strong>
-            <span>Entrar al panel, activar disponibilidad y recibir viajes.</span>
+            <span>Enregistrer votre profil, votre moto et preparer votre wallet professionnel.</span>
           </span>
-          <span class="entry-arrow" aria-hidden="true">›</span>
+          <span class="arrow" aria-hidden="true">&rsaquo;</span>
         </a>
       </div>
 
-      <p class="entry-note">Si ya tienes la app instalada, puedes seguir usandola normalmente.</p>
-
-      <div class="download-block">
-        <p class="download-title">Descargar app Android</p>
+      <div class="download-zone" id="telechargement">
+        <p class="zone-title">Applications Android</p>
         <div class="download-links">
-          <a class="download-link" href="/download/bego-pasajero.apk?v=20260606-map-shell-controls" download>
-            <span>↓</span> App pasajero
-          </a>
-          <a class="download-link driver" href="/download/bego-motorista.apk?v=20260606-map-shell-controls" download>
-            <span>↓</span> App motorista
-          </a>
+          <a class="pill download-passenger" href="/downloads/bego-pasajero.apk?v=20260609-public-signup" download>Telecharger passager</a>
+          <a class="pill download-driver" href="/downloads/bego-motorista.apk?v=20260609-public-signup" download>Telecharger motorista</a>
         </div>
       </div>
 
-      <div class="social-block">
-        <p class="social-title">Redes sociales oficiales</p>
+      <div class="download-zone">
+        <p class="zone-title">Reseaux officiels</p>
         <div class="social-links">
-          <a class="social-link" href="https://www.facebook.com/search/top?q=bego%20haiti" target="_blank" rel="noopener">
-            <span>f</span> BeGO Haiti
-          </a>
-          <a class="social-link" href="https://www.instagram.com/bego.haiti" target="_blank" rel="noopener">
-            <span>IG</span> @bego.haiti
-          </a>
-          <a class="social-link" href="https://www.tiktok.com/@bego.ht" target="_blank" rel="noopener">
-            <span>TT</span> @bego.ht
-          </a>
+          <a class="pill" href="https://www.facebook.com/search/top?q=bego%20haiti" target="_blank" rel="noopener">Facebook BeGO Haiti</a>
+          <a class="pill" href="https://www.instagram.com/bego.haiti" target="_blank" rel="noopener">Instagram @bego.haiti</a>
+          <a class="pill" href="https://www.tiktok.com/@bego.ht" target="_blank" rel="noopener">TikTok @bego.ht</a>
         </div>
       </div>
+
+      <p class="notice">
+        Pour recuperer un compte existant, utilisez l'application installee ou contactez le support officiel:
+        support@bego.com.ht.
+      </p>
     </section>
   </main>
-  <script src="./js/i18n/fr.visual.js?v=20260601-fr"></script>
+
+  <footer class="footer site-shell" id="droits">
+    <span>BeGO Haiti &copy; 2026. Tous droits reserves.</span>
+    <span class="footer-links">
+      <a href="/legal.html">Conditions</a>
+      <a href="/legal.html#confidentialite">Confidentialite</a>
+      <a href="/legal.html#colis">Regles colis</a>
+      <a href="mailto:support@bego.com.ht">Support officiel</a>
+    </span>
+  </footer>
+  <script>
+    const menuButton = document.getElementById("menuToggle");
+    const publicMenu = document.getElementById("publicMenu");
+
+    menuButton?.addEventListener("click", () => {
+      const nextOpen = !publicMenu?.classList.contains("is-open");
+      publicMenu?.classList.toggle("is-open", nextOpen);
+      menuButton.setAttribute("aria-expanded", nextOpen ? "true" : "false");
+    });
+
+    publicMenu?.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", () => {
+        publicMenu.classList.remove("is-open");
+        menuButton?.setAttribute("aria-expanded", "false");
+      });
+    });
+  </script>
 </body>
 </html>
