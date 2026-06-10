@@ -1,4 +1,4 @@
-import { map, getRutaActualCoords } from "./map.js?v=20260606-recenter-map";
+import { map, getRutaActualCoords, consumirRutaDesde } from "./map.js?v=20260610-route-consume";
 import { isDriverOnline, updateDriverPosition } from "./driver.status.js?v=20260608-gps-accept";
 import { motoIcon } from "./map.icons.js?v=20260603-road-heading-stable";
 import {
@@ -29,7 +29,7 @@ export function initGPS(socket) {
           map.setView([lat, lng], 16);
         }
 
-        setMotorcycleMarkerPose(
+        const pose = setMotorcycleMarkerPose(
           motoristaMarker,
           map,
           { lat, lng },
@@ -39,6 +39,7 @@ export function initGPS(socket) {
             maxSnapDistanceMeters: 85
           }
         );
+        consumirRutaDesde(pose?.latLng || { lat, lng });
       }
 
       const movidoSuficiente = !ultimaPosicion ||

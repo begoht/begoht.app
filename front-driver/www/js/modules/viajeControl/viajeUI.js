@@ -1,4 +1,4 @@
-import { borrarRuta } from "../map.js?v=20260606-recenter-map";
+import { borrarRuta } from "../map.js?v=20260610-route-consume";
 import {
     getEstadoViaje,
     getViajeEnCursoId,

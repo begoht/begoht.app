@@ -5,6 +5,8 @@ export let destinoMarkerRef = { current: null };
 
 const DEFAULT_MAP_CENTER = [18.2343, -72.5354];
 const DEFAULT_MAP_ZOOM = 14;
+const ROUTE_CONSUME_MAX_DISTANCE_METERS = 120;
+const ROUTE_CONSUME_FINISH_METERS = 12;
 
 let rutaActualCoords = [];
 let routeRequestId = 0;
@@ -25,6 +27,46 @@ export function initMap() {
 
 export function getRutaActualCoords() {
   return rutaActualCoords.map((coord) => ({ ...coord }));
+}
+
+export function consumirRutaDesde(posicion, {
+  maxDistanceMeters = ROUTE_CONSUME_MAX_DISTANCE_METERS,
+  finishDistanceMeters = ROUTE_CONSUME_FINISH_METERS
+} = {}) {
+  if (!map || !rutaLayerRef.current || rutaActualCoords.length < 2) {
+    return false;
+  }
+
+  if (typeof rutaLayerRef.current.setLatLngs !== "function") {
+    return false;
+  }
+
+  const punto = normalizarCoord(posicion);
+  if (!punto) return false;
+
+  const snap = proyectarEnRuta(punto, rutaActualCoords, maxDistanceMeters);
+  if (!snap) return false;
+
+  const destino = rutaActualCoords[rutaActualCoords.length - 1];
+  if (distanciaMetros(snap.latLng, destino) <= finishDistanceMeters) {
+    rutaActualCoords = [];
+    rutaLayerRef.current.setLatLngs([]);
+    return true;
+  }
+
+  const coordsRestantes = compactarCoords([
+    snap.latLng,
+    ...rutaActualCoords.slice(snap.segmentIndex + 1)
+  ]);
+
+  if (coordsRestantes.length < 2) return false;
+
+  rutaActualCoords = coordsRestantes;
+  rutaLayerRef.current.setLatLngs(
+    coordsRestantes.map((coord) => [coord.lat, coord.lng])
+  );
+
+  return true;
 }
 
 export function borrarRuta() {
@@ -220,10 +262,95 @@ async function fetchRutaReal(origen, destino) {
 
 function normalizarCoords(coords = []) {
   return coords
-    .map((coord) => {
-      const lat = Number(coord?.lat ?? coord?.[0]);
-      const lng = Number(coord?.lng ?? coord?.[1]);
-      return Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : null;
-    })
+    .map(normalizarCoord)
     .filter(Boolean);
+}
+
+function normalizarCoord(coord) {
+  const lat = Number(coord?.lat ?? coord?.[0]);
+  const lng = Number(coord?.lng ?? coord?.[1]);
+  return Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : null;
+}
+
+function proyectarEnRuta(punto, coords, maxDistanceMeters) {
+  const rawPoint = map.latLngToLayerPoint(punto);
+  let mejor = null;
+
+  for (let i = 0; i < coords.length - 1; i++) {
+    const inicio = normalizarCoord(coords[i]);
+    const fin = normalizarCoord(coords[i + 1]);
+    if (!inicio || !fin) continue;
+
+    const pointInicio = map.latLngToLayerPoint(inicio);
+    const pointFin = map.latLngToLayerPoint(fin);
+    const proyectado = proyectarPuntoEnSegmento(rawPoint, pointInicio, pointFin);
+    const pixelDistance = rawPoint.distanceTo(proyectado);
+
+    if (!mejor || pixelDistance < mejor.pixelDistance) {
+      const latLng = map.layerPointToLatLng(proyectado);
+      const latLngNormalizado = { lat: latLng.lat, lng: latLng.lng };
+
+      mejor = {
+        latLng: latLngNormalizado,
+        segmentIndex: i,
+        pixelDistance,
+        distanceMeters: distanciaMetros(punto, latLngNormalizado)
+      };
+    }
+  }
+
+  if (!mejor || mejor.distanceMeters > maxDistanceMeters) {
+    return null;
+  }
+
+  return mejor;
+}
+
+function proyectarPuntoEnSegmento(point, inicio, fin) {
+  const dx = fin.x - inicio.x;
+  const dy = fin.y - inicio.y;
+  const lengthSq = dx * dx + dy * dy;
+
+  if (!lengthSq) return inicio;
+
+  const t = Math.max(
+    0,
+    Math.min(1, ((point.x - inicio.x) * dx + (point.y - inicio.y) * dy) / lengthSq)
+  );
+
+  return L.point(inicio.x + t * dx, inicio.y + t * dy);
+}
+
+function compactarCoords(coords = []) {
+  const compactadas = [];
+
+  coords.forEach((coord) => {
+    const normalizada = normalizarCoord(coord);
+    if (!normalizada) return;
+
+    const anterior = compactadas[compactadas.length - 1];
+    if (anterior && distanciaMetros(anterior, normalizada) < 0.5) return;
+
+    compactadas.push(normalizada);
+  });
+
+  return compactadas;
+}
+
+function distanciaMetros(a, b) {
+  const inicio = normalizarCoord(a);
+  const fin = normalizarCoord(b);
+  if (!inicio || !fin) return Infinity;
+
+  const earth = 6371000;
+  const toRad = (value) => value * Math.PI / 180;
+  const dLat = toRad(fin.lat - inicio.lat);
+  const dLng = toRad(fin.lng - inicio.lng);
+  const lat1 = toRad(inicio.lat);
+  const lat2 = toRad(fin.lat);
+  const h =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+
+  return 2 * earth * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
 }

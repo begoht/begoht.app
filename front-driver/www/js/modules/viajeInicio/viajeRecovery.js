@@ -5,9 +5,9 @@ import {
     setViajeReservadoId,
     viajesActivos 
 } from "../viajeControl/viajeEstado.js";
-import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260608-offer-net-cash";
-import { getUltimaPosicion } from "../gps.js?v=20260608-gps-accept";
-import { redibujarRutaRecovery } from "./viajeInicioUI.js?v=20260606-recenter-map";
+import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260610-route-consume";
+import { getUltimaPosicion } from "../gps.js?v=20260610-route-consume";
+import { redibujarRutaRecovery } from "./viajeInicioUI.js?v=20260610-route-consume";
 let ultimoSyncProcesado = null;
 let ultimoSyncTs = 0;
 export function initViajeRecovery(socket) {

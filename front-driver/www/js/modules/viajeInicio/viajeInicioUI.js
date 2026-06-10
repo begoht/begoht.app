@@ -1,6 +1,6 @@
-import { borrarRuta, dibujarRutaPremium } from "../map.js?v=20260606-recenter-map";
+import { borrarRuta, dibujarRutaPremium } from "../map.js?v=20260610-route-consume";
 import { setViajeEnCurso, setEstadoViaje,viajesActivos,setViajeReservadoId} from "../viajeControl/viajeEstado.js";
-import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260608-offer-net-cash";
+import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260610-route-consume";
 import { llegadaTimeout } from "./viajeInicioEstado.js";
 
 export const limpiarInterfazViaje = (detenerSimulacionETA) => {

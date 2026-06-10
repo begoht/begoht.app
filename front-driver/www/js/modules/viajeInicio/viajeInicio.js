@@ -3,12 +3,12 @@ import {
     getViajeEnCursoId, setViajeEnCurso, 
     viajesActivos 
 } from "../viajeControl/viajeEstado.js"; 
-import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260608-offer-net-cash";
-import { getUltimaPosicion } from "../gps.js?v=20260608-gps-accept";
-import { dibujarRutaPremium } from "../map.js?v=20260606-recenter-map";
+import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260610-route-consume";
+import { getUltimaPosicion } from "../gps.js?v=20260610-route-consume";
+import { dibujarRutaPremium } from "../map.js?v=20260610-route-consume";
 import { UI_REFS, llegadaTimeout } from "./viajeInicioEstado.js";
-import { limpiarInterfazViaje, redibujarRutaRecovery } from "./viajeInicioUI.js?v=20260606-recenter-map";
-import { initViajeRecovery } from "./viajeRecovery.js?v=20260608-offer-net-cash";
+import { limpiarInterfazViaje, redibujarRutaRecovery } from "./viajeInicioUI.js?v=20260610-route-consume";
+import { initViajeRecovery } from "./viajeRecovery.js?v=20260610-route-consume";
 
 export function initViajeInicio(socket, detenerSimulacionETA) {
     if (!socket) return console.error("Socket no disponible en ViajeInicio");

@@ -1,6 +1,6 @@
 import { ofertaState, setLastDecision, getViajeId, CONFIG } from "./oferta.state.js";
 import { UI, notificar, resetBotonAceptar } from "./oferta.ui.js?v=20260608-offer-net-cash";
-import { getUltimaPosicion, setUltimaPosicion } from "../gps.js?v=20260608-gps-accept";
+import { getUltimaPosicion, setUltimaPosicion } from "../gps.js?v=20260610-route-consume";
 import { limpiarOferta } from "./oferta.render.js?v=20260608-offer-net-cash";
 import { getDriverAvailability, isDriverOnline } from "../driver.status.js?v=20260608-gps-accept";
 
