@@ -1,3 +1,0 @@
-[dotenv@17.2.3] injecting env (34) from .env -- tip: ⚙️  load multiple .env files with { path: ['.env.local', '.env'] }
-🚀 Redis conectado (Main)
-{"event":"cleanup_done","runId":"nonearby750_20260606082851","deletedUsers":975,"deletedWallets":0,"deletedTrips":50,"redisDeleted":7125}

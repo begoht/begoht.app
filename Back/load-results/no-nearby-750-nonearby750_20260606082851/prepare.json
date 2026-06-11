@@ -1,2 +1,0 @@
-[dotenv@17.2.3] injecting env (34) from .env -- tip: ⚙️  override existing env vars with { override: true }
-{"event":"fixtures_created","runId":"nonearby750_20260606082851","drivers":825,"passengers":150,"outFile":"/tmp/bego-load-no-nearby-nonearby750_20260606082851/fixtures.json"}
