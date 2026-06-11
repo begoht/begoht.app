@@ -1,0 +1,2 @@
+[dotenv@17.2.3] injecting env (34) from .env -- tip: 👥 sync secrets across teammates & machines: https://dotenvx.com/ops
+{"event":"fixtures_created","runId":"currentplan500_20260606072549","drivers":550,"passengers":100,"outFile":"/tmp/bego-load-current-currentplan500_20260606072549/fixtures.json"}

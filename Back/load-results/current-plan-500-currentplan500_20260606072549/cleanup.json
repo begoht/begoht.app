@@ -1,0 +1,3 @@
+[dotenv@17.2.3] injecting env (34) from .env -- tip: ⚙️  suppress all logs with { quiet: true }
+🚀 Redis conectado (Main)
+{"event":"cleanup_done","runId":"currentplan500_20260606072549","deletedUsers":650,"deletedWallets":0,"deletedTrips":36,"redisDeleted":4766}
