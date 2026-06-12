@@ -1,31 +1,36 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#120715">
-  <meta name="description" content="Inscription officielle BeGO Haiti pour passagers et motoristes. Telechargez l'application Android et creez votre compte en toute securite.">
-  <title>BeGO Haiti - Inscription officielle</title>
+  <meta name="description" content="BeGO - La plataforma premium de transporte en moto y envíos en tiempo real.">
+  <meta property="og:title" content="BeGO - Plataforma Oficial">
+  <meta property="og:description" content="Viajes en moto, envíos y billetera digital para moverse mejor en Haití.">
+  <meta property="og:type" content="website">
+  <title>BeGO - Plataforma Oficial</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
   <style>
     :root {
       color-scheme: dark;
       --bg: #120715;
       --bg-deep: #07090f;
-      --panel: rgba(18, 22, 30, 0.82);
-      --panel-strong: rgba(30, 35, 45, 0.92);
-      --line: rgba(202, 240, 255, 0.16);
+      --panel: rgba(18, 22, 30, 0.75);
+      --panel-strong: rgba(26, 31, 44, 0.9);
+      --line: rgba(202, 240, 255, 0.12);
       --text: #f8fbff;
       --muted: #b7c3d4;
       --soft: #7f8ea3;
       --cyan: #12f7ff;
-      --green: #00ff88;
       --orange: #ff8b1a;
-      --rose: #ff3b7d;
-      --shadow-cyan: 0 0 18px rgba(18, 247, 255, 0.32);
-      --shadow-panel: 0 24px 72px rgba(0, 0, 0, 0.48);
+      --shadow-cyan: 0 0 25px rgba(18, 247, 255, 0.35);
+      --shadow-orange: 0 0 25px rgba(255, 139, 26, 0.35);
+      --shadow-panel: 0 32px 64px rgba(0, 0, 0, 0.6);
     }
 
     * {
@@ -41,65 +46,65 @@
       scroll-behavior: smooth;
     }
 
+    :focus-visible {
+      outline: 3px solid rgba(18, 247, 255, 0.75);
+      outline-offset: 4px;
+    }
+
     body {
       min-height: 100dvh;
-      font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: "Poppins", system-ui, -apple-system, sans-serif;
       color: var(--text);
       background:
-        linear-gradient(115deg, rgba(18, 247, 255, 0.12) 0%, transparent 26%),
-        linear-gradient(245deg, rgba(255, 139, 26, 0.13) 0%, transparent 30%),
+        linear-gradient(125deg, rgba(18, 247, 255, 0.1) 0%, transparent 35%),
+        linear-gradient(305deg, rgba(255, 139, 26, 0.1) 0%, transparent 40%),
         linear-gradient(180deg, var(--bg) 0%, var(--bg-deep) 100%);
       overflow-x: hidden;
     }
 
+    /* Grid de fondo sutil tipo Portafolio Tech */
     body::before {
       content: "";
       position: fixed;
       inset: 0;
       pointer-events: none;
-      opacity: 0.42;
+      opacity: 0.35;
       background-image:
-        linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
-      background-size: 54px 54px;
-      mask-image: linear-gradient(180deg, #000 0%, transparent 82%);
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: linear-gradient(180deg, #000 15%, transparent 90%);
+      z-index: -1;
     }
 
     .site-shell {
-      width: min(1180px, calc(100% - 32px));
+      width: min(1200px, calc(100% - 40px));
       margin: 0 auto;
     }
 
+    /* HEADER / NAVBAR FLOTANTE */
     .topbar {
-      min-height: 84px;
+      min-height: 90px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 18px;
+      gap: 20px;
       position: relative;
-      z-index: 2;
+      z-index: 100;
     }
 
     .brand {
       display: inline-flex;
       align-items: center;
-      gap: 12px;
+      gap: 6px;
       color: var(--text);
       font-weight: 900;
-      letter-spacing: 0;
+      font-size: 1.8rem;
+      letter-spacing: -1px;
     }
 
-    .brand img {
-      width: 42px;
-      height: 42px;
-      object-fit: cover;
-      border-radius: 8px;
-      background: #ffffff;
-      box-shadow: var(--shadow-cyan);
-    }
-
-    .brand strong {
-      font-size: 1.25rem;
+    .brand:hover {
+      color: var(--text);
     }
 
     .brand span {
@@ -107,146 +112,135 @@
       text-shadow: var(--shadow-cyan);
     }
 
+    .brand .dot {
+      color: var(--orange);
+      text-shadow: var(--shadow-orange);
+    }
+
     .top-actions {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
+      padding: 6px 14px;
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+    }
+
+    .top-link {
+      min-height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 18px;
+      border-radius: 20px;
+      color: var(--muted);
+      font-size: 0.88rem;
+      font-weight: 500;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .top-link:hover, .top-link.active {
+      color: var(--cyan);
+      background: rgba(18, 247, 255, 0.08);
     }
 
     .menu-toggle {
       display: none;
-      min-height: 42px;
+      min-height: 44px;
       align-items: center;
-      justify-content: center;
       gap: 8px;
-      padding: 0 12px;
+      padding: 0 16px;
       border: 1px solid var(--line);
-      border-radius: 8px;
+      border-radius: 20px;
       color: var(--text);
-      background: rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.05);
       font: inherit;
-      font-size: 0.82rem;
-      font-weight: 800;
+      font-size: 0.85rem;
+      font-weight: 700;
       cursor: pointer;
     }
 
-    .menu-toggle-bars {
-      width: 18px;
-      display: grid;
-      gap: 4px;
+    .menu-toggle i,
+    .cta i,
+    .icon-wrapper i,
+    .footer-col i,
+    .sim-header i,
+    .sim-icon-moto {
+      line-height: 1;
     }
 
-    .menu-toggle-bars span {
-      height: 2px;
-      border-radius: 99px;
-      background: var(--cyan);
-      box-shadow: var(--shadow-cyan);
-    }
-
-    .top-link {
-      min-height: 40px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0 14px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      color: var(--muted);
-      background: rgba(255, 255, 255, 0.04);
-      font-size: 0.82rem;
-      font-weight: 700;
-    }
-
-    .hero {
-      min-height: calc(100dvh - 84px);
-      display: grid;
-      grid-template-columns: minmax(0, 1.02fr) minmax(330px, 0.98fr);
-      align-items: center;
-      gap: clamp(24px, 5vw, 70px);
-      padding: 28px 0 72px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .hero-copy {
-      display: grid;
-      gap: 22px;
-      min-width: 0;
-    }
-
+    /* BADGES & SUBTITLES */
     .kicker {
       width: fit-content;
       display: inline-flex;
       align-items: center;
-      gap: 9px;
-      min-height: 32px;
-      padding: 0 12px;
-      border: 1px solid rgba(18, 247, 255, 0.26);
+      gap: 10px;
+      min-height: 34px;
+      padding: 0 16px;
+      border: 1px solid rgba(18, 247, 255, 0.25);
       border-radius: 999px;
       color: var(--cyan);
-      background: rgba(18, 247, 255, 0.08);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
-      font-size: 0.76rem;
-      font-weight: 800;
+      background: rgba(18, 247, 255, 0.06);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      font-size: 0.78rem;
+      font-weight: 700;
       text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
     .kicker::before {
       content: "";
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: var(--green);
-      box-shadow: 0 0 14px rgba(0, 255, 136, 0.8);
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 12px var(--cyan);
     }
 
-    h1 {
-      max-width: 10ch;
-      font-size: clamp(3rem, 8vw, 6.5rem);
-      line-height: 0.92;
+    .kicker.orange-badge {
+      border-color: rgba(255, 139, 26, 0.3);
+      color: var(--orange);
+      background: rgba(255, 139, 26, 0.06);
+    }
+    .kicker.orange-badge::before {
+      background: var(--orange);
+      box-shadow: 0 0 12px var(--orange);
+    }
+
+    .section-title {
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      line-height: 1.15;
       font-weight: 900;
-      letter-spacing: 0;
-      overflow-wrap: anywhere;
+      letter-spacing: -1px;
     }
 
-    h1 span {
+    .section-title span {
       color: var(--cyan);
-      text-shadow:
-        0 0 12px rgba(18, 247, 255, 0.45),
-        0 0 32px rgba(18, 247, 255, 0.26);
+      text-shadow: var(--shadow-cyan);
     }
 
-    .hero-copy p {
-      max-width: 58ch;
-      color: var(--muted);
-      font-size: clamp(1rem, 2vw, 1.18rem);
-      line-height: 1.65;
-    }
-
-    .primary-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 4px;
-    }
-
+    /* BOTONES PREMIUM (ESTILO 3D / GLOW) */
     .cta {
-      min-height: 54px;
+      min-height: 56px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      padding: 0 18px;
+      gap: 12px;
+      padding: 0 28px;
       border: 2px solid var(--cyan);
-      border-radius: 8px;
+      border-radius: 12px;
       color: var(--bg-deep);
       background: var(--cyan);
       box-shadow: var(--shadow-cyan);
       font-size: 0.95rem;
-      font-weight: 900;
+      font-weight: 700;
       position: relative;
       overflow: hidden;
-      isolation: isolate;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      z-index: 1;
     }
 
     .cta::before {
@@ -254,13 +248,14 @@
       position: absolute;
       inset: 0;
       width: 0;
-      background: var(--bg);
-      transition: width 0.22s ease;
+      background: var(--bg-deep);
+      transition: width 0.3s ease;
       z-index: -1;
     }
 
     .cta:hover {
       color: var(--cyan);
+      transform: translateY(-2px);
     }
 
     .cta:hover::before {
@@ -268,485 +263,689 @@
     }
 
     .cta.secondary {
-      color: var(--cyan);
+      color: var(--orange);
       background: transparent;
+      border-color: var(--orange);
+      box-shadow: none;
     }
-
-    .cta.secondary::before {
-      background: var(--cyan);
-    }
-
     .cta.secondary:hover {
       color: var(--bg-deep);
+      box-shadow: var(--shadow-orange);
+    }
+    .cta.secondary::before {
+      background: var(--orange);
     }
 
-    .trust-row {
+    /* HERO SECTION */
+    .hero {
+      min-height: calc(100dvh - 90px);
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-      max-width: 620px;
-      margin-top: 6px;
-    }
-
-    .trust-row div {
-      min-height: 78px;
-      padding: 13px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.045);
-    }
-
-    .trust-row strong,
-    .trust-row span {
-      display: block;
-    }
-
-    .trust-row strong {
-      color: var(--text);
-      font-size: 1rem;
-    }
-
-    .trust-row span {
-      margin-top: 4px;
-      color: var(--soft);
-      font-size: 0.78rem;
-      line-height: 1.35;
-    }
-
-    .signup-panel {
-      display: grid;
-      gap: 16px;
-      min-width: 0;
-      padding: clamp(18px, 3vw, 28px);
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.035)),
-        var(--panel);
-      box-shadow: var(--shadow-panel);
-      backdrop-filter: blur(22px);
-    }
-
-    .panel-head {
-      display: grid;
-      gap: 8px;
-    }
-
-    .panel-head h2 {
-      font-size: clamp(1.55rem, 3vw, 2.25rem);
-      line-height: 1.08;
-      letter-spacing: 0;
-    }
-
-    .panel-head p {
-      color: var(--muted);
-      line-height: 1.55;
-      font-size: 0.94rem;
-    }
-
-    .signup-options {
-      display: grid;
-      gap: 12px;
-    }
-
-    .signup-card {
-      min-height: 112px;
-      display: grid;
-      grid-template-columns: 54px 1fr auto;
+      grid-template-columns: 1.1fr 0.9fr;
       align-items: center;
-      gap: 14px;
-      padding: 15px;
-      border: 1px solid rgba(18, 247, 255, 0.16);
-      border-radius: 8px;
-      color: var(--text);
-      background:
-        linear-gradient(90deg, rgba(18, 247, 255, 0.09), rgba(255, 255, 255, 0.025)),
-        var(--panel-strong);
-      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+      gap: clamp(30px, 6vw, 80px);
+      padding: 40px 0 90px;
     }
 
-    .signup-card:hover {
-      transform: translateY(-2px);
-      border-color: rgba(18, 247, 255, 0.5);
-      box-shadow: 0 14px 30px rgba(18, 247, 255, 0.1);
+    .hero-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
     }
 
-    .signup-card.driver {
-      border-color: rgba(255, 139, 26, 0.22);
-      background:
-        linear-gradient(90deg, rgba(255, 139, 26, 0.12), rgba(255, 255, 255, 0.025)),
-        var(--panel-strong);
-    }
-
-    .signup-card.driver:hover {
-      border-color: rgba(255, 139, 26, 0.55);
-      box-shadow: 0 14px 30px rgba(255, 139, 26, 0.11);
-    }
-
-    .icon-box {
-      width: 54px;
-      height: 54px;
-      display: grid;
-      place-items: center;
-      border: 1px solid rgba(18, 247, 255, 0.28);
-      border-radius: 8px;
-      background: rgba(18, 247, 255, 0.11);
-    }
-
-    .icon-box img {
-      width: 32px;
-      height: 32px;
-      object-fit: contain;
-    }
-
-    .signup-card.driver .icon-box {
-      border-color: rgba(255, 139, 26, 0.32);
-      background: rgba(255, 139, 26, 0.12);
-    }
-
-    .signup-card strong,
-    .signup-card span {
-      display: block;
-    }
-
-    .signup-card strong {
-      font-size: 1rem;
-      line-height: 1.1;
-    }
-
-    .signup-card span {
-      margin-top: 5px;
-      color: var(--muted);
-      font-size: 0.82rem;
-      line-height: 1.38;
-    }
-
-    .arrow {
-      width: 34px;
-      height: 34px;
-      display: grid;
-      place-items: center;
-      border-radius: 8px;
-      color: var(--cyan);
-      background: rgba(18, 247, 255, 0.08);
+    .hero h1 {
+      font-size: clamp(3.2rem, 7vw, 4.8rem);
+      line-height: 1.05;
       font-weight: 900;
+      letter-spacing: -2px;
     }
 
-    .signup-card.driver .arrow {
-      color: var(--orange);
-      background: rgba(255, 139, 26, 0.1);
-    }
-
-    .download-zone {
-      display: grid;
-      gap: 10px;
-      padding-top: 4px;
-    }
-
-    .zone-title {
-      color: var(--soft);
-      font-size: 0.78rem;
+    .dynamic-caption {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: clamp(1.3rem, 3vw, 2rem);
       font-weight: 800;
-      text-transform: uppercase;
     }
 
-    .download-links,
-    .social-links {
+    .dynamic-caption .word {
+      color: var(--cyan);
+      text-shadow: var(--shadow-cyan);
+      transition: opacity 0.3s ease;
+    }
+
+    .hero-copy > p {
+      max-width: 54ch;
+      color: var(--muted);
+      font-size: clamp(1.05rem, 2vw, 1.2rem);
+      line-height: 1.65;
+    }
+
+    .btn-group {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 16px;
+      margin-top: 12px;
     }
 
-    .pill {
-      min-height: 40px;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 0 12px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      color: var(--text);
-      background: rgba(255, 255, 255, 0.05);
-      font-size: 0.78rem;
-      font-weight: 800;
+    .micro-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      color: var(--soft);
+      font-size: 0.86rem;
     }
 
-    .pill.download-passenger {
-      color: var(--bg-deep);
-      background: var(--green);
-      border-color: rgba(0, 255, 136, 0.5);
-      box-shadow: 0 0 18px rgba(0, 255, 136, 0.18);
-    }
-
-    .pill.download-driver {
-      color: #1a0b00;
-      background: var(--orange);
-      border-color: rgba(255, 139, 26, 0.52);
-      box-shadow: 0 0 18px rgba(255, 139, 26, 0.18);
-    }
-
-    .notice {
-      padding: 12px;
-      border: 1px solid rgba(18, 247, 255, 0.15);
-      border-radius: 8px;
+    .micro-links a {
       color: var(--muted);
-      background: rgba(255, 255, 255, 0.045);
+      border-bottom: 1px solid rgba(18, 247, 255, 0.32);
+      transition: color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .micro-links a:hover {
+      color: var(--cyan);
+      border-color: var(--cyan);
+    }
+
+    /* CONTENEDOR DE LA APP / MOCKUP GLASSMORPHISM */
+    .hero-display {
+      display: grid;
+      place-items: center;
+      position: relative;
+    }
+
+    .mockup-container {
+      position: relative;
+      width: 100%;
+      max-width: 360px;
+      aspect-ratio: 9 / 18;
+      border-radius: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: linear-gradient(145deg, rgba(18, 247, 255, 0.08), rgba(255, 139, 26, 0.03));
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow-cyan), inset 0 2px 10px rgba(255,255,255,0.1);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* SIMULADOR DE APP EN VIVO INTERNO */
+    .app-screen-sim {
+      width: 100%;
+      height: 100%;
+      border-radius: 28px;
+      background: #090b11;
+      border: 1px solid rgba(255,255,255,0.05);
+      overflow: hidden;
+      position: relative;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .sim-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      color: var(--soft);
+    }
+
+    .sim-map {
+      flex-grow: 1;
+      margin: 15px 0;
+      border-radius: 16px;
+      background: radial-gradient(circle at center, #161b26 20%, #0d111a 80%);
+      border: 1px solid var(--line);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Radar/Pulse effect */
+    .sim-pulse {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 60px;
+      height: 60px;
+      border: 1px solid var(--cyan);
+      border-radius: 50%;
+      animation: pulse 2.5s infinite ease-out;
+    }
+
+    .sim-icon-moto {
+      position: absolute;
+      top: 45%;
+      left: 48%;
+      color: var(--cyan);
+      font-size: 1.5rem;
+      text-shadow: var(--shadow-cyan);
+    }
+
+    .sim-card {
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--line);
       font-size: 0.8rem;
+    }
+
+    /* GLASS SECTIONS */
+    .glass-section {
+      padding: 100px 0;
+      position: relative;
+    }
+
+    .glass-panel {
+      padding: clamp(30px, 6vw, 60px);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01)),
+        var(--panel);
+      box-shadow: var(--shadow-panel);
+      backdrop-filter: blur(30px);
+    }
+
+    /* SECCIÓN ABOUT / MÉTRICAS DE MOTOR INTEGRADO */
+    .about-split {
+      display: grid;
+      grid-template-columns: 1.20fr 0.80fr;
+      gap: 50px;
+      align-items: center;
+    }
+
+    .tech-badges {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .tech-box {
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.02);
+      transition: all 0.3s ease;
+    }
+
+    .tech-box:hover {
+      transform: translateY(-4px);
+      border-color: rgba(18, 247, 255, 0.3);
+      background: rgba(18, 247, 255, 0.03);
+    }
+
+    .tech-box i {
+      font-size: 2rem;
+      color: var(--cyan);
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .tech-box h4 {
+      font-size: 1.05rem;
+      margin-bottom: 6px;
+      overflow-wrap: anywhere;
+    }
+
+    .tech-box p {
+      font-size: 0.85rem;
+      color: var(--soft);
       line-height: 1.5;
     }
 
-    .footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 18px;
-      padding: 0 0 28px;
-      color: var(--soft);
-      font-size: 0.78rem;
+    /* SERVICIOS DEL APP */
+    .services-showcase {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      margin-top: 50px;
+    }
+
+    .service-card {
+      padding: 40px 30px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: var(--panel-strong);
       position: relative;
-      z-index: 1;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .footer a {
+    .service-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--cyan), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .service-card:hover {
+      transform: translateY(-10px);
+      border-color: rgba(18, 247, 255, 0.4);
+      box-shadow: 0 20px 40px rgba(18, 247, 255, 0.1);
+    }
+
+    .service-card:hover::before {
+      opacity: 1;
+    }
+
+    .icon-wrapper {
+      width: 70px;
+      height: 70px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(18, 247, 255, 0.25);
+      border-radius: 16px;
+      background: rgba(18, 247, 255, 0.08);
       color: var(--cyan);
-      font-weight: 800;
+      font-size: 2.2rem;
+      margin-bottom: 24px;
+      text-shadow: var(--shadow-cyan);
     }
 
-    .footer-links {
+    .service-card.orange-theme .icon-wrapper {
+      border-color: rgba(255, 139, 26, 0.25);
+      background: rgba(255, 139, 26, 0.08);
+      color: var(--orange);
+      text-shadow: var(--shadow-orange);
+    }
+
+    .service-card h3 {
+      font-size: 1.4rem;
+      margin-bottom: 14px;
+    }
+
+    .service-card p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .download-panel {
+      margin-top: 34px;
+      padding: clamp(22px, 4vw, 34px);
+      border: 1px solid rgba(255, 139, 26, 0.22);
+      border-radius: 20px;
+      background:
+        linear-gradient(90deg, rgba(255, 139, 26, 0.08), rgba(18, 247, 255, 0.04)),
+        var(--panel);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .download-panel p {
+      color: var(--muted);
+      line-height: 1.6;
+      margin-top: 8px;
+    }
+
+    .download-actions {
       display: flex;
       flex-wrap: wrap;
+      gap: 12px;
       justify-content: flex-end;
-      gap: 10px;
     }
 
-    @media (max-width: 900px) {
-      .site-shell {
-        width: min(100% - 24px, 680px);
-      }
-
-      .hero {
-        min-height: auto;
-        grid-template-columns: 1fr;
-        padding-top: 18px;
-      }
-
-      h1 {
-        max-width: 12ch;
-      }
+    /* ENGINE PERFORMANCE (B2B ARCHITECTURE HIGHLIGHT) */
+    .engine-section {
+      margin-top: 40px;
+      padding: 40px;
+      border-radius: 20px;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.02), rgba(18, 247, 255, 0.02));
+      border: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 30px;
     }
 
-    @media (max-width: 560px) {
+    .engine-status {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .pulse-dot {
+      width: 12px;
+      height: 12px;
+      background: #00ff88;
+      border-radius: 50%;
+      box-shadow: 0 0 15px #00ff88;
+    }
+
+    /* FOOTER PREMIUM */
+    .site-footer {
+      border-top: 1px solid var(--line);
+      background: #07090f;
+      padding: 60px 0 40px;
+      margin-top: 80px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.5fr repeat(2, 1fr);
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+
+    .footer-desc p {
+      color: var(--soft);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-top: 15px;
+      max-width: 32ch;
+    }
+
+    .footer-col h5 {
+      font-size: 1.1rem;
+      margin-bottom: 20px;
+      color: var(--text);
+    }
+
+    .footer-col a {
+      display: block;
+      color: var(--soft);
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+      transition: color 0.3s ease;
+    }
+
+    .footer-col a:hover {
+      color: var(--cyan);
+    }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 30px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      color: var(--soft);
+      font-size: 0.85rem;
+    }
+
+    /* ANIMACIONES */
+    @keyframes pulse {
+      0% { width: 40px; height: 40px; opacity: 1; }
+      100% { width: 180px; height: 180px; opacity: 0; }
+    }
+
+    /* RESPONSIVE DESIGN */
+    @media (max-width: 992px) {
+      .hero { grid-template-columns: 1fr; text-align: center; justify-items: center; }
+      .hero-copy { align-items: center; }
+      .btn-group { justify-content: center; }
+      .micro-links { justify-content: center; }
+      .about-split { grid-template-columns: 1fr; }
+      .engine-section { flex-direction: column; text-align: center; }
+      .download-panel { flex-direction: column; text-align: center; }
+      .download-actions { justify-content: center; }
+    }
+
+    @media (max-width: 768px) {
       .site-shell {
-        width: min(calc(100% - 24px), 366px);
-        margin-left: 12px;
-        margin-right: auto;
+        width: min(100% - 28px, 680px);
       }
 
       .topbar {
-        min-height: 72px;
+        min-height: 76px;
       }
 
-      .menu-toggle {
-        display: inline-flex;
-      }
-
+      .menu-toggle { display: inline-flex; }
       .top-actions {
-        position: fixed;
-        top: 72px;
-        left: 12px;
-        right: 12px;
-        z-index: 20;
-        display: none;
-        grid-template-columns: 1fr;
-        padding: 10px;
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background:
-          linear-gradient(180deg, rgba(18, 22, 30, 0.98), rgba(7, 9, 15, 0.98));
-        box-shadow: var(--shadow-panel);
-      }
-
-      .top-actions.is-open {
-        display: grid;
-      }
-
-      .top-link {
-        width: 100%;
-        min-height: 46px;
-        justify-content: flex-start;
-      }
-
-      .hero {
-        padding-bottom: 38px;
-        gap: 18px;
-      }
-
-      h1 {
-        max-width: 100%;
-        font-size: clamp(2.35rem, 12vw, 3.35rem);
-        line-height: 0.96;
-      }
-
-      .hero-copy p {
-        max-width: 100%;
-        font-size: 0.96rem;
-      }
-
-      .trust-row {
-        grid-template-columns: 1fr;
-      }
-
-      .signup-panel {
-        padding: 16px;
-      }
-
-      .signup-card {
-        grid-template-columns: 48px 1fr;
-        min-height: 104px;
-      }
-
-      .icon-box {
-        width: 48px;
-        height: 48px;
-      }
-
-      .arrow {
-        display: none;
-      }
-
-      .primary-row,
-      .download-links,
-      .social-links,
-      .footer {
+        position: absolute;
+        top: 76px;
+        left: 0;
+        right: 0;
         flex-direction: column;
+        background: var(--panel-strong);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 25px;
+        backdrop-filter: blur(25px);
+        display: none;
       }
+      .top-actions.is-open { display: flex; }
+      .top-link { width: 100%; min-height: 46px; }
+      .hero { min-height: auto; padding: 28px 0 58px; }
+      .hero h1 { font-size: clamp(2.55rem, 11vw, 3.6rem); letter-spacing: -1px; }
+      .dynamic-caption { flex-direction: column; gap: 2px; }
+      .mockup-container { max-width: 300px; border-radius: 34px; }
+      .glass-section { padding: 58px 0; }
+      .services-showcase { grid-template-columns: 1fr; }
+      .tech-badges { grid-template-columns: 1fr; }
+      .engine-section { padding: 26px; }
+      .cta { width: 100%; min-height: 54px; padding: 0 18px; }
+      .footer-grid { grid-template-columns: 1fr; gap: 30px; }
+      .footer-bottom { flex-direction: column; gap: 15px; text-align: center; }
+    }
 
-      .footer-links {
-        justify-content: flex-start;
-      }
-
-      .cta,
-      .pill {
-        width: 100%;
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
       }
     }
   </style>
 </head>
 <body>
-  <header class="topbar site-shell" aria-label="BeGO Haiti">
-    <a class="brand" href="/" aria-label="BeGO Haiti">
-      <img src="/assets/logo_primcial.png" alt="">
-      <strong>Be<span>GO</span></strong>
+
+  <header class="topbar site-shell" aria-label="BeGO">
+    <a href="#home" class="brand" aria-label="Inicio BeGO">
+      <span>Be</span>GO<span class="dot">.</span>
     </a>
 
     <button class="menu-toggle" id="menuToggle" type="button" aria-controls="publicMenu" aria-expanded="false">
-      <span class="menu-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span>
-      Menu
+      <i class='bx bx-grid-alt' style="font-size: 1.3rem; color: var(--cyan);" aria-hidden="true"></i> Menu
     </button>
 
-    <nav class="top-actions" id="publicMenu" aria-label="Navigation publique">
-      <a class="top-link" href="#inscription">Inscription</a>
-      <a class="top-link" href="#telechargement">Telecharger</a>
-      <a class="top-link" href="#droits">Droits</a>
-      <a class="top-link" href="/legal.html">Legal</a>
+    <nav class="top-actions" id="publicMenu" aria-label="Navegación principal">
+      <a class="top-link active" href="#home">Inicio</a>
+      <a class="top-link" href="#about">Tecnología</a>
+      <a class="top-link" href="#services">Servicios</a>
+      <a class="top-link" href="#wallet">Billetera</a>
+      <a class="top-link" href="#soporte">Soporte</a>
     </nav>
   </header>
 
-  <main class="hero site-shell">
-    <section class="hero-copy" aria-label="Inscription BeGO">
-      <p class="kicker">Lancement officiel Jacmel</p>
-      <h1>Inscription <span>BeGO</span></h1>
-      <p>
-        Creez votre compte passager ou motorista depuis le portail officiel BeGO Haiti.
-        Cette page est reservee a l'inscription et au telechargement des applications.
-      </p>
+  <main id="home" class="hero site-shell">
+    <section class="hero-copy">
+      <p class="kicker">Ecosistema de Movilidad Inteligente</p>
+      <h1>El Futuro del<br><span>Transporte Urbano</span></h1>
 
-      <div class="primary-row" aria-label="Actions principales">
-        <a class="cta" href="/registro.html?mode=registro">S'inscrire comme passager</a>
-        <a class="cta secondary" href="/driver/registro.html">Devenir motorista</a>
+      <div class="dynamic-caption">
+        <h3>Servicios en</h3>
+        <h3 class="word" id="changingText">Tiempo Real</h3>
       </div>
 
-      <div class="trust-row" aria-label="Confiance BeGO">
-        <div>
-          <strong>GPS</strong>
-          <span>Position utile pour les courses et la securite.</span>
-        </div>
-        <div>
-          <strong>PIN</strong>
-          <span>Wallet protege pour paiements et commissions.</span>
-        </div>
-        <div>
-          <strong>5 kg</strong>
-          <span>Regles colis claires pour petites livraisons.</span>
-        </div>
+      <p>BeGO conecta de forma inmediata a pasajeros y mensajeros con los conductores de motocicletas mejor calificados. Movilidad rápida, segura y optimizada mediante ingeniería de alta concurrencia.</p>
+
+      <div class="btn-group">
+        <a class="cta" href="/downloads/bego-pasajero.apk?v=20260612-landing" download><i class='bx bxl-android' aria-hidden="true"></i> Descargar pasajero</a>
+        <a class="cta secondary" href="/driver/registro.html"><i class='bx bx-navigation' aria-hidden="true"></i> Conducir en BeGO</a>
+      </div>
+
+      <div class="micro-links" aria-label="Accesos rápidos">
+        <a href="/registro.html?mode=registro">Crear cuenta pasajero</a>
+        <span aria-hidden="true">/</span>
+        <a href="/downloads/bego-motorista.apk?v=20260612-landing" download>Descargar app motorista</a>
       </div>
     </section>
 
-    <section class="signup-panel" id="inscription" aria-label="Choisir une inscription">
-      <div class="panel-head">
-        <p class="kicker">Compte BeGO</p>
-        <h2>Choisissez votre application.</h2>
-        <p>Chaque profil a son propre formulaire securise. Aucun acces de connexion n'est affiche depuis cette page publique.</p>
-      </div>
-
-      <div class="signup-options">
-        <a class="signup-card passenger" href="/registro.html?mode=registro" aria-label="Inscription passager BeGO">
-          <span class="icon-box">
-            <img src="/assets/icons/pasajero-transparent.svg" alt="">
-          </span>
-          <span>
-            <strong>Passager</strong>
-            <span>Creer un compte pour demander une course, payer et suivre votre trajet.</span>
-          </span>
-          <span class="arrow" aria-hidden="true">&rsaquo;</span>
-        </a>
-
-        <a class="signup-card driver" href="/driver/registro.html" aria-label="Inscription motorista BeGO">
-          <span class="icon-box">
-            <img src="/assets/icons/moto-transparent.svg" alt="">
-          </span>
-          <span>
-            <strong>Motorista</strong>
-            <span>Enregistrer votre profil, votre moto et preparer votre wallet professionnel.</span>
-          </span>
-          <span class="arrow" aria-hidden="true">&rsaquo;</span>
-        </a>
-      </div>
-
-      <div class="download-zone" id="telechargement">
-        <p class="zone-title">Applications Android</p>
-        <div class="download-links">
-          <a class="pill download-passenger" href="/downloads/bego-pasajero.apk?v=20260609-public-signup" download>Telecharger passager</a>
-          <a class="pill download-driver" href="/downloads/bego-motorista.apk?v=20260609-public-signup" download>Telecharger motorista</a>
+    <section class="hero-display">
+      <div class="mockup-container">
+        <div class="app-screen-sim">
+          <div class="sim-header">
+            <span><i class='bx bx-signal-5'></i> BeGO Live</span>
+            <span id="clock">12:00</span>
+          </div>
+          <div class="sim-map">
+            <div class="sim-pulse"></div>
+            <i class='bx bx-cycling sim-icon-moto'></i>
+          </div>
+          <div class="sim-card">
+            <div style="display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 4px;">
+              <span>Viaje Encontrado</span>
+              <span style="color: var(--cyan);">En ruta</span>
+            </div>
+            <p style="color: var(--soft); font-size: 0.7rem;">Conexión optimizada de baja latencia</p>
+          </div>
         </div>
       </div>
-
-      <div class="download-zone">
-        <p class="zone-title">Reseaux officiels</p>
-        <div class="social-links">
-          <a class="pill" href="https://www.facebook.com/search/top?q=bego%20haiti" target="_blank" rel="noopener">Facebook BeGO Haiti</a>
-          <a class="pill" href="https://www.instagram.com/bego.haiti" target="_blank" rel="noopener">Instagram @bego.haiti</a>
-          <a class="pill" href="https://www.tiktok.com/@bego.ht" target="_blank" rel="noopener">TikTok @bego.ht</a>
-        </div>
-      </div>
-
-      <p class="notice">
-        Pour recuperer un compte existant, utilisez l'application installee ou contactez le support officiel:
-        support@bego.com.ht.
-      </p>
     </section>
   </main>
 
-  <footer class="footer site-shell" id="droits">
-    <span>BeGO Haiti &copy; 2026. Tous droits reserves.</span>
-    <span class="footer-links">
-      <a href="/legal.html">Conditions</a>
-      <a href="/legal.html#confidentialite">Confidentialite</a>
-      <a href="/legal.html#colis">Regles colis</a>
-      <a href="mailto:support@bego.com.ht">Support officiel</a>
-    </span>
+  <section id="about" class="glass-section site-shell">
+    <div class="glass-panel">
+      <div class="about-split">
+        <div>
+          <p class="kicker">Infraestructura Tecnológica</p>
+          <h2 class="section-title">Diseñada para No <span>Detenerse</span></h2>
+          <p style="color: var(--muted); line-height: 1.8; margin: 20px 0 30px;">
+            BeGO no es solo una app de viajes; es un motor síncrono avanzado respaldado por bases de datos de alta velocidad en memoria y colas de asignación asíncronas. Nuestra plataforma garantiza persistencia absoluta, incluso bajo condiciones críticas de red móvil.
+          </p>
+
+          <div class="engine-section">
+            <div class="engine-status">
+              <div class="pulse-dot"></div>
+              <div style="text-align: left;">
+                <h5 style="font-weight: 700;">Algoritmo Back-to-Back (B2B)</h5>
+                <p style="font-size: 0.85rem; color: var(--soft);">Los conductores reservan su siguiente viaje antes de terminar el actual.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tech-badges">
+          <div class="tech-box">
+            <i class='bx bx-bolt-circle'></i>
+            <h4>Asignación &lt; 2s</h4>
+            <p>Emparejamiento inteligente de conductores mediante proximidad geoespacial.</p>
+          </div>
+          <div class="tech-box">
+            <i class='bx bx-sync'></i>
+            <h4>Auto-Recuperación</h4>
+            <p>Reconexión instantánea de estado ante interrupciones de datos.</p>
+          </div>
+          <div class="tech-box">
+            <i class='bx bx-shield-quarter'></i>
+            <h4>Seguridad Cripto</h4>
+            <p>Validación de transacciones y accesos protegida de extremo a extremo.</p>
+          </div>
+          <div class="tech-box">
+            <i class='bx bx-line-chart'></i>
+            <h4>Eficiencia Activa</h4>
+            <p>Minimiza el tiempo muerto de los motores en circulación urbana.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="services" class="glass-section site-shell">
+    <div style="text-align: center; margin-bottom: 20px;">
+      <p class="kicker orange-badge">Módulos Integrados</p>
+      <h2 class="section-title">Servicios de la <span>Aplicación</span></h2>
+    </div>
+
+    <div class="services-showcase">
+      <div class="service-card">
+        <div class="icon-wrapper"><i class='bx bx-user-voice'></i></div>
+        <h3>Moto-Taxi Express</h3>
+        <p>Solicita un viaje seguro en dos ruedas al instante. Filtros automáticos localizan al conductor ideal más cercano a tu ubicación con tarifas transparentes fijadas desde la app.</p>
+      </div>
+
+      <div class="service-card orange-theme">
+        <div class="icon-wrapper"><i class='bx bx-package'></i></div>
+        <h3>Envíos y Mensajería (Colis)</h3>
+        <p>Envía paquetes y documentos con confirmación en tiempo real. Seguimiento activo mediante canales de rastreo dedicados para remitente y destinatario con máxima seguridad.</p>
+      </div>
+
+      <div class="service-card" id="wallet">
+        <div class="icon-wrapper"><i class='bx bx-wallet'></i></div>
+        <h3>BeGO Digital Wallet</h3>
+        <p>Recarga saldo, gestiona tus ganancias y asegura tus fondos. Sistema integrado de transacciones fluidas que elimina la necesidad de dinero en efectivo y permite recargas móviles.</p>
+      </div>
+    </div>
+
+    <div class="download-panel">
+      <div>
+        <p class="kicker orange-badge">Apps Android oficiales</p>
+        <p>Instala BeGO desde los enlaces oficiales para pasajeros y motoristas. Si ya tienes cuenta, abre la app instalada y continúa desde ahí.</p>
+      </div>
+      <div class="download-actions">
+        <a class="cta" href="/downloads/bego-pasajero.apk?v=20260612-landing" download><i class='bx bxl-android' aria-hidden="true"></i> Pasajero</a>
+        <a class="cta secondary" href="/downloads/bego-motorista.apk?v=20260612-landing" download><i class='bx bxl-android' aria-hidden="true"></i> Motorista</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer" id="soporte">
+    <div class="site-shell footer-grid">
+      <div class="footer-desc">
+        <a href="#home" class="brand"><span>Be</span>GO<span class="dot">.</span></a>
+        <p>Redefiniendo el estándar de la micro-movilidad y logística urbana en Haití mediante arquitectura de software premium.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Comunidad</h5>
+        <a href="https://www.instagram.com/bego.haiti" target="_blank" rel="noopener"><i class='bx bxl-instagram' aria-hidden="true"></i> Instagram @bego.haiti</a>
+        <a href="https://www.tiktok.com/@bego.ht" target="_blank" rel="noopener"><i class='bx bxl-tiktok' aria-hidden="true"></i> TikTok @bego.ht</a>
+      </div>
+      <div class="footer-col">
+        <h5>Canales de Soporte</h5>
+        <a href="mailto:support@bego.com.ht"><i class='bx bx-envelope' aria-hidden="true"></i> support@bego.com.ht</a>
+        <a href="/legal.html"><i class='bx bx-file' aria-hidden="true"></i> Términos y Condiciones</a>
+      </div>
+    </div>
+
+    <div class="site-shell footer-bottom">
+      <span>BeGO Haití &copy; 2026. Todos los derechos reservados.</span>
+      <span style="color: var(--soft);">Ingeniería síncrona de alta fidelidad.</span>
+    </div>
   </footer>
+
   <script>
+    // Reloj dinámico interno del simulador
+    function updateClock() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const clockElement = document.getElementById('clock');
+      if(clockElement) clockElement.textContent = `${hours}:${minutes}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Rotación del texto dinámico del Hero (Estilo Portafolio)
+    const words = ["Tiempo Real", "Dos Ruedas", "Alta Velocidad", "BeGO Wallet"];
+    let currentIndex = 0;
+    const changingTextElement = document.getElementById("changingText");
+
+    setInterval(() => {
+      currentIndex = (currentIndex + 1) % words.length;
+      if(changingTextElement) {
+        changingTextElement.style.opacity = 0;
+        setTimeout(() => {
+          changingTextElement.textContent = words[currentIndex];
+          changingTextElement.style.opacity = 1;
+        }, 300);
+      }
+    }, 3000);
+
+    // Toggle del menú móvil
     const menuButton = document.getElementById("menuToggle");
     const publicMenu = document.getElementById("publicMenu");
 
@@ -760,6 +959,8 @@
       link.addEventListener("click", () => {
         publicMenu.classList.remove("is-open");
         menuButton?.setAttribute("aria-expanded", "false");
+        publicMenu.querySelectorAll("a").forEach(l => l.classList.remove("active"));
+        link.classList.add("active");
       });
     });
   </script>
