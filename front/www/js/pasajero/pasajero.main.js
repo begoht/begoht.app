@@ -64,10 +64,12 @@ export function initPasajero(map) {
     if (!window.pasajeroInicializado) {
       initPasajeroSocket();
 
-      socket.off("connect");
-      socket.on("connect", () => {
-        console.log("Socket listo (pasajero)");
-      });
+      if (socket && !socket.__passengerReadyLogBound) {
+        socket.__passengerReadyLogBound = true;
+        socket.on("connect", () => {
+          console.log("Socket listo (pasajero)");
+        });
+      }
 
       window.pasajeroInicializado = true;
     }

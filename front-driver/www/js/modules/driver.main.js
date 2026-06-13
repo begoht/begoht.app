@@ -5,7 +5,7 @@
 // Asegúrate de que estos archivos existan en estas rutas exactas
 import { initSocket } from "./socket.js?v=20260608-gps-accept";
 import { initMap } from "./map.js?v=20260610-route-consume";
-import { initGPS } from "./gps.js?v=20260610-route-consume";
+import { initGPS } from "./gps.js?v=20260613-background-gps";
 import { initOferta } from "./oferta/oferta.index.js?v=20260610-route-consume";
 import { initViajeInicio } from "./viajeInicio/viajeInicio.js?v=20260610-route-consume";
 import { initViajeFinalizar } from "./viajeFinalizar.js?v=20260610-route-consume";

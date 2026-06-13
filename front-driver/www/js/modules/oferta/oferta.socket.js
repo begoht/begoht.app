@@ -5,7 +5,7 @@ import { notificar, reproducirSonido } from "./oferta.ui.js?v=20260608-offer-net
 import { registrarViaje } from "../viajeControl/viajeControl.js?v=20260608-offer-net-cash";
 import { setViajeEnCurso } from "../viajeControl/viajeEstado.js";
 import { dibujarRutaPremium } from "../map.js?v=20260610-route-consume";
-import { getUltimaPosicion } from "../gps.js?v=20260610-route-consume";
+import { getUltimaPosicion } from "../gps.js?v=20260613-background-gps";
 import { isDriverOnline } from "../driver.status.js?v=20260608-gps-accept";
 
 const viajesTomadosProcesados = new Set();

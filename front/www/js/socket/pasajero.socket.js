@@ -44,7 +44,11 @@ const MAPEO_EVENTOS = {
 
 export function initPasajeroSocket() {
   const socket = getSocket();
-  if (!socket || listenersRegistrados) return;
+  if (!socket) return;
+
+  bindForegroundSync(socket);
+
+  if (listenersRegistrados) return;
 
   listenersRegistrados = true;
   console.log("Pasajero Socket: INIT PRO MODULAR");
@@ -84,6 +88,59 @@ export function initPasajeroSocket() {
   });
 
   initPasajeroChat(socket);
+
+  if (socket.connected) {
+    if (viajeState.viajeId) {
+      socket.emit("join-room", `track:${viajeState.viajeId}`);
+    }
+
+    socket.emit("sync-pasajero");
+  }
+}
+
+function bindForegroundSync(socket) {
+  if (!socket || socket.__passengerForegroundSyncBound) return;
+  socket.__passengerForegroundSyncBound = true;
+
+  let lastSyncAt = 0;
+
+  const requestSync = () => {
+    if (document.visibilityState && document.visibilityState !== "visible") return;
+
+    if (!socket.connected) {
+      socket.connect?.();
+      return;
+    }
+
+    const now = Date.now();
+    if (now - lastSyncAt < 1000) return;
+    lastSyncAt = now;
+
+    if (viajeState.viajeId) {
+      socket.emit("join-room", `track:${viajeState.viajeId}`);
+    }
+
+    socket.emit("sync-pasajero");
+  };
+
+  document.addEventListener("visibilitychange", requestSync);
+  window.addEventListener("focus", requestSync);
+  window.addEventListener("online", requestSync);
+
+  const appPlugin = window.Capacitor?.Plugins?.App;
+  if (appPlugin?.addListener) {
+    const bind = (eventName, handler) => {
+      try {
+        const result = appPlugin.addListener(eventName, handler);
+        result?.catch?.(() => {});
+      } catch {}
+    };
+
+    bind("appStateChange", (state) => {
+      if (state?.isActive) requestSync();
+    });
+    bind("resume", requestSync);
+  }
 }
 
 function esEventoDuplicado(eventName, data = {}) {
