@@ -5,7 +5,12 @@ import {
 } from "../viajeControl/viajeEstado.js"; 
 import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260610-route-consume";
 import { getUltimaPosicion } from "../gps.js?v=20260613-background-gps";
-import { dibujarRutaPremium } from "../map.js?v=20260610-route-consume";
+import { dibujarRutaPremium } from "../map.js?v=20260613-trip-guards";
+import {
+    ARRIVAL_MAX_DISTANCE_METERS,
+    validarCercaniaViaje,
+    notificarGuardia
+} from "../tripGuards.js?v=20260613-trip-guards";
 import { UI_REFS, llegadaTimeout } from "./viajeInicioEstado.js";
 import { limpiarInterfazViaje, redibujarRutaRecovery } from "./viajeInicioUI.js?v=20260610-route-consume";
 import { initViajeRecovery } from "./viajeRecovery.js?v=20260610-route-consume";
@@ -97,7 +102,7 @@ export function initViajeInicio(socket, detenerSimulacionETA) {
     // ---------------- LÓGICA DE CLICK ----------------
     if (!UI_REFS.btnIniciar.dataset.boundInicio) {
         UI_REFS.btnIniciar.dataset.boundInicio = "1";
-        UI_REFS.btnIniciar.addEventListener("click", () => {
+        UI_REFS.btnIniciar.addEventListener("click", async () => {
             const estado = getEstadoViaje();
             const viajeIdActual = getViajeEnCursoId();
             if (!estado || !viajeIdActual) return;
@@ -106,7 +111,27 @@ export function initViajeInicio(socket, detenerSimulacionETA) {
             UI_REFS.btnIniciar.disabled = true;
 
             if (estado === "asignado") {
-                socket.emit("motorista-llego", { viajeId: viajeIdActual });
+                const viajeActual = obtenerViajeActual(viajeIdActual);
+                const guard = await validarCercaniaViaje({
+                    viaje: viajeActual,
+                    targetKey: "origen",
+                    maxDistanceMeters: ARRIVAL_MAX_DISTANCE_METERS,
+                    missingTargetMessage: "Impossible de verifier le point de prise en charge.",
+                    farMessage: (distancia, limite) =>
+                        `Tu es encore a ${distancia} du passager. Rapproche-toi a ${limite} pour aviser l'arrivee.`
+                });
+
+                if (!guard.ok) {
+                    UI_REFS.btnIniciar.disabled = false;
+                    return;
+                }
+
+                socket.emit("motorista-llego", {
+                    viajeId: viajeIdActual,
+                    lat: guard.posicion.lat,
+                    lng: guard.posicion.lng,
+                    distanciaMetros: Math.round(guard.distanciaMetros)
+                });
                 return;
             }
             if (estado === "llego") {
@@ -125,7 +150,24 @@ export function initViajeInicio(socket, detenerSimulacionETA) {
         UI_REFS.btnIniciar.disabled = false;
     });
 
+    socket.off("error-operacion", onErrorOperacionViaje);
+    socket.on("error-operacion", onErrorOperacionViaje);
+
     window.addEventListener("beforeunload", () => {
         clearTimeout(llegadaTimeout);
     });
+}
+
+function obtenerViajeActual(viajeId) {
+    return viajesActivos.get(viajeId) || viajesActivos.get(String(viajeId)) || {};
+}
+
+function onErrorOperacionViaje(err = {}) {
+    const code = String(err?.code || "");
+    if (!code.startsWith("DISTANCIA_")) return;
+
+    const btnIniciar = document.getElementById("btnIniciarViaje");
+    if (btnIniciar) btnIniciar.disabled = false;
+
+    notificarGuardia(err.msg || "Rapproche-toi du point indique pour continuer.", "#f59e0b");
 }

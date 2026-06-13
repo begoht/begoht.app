@@ -5,7 +5,11 @@ import {
 } from "./viajeControl/viajeEstado.js";
 
 import { limpiarViajeMain } from "./viajeControl/viajeUI.js?v=20260610-route-consume";
-import { borrarRuta } from "./map.js?v=20260610-route-consume";
+import { borrarRuta } from "./map.js?v=20260613-trip-guards";
+import {
+    FINISH_MAX_DISTANCE_METERS,
+    validarCercaniaViaje
+} from "./tripGuards.js?v=20260613-trip-guards";
 
 const viajesFinalizadosProcesados = new Set();
 const finalizacionesPendientes = new Map();
@@ -60,6 +64,14 @@ export function initViajeFinalizar(socket) {
 }
 
 function onClickFinalizar(e) {
+    procesarClickFinalizar(e).catch((err) => {
+        console.error("Error preparando finalizacion:", err);
+        const btn = document.getElementById("btnFinalizar");
+        if (btn) btn.disabled = false;
+    });
+}
+
+async function procesarClickFinalizar(e) {
     const target = e.target.closest("#btnFinalizar");
     if (!target || target.disabled) return;
 
@@ -80,6 +92,17 @@ function onClickFinalizar(e) {
     const viajeActual = obtenerViajeActual(viajeId);
     const esEnvio = viajeActual.tipo === "envio";
     let codigoEntrega = null;
+
+    const guard = await validarCercaniaViaje({
+        viaje: viajeActual,
+        targetKey: "destino",
+        maxDistanceMeters: FINISH_MAX_DISTANCE_METERS,
+        missingTargetMessage: "Impossible de verifier la destination de cette course.",
+        farMessage: (distancia, limite) =>
+            `Tu es encore a ${distancia} de la destination. Rapproche-toi a ${limite} pour finaliser.`
+    });
+
+    if (!guard.ok) return;
 
     if (esEnvio) {
         codigoEntrega = window.prompt("Code de livraison a 4 chiffres");
@@ -116,6 +139,9 @@ function onClickFinalizar(e) {
     socket.emit("finalizar-viaje", {
         viajeId,
         codigoEntrega,
+        lat: guard.posicion.lat,
+        lng: guard.posicion.lng,
+        distanciaMetros: Math.round(guard.distanciaMetros),
         motoristaId: socket.user?._id || socket.user?.id
     });
 

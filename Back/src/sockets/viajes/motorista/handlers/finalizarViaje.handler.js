@@ -3,12 +3,14 @@ const finalizarViaje = require(
 );
 
 module.exports = (io, socket) => {
-    return async ({ viajeId, codigoEntrega }) => {
+    return async ({ viajeId, codigoEntrega, lat, lng }) => {
         await finalizarViaje({
             io,
             socket,
             viajeId,
             codigoEntrega,
+            lat,
+            lng,
             motoristaId: socket.user._id.toString()
         });
     };

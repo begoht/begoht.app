@@ -4,9 +4,10 @@ import { seenOfertas, ofertaState, CONFIG, getViajeId } from "./oferta.state.js"
 import { notificar, reproducirSonido } from "./oferta.ui.js?v=20260608-offer-net-cash";
 import { registrarViaje } from "../viajeControl/viajeControl.js?v=20260608-offer-net-cash";
 import { setViajeEnCurso } from "../viajeControl/viajeEstado.js";
-import { dibujarRutaPremium } from "../map.js?v=20260610-route-consume";
-import { getUltimaPosicion } from "../gps.js?v=20260613-background-gps";
+import { dibujarRutaPremium } from "../map.js?v=20260613-trip-guards";
+import { getUltimaPosicion, refreshDriverLocation } from "../gps.js?v=20260613-background-gps";
 import { isDriverOnline } from "../driver.status.js?v=20260608-gps-accept";
+import { normalizarPunto, notificarGuardia } from "../tripGuards.js?v=20260613-trip-guards";
 
 const viajesTomadosProcesados = new Set();
 
@@ -63,8 +64,7 @@ export function initSocketEventos(socket) {
     registrarViaje(vId, viaje);
     setViajeEnCurso(vId);
 
-    const pos = getUltimaPosicion();
-    if (pos && viaje.origen) dibujarRutaPremium(pos, viaje.origen);
+    trazarRutaAlPunto(viaje.origen);
 
     limpiarOferta({ resetViaje: false });
 
@@ -103,10 +103,7 @@ export function initSocketEventos(socket) {
     setViajeEnCurso(vId);
     registrarViaje(vId, { ...data, estado: "asignado" });
 
-    const pos = getUltimaPosicion();
-    if (pos && data.origen) {
-        setTimeout(() => dibujarRutaPremium(pos, data.origen), 500);
-    }
+    setTimeout(() => trazarRutaAlPunto(data.origen), 500);
 
     notificar("🚀 ¡Reserva activada!", "#8b5cf6");
     reproducirSonido();
@@ -185,4 +182,27 @@ export function initSocketEventos(socket) {
       notificar("🚫 Este viaje fue tomado", "#ef4444");
     }
   });
+}
+
+async function trazarRutaAlPunto(punto) {
+  const destino = normalizarPunto(punto);
+
+  if (!destino) {
+    notificarGuardia("Impossible de tracer la route: point de depart invalide.", "#f59e0b");
+    return false;
+  }
+
+  let origen = normalizarPunto(getUltimaPosicion());
+
+  if (!origen) {
+    await refreshDriverLocation({ force: true });
+    origen = normalizarPunto(getUltimaPosicion());
+  }
+
+  if (!origen) {
+    notificarGuardia("Active le GPS pour tracer la route.", "#ef4444");
+    return false;
+  }
+
+  return dibujarRutaPremium(origen, destino);
 }

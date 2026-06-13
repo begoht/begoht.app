@@ -178,17 +178,23 @@ function recenterFallback() {
 }
 
 export async function dibujarRutaPremium(origen, destino) {
-  if (!map || !origen || !destino) return;
+  const origenCoord = normalizarCoord(origen);
+  const destinoCoord = normalizarCoord(destino);
+
+  if (!map || !origenCoord || !destinoCoord) {
+    console.warn("Ruta motorista omitida: coordenadas invalidas", { origen, destino });
+    return false;
+  }
 
   borrarRuta();
   const requestId = ++routeRequestId;
 
-  origenMarkerRef.current = L.marker([origen.lat, origen.lng]).addTo(map);
-  destinoMarkerRef.current = L.marker([destino.lat, destino.lng]).addTo(map);
+  origenMarkerRef.current = L.marker([origenCoord.lat, origenCoord.lng]).addTo(map);
+  destinoMarkerRef.current = L.marker([destinoCoord.lat, destinoCoord.lng]).addTo(map);
 
   const fallbackCoords = [
-    [origen.lat, origen.lng],
-    [destino.lat, destino.lng]
+    [origenCoord.lat, origenCoord.lng],
+    [destinoCoord.lat, destinoCoord.lng]
   ];
 
   renderRutaCoords(fallbackCoords, {
@@ -198,7 +204,7 @@ export async function dibujarRutaPremium(origen, destino) {
   });
 
   try {
-    const coords = await fetchRutaReal(origen, destino);
+    const coords = await fetchRutaReal(origenCoord, destinoCoord);
     if (requestId !== routeRequestId || !coords?.length) return;
 
     renderRutaCoords(coords, {
@@ -209,6 +215,8 @@ export async function dibujarRutaPremium(origen, destino) {
   } catch (err) {
     console.warn("Ruta real no disponible, usando fallback:", err?.message || err);
   }
+
+  return true;
 }
 
 function renderRutaCoords(coords, { color, dashArray, fit } = {}) {
@@ -267,8 +275,62 @@ function normalizarCoords(coords = []) {
 }
 
 function normalizarCoord(coord) {
-  const lat = Number(coord?.lat ?? coord?.[0]);
-  const lng = Number(coord?.lng ?? coord?.[1]);
+  if (!coord) return null;
+
+  const candidates = [
+    coord,
+    coord.coords,
+    coord.ubicacion,
+    coord.location,
+    coord.position,
+    coord.geometry?.location
+  ].filter(Boolean);
+
+  for (const candidate of candidates) {
+    if (Array.isArray(candidate)) {
+      const point = normalizarArrayCoord(candidate);
+      if (point) return point;
+    }
+
+    const lat = Number(candidate.lat ?? candidate.latitude);
+    const lng = Number(candidate.lng ?? candidate.lon ?? candidate.longitude);
+
+    if (Number.isFinite(lat) && Number.isFinite(lng)) {
+      return { lat, lng };
+    }
+
+    const coordinates = normalizarCoordinates(candidate.coordinates);
+    if (coordinates) return coordinates;
+  }
+
+  return null;
+}
+
+function normalizarArrayCoord(coord) {
+  if (!Array.isArray(coord) || coord.length < 2) return null;
+
+  const first = Number(coord[0]);
+  const second = Number(coord[1]);
+
+  if (!Number.isFinite(first) || !Number.isFinite(second)) return null;
+
+  if (Math.abs(first) <= 90 && Math.abs(second) <= 180) {
+    return { lat: first, lng: second };
+  }
+
+  if (Math.abs(second) <= 90 && Math.abs(first) <= 180) {
+    return { lat: second, lng: first };
+  }
+
+  return null;
+}
+
+function normalizarCoordinates(coord) {
+  if (!Array.isArray(coord) || coord.length < 2) return null;
+
+  const lng = Number(coord[0]);
+  const lat = Number(coord[1]);
+
   return Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : null;
 }
 

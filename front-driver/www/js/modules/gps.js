@@ -1,4 +1,4 @@
-import { map, getRutaActualCoords, consumirRutaDesde } from "./map.js?v=20260610-route-consume";
+import { map, getRutaActualCoords, consumirRutaDesde } from "./map.js?v=20260613-trip-guards";
 import { isDriverOnline, updateDriverPosition } from "./driver.status.js?v=20260608-gps-accept";
 import { motoIcon } from "./map.icons.js?v=20260603-road-heading-stable";
 import {

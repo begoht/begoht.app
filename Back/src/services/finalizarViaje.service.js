@@ -10,6 +10,10 @@ const { ensurePlatformAccount } = require("./platformAccount.service");
 const { enviarResumenViaje } = require("./email/email.service");
 const { getCommissionRate, calculateCommission } = require("./commission.service");
 const { normalizeLegacyWalletDebt } = require("./driverCommission.service");
+const {
+  FINISH_MAX_DISTANCE_METERS,
+  validarCercaniaMotorista
+} = require("./tripProximity.service");
 const crypto = require("crypto");
 
 const LOCK_TTL = 30000;
@@ -372,7 +376,7 @@ function enviarReciboFinalizacion(viaje, viajeId, total) {
   });
 }
 
-module.exports = async function finalizarViaje({ io, socket, viajeId, motoristaId, codigoEntrega }) {
+module.exports = async function finalizarViaje({ io, socket, viajeId, motoristaId, codigoEntrega, lat, lng }) {
   const lockId = await acquireLock(viajeId);
   if (!lockId) return;
 
@@ -392,6 +396,15 @@ module.exports = async function finalizarViaje({ io, socket, viajeId, motoristaI
     if (!viaje || viaje.finalizacionProcesada || viaje.estado !== "en_curso") {
       throw new Error("El viaje ya fue procesado o no es valido para finalizar");
     }
+
+    await validarCercaniaMotorista({
+      motoristaId,
+      target: viaje.destino,
+      fallbackPosition: { lat, lng },
+      maxDistanceMeters: FINISH_MAX_DISTANCE_METERS,
+      code: "DISTANCIA_DESTINO",
+      message: "Estas lejos del destino. Acercate para finalizar el viaje."
+    });
 
     validarCodigoEntrega(viaje, codigoEntrega);
 
@@ -486,7 +499,13 @@ module.exports = async function finalizarViaje({ io, socket, viajeId, motoristaI
   } catch (err) {
     if (session.inTransaction()) await session.abortTransaction();
     console.error("ERROR CRITICO finalizarViaje:", err.message);
-    socket.emit("error-finalizar", { msg: err.message, viajeId });
+    socket.emit("error-finalizar", {
+      code: err.code,
+      msg: err.message,
+      viajeId,
+      distanciaMetros: err.distanciaMetros,
+      maxDistanceMeters: err.maxDistanceMeters
+    });
   } finally {
     await session.endSession();
     await releaseLock(viajeId, lockId);

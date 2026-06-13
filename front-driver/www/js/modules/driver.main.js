@@ -4,11 +4,11 @@
 
 // Asegúrate de que estos archivos existan en estas rutas exactas
 import { initSocket } from "./socket.js?v=20260608-gps-accept";
-import { initMap } from "./map.js?v=20260610-route-consume";
+import { initMap } from "./map.js?v=20260613-trip-guards";
 import { initGPS } from "./gps.js?v=20260613-background-gps";
-import { initOferta } from "./oferta/oferta.index.js?v=20260610-route-consume";
-import { initViajeInicio } from "./viajeInicio/viajeInicio.js?v=20260610-route-consume";
-import { initViajeFinalizar } from "./viajeFinalizar.js?v=20260610-route-consume";
+import { initOferta } from "./oferta/oferta.index.js?v=20260613-trip-guards";
+import { initViajeInicio } from "./viajeInicio/viajeInicio.js?v=20260613-trip-guards";
+import { initViajeFinalizar } from "./viajeFinalizar.js?v=20260613-trip-guards";
 import { initViajeControl } from "./viajeControl/viajeControl.js?v=20260610-route-consume";
 import { initDriverChat } from "./chat/viajeChat.js?v=20260608-trip-panel-compact";
 import { initDriverStatus } from "./driver.status.js?v=20260608-wallet-pin";
