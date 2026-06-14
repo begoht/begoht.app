@@ -1,6 +1,6 @@
-import { map, getRutaActualCoords, consumirRutaDesde } from "./map.js?v=20260613-trip-guards";
+import { map, getRutaActualCoords, consumirRutaDesde } from "./map.js?v=20260614-mobile-runtime";
 import { isDriverOnline, updateDriverPosition } from "./driver.status.js?v=20260608-gps-accept";
-import { motoIcon } from "./map.icons.js?v=20260603-road-heading-stable";
+import { crearMotoIcon, motoIcon } from "./map.icons.js?v=20260614-mobile-runtime";
 import {
   setMotorcycleMarkerPose
 } from "./map.motion.js?v=20260603-road-heading-stable";
@@ -156,10 +156,11 @@ function bindCapacitorLifecycleRefresh() {
 }
 
 function updateMapPosition({ lat, lng, heading }) {
-  if (!map || document.hidden) return;
+  if (!map || document.hidden || !window.L?.marker) return;
 
   if (!motoristaMarker) {
-    motoristaMarker = L.marker([lat, lng], { icon: motoIcon }).addTo(map);
+    const icon = motoIcon || crearMotoIcon();
+    motoristaMarker = L.marker([lat, lng], icon ? { icon } : {}).addTo(map);
     map.setView([lat, lng], 16);
   }
 

@@ -77,7 +77,7 @@ export function setDriverAvailability(nextOnline, { silent = false } = {}) {
 
   if (!online) {
     Promise.all([
-      import("./oferta/oferta.render.js?v=20260614-prod-hardening"),
+      import("./oferta/oferta.render.js?v=20260614-mobile-runtime"),
       import("./oferta/oferta.queue.js")
     ])
       .then(([{ limpiarOferta }, { limpiarColaOfertas }]) => {

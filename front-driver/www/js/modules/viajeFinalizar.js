@@ -5,7 +5,7 @@ import {
 } from "./viajeControl/viajeEstado.js";
 
 import { limpiarViajeMain } from "./viajeControl/viajeUI.js?v=20260610-route-consume";
-import { borrarRuta } from "./map.js?v=20260613-trip-guards";
+import { borrarRuta } from "./map.js?v=20260614-mobile-runtime";
 import {
     FINISH_MAX_DISTANCE_METERS,
     validarCercaniaViaje

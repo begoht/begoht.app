@@ -1,177 +1,183 @@
-/*************************************************
- * 🚀 DRIVER MAIN - Modular Production
- *************************************************/
-
-// Asegúrate de que estos archivos existan en estas rutas exactas
-import { initSocket } from "./socket.js?v=20260614-prod-hardening";
-import { initMap } from "./map.js?v=20260613-trip-guards";
-import { initGPS } from "./gps.js?v=20260613-background-gps";
-import { initOferta } from "./oferta/oferta.index.js?v=20260614-prod-hardening";
-import { initViajeInicio } from "./viajeInicio/viajeInicio.js?v=20260613-trip-guards";
-import { initViajeFinalizar } from "./viajeFinalizar.js?v=20260613-trip-guards";
+import { initSocket } from "./socket.js?v=20260614-mobile-runtime";
+import { initMap } from "./map.js?v=20260614-mobile-runtime";
+import { initGPS } from "./gps.js?v=20260614-mobile-runtime";
+import { initOferta } from "./oferta/oferta.index.js?v=20260614-mobile-runtime";
+import { initViajeInicio } from "./viajeInicio/viajeInicio.js?v=20260614-mobile-runtime";
+import { initViajeFinalizar } from "./viajeFinalizar.js?v=20260614-mobile-runtime";
 import { initViajeControl } from "./viajeControl/viajeControl.js?v=20260610-route-consume";
 import { initDriverChat } from "./chat/viajeChat.js?v=20260608-trip-panel-compact";
-import { initDriverStatus } from "./driver.status.js?v=20260608-wallet-pin";
+import { initDriverStatus } from "./driver.status.js?v=20260614-mobile-runtime";
 import { initDriverSpa } from "./driver.spa.js?v=20260614-prod-hardening";
 import { iniciarSonidoOfertaLoop } from "./oferta/oferta.ui.js?v=20260608-offer-net-cash";
 import { initLaunchCountdown } from "./launch-countdown.js?v=20260603-launch-gate";
 import {
-    getDriverAccessToken,
-    refreshDriverAccessToken
+  getDriverAccessToken,
+  refreshDriverAccessToken
 } from "../auth/session.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
+  const bootStatus = document.getElementById("driverBootStatus");
+  let revealPromise = null;
 
-    const bootStatus = document.getElementById("driverBootStatus");
+  const setBootStatus = (message) => {
+    if (bootStatus) bootStatus.textContent = message;
+  };
 
-    function setBootStatus(message) {
-        if (bootStatus) bootStatus.textContent = message;
-    }
+  const mostrarAppConectada = () => {
+    if (revealPromise) return revealPromise;
 
-    let revealPromise = null;
-
-    function mostrarAppConectada() {
-        if (revealPromise) return revealPromise;
-
-        revealPromise = (async () => {
-            document.documentElement.classList.remove("driver-booting");
-            document.documentElement.classList.add("driver-ready");
-        })();
-
-        return revealPromise;
-    }
-
-    /*************************************************
-     * 🔐 VALIDACIÓN TOKEN
-     *************************************************/
-    let token = getDriverAccessToken();
-
-    // Limpiar comillas si existen (común en algunos almacenamientos)
-    if (token?.startsWith('"') && token.endsWith('"')) {
-        token = token.slice(1, -1);
-    }
-
-    if (!token) {
-        try {
-            token = await refreshDriverAccessToken();
-        } catch {
-            token = null;
-        }
-    }
-
-    if (!token) {
-        console.error("❌ No se encontró token de acceso");
-        alert("⚠️ Sesión expirada o no iniciada. Iniciá sesión nuevamente.");
-        window.location.replace("login.html");
-        return;
-    }
-
-    /*************************************************
-     * 🌐 SERVER URL (Consistente con conexion.js)
-     *************************************************/
-    // Usamos la función global definida en conexion.js para evitar conflictos
-    const serverUrl = typeof window.getServerUrl === "function" 
-        ? window.getServerUrl() 
-        : window.location.origin;
-
-    console.log("🌐 Conectando Socket a:", serverUrl);
-    setBootStatus("Verification du lancement...");
-    await initLaunchCountdown();
-    setBootStatus("Connexion au serveur...");
-
-    /*************************************************
-     * 🔌 SOCKET INICIALIZADO
-     *************************************************/
-    const socket = initSocket(serverUrl, token);
-    initDriverStatus(socket);
-
-    if (socket.connected) {
-        mostrarAppConectada();
-    }
-
-    socket.once("connect", () => {
-        setBootStatus("Connecte.");
-        mostrarAppConectada();
+    revealPromise = Promise.resolve().then(() => {
+      document.documentElement.classList.remove("driver-booting");
+      document.documentElement.classList.add("driver-ready");
     });
 
-    socket.on("connect_error", (err) => {
-        setBootStatus("Connexion indisponible. Nouvelle tentative...");
-        console.error("Error de conexion inicial:", err?.message || err);
-    });
+    return revealPromise;
+  };
 
-    setTimeout(() => {
-        if (socket.connected) {
-            mostrarAppConectada();
-        } else {
-            setBootStatus("La connexion prend du temps. Nouvelle tentative...");
-        }
-    }, 12000);
+  bindGlobalUi();
 
-    /*************************************************
-     * 🎯 UI ELEMENTS
-     *************************************************/
-    const uiElements = {
-        btnIniciar:   document.getElementById("btnIniciarViaje"),
-        btnFinalizar: document.getElementById("btnFinalizar"),
-        btnLlegue:    document.getElementById("btnLlegue"),
-        estadoBox:    document.getElementById("estadoViaje")
-    };
+  let token = getDriverAccessToken();
 
-    /*************************************************
-     * 🔥 INICIALIZAR MÓDULOS
-     *************************************************/
+  if (token?.startsWith('"') && token.endsWith('"')) {
+    token = token.slice(1, -1);
+  }
+
+  if (!token) {
     try {
-        initMap();
-        initGPS(socket);
-        initViajeControl(socket, uiElements);
-        initDriverChat(socket);
-        initOferta(socket);
-        initViajeInicio(socket);
-        initViajeFinalizar(socket);
-        initDriverSpa();
-
-        // Actualizar nombre en la interfaz si existe
-        const driverName = document.getElementById("driverName");
-        // Aquí podrías cargar el nombre desde localStorage si lo guardaste en el login
-        // driverName.innerText = localStorage.getItem("nombre") || "Motorista";
-
-        console.log("✅ Todos los módulos de Motorista inicializados");
-    } catch (error) {
-        console.error("❌ Error inicializando módulos:", error);
+      token = await refreshDriverAccessToken();
+    } catch {
+      token = null;
     }
+  }
 
-    /*************************************************
-     * 📱 SIDEBAR & UI GLOBAL
-     *************************************************/
-    window.toggleMenu = function () {
-        const sidebar = document.getElementById("sidebar");
-        const backdrop = document.getElementById("backdrop");
-        
-        if (sidebar && backdrop) {
-            sidebar.classList.toggle("active");
-            backdrop.classList.toggle("active");
-        }
-    };
-    
-    
-    let audioUnlocked = false;
-    
-    function unlockAudio() {
-        if (audioUnlocked) return;
-        
-        const audio = new Audio();
-        audio.play().catch(() => {});
-        audioUnlocked = true;
-        
-        console.log("🔓 Audio desbloqueado");
-        
-        // 🔥 Si hay panel visible, reproducir sonido ahora
-        const panel = document.getElementById("panelOferta");
-        
-        if (panel && !panel.classList.contains("hidden")) {
-            iniciarSonidoOfertaLoop();
-        }
+  if (!token) {
+    alert("Sesion expirada o no iniciada. Inicia sesion nuevamente.");
+    window.location.replace("login.html");
+    return;
+  }
+
+  const serverUrl = typeof window.getServerUrl === "function"
+    ? window.getServerUrl()
+    : window.location.origin;
+
+  setBootStatus("Verification du lancement...");
+  await initLaunchCountdown();
+
+  setBootStatus("Chargement de la connexion...");
+  const socketIoReady = await Promise.resolve(window.begoSocketIoReady).catch(() => false);
+  const leafletReady = await Promise.resolve(window.begoLeafletReady).catch(() => false);
+
+  if (!leafletReady) {
+    window.begoReportFrontendError?.({
+      level: "warning",
+      type: "driver_leaflet_unavailable",
+      message: "Leaflet no cargo; la app continua sin mapa hasta recargar."
+    });
+  }
+
+  if (!socketIoReady || typeof window.io !== "function") {
+    setBootStatus("Connexion temps reel indisponible. Verifie Internet et relance l'app.");
+    safeInit("driver-pages", initDriverSpa);
+    mostrarAppConectada();
+    return;
+  }
+
+  setBootStatus("Connexion au serveur...");
+
+  let socket = null;
+  try {
+    socket = initSocket(serverUrl, token);
+  } catch (error) {
+    console.error("Socket.IO init error:", error);
+    setBootStatus("Connexion temps reel indisponible. Verifie Internet et relance l'app.");
+    safeInit("driver-pages", initDriverSpa);
+    mostrarAppConectada();
+    return;
+  }
+
+  safeInit("driver-status", () => initDriverStatus(socket));
+
+  if (socket.connected) {
+    mostrarAppConectada();
+  }
+
+  socket.once("connect", () => {
+    setBootStatus("Connecte.");
+    mostrarAppConectada();
+  });
+
+  socket.on("connect_error", (err) => {
+    setBootStatus("Connexion indisponible. Nouvelle tentative...");
+    console.error("Error de conexion inicial:", err?.message || err);
+  });
+
+  setTimeout(() => {
+    if (socket.connected) {
+      mostrarAppConectada();
+    } else {
+      setBootStatus("La connexion prend du temps. Nouvelle tentative...");
     }
-    window.addEventListener("click", unlockAudio, { once: true });
-    window.addEventListener("touchstart", unlockAudio, { once: true });
+  }, 12000);
+
+  const uiElements = {
+    btnIniciar: document.getElementById("btnIniciarViaje"),
+    btnFinalizar: document.getElementById("btnFinalizar"),
+    btnLlegue: document.getElementById("btnLlegue"),
+    estadoBox: document.getElementById("estadoViaje")
+  };
+
+  safeInit("map", initMap);
+  safeInit("gps", () => initGPS(socket));
+  safeInit("trip-control", () => initViajeControl(socket, uiElements));
+  safeInit("chat", () => initDriverChat(socket));
+  safeInit("offers", () => initOferta(socket));
+  safeInit("trip-start", () => initViajeInicio(socket));
+  safeInit("trip-finish", () => initViajeFinalizar(socket));
+  safeInit("driver-pages", initDriverSpa);
+
+  console.log("Modulos de Motorista inicializados");
 });
+
+function safeInit(name, init) {
+  try {
+    init();
+  } catch (error) {
+    console.error(`Error inicializando ${name}:`, error);
+    window.begoReportFrontendError?.({
+      level: "error",
+      type: "driver_module_init_error",
+      message: `${name}: ${error?.message || error}`,
+      stack: error?.stack || ""
+    });
+  }
+}
+
+function bindGlobalUi() {
+  window.toggleMenu = function toggleMenu() {
+    const sidebar = document.getElementById("sidebar");
+    const backdrop = document.getElementById("backdrop");
+
+    if (sidebar && backdrop) {
+      sidebar.classList.toggle("active");
+      backdrop.classList.toggle("active");
+    }
+  };
+
+  let audioUnlocked = false;
+
+  function unlockAudio() {
+    if (audioUnlocked) return;
+
+    const audio = new Audio();
+    audio.play().catch(() => {});
+    audioUnlocked = true;
+
+    const panel = document.getElementById("panelOferta");
+    if (panel && !panel.classList.contains("hidden")) {
+      iniciarSonidoOfertaLoop();
+    }
+  }
+
+  window.addEventListener("click", unlockAudio, { once: true });
+  window.addEventListener("touchstart", unlockAudio, { once: true });
+}

@@ -102,8 +102,8 @@ driverVariables = setGradleNumber(driverVariables, "targetSdkVersion", 36);
 changed = writeIfChanged(files.driverVariables, driverVariables) || changed;
 
 let driverBuild = read(files.driverBuild);
-driverBuild = setGradleNumber(driverBuild, "versionCode", 9);
-driverBuild = setGradleString(driverBuild, "versionName", "1.0.8");
+driverBuild = setGradleNumber(driverBuild, "versionCode", 10);
+driverBuild = setGradleString(driverBuild, "versionName", "1.0.9");
 changed = writeIfChanged(files.driverBuild, driverBuild) || changed;
 
 let passengerBuild = read(files.passengerBuild);

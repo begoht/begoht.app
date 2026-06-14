@@ -1,5 +1,5 @@
 import { viajeState } from "../viaje/viaje.state.js";
-import { motoIcon } from "./map.icons.js?v=20260603-road-heading-stable";
+import { motoIcon } from "./map.icons.js?v=20260614-mobile-runtime";
 import { getRutaActualCoords } from "./map.js?v=20260610-route-consume";
 import {
   setMotorcycleMarkerPose

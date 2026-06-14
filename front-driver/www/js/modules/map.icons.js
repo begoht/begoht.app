@@ -23,10 +23,16 @@ const motoSvg = `
 
 export const transparentMotoIconUrl = svgDataUrl(motoSvg);
 
-export const motoIcon = L.icon({
-  iconUrl: transparentMotoIconUrl,
-  iconSize: [MOTORISTA_SIZE, MOTORISTA_SIZE],
-  iconAnchor: [MOTORISTA_SIZE / 2, MOTORISTA_SIZE / 2],
-  popupAnchor: [0, -18],
-  className: "bego-map-icon bego-map-icon-moto"
-});
+export function crearMotoIcon() {
+  if (!window.L?.icon) return null;
+
+  return L.icon({
+    iconUrl: transparentMotoIconUrl,
+    iconSize: [MOTORISTA_SIZE, MOTORISTA_SIZE],
+    iconAnchor: [MOTORISTA_SIZE / 2, MOTORISTA_SIZE / 2],
+    popupAnchor: [0, -18],
+    className: "bego-map-icon bego-map-icon-moto"
+  });
+}
+
+export const motoIcon = crearMotoIcon();

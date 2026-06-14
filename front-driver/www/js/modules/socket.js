@@ -11,9 +11,14 @@ export function initSocket(serverUrl, token) {
 
   if (socketInstance) return socketInstance;
 
+  if (typeof io !== "function") {
+    throw new Error("Socket.IO no esta cargado en el dispositivo");
+  }
+
   socketInstance = io(serverUrl, {
     auth: { token, role: "motorista" },
-    transports: ["websocket"],
+    transports: ["websocket", "polling"],
+    upgrade: true,
     reconnection: true,
     reconnectionAttempts: Infinity,
     reconnectionDelay: 1000,

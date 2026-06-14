@@ -13,6 +13,14 @@ let routeRequestId = 0;
 let recenterButtonBound = false;
 
 export function initMap() {
+  if (!window.L?.map) {
+    console.warn("Leaflet no disponible: mapa motorista desactivado temporalmente.");
+    return null;
+  }
+
+  const mapElement = document.getElementById("map");
+  if (!mapElement) return null;
+
   map = L.map("map", { zoomControl: false })
     .setView(DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM);
 

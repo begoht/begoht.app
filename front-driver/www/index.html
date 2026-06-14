@@ -11,7 +11,8 @@
     (function () {
       try {
         var token = localStorage.getItem("token");
-        if (!token) {
+        var refreshToken = localStorage.getItem("refreshToken") || localStorage.getItem("BeGO_driver_refreshToken");
+        if (!token && !refreshToken) {
           window.location.replace("login.html");
           return;
         }
@@ -25,8 +26,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="./css/inicio.css?v=20260608-trip-panel-compact" />
 
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <link id="bego-leaflet-css" rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
@@ -239,10 +239,10 @@
   <audio id="sonidoOferta" src="./assets/sounds/bego-offer.wav?v=20260602-bego-offer-persistent" preload="auto"></audio>
 
   <script src="./js/core/production-console.js?v=20260606-console-clean"></script>
-  <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
   <script src="./js/core/conexion.js"></script>
+  <script src="./js/core/native-runtime-loader.js?v=20260614-mobile-runtime"></script>
   <script type="module" src="./js/monitoring/frontend-monitor.js?v=20260607-monitor-suspend"></script>
-  <script type="module" src="js/modules/driver.main.js?v=20260614-prod-hardening"></script>
+  <script type="module" src="js/modules/driver.main.js?v=20260614-mobile-runtime"></script>
   <script src="./js/i18n/fr.visual.js?v=20260601-fr"></script>
 
   <script>

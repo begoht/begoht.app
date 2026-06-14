@@ -6,6 +6,7 @@ let layerGroup = null;
 export function initMiniMapa() {
   const container = document.getElementById("miniMapaOferta");
   if (!container) return;
+  if (!window.L?.map) return;
 
   if (miniMapa) return;
 
@@ -27,6 +28,7 @@ export function initMiniMapa() {
 
 export function renderMiniRuta(origen, destino) {
   if (!miniMapa || !layerGroup) return;
+  if (!window.L?.marker) return;
 
   layerGroup.clearLayers();
 
