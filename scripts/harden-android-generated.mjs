@@ -1,0 +1,114 @@
+import fs from "node:fs";
+import path from "node:path";
+
+const root = path.resolve(import.meta.dirname, "..");
+
+const files = {
+  driverManifest: path.join(root, "front-driver/android/app/src/main/AndroidManifest.xml"),
+  driverBuild: path.join(root, "front-driver/android/app/build.gradle"),
+  driverVariables: path.join(root, "front-driver/android/variables.gradle"),
+  passengerManifest: path.join(root, "front/android/app/src/main/AndroidManifest.xml"),
+  passengerBuild: path.join(root, "front/android/app/build.gradle"),
+};
+
+function read(file) {
+  return fs.readFileSync(file, "utf8");
+}
+
+function writeIfChanged(file, next) {
+  const current = read(file);
+  if (current === next) return false;
+  fs.writeFileSync(file, next);
+  return true;
+}
+
+function removePermission(xml, permissionName) {
+  const pattern = new RegExp(`\\s*<uses-permission\\s+android:name="${escapeRegExp(permissionName)}"\\s*/>`, "g");
+  return xml.replace(pattern, "");
+}
+
+function ensurePermissionRemoval(xml, permissionName) {
+  if (xml.includes(`android:name="${permissionName}" tools:node="remove"`)) return xml;
+
+  const marker = permissionName === "android.permission.ACCESS_BACKGROUND_LOCATION"
+    ? '<uses-permission android:name="android.permission.FOREGROUND_SERVICE"'
+    : '<uses-feature ';
+
+  const line = `    <uses-permission android:name="${permissionName}" tools:node="remove" />\n`;
+  const index = xml.indexOf(marker);
+  if (index === -1) {
+    return xml.replace(/<application/, `${line}\n    <application`);
+  }
+
+  return `${xml.slice(0, index)}${line}${xml.slice(index)}`;
+}
+
+function ensureToolsNamespace(xml) {
+  if (xml.includes("xmlns:tools=")) return xml;
+  return xml.replace(
+    '<manifest xmlns:android="http://schemas.android.com/apk/res/android">',
+    '<manifest xmlns:android="http://schemas.android.com/apk/res/android"\n    xmlns:tools="http://schemas.android.com/tools">'
+  );
+}
+
+function ensureDriverServicePrivate(xml) {
+  const service = `
+
+        <service
+            android:name="com.equimaps.capacitor_background_geolocation.BackgroundGeolocationService"
+            android:exported="false"
+            tools:replace="android:exported" />`;
+
+  if (xml.includes('android:name="com.equimaps.capacitor_background_geolocation.BackgroundGeolocationService"')) {
+    return xml.replace(
+      /<service\s+android:name="com\.equimaps\.capacitor_background_geolocation\.BackgroundGeolocationService"[\s\S]*?\/>/,
+      service.trimStart()
+    );
+  }
+
+  return xml.replace(/\s*<\/application>/, `${service}\n    </application>`);
+}
+
+function setGradleNumber(source, key, value) {
+  return source.replace(new RegExp(`(${key}\\s*=*\\s*)\\d+`), `$1${value}`);
+}
+
+function setGradleString(source, key, value) {
+  return source.replace(new RegExp(`(${key}\\s+)"[^"]+"`), `$1"${value}"`);
+}
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+let changed = false;
+
+let driverManifest = ensureToolsNamespace(read(files.driverManifest));
+driverManifest = removePermission(driverManifest, "android.permission.ACCESS_BACKGROUND_LOCATION");
+driverManifest = removePermission(driverManifest, "android.permission.USE_FINGERPRINT");
+driverManifest = ensurePermissionRemoval(driverManifest, "android.permission.ACCESS_BACKGROUND_LOCATION");
+driverManifest = ensurePermissionRemoval(driverManifest, "android.permission.USE_FINGERPRINT");
+driverManifest = ensureDriverServicePrivate(driverManifest);
+changed = writeIfChanged(files.driverManifest, driverManifest) || changed;
+
+let passengerManifest = ensureToolsNamespace(read(files.passengerManifest));
+passengerManifest = removePermission(passengerManifest, "android.permission.USE_FINGERPRINT");
+passengerManifest = ensurePermissionRemoval(passengerManifest, "android.permission.USE_FINGERPRINT");
+changed = writeIfChanged(files.passengerManifest, passengerManifest) || changed;
+
+let driverVariables = read(files.driverVariables);
+driverVariables = setGradleNumber(driverVariables, "compileSdkVersion", 36);
+driverVariables = setGradleNumber(driverVariables, "targetSdkVersion", 36);
+changed = writeIfChanged(files.driverVariables, driverVariables) || changed;
+
+let driverBuild = read(files.driverBuild);
+driverBuild = setGradleNumber(driverBuild, "versionCode", 9);
+driverBuild = setGradleString(driverBuild, "versionName", "1.0.8");
+changed = writeIfChanged(files.driverBuild, driverBuild) || changed;
+
+let passengerBuild = read(files.passengerBuild);
+passengerBuild = setGradleNumber(passengerBuild, "versionCode", 8);
+passengerBuild = setGradleString(passengerBuild, "versionName", "1.0.7");
+changed = writeIfChanged(files.passengerBuild, passengerBuild) || changed;
+
+console.log(changed ? "Android generated project hardened." : "Android generated project already hardened.");
