@@ -224,8 +224,8 @@ function renderPaqueteOferta(viaje) {
   const html = `
     <small>ENVIO DE PAQUETE</small>
     <strong>${Number(viaje.paquete.pesoKg || 0).toFixed(1)} kg</strong>
-    <span>${viaje.paquete.descripcion || "Paquete"}</span>
-    ${viaje.paquete.instrucciones ? `<em>${viaje.paquete.instrucciones}</em>` : ""}
+    <span>${escapeHtml(viaje.paquete.descripcion || "Paquete")}</span>
+    ${viaje.paquete.instrucciones ? `<em>${escapeHtml(viaje.paquete.instrucciones)}</em>` : ""}
   `;
 
   if (existente) {
@@ -238,4 +238,13 @@ function renderPaqueteOferta(viaje) {
   card.className = "oferta-paquete-info";
   card.innerHTML = html;
   body.insertBefore(card, body.querySelector(".rutas-box"));
+}
+
+function escapeHtml(value = "") {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }

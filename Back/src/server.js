@@ -16,6 +16,7 @@ const { createAdapter } = require("@socket.io/redis-adapter");
 const path = require("path");
 const limpiarEstadosHuerfanos = require("./utils/startupCleanup");
 const securityHeaders = require("./middleware/securityHeaders");
+const authAdmin = require("./middleware/authAdmin");
 const { buildCorsOptions } = require("./utils/corsOptions");
 const { getReadiness } = require("./utils/readiness");
 const { recordSocketDisconnect } = require("./services/monitoring/monitoring.service");
@@ -129,7 +130,12 @@ require("./worker/matching.worker");
 // ============================
 // 🔹 MIDDLEWARES
 // ============================
-app.use(express.json());
+app.use(express.json({
+  limit: process.env.JSON_BODY_LIMIT || "1mb",
+  verify: (req, res, buf) => {
+    req.rawBody = Buffer.from(buf || "");
+  },
+}));
 app.use(securityHeaders);
 app.use(cors(buildCorsOptions()));
 /*
@@ -200,7 +206,7 @@ app.get("/driver/*", (req, res) => {
 // 🔹 ROUTES (API)
 // ============================
 
-app.use("/admin/queues", serverAdapter.getRouter());
+app.use("/admin/queues", authAdmin, serverAdapter.getRouter());
 
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/users", require("./routes/users"));

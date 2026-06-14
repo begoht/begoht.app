@@ -15,11 +15,16 @@ const {
 const emailVerification = require("../controllers/emailVerification.controller");
 const phoneVerification = require("../controllers/phoneVerification.controller");
 const {
+  generarAccessToken,
+  generarRefreshToken,
+} = require("../utils/jwt");
+const {
   authLimiter,
   emailOtpLimiter,
   emailOtpVerifyLimiter,
   phoneOtpLimiter,
   phoneOtpVerifyLimiter,
+  refreshLimiter,
   registerLimiter,
 } = require("../middleware/rateLimits");
 
@@ -171,17 +176,16 @@ router.post("/login", authLimiter, async (req, res) => {
       return res.status(401).json({ msg: "Contrasena incorrecta" });
     }
 
-    const token = jwt.sign(
-      {
-        id: user._id,
-        tokenVersion: user.tokenVersion,
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: "30d" }
-    );
+    const accessToken = generarAccessToken(user);
+    const refreshToken = generarRefreshToken(user);
+
+    user.refreshToken = refreshToken;
+    await user.save();
 
     return res.json({
-      token,
+      token: accessToken,
+      accessToken,
+      refreshToken,
       user: {
         id: user._id,
         nombre: user.nombre,
@@ -191,6 +195,57 @@ router.post("/login", authLimiter, async (req, res) => {
   } catch (err) {
     console.error("Driver login error:", err);
     return res.status(500).json({ msg: "Error servidor" });
+  }
+});
+
+router.post("/refresh", refreshLimiter, async (req, res) => {
+  try {
+    const refreshToken = req.body?.refreshToken;
+
+    if (!refreshToken) {
+      return res.status(400).json({ msg: "Refresh token requerido" });
+    }
+
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    const user = await User.findOne({
+      _id: decoded.id,
+      rol: "motorista",
+    });
+
+    if (!user || user.refreshToken !== refreshToken) {
+      return res.status(401).json({ msg: "Sesion invalida" });
+    }
+
+    if (user.saldoBloqueado) {
+      return res.status(403).json({ msg: "Cuenta bloqueada" });
+    }
+
+    if (user.aprobado === false) {
+      return res.status(403).json({ msg: "Cuenta pendiente de aprobacion" });
+    }
+
+    const accessToken = generarAccessToken(user);
+    const nextRefreshToken = generarRefreshToken(user);
+
+    user.refreshToken = nextRefreshToken;
+    await user.save();
+
+    return res.json({
+      token: accessToken,
+      accessToken,
+      refreshToken: nextRefreshToken,
+      user: {
+        id: user._id,
+        nombre: user.nombre,
+        rol: user.rol,
+      },
+    });
+  } catch (err) {
+    const msg = err.name === "TokenExpiredError"
+      ? "Sesion expirada"
+      : "Sesion invalida";
+
+    return res.status(401).json({ msg });
   }
 });
 

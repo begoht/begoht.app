@@ -50,12 +50,21 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error(data.msg || "Error al iniciar sesion");
       }
 
-      if (!data.token) {
+      const accessToken = data.accessToken || data.token;
+
+      if (!accessToken) {
         console.log("Respuesta login:", data);
         throw new Error("El servidor no devolvio token");
       }
 
-      localStorage.setItem("token", data.token);
+      localStorage.setItem("token", accessToken);
+      if (data.refreshToken) {
+        localStorage.setItem("refreshToken", data.refreshToken);
+        localStorage.setItem("BeGO_driver_refreshToken", data.refreshToken);
+      }
+      if (data.user) {
+        localStorage.setItem("motorista", JSON.stringify(data.user));
+      }
       localStorage.setItem("rol", "motorista");
 
       console.log("Login exitoso");

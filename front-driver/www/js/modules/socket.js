@@ -1,6 +1,11 @@
 import { isDriverOnline, updateDriverPosition } from "./driver.status.js?v=20260608-gps-accept";
+import {
+  clearDriverSession,
+  refreshDriverAccessToken,
+} from "../auth/session.js";
 
 let socketInstance = null;
+let refreshInFlight = false;
 
 export function initSocket(serverUrl, token) {
 
@@ -28,15 +33,25 @@ export function initSocket(serverUrl, token) {
     enviarPosicionActual();
   });
   
-  socketInstance.on("connect_error", (err) => {
+  socketInstance.on("connect_error", async (err) => {
     console.error("❌ Error conexión:", err.message);
-    
-    if (err.message?.includes("jwt") || err.message?.includes("token")) {
-      localStorage.clear();
+
+    if (!isAuthError(err)) return;
+    if (refreshInFlight) return;
+
+    refreshInFlight = true;
+    try {
+      const nextToken = await refreshDriverAccessToken(serverUrl);
+      socketInstance.auth = { token: nextToken, role: "motorista" };
+      socketInstance.connect();
+    } catch {
+      clearDriverSession();
       window.location.href = "login.html";
+    } finally {
+      refreshInFlight = false;
     }
   });
-  
+
   function enviarPosicionActual() {
     if (!navigator.geolocation) return;
     
@@ -86,4 +101,15 @@ export function initSocket(serverUrl, token) {
   window.socket = socketInstance;
 
   return socketInstance;
+}
+
+function isAuthError(err) {
+  const message = String(err?.message || "").toLowerCase();
+  return (
+    message.includes("jwt") ||
+    message.includes("token") ||
+    message.includes("expired") ||
+    message.includes("outdated") ||
+    message.includes("invalid")
+  );
 }

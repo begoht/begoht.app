@@ -345,6 +345,27 @@ router.post("/wallet/callback/:firma", async (req, res) => {
   }
 });
 
+function endpointViajeDesactivado(message) {
+  return (req, res) => {
+    res.status(410).json({
+      ok: false,
+      error: message,
+    });
+  };
+}
+
+router.post(
+  "/finalizar/:id",
+  auth,
+  endpointViajeDesactivado("Endpoint desactivado. Finaliza el viaje desde el flujo seguro del motorista.")
+);
+
+router.post(
+  "/cancelar/:id",
+  auth,
+  endpointViajeDesactivado("Endpoint desactivado. Cancela el viaje desde el flujo seguro autorizado.")
+);
+
 router.post("/finalizar/:id", auth, async (req, res) => {
   const session = await mongoose.startSession();
   session.startTransaction();

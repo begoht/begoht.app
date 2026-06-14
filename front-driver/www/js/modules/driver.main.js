@@ -3,18 +3,22 @@
  *************************************************/
 
 // Asegúrate de que estos archivos existan en estas rutas exactas
-import { initSocket } from "./socket.js?v=20260608-gps-accept";
+import { initSocket } from "./socket.js?v=20260614-prod-hardening";
 import { initMap } from "./map.js?v=20260613-trip-guards";
 import { initGPS } from "./gps.js?v=20260613-background-gps";
-import { initOferta } from "./oferta/oferta.index.js?v=20260613-trip-guards";
+import { initOferta } from "./oferta/oferta.index.js?v=20260614-prod-hardening";
 import { initViajeInicio } from "./viajeInicio/viajeInicio.js?v=20260613-trip-guards";
 import { initViajeFinalizar } from "./viajeFinalizar.js?v=20260613-trip-guards";
 import { initViajeControl } from "./viajeControl/viajeControl.js?v=20260610-route-consume";
 import { initDriverChat } from "./chat/viajeChat.js?v=20260608-trip-panel-compact";
 import { initDriverStatus } from "./driver.status.js?v=20260608-wallet-pin";
-import { initDriverSpa } from "./driver.spa.js?v=20260608-wallet-pin";
+import { initDriverSpa } from "./driver.spa.js?v=20260614-prod-hardening";
 import { iniciarSonidoOfertaLoop } from "./oferta/oferta.ui.js?v=20260608-offer-net-cash";
 import { initLaunchCountdown } from "./launch-countdown.js?v=20260603-launch-gate";
+import {
+    getDriverAccessToken,
+    refreshDriverAccessToken
+} from "../auth/session.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
 
@@ -40,11 +44,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     /*************************************************
      * 🔐 VALIDACIÓN TOKEN
      *************************************************/
-    let token = localStorage.getItem("token");
+    let token = getDriverAccessToken();
 
     // Limpiar comillas si existen (común en algunos almacenamientos)
     if (token?.startsWith('"') && token.endsWith('"')) {
         token = token.slice(1, -1);
+    }
+
+    if (!token) {
+        try {
+            token = await refreshDriverAccessToken();
+        } catch {
+            token = null;
+        }
     }
 
     if (!token) {

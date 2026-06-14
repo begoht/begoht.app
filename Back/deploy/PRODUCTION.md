@@ -40,6 +40,11 @@ nano .env
 
 Put the real production secrets in `.env`.
 
+Required security values before enabling payments:
+
+- `PAYMENT_WEBHOOK_SECRET`: HMAC secret for `/api/webhook/pago` signatures.
+- `CORS_ORIGINS`: exact public/native origins, not `*`, in production.
+
 ## Start with PM2
 
 ```bash

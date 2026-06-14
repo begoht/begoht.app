@@ -51,7 +51,10 @@ function agregarMensaje(texto, tipo, nombre = "") {
   div.className = "mensaje " + tipo;
 
   if (tipo === "soporte") {
-    div.innerHTML = `<strong>${nombre}:</strong> ${texto}`;
+    const strong = document.createElement("strong");
+    strong.textContent = `${nombre}:`;
+    div.appendChild(strong);
+    div.appendChild(document.createTextNode(` ${texto}`));
   } else {
     div.textContent = texto;
   }

@@ -1,5 +1,10 @@
 import { getDriverAvailability, onDriverAvailabilityChange } from "./driver.status.js?v=20260608-wallet-pin";
 import { initDriverSupportChat } from "./support/supportChat.js?v=20260604-live-support";
+import {
+  clearDriverSession,
+  getDriverAccessToken,
+  refreshDriverAccessToken,
+} from "../auth/session.js";
 
 let pageView = null;
 let homeView = null;
@@ -880,9 +885,9 @@ function refrescarPaginaDriver() {
   }
 }
 
-async function fetchJson(path, options = {}) {
+async function fetchJson(path, options = {}, retry = true) {
   const serverUrl = typeof window.getServerUrl === "function" ? window.getServerUrl() : "";
-  const token = localStorage.getItem("token");
+  const token = getDriverAccessToken();
   const res = await fetch(`${serverUrl}${path}`, {
     method: options.method || "GET",
     headers: {
@@ -897,6 +902,17 @@ async function fetchJson(path, options = {}) {
   try {
     data = await res.json();
   } catch {}
+
+  if (res.status === 401 && retry) {
+    try {
+      await refreshDriverAccessToken(serverUrl);
+      return fetchJson(path, options, false);
+    } catch {
+      clearDriverSession();
+      window.location.href = "login.html";
+      throw new Error("Sesion expirada");
+    }
+  }
 
   if (!res.ok) throw new Error(data?.error || data?.msg || `HTTP ${res.status}`);
   return data;
