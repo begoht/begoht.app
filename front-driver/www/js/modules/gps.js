@@ -14,6 +14,7 @@ let webWatchId = null;
 let backgroundWatchId = null;
 let lifecycleBound = false;
 let capacitorLifecycleBound = false;
+let pendingPosition = null;
 
 const FRECUENCIA_MS = 4000;
 const HEARTBEAT_MS = 25000;
@@ -25,7 +26,10 @@ export function initGPS(socket) {
 
   if (socketRef && !socketRef.__driverGpsRefreshBound) {
     socketRef.__driverGpsRefreshBound = true;
-    socketRef.on("connect", () => refreshDriverLocation({ force: true }));
+    socketRef.on("connect", () => {
+      flushPendingPosition({ source: "reconnect" });
+      refreshDriverLocation({ force: true });
+    });
   }
 
   if (!startBackgroundGeolocation()) {
@@ -72,7 +76,7 @@ function startBackgroundGeolocation() {
       backgroundTitle: "BeGO Driver actif",
       requestPermissions: true,
       stale: false,
-      distanceFilter: 10
+      distanceFilter: 5
     },
     (location, error) => {
       if (error) {
@@ -119,7 +123,10 @@ function bindLifecycleRefresh() {
 
   document.addEventListener("visibilitychange", refresh);
   window.addEventListener("focus", () => refreshDriverLocation({ force: true }));
-  window.addEventListener("online", () => refreshDriverLocation({ force: true }));
+  window.addEventListener("online", () => {
+    flushPendingPosition({ source: "online" });
+    refreshDriverLocation({ force: true });
+  });
   bindCapacitorLifecycleRefresh();
 }
 
@@ -185,24 +192,65 @@ function emitPosition({ lat, lng, heading }, { force = false, source = "gps" } =
 
   const tiempoSuficiente = ahora - ultimaEmisionTime > FRECUENCIA_MS;
   const heartbeatNecesario = ahora - ultimaEmisionTime > HEARTBEAT_MS;
+  const shouldEmit = force || (movidoSuficiente && tiempoSuficiente) || heartbeatNecesario;
 
-  if (!isDriverOnline() || !socketRef?.connected) {
+  if (!isDriverOnline()) {
+    pendingPosition = null;
     return;
   }
 
-  if (force || (movidoSuficiente && tiempoSuficiente) || heartbeatNecesario) {
-    ultimaPosicion = { lat, lng };
-    ultimaEmisionTime = ahora;
-    socketRef.emit("motoristas:ubicacion", {
-      lat,
-      lng,
-      heading,
-      heartbeat: !force && !movidoSuficiente,
-      disponible: true,
-      force,
-      source
-    });
+  if (!shouldEmit) {
+    return;
   }
+
+  if (!socketRef?.connected) {
+    queuePendingPosition({ lat, lng, heading }, { force, source });
+    requestSocketReconnect();
+    return;
+  }
+
+  ultimaPosicion = { lat, lng };
+  ultimaEmisionTime = ahora;
+  pendingPosition = null;
+  socketRef.emit("motoristas:ubicacion", {
+    lat,
+    lng,
+    heading,
+    heartbeat: !force && !movidoSuficiente,
+    disponible: true,
+    force,
+    source
+  });
+}
+
+function queuePendingPosition({ lat, lng, heading }, { force = false, source = "gps" } = {}) {
+  pendingPosition = {
+    lat,
+    lng,
+    heading,
+    force,
+    source,
+    queuedAt: Date.now()
+  };
+}
+
+function flushPendingPosition({ source = "reconnect" } = {}) {
+  if (!pendingPosition || !isDriverOnline() || !socketRef?.connected) return;
+
+  const position = pendingPosition;
+  pendingPosition = null;
+  emitPosition(position, {
+    force: true,
+    source: `${source}:${position.source || "gps"}`
+  });
+}
+
+function requestSocketReconnect() {
+  if (!socketRef || socketRef.connected) return;
+
+  try {
+    socketRef.connect?.();
+  } catch {}
 }
 
 function normalizePosition(posicion) {

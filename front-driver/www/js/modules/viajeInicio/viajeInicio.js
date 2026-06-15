@@ -4,7 +4,7 @@ import {
     viajesActivos 
 } from "../viajeControl/viajeEstado.js"; 
 import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260610-route-consume";
-import { getUltimaPosicion } from "../gps.js?v=20260614-mobile-runtime";
+import { getUltimaPosicion } from "../gps.js?v=20260614-background-gps";
 import { dibujarRutaPremium } from "../map.js?v=20260614-mobile-runtime";
 import {
     ARRIVAL_MAX_DISTANCE_METERS,

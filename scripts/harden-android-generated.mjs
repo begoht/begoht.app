@@ -23,8 +23,24 @@ function writeIfChanged(file, next) {
 }
 
 function removePermission(xml, permissionName) {
-  const pattern = new RegExp(`\\s*<uses-permission\\s+android:name="${escapeRegExp(permissionName)}"\\s*/>`, "g");
+  const pattern = new RegExp(
+    `\\s*<uses-permission\\s+android:name="${escapeRegExp(permissionName)}"(?:\\s+tools:node="remove")?\\s*/>`,
+    "g"
+  );
   return xml.replace(pattern, "");
+}
+
+function ensurePermission(xml, permissionName, beforeMarker = "<uses-feature ") {
+  if (xml.includes(`android:name="${permissionName}"`)) return xml;
+
+  const line = `    <uses-permission android:name="${permissionName}" />\n`;
+  const index = xml.indexOf(beforeMarker);
+  if (index === -1) {
+    return xml.replace(/<application/, `${line}\n    <application`);
+  }
+
+  const lineStart = xml.lastIndexOf("\n", index) + 1;
+  return `${xml.slice(0, lineStart)}${line}${xml.slice(lineStart)}`;
 }
 
 function ensurePermissionRemoval(xml, permissionName) {
@@ -40,7 +56,8 @@ function ensurePermissionRemoval(xml, permissionName) {
     return xml.replace(/<application/, `${line}\n    <application`);
   }
 
-  return `${xml.slice(0, index)}${line}${xml.slice(index)}`;
+  const lineStart = xml.lastIndexOf("\n", index) + 1;
+  return `${xml.slice(0, lineStart)}${line}${xml.slice(lineStart)}`;
 }
 
 function ensureToolsNamespace(xml) {
@@ -51,13 +68,18 @@ function ensureToolsNamespace(xml) {
   );
 }
 
+function normalizeManifestSpacing(xml) {
+  return xml.replace(/\n\s*(<uses-(?:permission|feature)\b)/g, "\n    $1");
+}
+
 function ensureDriverServicePrivate(xml) {
   const service = `
 
         <service
             android:name="com.equimaps.capacitor_background_geolocation.BackgroundGeolocationService"
             android:exported="false"
-            tools:replace="android:exported" />`;
+            android:foregroundServiceType="location"
+            tools:replace="android:exported,android:foregroundServiceType" />`;
 
   if (xml.includes('android:name="com.equimaps.capacitor_background_geolocation.BackgroundGeolocationService"')) {
     return xml.replace(
@@ -86,14 +108,20 @@ let changed = false;
 let driverManifest = ensureToolsNamespace(read(files.driverManifest));
 driverManifest = removePermission(driverManifest, "android.permission.ACCESS_BACKGROUND_LOCATION");
 driverManifest = removePermission(driverManifest, "android.permission.USE_FINGERPRINT");
-driverManifest = ensurePermissionRemoval(driverManifest, "android.permission.ACCESS_BACKGROUND_LOCATION");
+driverManifest = ensurePermission(
+  driverManifest,
+  "android.permission.ACCESS_BACKGROUND_LOCATION",
+  '<uses-permission android:name="android.permission.FOREGROUND_SERVICE"'
+);
 driverManifest = ensurePermissionRemoval(driverManifest, "android.permission.USE_FINGERPRINT");
 driverManifest = ensureDriverServicePrivate(driverManifest);
+driverManifest = normalizeManifestSpacing(driverManifest);
 changed = writeIfChanged(files.driverManifest, driverManifest) || changed;
 
 let passengerManifest = ensureToolsNamespace(read(files.passengerManifest));
 passengerManifest = removePermission(passengerManifest, "android.permission.USE_FINGERPRINT");
 passengerManifest = ensurePermissionRemoval(passengerManifest, "android.permission.USE_FINGERPRINT");
+passengerManifest = normalizeManifestSpacing(passengerManifest);
 changed = writeIfChanged(files.passengerManifest, passengerManifest) || changed;
 
 let driverVariables = read(files.driverVariables);
@@ -102,8 +130,8 @@ driverVariables = setGradleNumber(driverVariables, "targetSdkVersion", 36);
 changed = writeIfChanged(files.driverVariables, driverVariables) || changed;
 
 let driverBuild = read(files.driverBuild);
-driverBuild = setGradleNumber(driverBuild, "versionCode", 10);
-driverBuild = setGradleString(driverBuild, "versionName", "1.0.9");
+driverBuild = setGradleNumber(driverBuild, "versionCode", 11);
+driverBuild = setGradleString(driverBuild, "versionName", "1.0.10");
 changed = writeIfChanged(files.driverBuild, driverBuild) || changed;
 
 let passengerBuild = read(files.passengerBuild);

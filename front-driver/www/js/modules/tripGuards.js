@@ -1,4 +1,4 @@
-import { getUltimaPosicion, refreshDriverLocation } from "./gps.js?v=20260614-mobile-runtime";
+import { getUltimaPosicion, refreshDriverLocation } from "./gps.js?v=20260614-background-gps";
 import {
   ARRIVAL_MAX_DISTANCE_METERS,
   FINISH_MAX_DISTANCE_METERS,

@@ -1,6 +1,6 @@
 import { initSocket } from "./socket.js?v=20260614-mobile-runtime";
 import { initMap } from "./map.js?v=20260614-mobile-runtime";
-import { initGPS } from "./gps.js?v=20260614-mobile-runtime";
+import { initGPS } from "./gps.js?v=20260614-background-gps";
 import { initOferta } from "./oferta/oferta.index.js?v=20260614-mobile-runtime";
 import { initViajeInicio } from "./viajeInicio/viajeInicio.js?v=20260614-mobile-runtime";
 import { initViajeFinalizar } from "./viajeFinalizar.js?v=20260614-mobile-runtime";
