@@ -24,24 +24,22 @@ export function renderHero() {
       </section>
 
       <section class="hero-display" aria-label="Vista BeGO en vivo">
-        <div class="phone-frame">
+        <div class="mockup-container">
           <div class="app-screen-sim">
             <div class="sim-header">
               <span><i class="bx bx-signal-5" aria-hidden="true"></i> BeGO Live</span>
               <span id="clock">12:00</span>
             </div>
             <div class="sim-map">
-              <div class="sim-route" aria-hidden="true"></div>
-              <img class="sim-moto" src="./assets/icons/moto-transparent.svg" alt="">
-              <span class="sim-location sim-location-a" aria-hidden="true"></span>
-              <span class="sim-location sim-location-b" aria-hidden="true"></span>
+              <div class="sim-pulse" aria-hidden="true"></div>
+              <i class="bx bx-cycling sim-icon-moto" aria-hidden="true"></i>
             </div>
-            <div class="sim-status">
-              <div>
-                <span>Viaje activo</span>
-                <strong>En ruta</strong>
+            <div class="sim-card">
+              <div class="sim-card-row">
+                <span>Viaje Encontrado</span>
+                <span class="sim-card-state">En ruta</span>
               </div>
-              <i class="bx bx-right-arrow-alt" aria-hidden="true"></i>
+              <p>Conexion optimizada de baja latencia</p>
             </div>
           </div>
         </div>
