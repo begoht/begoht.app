@@ -174,6 +174,18 @@ const ViajeSchema = new mongoose.Schema(
     paBeGOrista: { type: Number, default: 0, min: 0 },
 
     finalizacionProcesada: { type: Boolean, default: false },
+    finalizadoPor: {
+      type: String,
+      enum: ["motorista", "admin", "auto"],
+      default: null,
+    },
+    finalizacionMotivo: { type: String, trim: true, maxlength: 160, default: "" },
+    finalizadoPorAdmin: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+    finalizadoAutomaticamente: { type: Boolean, default: false },
 
     rating: {
       type: RatingViajeSchema,

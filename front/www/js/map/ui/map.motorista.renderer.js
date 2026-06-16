@@ -1,12 +1,17 @@
 import { viajeState } from "../../viaje/viaje.state.js";
-import { motoIcon } from "../map.icons.js?v=20260604-jacmel-gps";
-import { getRutaActualCoords } from "./map.route.renderer.js?v=20260604-jacmel-gps";
+import { motoIcon } from "../map.icons.js?v=20260615-smooth-autofinish";
+import { getRutaActualCoords } from "./map.route.renderer.js?v=20260615-smooth-autofinish";
 import {
   setMotorcycleMarkerPose
-} from "../utils/map.motorcycle.motion.js?v=20260604-jacmel-gps";
+} from "../utils/map.motorcycle.motion.js?v=20260615-smooth-autofinish";
+
+const FOLLOW_PAUSE_MS = 12000;
+let followPausedUntil = 0;
 
 export function renderMotorista(map, motorista) {
   if (!map || !motorista) return;
+
+  bindFollowPause(map);
 
   const { lat, lng, nombre, heading } = motorista;
   if (lat == null || lng == null) return;
@@ -52,12 +57,13 @@ export function renderMotorista(map, motorista) {
 
   const markerPos = viajeState.motoristaMarker?.getLatLng?.() || { lat, lng };
 
-  map.panTo(markerPos, {
-    animate: true,
-    duration: 0.8
-  });
-
-  viajeState.motoristaMarker?.openPopup?.();
+  if (shouldFollowMarker(map, markerPos)) {
+    map.panInside(markerPos, {
+      padding: [72, 72],
+      animate: true,
+      duration: 0.8
+    });
+  }
 }
 
 export function removeMotorista(map) {
@@ -67,4 +73,25 @@ export function removeMotorista(map) {
     map.removeLayer(viajeState.motoristaMarker);
     viajeState.motoristaMarker = null;
   }
+}
+
+function bindFollowPause(map) {
+  if (!map || map._begoFollowPauseBound) return;
+  map._begoFollowPauseBound = true;
+
+  const pause = () => {
+    followPausedUntil = Date.now() + FOLLOW_PAUSE_MS;
+  };
+
+  map.on?.("dragstart", pause);
+  map.on?.("zoomstart", pause);
+}
+
+function shouldFollowMarker(map, markerPos) {
+  if (!map || !markerPos || Date.now() < followPausedUntil) return false;
+
+  const bounds = map.getBounds?.();
+  if (!bounds?.pad) return false;
+
+  return !bounds.pad(-0.25).contains(markerPos);
 }

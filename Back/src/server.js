@@ -669,7 +669,9 @@ mongoose
     // 🔹 Workers después de DB
     if (shouldRunSingletonJobs) {
       const { initMatchingWorker } = require("./worker/matching.worker");
+      const { startAutoFinalizeTrips } = require("./services/autoFinalizeTrips.service");
       initMatchingWorker();
+      startAutoFinalizeTrips({ io });
       console.log("👷 Workers de BullMQ inicializados");
     } else {
       console.log("Workers singleton omitidos en esta instancia PM2");

@@ -33,7 +33,7 @@
           cell("Comision", `<span class="money warn">${money(trip.comision)}</span>`),
           cell("Pago", `<span class="status ${cssToken(trip.estadoPago)}">${formatType(trip.estadoPago || "-")}</span>`),
           cell("Fecha", formatDate(trip.finViajeAt || trip.createdAt)),
-          cell("Accion", reassignAction(trip))
+          cell("Accion", tripAction(trip))
         ]);
       }
 
@@ -47,7 +47,7 @@
         cell("Pago", `<span class="status ${cssToken(trip.estadoPago)}">${formatType(trip.estadoPago || "-")}</span>`),
         cell("Ciudad", escapeHtml(trip.ciudad || "-")),
         cell("Actualizado", formatDate(trip.updatedAt || trip.createdAt)),
-        cell("Accion", reassignAction(trip))
+        cell("Accion", tripAction(trip))
       ]);
     }
 
@@ -132,7 +132,7 @@
         cell("Ciudad", escapeHtml(trip.ciudad || "-")),
         cell("Pago", `<span class="status ${cssToken(trip.metodoPago)}">${formatType(trip.metodoPago)}</span>`),
         cell("Creada", formatDate(trip.reservadoEn || trip.createdAt)),
-        cell("Accion", reassignAction(trip))
+        cell("Accion", tripAction(trip))
       ]);
     }
 
@@ -153,8 +153,17 @@
       ]);
     }
 
-    function reassignAction(trip) {
+    function tripAction(trip) {
+      if (trip.estado === "en_curso") {
+        return `
+          <button class="btn small good" type="button" onclick="finishTrip('${trip._id}')">
+            <i class="fa-solid fa-flag-checkered"></i>Finalizar
+          </button>
+        `;
+      }
+
       if (!["asignado", "llego", "reservado"].includes(trip.estado)) return "-";
+
       return `
         <button class="btn small warn" type="button" onclick="reassignTrip('${trip._id}')">
           <i class="fa-solid fa-rotate"></i>Reasignar

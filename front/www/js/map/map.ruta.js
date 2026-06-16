@@ -15,7 +15,7 @@ import {
   renderRutaReserva,
   renderLineaRecta,
   limpiarRuta
-} from "./ui/map.route.renderer.js?v=20260604-jacmel-gps";
+} from "./ui/map.route.renderer.js?v=20260615-smooth-autofinish";
 
 let ultimaRutaCalculada = 0;
 
@@ -134,8 +134,10 @@ export async function dibujarRuta(
       renderLineaRecta(
         map,
         origen,
-        destino
+        destino,
+        { fit: !rutaInicialDibujada }
       );
+      rutaInicialDibujada = true;
       return;
     }
 
@@ -147,8 +149,10 @@ export async function dibujarRuta(
       renderLineaRecta(
         map,
         origen,
-        destino
+        destino,
+        { fit: !rutaInicialDibujada }
       );
+      rutaInicialDibujada = true;
 
       return;
     }
@@ -184,8 +188,10 @@ export async function dibujarRuta(
     renderLineaRecta(
       map,
       origen,
-      destino
+      destino,
+      { fit: !rutaInicialDibujada }
     );
+    rutaInicialDibujada = true;
   }
 }
 
@@ -263,8 +269,10 @@ export async function dibujarRutaReserva(
       renderLineaRecta(
         map,
         origen,
-        origenPasajero
+        origenPasajero,
+        { fit: !rutaInicialDibujada }
       );
+      rutaInicialDibujada = true;
       return;
     }
 
@@ -276,8 +284,10 @@ export async function dibujarRutaReserva(
       renderLineaRecta(
         map,
         origen,
-        origenPasajero
+        origenPasajero,
+        { fit: !rutaInicialDibujada }
       );
+      rutaInicialDibujada = true;
       return;
     }
 
@@ -290,7 +300,10 @@ export async function dibujarRutaReserva(
     ) || [];
 
     if (coordsActual.length || coordsHaciaPasajero.length) {
-      renderRutaReserva(map, coordsActual, coordsHaciaPasajero);
+      renderRutaReserva(map, coordsActual, coordsHaciaPasajero, {
+        fit: !rutaInicialDibujada
+      });
+      rutaInicialDibujada = true;
       onETA?.({
         actual: tramoActual,
         haciaPasajero: tramoHaciaPasajero
@@ -303,7 +316,10 @@ export async function dibujarRutaReserva(
         ([lng, lat]) => [lat, lng]
       );
 
-    renderRutaReserva(map, coords);
+    renderRutaReserva(map, coords, [], {
+      fit: !rutaInicialDibujada
+    });
+    rutaInicialDibujada = true;
 
   } catch (err) {
 

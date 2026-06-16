@@ -1,8 +1,8 @@
 import { viajeState } from "../../viaje/viaje.state.js";
-import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260604-jacmel-gps";
+import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260615-smooth-autofinish";
 import { mostrarDestinoEnMapa } from "../../map/map.destino.js";
-import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260607-finalized-guard";
-import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260607-finalized-guard";
+import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260615-smooth-autofinish";
+import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260615-smooth-autofinish";
 
 let lastIniciadoViajeId = null;
 

@@ -3,16 +3,16 @@ import { viajeState } from "../viaje/viaje.state.js";
 import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260606-legal-trust";
 import { cerrarBuscandoMotorista } from "../pasajero/pasajero.ui.js";
 import { limpiarViajePasajero } from "../socket/viaje.limpieza.js";
-import { limpiarRutas } from "../map/map.ruta.js?v=20260604-jacmel-gps";
+import { limpiarRutas } from "../map/map.ruta.js?v=20260615-smooth-autofinish";
 import { initDriverMinimize } from "../ui/driver.minimize.js";
-import { resetRutaController } from "../map/map.route.flow.js?v=20260604-jacmel-gps";
+import { resetRutaController } from "../map/map.route.flow.js?v=20260615-smooth-autofinish";
 import { actualizarETA, resetETA } from "../pasajero/pasajero.eta.js";
 import { queuePendingRating, submitViajeRating } from "../rating/rating.api.js?v=20260605-rating-premium";
 import {
   confirmarFinalizacionPendiente,
   guardarFinalizacionPendiente,
   getViajeIdFromPayload
-} from "../viaje/viaje.finalizado.local.js?v=20260607-finalized-guard";
+} from "../viaje/viaje.finalizado.local.js?v=20260615-smooth-autofinish";
 
 /**
  * Guarda la sesión del viaje actual en localStorage de forma segura

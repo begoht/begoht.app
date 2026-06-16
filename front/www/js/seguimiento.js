@@ -11,7 +11,7 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 // ICONO MOTORISTA
 // ===============================
 const motoIcon = L.icon({
-  iconUrl: "/assets/icons/moto-transparent.svg?v=20260604-jacmel-gps",
+  iconUrl: "/assets/icons/moto-transparent.svg?v=20260615-smooth-autofinish",
   iconSize: [44, 44],
   iconAnchor: [22, 22],
   className: "bego-map-icon bego-map-icon-moto",
@@ -29,6 +29,14 @@ const GPS_HEADING_ACCEPT_DEG = 75;
 const GPS_FLIP_GUARD_DEG = 135;
 const HEADING_SMOOTHING = 0.58;
 const MIN_HEADING_MOVE_METERS = 2;
+const FOLLOW_PAUSE_MS = 12000;
+const MOVE_DURATION_MS = 900;
+
+let followPausedUntil = 0;
+
+map.on("dragstart zoomstart", () => {
+  followPausedUntil = Date.now() + FOLLOW_PAUSE_MS;
+});
 
 // ===============================
 // SOCKET.IO
@@ -49,17 +57,60 @@ socket.emit("unirse-viaje", viajeId);
 socket.on("ubicacion-motorista", (data) => {
   const { lat, lng, estado, heading } = data;
 
-  motoristaMarker.setLatLng([lat, lng]);
+  animarMarker(motoristaMarker, [lat, lng]);
   const nextLatLng = { lat, lng };
   const rumbo = seleccionarRumbo(heading, calcularRumbo(lastMotoristaLatLng, nextLatLng));
   aplicarRumbo(motoristaMarker, rumbo.heading, rumbo.source);
   lastMotoristaLatLng = nextLatLng;
-  map.panTo([lat, lng]);
+  if (Date.now() >= followPausedUntil && !map.getBounds().pad(-0.25).contains([lat, lng])) {
+    map.panInside([lat, lng], {
+      padding: [72, 72],
+      animate: true,
+      duration: 0.8
+    });
+  }
 
   if (estado) {
     document.getElementById("estadoViaje").textContent = estado;
   }
 });
+
+function animarMarker(marker, latLng) {
+  if (!marker) return;
+
+  if (marker._begoMoveFrame) {
+    cancelAnimationFrame(marker._begoMoveFrame);
+    marker._begoMoveFrame = null;
+  }
+
+  const inicio = marker.getLatLng();
+  const destino = { lat: Number(latLng[0]), lng: Number(latLng[1]) };
+  const startedAt = performance.now();
+
+  const tick = (now) => {
+    const progress = easeInOutCubic(Math.min(1, (now - startedAt) / MOVE_DURATION_MS));
+    marker.setLatLng([
+      inicio.lat + (destino.lat - inicio.lat) * progress,
+      inicio.lng + (destino.lng - inicio.lng) * progress
+    ]);
+
+    if (progress < 1) {
+      marker._begoMoveFrame = requestAnimationFrame(tick);
+      return;
+    }
+
+    marker.setLatLng([destino.lat, destino.lng]);
+    marker._begoMoveFrame = null;
+  };
+
+  marker._begoMoveFrame = requestAnimationFrame(tick);
+}
+
+function easeInOutCubic(t) {
+  return t < 0.5
+    ? 4 * t * t * t
+    : 1 - ((-2 * t + 2) ** 3) / 2;
+}
 
 function calcularRumbo(from, to) {
   if (!from || !to) return null;

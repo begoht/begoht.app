@@ -1,4 +1,4 @@
-import { resetRutaCache } from "../map.ruta.js?v=20260604-jacmel-gps";
+import { resetRutaCache } from "../map.ruta.js?v=20260615-smooth-autofinish";
 
 let lastEstado = null;
 

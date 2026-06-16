@@ -376,9 +376,29 @@ function enviarReciboFinalizacion(viaje, viajeId, total) {
   });
 }
 
-module.exports = async function finalizarViaje({ io, socket, viajeId, motoristaId, codigoEntrega, lat, lng }) {
+module.exports = async function finalizarViaje({
+  io,
+  socket,
+  viajeId,
+  motoristaId,
+  codigoEntrega,
+  lat,
+  lng,
+  enforceProximity = true,
+  enforceDeliveryCode = true,
+  source = "motorista",
+  motivo = "",
+  adminId = null,
+  emitErrors = true,
+  throwOnError = false
+}) {
   const lockId = await acquireLock(viajeId);
-  if (!lockId) return;
+  if (!lockId) {
+    const lockError = new Error("Finalizacion en proceso. Intenta nuevamente en unos segundos.");
+    lockError.code = "FINALIZACION_EN_PROCESO";
+    if (throwOnError) throw lockError;
+    return { ok: false, error: lockError.message, code: lockError.code };
+  }
 
   const session = await mongoose.startSession();
 
@@ -397,16 +417,20 @@ module.exports = async function finalizarViaje({ io, socket, viajeId, motoristaI
       throw new Error("El viaje ya fue procesado o no es valido para finalizar");
     }
 
-    await validarCercaniaMotorista({
-      motoristaId,
-      target: viaje.destino,
-      fallbackPosition: { lat, lng },
-      maxDistanceMeters: FINISH_MAX_DISTANCE_METERS,
-      code: "DISTANCIA_DESTINO",
-      message: "Estas lejos del destino. Acercate para finalizar el viaje."
-    });
+    if (enforceProximity) {
+      await validarCercaniaMotorista({
+        motoristaId,
+        target: viaje.destino,
+        fallbackPosition: { lat, lng },
+        maxDistanceMeters: FINISH_MAX_DISTANCE_METERS,
+        code: "DISTANCIA_DESTINO",
+        message: "Estas lejos del destino. Acercate para finalizar el viaje."
+      });
+    }
 
-    validarCodigoEntrega(viaje, codigoEntrega);
+    if (enforceDeliveryCode) {
+      validarCodigoEntrega(viaje, codigoEntrega);
+    }
 
     const trayectoriaRedis = await obtenerTrayectoriaReal(viajeId);
     const ultimaPosicion = await obtenerUltimaPosicionMotorista(motoristaId);
@@ -430,6 +454,10 @@ module.exports = async function finalizarViaje({ io, socket, viajeId, motoristaI
       viaje.trayectoriaReal = trayectoriaFinal.puntos;
     }
     viaje.finalizacionProcesada = true;
+    viaje.finalizadoPor = normalizeFinishSource(source);
+    viaje.finalizacionMotivo = String(motivo || defaultFinishReason(source)).slice(0, 160);
+    viaje.finalizadoPorAdmin = adminId || null;
+    viaje.finalizadoAutomaticamente = normalizeFinishSource(source) === "auto";
     viaje.comision = comision;
     viaje.pagoMotorista = neto;
     viaje.paBeGOrista = neto;
@@ -496,18 +524,51 @@ module.exports = async function finalizarViaje({ io, socket, viajeId, motoristaI
     }
 
     await redis.del(`viaje:trayectoria:${viajeId}`, `trayectoria:cooldown:${viajeId}`);
+    return {
+      ok: true,
+      viajeId,
+      estado: "finalizado",
+      finalizadoPor: viaje.finalizadoPor,
+      finalizacionMotivo: viaje.finalizacionMotivo
+    };
   } catch (err) {
     if (session.inTransaction()) await session.abortTransaction();
     console.error("ERROR CRITICO finalizarViaje:", err.message);
-    socket.emit("error-finalizar", {
+    if (emitErrors && socket?.emit) {
+      socket.emit("error-finalizar", {
+        code: err.code,
+        msg: err.message,
+        viajeId,
+        distanciaMetros: err.distanciaMetros,
+        maxDistanceMeters: err.maxDistanceMeters
+      });
+    }
+
+    if (throwOnError) {
+      throw err;
+    }
+
+    return {
+      ok: false,
+      error: err.message,
       code: err.code,
-      msg: err.message,
-      viajeId,
-      distanciaMetros: err.distanciaMetros,
-      maxDistanceMeters: err.maxDistanceMeters
-    });
+      viajeId
+    };
   } finally {
     await session.endSession();
     await releaseLock(viajeId, lockId);
   }
 };
+
+function normalizeFinishSource(source) {
+  if (source === "admin") return "admin";
+  if (source === "auto" || source === "auto_timeout") return "auto";
+  return "motorista";
+}
+
+function defaultFinishReason(source) {
+  const normalized = normalizeFinishSource(source);
+  if (normalized === "admin") return "finalizado_por_admin";
+  if (normalized === "auto") return "auto_una_hora_sin_finalizar";
+  return "finalizado_por_motorista";
+}

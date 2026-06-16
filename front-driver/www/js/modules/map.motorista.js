@@ -1,15 +1,19 @@
 import { viajeState } from "../viaje/viaje.state.js";
-import { motoIcon } from "./map.icons.js?v=20260614-mobile-runtime";
-import { getRutaActualCoords } from "./map.js?v=20260610-route-consume";
+import { motoIcon } from "./map.icons.js?v=20260615-smooth-autofinish";
+import { getRutaActualCoords } from "./map.js?v=20260615-smooth-autofinish";
 import {
   setMotorcycleMarkerPose
-} from "./map.motion.js?v=20260603-road-heading-stable";
+} from "./map.motion.js?v=20260615-smooth-autofinish";
 
 let mapa;
 let followMode = true;
+let followPausedUntil = 0;
+
+const FOLLOW_PAUSE_MS = 12000;
 
 export function setMapa(mapInstance) {
   mapa = mapInstance;
+  bindFollowPause();
 }
 
 export function setFollowMode(value) {
@@ -38,7 +42,7 @@ export function mostrarMotoristaEnMapa(motorista) {
     });
   }
 
-  if (followMode) {
+  if (followMode && Date.now() >= followPausedUntil) {
     const markerPos = viajeState.motoristaMarker?.getLatLng?.() || { lat, lng };
     const centro = mapa.getCenter();
     const lejos =
@@ -46,12 +50,25 @@ export function mostrarMotoristaEnMapa(motorista) {
       Math.abs(centro.lng - markerPos.lng) > 0.002;
 
     if (lejos) {
-      mapa.setView(markerPos, mapa.getZoom(), {
+      mapa.panInside(markerPos, {
+        padding: [72, 72],
         animate: true,
         duration: 0.8
       });
     }
   }
+}
+
+function bindFollowPause() {
+  if (!mapa || mapa._begoDriverFollowPauseBound) return;
+  mapa._begoDriverFollowPauseBound = true;
+
+  const pause = () => {
+    followPausedUntil = Date.now() + FOLLOW_PAUSE_MS;
+  };
+
+  mapa.on?.("dragstart", pause);
+  mapa.on?.("zoomstart", pause);
 }
 
 export function eliminarMotoristaDelMapa() {
@@ -104,8 +121,15 @@ export function mostrarMotoristas(drivers) {
 function animarMovimiento(marker, destino, heading = null) {
   if (!marker) return;
 
-  if (marker._animFrame) {
-    cancelAnimationFrame(marker._animFrame);
+  if (marker._animFrame) cancelAnimationFrame(marker._animFrame);
+
+  if (Date.now() < followPausedUntil) {
+    setMotorcycleMarkerPose(marker, mapa, destino, {
+      routeCoords: getRutaActualCoords(),
+      heading,
+      maxSnapDistanceMeters: 85
+    });
+    return;
   }
 
   const inicio = marker.getLatLng();

@@ -218,7 +218,7 @@ export async function dibujarRutaPremium(origen, destino) {
     renderRutaCoords(coords, {
       color: "#00F5FF",
       dashArray: null,
-      fit: true
+      fit: false
     });
   } catch (err) {
     console.warn("Ruta real no disponible, usando fallback:", err?.message || err);

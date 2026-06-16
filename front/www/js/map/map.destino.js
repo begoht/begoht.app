@@ -2,11 +2,11 @@
 
 import { viajeState } from "../viaje/viaje.state.js";
 
-import { dibujarRuta } from "./map.ruta.js?v=20260604-jacmel-gps";
+import { dibujarRuta } from "./map.ruta.js?v=20260615-smooth-autofinish";
 
 import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260606-legal-trust";
 
-import { destinoIcon } from "./map.icons.js?v=20260604-jacmel-gps";
+import { destinoIcon } from "./map.icons.js?v=20260615-smooth-autofinish";
 
 import { reverseGeocode } from "./services/map.reverse.js";
 

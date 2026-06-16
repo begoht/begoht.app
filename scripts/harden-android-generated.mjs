@@ -130,13 +130,13 @@ driverVariables = setGradleNumber(driverVariables, "targetSdkVersion", 36);
 changed = writeIfChanged(files.driverVariables, driverVariables) || changed;
 
 let driverBuild = read(files.driverBuild);
-driverBuild = setGradleNumber(driverBuild, "versionCode", 11);
-driverBuild = setGradleString(driverBuild, "versionName", "1.0.10");
+driverBuild = setGradleNumber(driverBuild, "versionCode", 12);
+driverBuild = setGradleString(driverBuild, "versionName", "1.0.11");
 changed = writeIfChanged(files.driverBuild, driverBuild) || changed;
 
 let passengerBuild = read(files.passengerBuild);
-passengerBuild = setGradleNumber(passengerBuild, "versionCode", 8);
-passengerBuild = setGradleString(passengerBuild, "versionName", "1.0.7");
+passengerBuild = setGradleNumber(passengerBuild, "versionCode", 9);
+passengerBuild = setGradleString(passengerBuild, "versionName", "1.0.8");
 changed = writeIfChanged(files.passengerBuild, passengerBuild) || changed;
 
 console.log(changed ? "Android generated project hardened." : "Android generated project already hardened.");

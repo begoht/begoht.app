@@ -47,7 +47,8 @@ export function renderRuta(map, coords) {
 export function renderRutaReserva(
   map,
   coordsActual,
-  coordsHaciaPasajero = []
+  coordsHaciaPasajero = [],
+  { fit = false } = {}
 ) {
 
   limpiarRuta(map);
@@ -90,7 +91,7 @@ export function renderRutaReserva(
     ...(coordsHaciaPasajero || [])
   ];
 
-  if (allCoords.length > 1) {
+  if (fit && allCoords.length > 1) {
     try {
       map.fitBounds(L.latLngBounds(allCoords), {
         padding: [80, 80],
@@ -109,7 +110,8 @@ export function renderRutaReserva(
 export function renderLineaRecta(
   map,
   origen,
-  destino
+  destino,
+  { fit = true } = {}
 ) {
 
   limpiarRuta(map);
@@ -128,13 +130,15 @@ export function renderLineaRecta(
     dashArray: "5, 10"
   }).addTo(map);
 
-  try {
-    map.fitBounds(rutaActualLayer.getBounds(), {
-      padding: [70, 70],
-      animate: true,
-      duration: 0.5
-    });
-  } catch {}
+  if (fit) {
+    try {
+      map.fitBounds(rutaActualLayer.getBounds(), {
+        padding: [70, 70],
+        animate: true,
+        duration: 0.5
+      });
+    } catch {}
+  }
 
   return rutaActualLayer;
 }

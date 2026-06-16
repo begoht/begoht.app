@@ -4,8 +4,8 @@ import {
     setViajeEnCurso
 } from "./viajeControl/viajeEstado.js";
 
-import { limpiarViajeMain } from "./viajeControl/viajeUI.js?v=20260610-route-consume";
-import { borrarRuta } from "./map.js?v=20260614-mobile-runtime";
+import { limpiarViajeMain } from "./viajeControl/viajeUI.js?v=20260615-smooth-autofinish";
+import { borrarRuta } from "./map.js?v=20260615-smooth-autofinish";
 import {
     FINISH_MAX_DISTANCE_METERS,
     validarCercaniaViaje

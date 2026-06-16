@@ -4,6 +4,8 @@ const MIN_HEADING_MOVE_METERS = 2;
 const GPS_HEADING_ACCEPT_DEG = 75;
 const GPS_FLIP_GUARD_DEG = 135;
 const HEADING_SMOOTHING = 0.58;
+const DEFAULT_MOVE_DURATION_MS = 900;
+const MAX_ANIMATED_MOVE_METERS = 900;
 
 export function normalizeLatLng(input) {
   if (!input) return null;
@@ -94,19 +96,77 @@ export function resolveMotorcyclePose(map, rawLatLng, {
 export function setMotorcycleMarkerPose(marker, map, rawLatLng, options = {}) {
   if (!marker) return null;
 
+  const previousLatLng = marker.getLatLng?.();
   const pose = resolveMotorcyclePose(map, rawLatLng, {
-    previousLatLng: marker.getLatLng?.(),
+    previousLatLng,
     ...options
   });
 
   if (!pose) return null;
 
-  marker.setLatLng([pose.latLng.lat, pose.latLng.lng]);
+  moveMarker(marker, previousLatLng, pose.latLng, options);
   applyMotorcycleHeading(marker, pose.heading, {
     source: pose.headingSource
   });
 
   return pose;
+}
+
+function moveMarker(marker, fromLatLng, toLatLng, {
+  animate = true,
+  durationMs = DEFAULT_MOVE_DURATION_MS
+} = {}) {
+  const from = normalizeLatLng(fromLatLng);
+  const to = normalizeLatLng(toLatLng);
+  if (!to) return;
+
+  if (marker._begoMoveFrame) {
+    cancelAnimationFrame(marker._begoMoveFrame);
+    marker._begoMoveFrame = null;
+  }
+
+  const moveDistance = from ? distanceMeters(from, to) : Infinity;
+  const shouldAnimate =
+    animate &&
+    from &&
+    !document.hidden &&
+    moveDistance > 1 &&
+    moveDistance <= MAX_ANIMATED_MOVE_METERS &&
+    typeof requestAnimationFrame === "function";
+
+  if (!shouldAnimate) {
+    marker.setLatLng([to.lat, to.lng]);
+    marker._begoMoveTarget = to;
+    return;
+  }
+
+  const startedAt = performance.now();
+  marker._begoMoveTarget = to;
+
+  const tick = (now) => {
+    const elapsed = now - startedAt;
+    const progress = easeInOutCubic(Math.min(1, elapsed / durationMs));
+    const lat = from.lat + (to.lat - from.lat) * progress;
+    const lng = from.lng + (to.lng - from.lng) * progress;
+
+    marker.setLatLng([lat, lng]);
+
+    if (progress < 1) {
+      marker._begoMoveFrame = requestAnimationFrame(tick);
+      return;
+    }
+
+    marker.setLatLng([to.lat, to.lng]);
+    marker._begoMoveFrame = null;
+  };
+
+  marker._begoMoveFrame = requestAnimationFrame(tick);
+}
+
+function easeInOutCubic(t) {
+  return t < 0.5
+    ? 4 * t * t * t
+    : 1 - ((-2 * t + 2) ** 3) / 2;
 }
 
 export function applyMotorcycleHeading(marker, heading, { source = null } = {}) {

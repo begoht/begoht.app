@@ -2,8 +2,8 @@ import { viajeState } from "../../viaje/viaje.state.js";
 import { handleAsignado } from "./asignado.handler.js";
 import { handleIniciado } from "./iniciado.handler.js";
 import { handleLlego } from "./llego.handler.js";
-import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260604-jacmel-gps";
-import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260607-finalized-guard";
+import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260615-smooth-autofinish";
+import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260615-smooth-autofinish";
 
 export const handleEstado = (data) => {
   if (data?.viajeId && viajeFueFinalizado(data.viajeId)) {

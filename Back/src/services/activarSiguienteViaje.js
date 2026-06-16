@@ -106,6 +106,8 @@ const activarSiguienteViaje = async (io, socket, motoristaId) => {
 
         if (socket) {
             socket.emit("iniciar-viaje-siguiente", payload);
+        } else {
+            io.to(`motorista:${motoristaId}`).emit("iniciar-viaje-siguiente", payload);
         }
         
         return siguiente;

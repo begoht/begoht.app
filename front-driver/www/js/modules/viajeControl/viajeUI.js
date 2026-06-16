@@ -1,4 +1,4 @@
-import { borrarRuta } from "../map.js?v=20260614-mobile-runtime";
+import { borrarRuta } from "../map.js?v=20260615-smooth-autofinish";
 import {
     getEstadoViaje,
     getViajeEnCursoId,
@@ -102,7 +102,7 @@ export function limpiarViajeMain(ui = {}) {
     clearTimeout(llegadaRetryTimeout);
     setLlegadaRetryTimeout(null);
 
-    import("../oferta/oferta.render.js?v=20260614-mobile-runtime").then(mod => {
+    import("../oferta/oferta.render.js?v=20260615-smooth-autofinish").then(mod => {
         mod.limpiarOferta();
     }).catch(err => {
         console.warn("No se pudo limpiar oferta:", err);

@@ -1,9 +1,9 @@
-import { map, getRutaActualCoords, consumirRutaDesde } from "./map.js?v=20260614-mobile-runtime";
+import { map, getRutaActualCoords, consumirRutaDesde } from "./map.js?v=20260615-smooth-autofinish";
 import { isDriverOnline, updateDriverPosition } from "./driver.status.js?v=20260608-gps-accept";
-import { crearMotoIcon, motoIcon } from "./map.icons.js?v=20260614-mobile-runtime";
+import { crearMotoIcon, motoIcon } from "./map.icons.js?v=20260615-smooth-autofinish";
 import {
   setMotorcycleMarkerPose
-} from "./map.motion.js?v=20260603-road-heading-stable";
+} from "./map.motion.js?v=20260615-smooth-autofinish";
 
 let ultimaPosicion = null;
 let ultimaLectura = null;

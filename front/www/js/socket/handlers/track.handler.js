@@ -1,10 +1,10 @@
 import { viajeState } from "../../viaje/viaje.state.js";
-import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260604-jacmel-gps";
+import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260615-smooth-autofinish";
 import { mostrarDestinoEnMapa } from "../../map/map.destino.js";
-import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260604-jacmel-gps";
-import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260607-finalized-guard";
+import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260615-smooth-autofinish";
+import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260615-smooth-autofinish";
 import { getMap } from "../../map/map.singleton.js";
-import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260607-finalized-guard";
+import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260615-smooth-autofinish";
 
 let lastEstadoPersistido = null;
 let rutaInicialRenderizada = false;

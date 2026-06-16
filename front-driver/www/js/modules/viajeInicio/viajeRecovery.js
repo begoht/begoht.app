@@ -9,9 +9,9 @@ import {
     persistirViajeEstado,
     limpiarViajePersistido
 } from "../viajeControl/viajeEstado.js";
-import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260610-route-consume";
-import { getUltimaPosicion, refreshDriverLocation } from "../gps.js?v=20260614-background-gps";
-import { redibujarRutaRecovery } from "./viajeInicioUI.js?v=20260610-route-consume";
+import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260615-smooth-autofinish";
+import { getUltimaPosicion, refreshDriverLocation } from "../gps.js?v=20260615-smooth-autofinish";
+import { redibujarRutaRecovery } from "./viajeInicioUI.js?v=20260615-smooth-autofinish";
 
 let ultimoSyncProcesado = null;
 let ultimoSyncTs = 0;

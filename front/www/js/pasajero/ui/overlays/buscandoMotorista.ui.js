@@ -3,7 +3,7 @@ import { getMapaInstance } from "../../../map/state/map.motoristas.state.js";
 import {
   eliminarMotoristaDelMapa,
   mostrarMotoristaEnMapa
-} from "../../../map/map.motorista.js?v=20260604-jacmel-gps";
+} from "../../../map/map.motorista.js?v=20260615-smooth-autofinish";
 import { viajeState } from "../../../viaje/viaje.state.js";
 import { actualizarBotonViaje } from "../boton/botonViaje.ui.js?v=20260606-legal-trust";
 

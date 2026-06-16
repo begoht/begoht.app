@@ -2,7 +2,7 @@ import {
   dibujarRuta,
   dibujarRutaReserva,
   limpiarRutas
-} from "../map.ruta.js?v=20260604-jacmel-gps";
+} from "../map.ruta.js?v=20260615-smooth-autofinish";
 
 import {
   mismaPosicion,

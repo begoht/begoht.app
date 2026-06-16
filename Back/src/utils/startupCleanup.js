@@ -5,8 +5,6 @@ const limpiarEstadosHuerfanos = async () => {
   try {
     console.log("🧹 Iniciando verificación de salud de viajes...");
 
-    const ahora = new Date();
-
     /*************************************************
      * ⏱️ TIEMPOS
      *************************************************/
@@ -14,18 +12,17 @@ const limpiarEstadosHuerfanos = async () => {
     const hace5Min = new Date(Date.now() - 5 * 60 * 1000);
 
     /*************************************************
-     * 🧟 CERRAR VIAJES HUÉRFANOS (2H INACTIVOS)
+     * 🧟 EXPIRAR VIAJES HUERFANOS SIN INICIAR (2H INACTIVOS)
      *************************************************/
     const activosResult = await Viaje.updateMany(
       {
-        estado: { $in: ["asignado", "llego", "en_curso", "reservado"] },
+        estado: { $in: ["asignado", "llego", "reservado"] },
         updatedAt: { $lt: haceDosHoras }
       },
       {
         $set: {
-          estado: "finalizado",
-          finalizadoEn: ahora,
-          notas_sistema: "Cerrado por inactividad prolongada tras reinicio"
+          estado: "expirado",
+          finalizacionMotivo: "expirado_por_inactividad_tras_reinicio"
         }
       }
     );
@@ -52,7 +49,7 @@ const limpiarEstadosHuerfanos = async () => {
     /*************************************************
      * LOGS
      *************************************************/
-    console.log(`🧟 Viajes huérfanos cerrados: ${activosResult.modifiedCount}`);
+    console.log(`🧟 Viajes huerfanos expirados: ${activosResult.modifiedCount}`);
     console.log(`🧹 Redis limpiado en ${redisLimpios} viaje(s)`);
     console.log(`🚀 Sistema listo para recovery limpio`);
 

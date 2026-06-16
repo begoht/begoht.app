@@ -50,6 +50,24 @@
       }
     }
 
+    async function finishTrip(id) {
+      const motivo = prompt("Motivo de finalizacion", "finalizado_por_admin");
+      if (motivo === null) return;
+      if (!confirm("Finalizar este viaje ahora? Se liquidara el pago y se avisara al pasajero y al motorista.")) return;
+
+      try {
+        await api(`/api/admin/viajes/${id}/finalizar`, {
+          method: "POST",
+          body: { motivo }
+        });
+        await loadAll();
+        showToast("Viaje finalizado");
+      } catch (err) {
+        console.error(err);
+        showToast("No se pudo finalizar el viaje");
+      }
+    }
+
     async function executeDelayReassignment() {
       const total = Number(state.delayReassignment?.total || state.delayReassignment?.viajes?.length || 0);
       if (!total) {
@@ -79,6 +97,7 @@ Object.assign(window, {
   toggleAvailability,
   payWithdraw,
   reassignTrip,
+  finishTrip,
   executeDelayReassignment,
   logout,
 });

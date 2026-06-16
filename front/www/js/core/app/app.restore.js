@@ -1,13 +1,13 @@
 import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260606-legal-trust";
-import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260604-jacmel-gps";
+import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260615-smooth-autofinish";
 import { getMap } from "../../map/map.singleton.js";
-import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260604-jacmel-gps";
+import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260615-smooth-autofinish";
 import { viajeState } from "../../viaje/viaje.state.js";
-import { actualizarUIDriver, mostrarModalFinalizado } from "../../socket/pasajero.utils.js?v=20260607-finalized-guard";
+import { actualizarUIDriver, mostrarModalFinalizado } from "../../socket/pasajero.utils.js?v=20260615-smooth-autofinish";
 import {
   obtenerFinalizacionPendiente,
   viajeFueFinalizado
-} from "../../viaje/viaje.finalizado.local.js?v=20260607-finalized-guard";
+} from "../../viaje/viaje.finalizado.local.js?v=20260615-smooth-autofinish";
 
 let restoring = false;
 const ESTADOS_ACTIVOS = ["buscando", "asignado", "reservado", "llego", "en_curso"];
@@ -105,7 +105,7 @@ export async function restoreViajeUI() {
         !document.getElementById("modalPrecio") &&
         !document.getElementById("buscandoMotorista")
       ) {
-        import("../../pasajero/ui/overlays/buscandoMotorista.ui.js?v=20260608-search-modal")
+        import("../../pasajero/ui/overlays/buscandoMotorista.ui.js?v=20260615-smooth-autofinish")
           .then(m => m.mostrarBuscandoMotorista?.(true))
           .catch(err => console.error("❌ Error importando modal:", err));
       }

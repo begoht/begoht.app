@@ -5,6 +5,7 @@ const Viaje = require("../models/Viaje");
 const authAdmin = require("../middleware/authAdmin");
 const { redis } = require("../config/redis");
 const { matchingQueue } = require("../config/queues");
+const finalizarViaje = require("../services/finalizarViaje.service");
 const {
   getOfferKey,
   getOfferSetKey,
@@ -118,6 +119,72 @@ router.post("/viajes/:id/reasignar", authAdmin, async (req, res) => {
   } catch (err) {
     console.error("Error reasignando viaje:", err);
     return res.status(err.status || 500).json({ error: err.publicMessage || "Error reasignando viaje" });
+  }
+});
+
+router.post("/viajes/:id/finalizar", authAdmin, async (req, res) => {
+  const viajeId = req.params.id;
+
+  if (!mongoose.Types.ObjectId.isValid(viajeId)) {
+    return res.status(400).json({ error: "Viaje invalido" });
+  }
+
+  try {
+    const viaje = await Viaje.findById(viajeId)
+      .select("_id estado motorista pasajero precio metodoPago estadoPago")
+      .lean();
+
+    if (!viaje) {
+      return res.status(404).json({ error: "Viaje no encontrado" });
+    }
+
+    if (viaje.estado !== "en_curso") {
+      return res.status(400).json({ error: "Solo se pueden finalizar viajes en curso" });
+    }
+
+    if (!viaje.motorista) {
+      return res.status(400).json({ error: "El viaje no tiene motorista asignado" });
+    }
+
+    const motivo = String(req.body?.motivo || "finalizado_por_admin").slice(0, 160);
+    const resultado = await finalizarViaje({
+      io: global.io,
+      socket: null,
+      viajeId,
+      motoristaId: viaje.motorista.toString(),
+      enforceProximity: false,
+      enforceDeliveryCode: false,
+      source: "admin",
+      motivo,
+      adminId: req.user._id,
+      emitErrors: false,
+      throwOnError: true
+    });
+
+    await logAdminAction(req, {
+      action: "trip.finish",
+      entity: "Viaje",
+      entityId: viajeId,
+      before: {
+        estado: viaje.estado,
+        motorista: viaje.motorista?.toString() || null,
+      },
+      after: {
+        estado: "finalizado",
+        finalizadoPor: "admin",
+      },
+      meta: {
+        motivo,
+        pasajeroId: viaje.pasajero?.toString() || null,
+      },
+    });
+
+    return res.json(resultado);
+  } catch (err) {
+    console.error("Error finalizando viaje desde admin:", err);
+    return res.status(err.status || 500).json({
+      error: err.publicMessage || err.message || "Error finalizando viaje"
+    });
   }
 });
 
