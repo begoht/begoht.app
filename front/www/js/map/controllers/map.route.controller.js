@@ -2,7 +2,7 @@ import {
   dibujarRuta,
   dibujarRutaReserva,
   limpiarRutas
-} from "../map.ruta.js?v=20260615-smooth-autofinish";
+} from "../map.ruta.js?v=20260618-passenger-map-full";
 
 import {
   mismaPosicion,
@@ -13,12 +13,12 @@ import {
   getRouteState,
   setRouteState,
   resetRouteState
-} from "../state/map.route.state.js";
+} from "../state/map.route.state.js?v=20260618-passenger-map-full";
 
 import {
   getMap,
   isMapReady
-} from "../map.singleton.js";
+} from "../map.singleton.js?v=20260618-passenger-map-full";
 
 /*************************************************
  * 🎯 ESTADOS VÁLIDOS

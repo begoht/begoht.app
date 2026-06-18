@@ -1,6 +1,7 @@
 const MOTORISTA_SIZE = 44;
 const SIMPLE_SIZE = 38;
-const PASSENGER_LOCATION_SIZE = 56;
+const PASSENGER_LOCATION_SIZE = 34;
+const ROUTE_POINT_SIZE = 30;
 const POI_SIZE = 26;
 
 function svgDataUrl(svg) {
@@ -53,12 +54,8 @@ function makeIcon({ svg, size, anchorY, className }) {
 
 export const pasajeroIcon = L.divIcon({
   html: `
-    <span class="bego-passenger-location" aria-hidden="true">
-      <span class="bego-passenger-location__beam"></span>
-      <span class="bego-passenger-location__accuracy"></span>
-      <span class="bego-passenger-location__dot">
-        <span class="bego-passenger-location__core"></span>
-      </span>
+    <span class="bego-route-point bego-route-point-origin" aria-hidden="true">
+      <span class="bego-route-point__core"></span>
     </span>
   `,
   iconSize: [PASSENGER_LOCATION_SIZE, PASSENGER_LOCATION_SIZE],
@@ -67,10 +64,15 @@ export const pasajeroIcon = L.divIcon({
   className: "bego-map-icon bego-map-icon-passenger-dot",
 });
 
-export const destinoIcon = makeIcon({
-  svg: destinoSvg,
-  size: SIMPLE_SIZE,
-  anchorY: SIMPLE_SIZE,
+export const destinoIcon = L.divIcon({
+  html: `
+    <span class="bego-route-point bego-route-point-destination" aria-hidden="true">
+      <span class="bego-route-point__core"></span>
+    </span>
+  `,
+  iconSize: [ROUTE_POINT_SIZE, ROUTE_POINT_SIZE],
+  iconAnchor: [ROUTE_POINT_SIZE / 2, ROUTE_POINT_SIZE / 2],
+  popupAnchor: [0, -18],
   className: "bego-map-icon bego-map-icon-destination",
 });
 

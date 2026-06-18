@@ -18,19 +18,21 @@ export function renderRuta(map, coords) {
   rutaActualCoords = normalizarCoords(coords);
 
   const outline = L.polyline(coords, {
-    color: "#020617",
-    weight: 6
+    color: "#111113",
+    weight: 8,
+    opacity: 0.5
   }).addTo(map);
 
   const glow = L.polyline(coords, {
-    color: "#00e5ff",
-    weight: 10,
-    opacity: 0.25
+    color: "#ffffff",
+    weight: 9,
+    opacity: 0.16
   }).addTo(map);
 
   const main = L.polyline(coords, {
-    color: "#00e5ff",
-    weight: 4
+    color: "#e5e7eb",
+    weight: 5,
+    opacity: 0.96
   }).addTo(map);
 
   rutaActualLayer = main;
@@ -62,9 +64,9 @@ export function renderRutaReserva(
   if (coordsActual?.length) {
     layers.push(
       L.polyline(coordsActual, {
-        color: "#f59e0b",
+        color: "#e5e7eb",
         weight: 5,
-        opacity: 0.9
+        opacity: 0.96
       })
     );
   }
@@ -72,10 +74,10 @@ export function renderRutaReserva(
   if (coordsHaciaPasajero?.length) {
     layers.push(
       L.polyline(coordsHaciaPasajero, {
-        color: "#00e5ff",
+        color: "#f8fafc",
         weight: 5,
         dashArray: "10, 10",
-        opacity: 0.95
+        opacity: 0.9
       })
     );
   }
@@ -125,9 +127,9 @@ export function renderLineaRecta(
     [origen.lat, origen.lng],
     [destino.lat, destino.lng]
   ], {
-    color: "#ef4444",
-    weight: 3,
-    dashArray: "5, 10"
+    color: "#e5e7eb",
+    weight: 5,
+    opacity: 0.92
   }).addTo(map);
 
   if (fit) {

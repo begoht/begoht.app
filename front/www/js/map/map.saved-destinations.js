@@ -1,5 +1,5 @@
 import { viajeState } from "../viaje/viaje.state.js";
-import { asignarDestino } from "./map.destino.js";
+import { asignarDestino } from "./map.destino.js?v=20260618-passenger-map-full";
 import { coordsInCity } from "./config/index.js";
 
 const MAX_DESTINOS = 3;

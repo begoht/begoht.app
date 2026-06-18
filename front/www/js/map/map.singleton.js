@@ -131,9 +131,9 @@ export function createMap(container) {
    * 🌍 TILE LAYER
    *************************************************/
   L.tileLayer(
-    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
     {
-      attribution: "&copy; OpenStreetMap",
+      attribution: "&copy; OpenStreetMap &copy; CARTO",
       detectRetina: true,
       updateWhenIdle: true,
       keepBuffer: 3

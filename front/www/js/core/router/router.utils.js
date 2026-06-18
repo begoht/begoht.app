@@ -1,4 +1,4 @@
-import { stopGeo } from "../../map/map.geo.js?v=20260607-jacmel-reference-icons";
+import { stopGeo } from "../../map/map.geo.js?v=20260618-passenger-map-full";
 
 // ===============================
 // 🌍 BASE PATH ROBUSTO

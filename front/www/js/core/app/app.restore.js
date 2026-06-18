@@ -1,9 +1,9 @@
 import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260606-legal-trust";
-import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260615-smooth-autofinish";
-import { getMap } from "../../map/map.singleton.js";
-import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260615-smooth-autofinish";
+import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260618-passenger-map-full";
+import { getMap } from "../../map/map.singleton.js?v=20260618-passenger-map-full";
+import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260618-passenger-map-full";
 import { viajeState } from "../../viaje/viaje.state.js";
-import { actualizarUIDriver, mostrarModalFinalizado } from "../../socket/pasajero.utils.js?v=20260615-smooth-autofinish";
+import { actualizarUIDriver, mostrarModalFinalizado } from "../../socket/pasajero.utils.js?v=20260618-passenger-map-full";
 import {
   obtenerFinalizacionPendiente,
   viajeFueFinalizado
@@ -105,7 +105,7 @@ export async function restoreViajeUI() {
         !document.getElementById("modalPrecio") &&
         !document.getElementById("buscandoMotorista")
       ) {
-        import("../../pasajero/ui/overlays/buscandoMotorista.ui.js?v=20260615-smooth-autofinish")
+        import("../../pasajero/ui/overlays/buscandoMotorista.ui.js?v=20260618-passenger-map-full")
           .then(m => m.mostrarBuscandoMotorista?.(true))
           .catch(err => console.error("❌ Error importando modal:", err));
       }

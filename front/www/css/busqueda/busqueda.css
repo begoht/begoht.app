@@ -735,3 +735,183 @@ body[class*="route-"]:not(.route-home) .home-map-shell {
   font-size: 0.8rem;
   line-height: 1.35;
 }
+
+/* Passenger ride map layout: full width, with controls and route points over the map. */
+.route-home .home-map-shell {
+  position: fixed;
+  inset: 0 0 auto;
+  height: min(68dvh, 620px);
+  min-height: 430px;
+  margin: 0;
+  z-index: 1;
+  background: #10151f;
+  overflow: hidden;
+}
+
+.route-home #map {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  border: 0;
+  border-radius: 0;
+  background-color: #10151f;
+  box-shadow: none;
+}
+
+.route-home .home-map-shell::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 120px;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(17, 17, 19, 0), #111113 86%);
+}
+
+.route-home #appMain.home-page {
+  position: relative;
+  z-index: 4;
+  min-height: 100dvh;
+  padding-top: max(360px, calc(min(68dvh, 620px) - 34px));
+  padding-bottom: calc(var(--footer-height, 76px) + env(safe-area-inset-bottom) + 16px);
+  background: transparent;
+}
+
+.route-home #appMain.home-page::before {
+  content: "";
+  position: absolute;
+  top: calc(max(360px, calc(min(68dvh, 620px) - 34px)) - 1px);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  border-radius: 26px 26px 0 0;
+  background: #111113;
+  box-shadow: 0 -16px 34px rgba(0, 0, 0, 0.28);
+}
+
+.route-home .map-recenter-btn {
+  right: 18px;
+  bottom: calc(68px + env(safe-area-inset-bottom));
+  width: 56px;
+  height: 56px;
+  border: 0;
+  border-radius: 50%;
+  color: #f8fafc;
+  background: rgba(0, 0, 0, 0.9);
+  box-shadow:
+    0 14px 30px rgba(0, 0, 0, 0.44),
+    inset 0 0 0 2px rgba(255, 255, 255, 0.08);
+}
+
+.route-home .map-recenter-btn i {
+  font-size: 23px;
+}
+
+.route-home .busqueda {
+  margin: 0;
+  padding: 20px 18px 14px 34px;
+  border: 0;
+  border-radius: 0;
+  background: #111113;
+  box-shadow: none;
+  gap: 12px;
+}
+
+.route-home .desde,
+.route-home #inputDestino,
+.route-home .inicio {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  background: #1b1b1f;
+  box-shadow: none;
+}
+
+.route-home .desde {
+  padding: 13px 14px;
+}
+
+.route-home .inicio {
+  padding: 14px 16px;
+  margin-bottom: 0;
+}
+
+.route-home #inputDestino {
+  padding: 13px 14px;
+}
+
+.route-home #inputDestino:focus {
+  border-color: rgba(248, 250, 252, 0.2);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
+}
+
+.route-home .desde::before {
+  left: -20px;
+  top: 42px;
+  width: 12px;
+  height: 12px;
+  background: #f8fafc;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 4px #111113, 0 0 0 2px #f8fafc;
+}
+
+.route-home .desde::after {
+  left: -15px;
+  top: 58px;
+  width: 2px;
+  height: calc(100% + 12px);
+  background: rgba(248, 250, 252, 0.48);
+  opacity: 1;
+}
+
+.route-home .hacia::before {
+  left: -20px;
+  top: 42px;
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  background: #f8fafc;
+  box-shadow: inset 0 0 0 4px #111113, 0 0 0 2px #f8fafc;
+}
+
+.route-home #btnUbicacion {
+  display: block;
+  padding: 12px 18px;
+  border-radius: 0;
+  color: #e5e7eb;
+  background: #111113;
+  box-shadow: none;
+}
+
+.route-home .titulo-pago,
+.route-home .pago-opciones,
+.route-home #appMain .home-promos {
+  background: #111113;
+}
+
+@media (max-width: 380px) {
+  .route-home .home-map-shell {
+    height: min(65dvh, 560px);
+    min-height: 390px;
+  }
+
+  .route-home #appMain.home-page {
+    padding-top: max(330px, calc(min(65dvh, 560px) - 32px));
+  }
+
+  .route-home #appMain.home-page::before {
+    top: calc(max(330px, calc(min(65dvh, 560px) - 32px)) - 1px);
+  }
+
+  .route-home .busqueda {
+    padding-left: 30px;
+  }
+
+  .route-home .map-recenter-btn {
+    right: 14px;
+    width: 52px;
+    height: 52px;
+  }
+}

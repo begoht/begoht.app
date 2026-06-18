@@ -1,9 +1,9 @@
 import { viajeState } from "../../viaje/viaje.state.js";
-import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260615-smooth-autofinish";
-import { mostrarDestinoEnMapa } from "../../map/map.destino.js";
-import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260615-smooth-autofinish";
-import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260615-smooth-autofinish";
-import { getMap } from "../../map/map.singleton.js";
+import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260618-passenger-map-full";
+import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260618-passenger-map-full";
+import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260618-passenger-map-full";
+import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260618-passenger-map-full";
+import { getMap } from "../../map/map.singleton.js?v=20260618-passenger-map-full";
 import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260615-smooth-autofinish";
 
 let lastEstadoPersistido = null;
