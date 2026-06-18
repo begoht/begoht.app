@@ -1,4 +1,4 @@
-import { stopGeo } from "../../map/map.geo.js?v=20260618-map-ref-reserve";
+import { stopGeo } from "../../map/map.geo.js?v=20260618-map-drag-bg";
 
 // ===============================
 // 🌍 BASE PATH ROBUSTO

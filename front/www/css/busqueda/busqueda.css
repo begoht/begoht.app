@@ -758,7 +758,15 @@ body[class*="route-"]:not(.route-home) .home-map-shell {
   box-shadow: none;
 }
 
+.route-home #map.leaflet-container,
+.route-home #map .leaflet-pane,
+.route-home #map .leaflet-map-pane,
+.route-home #map .leaflet-tile-pane {
+  background: #343a43 !important;
+}
+
 .route-home #map .leaflet-tile {
+  background: #343a43 !important;
   filter: grayscale(1) brightness(1.22) contrast(0.9) saturate(0.55);
 }
 

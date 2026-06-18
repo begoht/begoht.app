@@ -1,7 +1,7 @@
 import { viajeState } from "../../viaje/viaje.state.js";
-import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260618-map-ref-reserve";
-import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260618-map-ref-reserve";
-import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260618-map-ref-reserve";
+import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260618-map-drag-bg";
+import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260618-map-drag-bg";
+import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260618-map-drag-bg";
 import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260615-smooth-autofinish";
 
 let lastIniciadoViajeId = null;

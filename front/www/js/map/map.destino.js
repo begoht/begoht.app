@@ -2,15 +2,15 @@
 
 import { viajeState } from "../viaje/viaje.state.js";
 
-import { dibujarRuta } from "./map.ruta.js?v=20260618-map-ref-reserve";
+import { dibujarRuta } from "./map.ruta.js?v=20260618-map-drag-bg";
 
 import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260606-legal-trust";
 
-import { destinoIcon } from "./map.icons.js?v=20260618-map-ref-reserve";
+import { destinoIcon } from "./map.icons.js?v=20260618-map-drag-bg";
 
 import { reverseGeocode } from "./services/map.reverse.js";
 
-import { getMap } from "./map.singleton.js?v=20260618-map-ref-reserve";
+import { getMap } from "./map.singleton.js?v=20260618-map-drag-bg";
 import { cityConfig, coordsInCity } from "./config/index.js";
 
 import {

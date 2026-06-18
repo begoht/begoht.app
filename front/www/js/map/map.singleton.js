@@ -135,8 +135,11 @@ export function createMap(container) {
     {
       attribution: "&copy; OpenStreetMap &copy; CARTO",
       detectRetina: true,
-      updateWhenIdle: true,
-      keepBuffer: 3
+      updateWhenIdle: false,
+      updateWhenZooming: true,
+      updateInterval: 80,
+      keepBuffer: 8,
+      className: "bego-map-tiles"
     }
   ).addTo(mapInstance);
 

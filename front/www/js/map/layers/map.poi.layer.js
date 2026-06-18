@@ -1,4 +1,4 @@
-import { createPOIIcon } from "../map.icons.js?v=20260618-map-ref-reserve";
+import { createPOIIcon } from "../map.icons.js?v=20260618-map-drag-bg";
 
 
 import { cityConfig } from "../config/index.js";

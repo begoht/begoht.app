@@ -1,4 +1,4 @@
-import { resetRutaCache } from "../map.ruta.js?v=20260618-map-ref-reserve";
+import { resetRutaCache } from "../map.ruta.js?v=20260618-map-drag-bg";
 
 let lastEstado = null;
 

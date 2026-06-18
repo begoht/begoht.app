@@ -1,9 +1,9 @@
 import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260606-legal-trust";
-import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260618-map-ref-reserve";
-import { getMap } from "../../map/map.singleton.js?v=20260618-map-ref-reserve";
-import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260618-map-ref-reserve";
+import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260618-map-drag-bg";
+import { getMap } from "../../map/map.singleton.js?v=20260618-map-drag-bg";
+import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260618-map-drag-bg";
 import { viajeState } from "../../viaje/viaje.state.js";
-import { actualizarUIDriver, mostrarModalFinalizado } from "../../socket/pasajero.utils.js?v=20260618-map-ref-reserve";
+import { actualizarUIDriver, mostrarModalFinalizado } from "../../socket/pasajero.utils.js?v=20260618-map-drag-bg";
 import {
   obtenerFinalizacionPendiente,
   viajeFueFinalizado
@@ -105,7 +105,7 @@ export async function restoreViajeUI() {
         !document.getElementById("modalPrecio") &&
         !document.getElementById("buscandoMotorista")
       ) {
-        import("../../pasajero/ui/overlays/buscandoMotorista.ui.js?v=20260618-map-ref-reserve")
+        import("../../pasajero/ui/overlays/buscandoMotorista.ui.js?v=20260618-map-drag-bg")
           .then(m => m.mostrarBuscandoMotorista?.(true))
           .catch(err => console.error("❌ Error importando modal:", err));
       }
