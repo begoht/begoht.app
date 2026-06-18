@@ -1,9 +1,9 @@
 import { viajeState } from "../../viaje/viaje.state.js";
 import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260606-legal-trust";
-import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260618-passenger-map-full";
-import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260618-passenger-map-full";
-import { limpiarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260618-passenger-map-full";
-import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260618-passenger-map-full";
+import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260618-map-ref-reserve";
+import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260618-map-ref-reserve";
+import { limpiarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260618-map-ref-reserve";
+import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260618-map-ref-reserve";
 import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260615-smooth-autofinish";
 
 export const handleSync = (data) => {

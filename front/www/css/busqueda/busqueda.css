@@ -312,10 +312,10 @@ body[class*="route-"]:not(.route-home) .home-map-shell {
 }
 
 .route-home .destinos-fab {
-  position: absolute;
-  right: 14px;
-  top: 14px;
-  z-index: 34;
+  position: fixed;
+  right: 16px;
+  top: calc(env(safe-area-inset-top) + 88px);
+  z-index: 1250;
   width: 46px;
   height: 46px;
   border: 0;
@@ -334,8 +334,8 @@ body[class*="route-"]:not(.route-home) .home-map-shell {
 
 @media (max-width: 380px) {
   .route-home .destinos-fab {
-    right: 12px;
-    top: 12px;
+    right: 14px;
+    top: calc(env(safe-area-inset-top) + 82px);
     width: 44px;
     height: 44px;
   }
@@ -754,8 +754,12 @@ body[class*="route-"]:not(.route-home) .home-map-shell {
   min-height: 100%;
   border: 0;
   border-radius: 0;
-  background-color: #10151f;
+  background-color: #343a43;
   box-shadow: none;
+}
+
+.route-home #map .leaflet-tile {
+  filter: grayscale(1) brightness(1.22) contrast(0.9) saturate(0.55);
 }
 
 .route-home .home-map-shell::after {

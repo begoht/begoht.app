@@ -166,6 +166,14 @@
     0 0 0 2px rgba(255, 255, 255, 0.72);
 }
 
+.bego-route-point-stopover {
+  border-radius: 50%;
+  background: #f8fafc;
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.34),
+    0 0 0 2px rgba(255, 255, 255, 0.72);
+}
+
 .bego-route-point__core {
   width: 8px;
   height: 8px;

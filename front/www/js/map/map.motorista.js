@@ -10,12 +10,12 @@ import {
 import {
   renderMotorista,
   removeMotorista
-} from "./ui/map.motorista.renderer.js?v=20260618-passenger-map-full";
+} from "./ui/map.motorista.renderer.js?v=20260618-map-ref-reserve";
 
 import {
   renderMotoristas,
   clearMotoristas
-} from "./ui/map.motoristas.renderer.js?v=20260618-passenger-map-full";
+} from "./ui/map.motoristas.renderer.js?v=20260618-map-ref-reserve";
 
 /*************************************************
  * 🗺️ SET MAPA

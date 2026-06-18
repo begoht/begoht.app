@@ -1,4 +1,4 @@
-import { getMap } from "./map.singleton.js?v=20260618-passenger-map-full";
+import { getMap } from "./map.singleton.js?v=20260618-map-ref-reserve";
 
 import {
   mismaPosicion,
@@ -15,7 +15,7 @@ import {
   renderRutaReserva,
   renderLineaRecta,
   limpiarRuta
-} from "./ui/map.route.renderer.js?v=20260618-passenger-map-full";
+} from "./ui/map.route.renderer.js?v=20260618-map-ref-reserve";
 
 let ultimaRutaCalculada = 0;
 
@@ -266,11 +266,20 @@ export async function dibujarRutaReserva(
     }
 
     if (!data) {
-      renderLineaRecta(
+      renderRutaReserva(
         map,
-        origen,
-        origenPasajero,
-        { fit: !rutaInicialDibujada }
+        [
+          [origen.lat, origen.lng],
+          [destinoActual.lat, destinoActual.lng]
+        ],
+        [
+          [destinoActual.lat, destinoActual.lng],
+          [origenPasajero.lat, origenPasajero.lng]
+        ],
+        {
+          fit: !rutaInicialDibujada,
+          stopover: destinoActual
+        }
       );
       rutaInicialDibujada = true;
       return;
@@ -281,11 +290,20 @@ export async function dibujarRutaReserva(
     const tramoHaciaPasajero = data.segmentos?.haciaPasajero || data.segments?.haciaPasajero || null;
 
     if (!route && !tramoActual && !tramoHaciaPasajero) {
-      renderLineaRecta(
+      renderRutaReserva(
         map,
-        origen,
-        origenPasajero,
-        { fit: !rutaInicialDibujada }
+        [
+          [origen.lat, origen.lng],
+          [destinoActual.lat, destinoActual.lng]
+        ],
+        [
+          [destinoActual.lat, destinoActual.lng],
+          [origenPasajero.lat, origenPasajero.lng]
+        ],
+        {
+          fit: !rutaInicialDibujada,
+          stopover: destinoActual
+        }
       );
       rutaInicialDibujada = true;
       return;
@@ -301,7 +319,8 @@ export async function dibujarRutaReserva(
 
     if (coordsActual.length || coordsHaciaPasajero.length) {
       renderRutaReserva(map, coordsActual, coordsHaciaPasajero, {
-        fit: !rutaInicialDibujada
+        fit: !rutaInicialDibujada,
+        stopover: destinoActual
       });
       rutaInicialDibujada = true;
       onETA?.({
@@ -317,7 +336,8 @@ export async function dibujarRutaReserva(
       );
 
     renderRutaReserva(map, coords, [], {
-      fit: !rutaInicialDibujada
+      fit: !rutaInicialDibujada,
+      stopover: destinoActual
     });
     rutaInicialDibujada = true;
 

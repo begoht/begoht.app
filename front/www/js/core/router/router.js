@@ -1,10 +1,10 @@
-import { routes } from "./router.routes.js?v=20260618-passenger-map-full";
+import { routes } from "./router.routes.js?v=20260618-map-ref-reserve";
 import { renderLayout } from "./router.render.js?v=20260606-legal-trust";
 import { runCleanup, setCleanup } from "./router.cleanup.js";
 import { afterRender, pushURL, actualizarLinksActivos } from "./router.utils.js";
-import { runPageInit } from "../app/app.lifecycle.js?v=20260618-passenger-map-full";
+import { runPageInit } from "../app/app.lifecycle.js?v=20260618-map-ref-reserve";
 import { AppState } from "../state.js";
-import { stopGeo } from "../../map/map.geo.js?v=20260618-passenger-map-full";
+import { stopGeo } from "../../map/map.geo.js?v=20260618-map-ref-reserve";
 
 let navigationId = 0;
 let routerReady = false;

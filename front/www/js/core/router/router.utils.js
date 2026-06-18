@@ -1,4 +1,4 @@
-import { stopGeo } from "../../map/map.geo.js?v=20260618-passenger-map-full";
+import { stopGeo } from "../../map/map.geo.js?v=20260618-map-ref-reserve";
 
 // ===============================
 // 🌍 BASE PATH ROBUSTO

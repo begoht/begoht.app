@@ -1,4 +1,4 @@
-import { resetRutaCache } from "../map.ruta.js?v=20260618-passenger-map-full";
+import { resetRutaCache } from "../map.ruta.js?v=20260618-map-ref-reserve";
 
 let lastEstado = null;
 

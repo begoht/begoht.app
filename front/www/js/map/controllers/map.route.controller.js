@@ -2,7 +2,7 @@ import {
   dibujarRuta,
   dibujarRutaReserva,
   limpiarRutas
-} from "../map.ruta.js?v=20260618-passenger-map-full";
+} from "../map.ruta.js?v=20260618-map-ref-reserve";
 
 import {
   mismaPosicion,
@@ -13,12 +13,12 @@ import {
   getRouteState,
   setRouteState,
   resetRouteState
-} from "../state/map.route.state.js?v=20260618-passenger-map-full";
+} from "../state/map.route.state.js?v=20260618-map-ref-reserve";
 
 import {
   getMap,
   isMapReady
-} from "../map.singleton.js?v=20260618-passenger-map-full";
+} from "../map.singleton.js?v=20260618-map-ref-reserve";
 
 /*************************************************
  * 🎯 ESTADOS VÁLIDOS

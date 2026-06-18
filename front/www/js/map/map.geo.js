@@ -1,4 +1,4 @@
-import { pasajeroIcon } from "./map.icons.js?v=20260618-passenger-map-full";
+import { pasajeroIcon } from "./map.icons.js?v=20260618-map-ref-reserve";
 import { ACTIVE_CITY, cityConfig, coordsInCity, inferCityConfigFromCoords, persistDetectedCity } from "./config/index.js";
 import { viajeState } from "../viaje/viaje.state.js";
 import { reverseGeocode } from "./services/map.reverse.js";
@@ -9,7 +9,7 @@ import {
   layerReferencias
 } from "./layers/map.layers.js";
 
-import { renderPOILayer } from "./layers/map.poi.layer.js?v=20260618-passenger-map-full";
+import { renderPOILayer } from "./layers/map.poi.layer.js?v=20260618-map-ref-reserve";
 
 import {
   getCurrentPosition,
