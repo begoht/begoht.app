@@ -777,6 +777,7 @@ body[class*="route-"]:not(.route-home) .home-map-shell {
   padding-top: max(360px, calc(min(68dvh, 620px) - 34px));
   padding-bottom: calc(var(--footer-height, 76px) + env(safe-area-inset-bottom) + 16px);
   background: transparent;
+  pointer-events: none;
 }
 
 .route-home #appMain.home-page::before {
@@ -818,6 +819,13 @@ body[class*="route-"]:not(.route-home) .home-map-shell {
   background: #111113;
   box-shadow: none;
   gap: 12px;
+}
+
+.route-home #appMain.home-page > *,
+.route-home .destinos-fab,
+.route-home .destinos-panel,
+.route-home .map-recenter-btn {
+  pointer-events: auto;
 }
 
 .route-home .desde,
