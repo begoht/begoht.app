@@ -24,9 +24,12 @@ function normalizarDireccion(data) {
 
   const calle =
     data.address.road ||
+    data.address.highway ||
+    data.address.residential ||
     data.address.pedestrian ||
     data.address.cycleway ||
     data.address.footway ||
+    data.address.path ||
     "";
 
   const numero = data.address.house_number || "";
@@ -43,9 +46,7 @@ export async function reverseGeocode(lat, lng) {
     return "Punto invalido";
   }
 
-  if (!coordsInCity({ lat, lng })) {
-    return `Fuera de ${cityConfig?.name || "la ciudad activa"}`;
-  }
+  const dentroDeCiudad = coordsInCity({ lat, lng });
 
   const poi = buscarPOICercano(lat, lng);
 
@@ -70,9 +71,12 @@ export async function reverseGeocode(lat, lng) {
     const url =
       `https://nominatim.openstreetmap.org/reverse` +
       `?format=json` +
+      `&addressdetails=1` +
+      `&zoom=18` +
       `&lat=${lat}` +
       `&lon=${lng}` +
-      `&countrycodes=${countryCode}`;
+      `&countrycodes=${countryCode}` +
+      `&accept-language=es,fr,en`;
 
     const response = await fetch(url, {
       headers: {
@@ -89,15 +93,18 @@ export async function reverseGeocode(lat, lng) {
 
     const data = await response.json();
     const direccion = normalizarDireccion(data);
+    const resolved = direccion === "Direccion desconocida" && !dentroDeCiudad
+      ? `Fuera de ${cityConfig?.name || "la ciudad activa"}`
+      : direccion;
 
-    reverseCache.set(key, direccion);
+    reverseCache.set(key, resolved);
 
-    return direccion;
+    return resolved;
   } catch (error) {
     if (error.name !== "AbortError") {
       console.error("reverseGeocode:", error.message);
     }
 
-    return "Punto en el mapa";
+    return dentroDeCiudad ? "Punto en el mapa" : `Fuera de ${cityConfig?.name || "la ciudad activa"}`;
   }
 }

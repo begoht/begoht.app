@@ -1,4 +1,4 @@
-import { renderHeader } from "../../components/header.js?v=20260606-legal-trust";
+import { renderHeader } from "../../components/header.js?v=20260619-clear-map-address";
 import { renderFooter } from "../../components/footer.js";
 
 export function renderLayout(route, mainClass, contentHTML) {

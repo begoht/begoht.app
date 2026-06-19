@@ -1,6 +1,6 @@
 import {
   reverseGeocode
-} from "./services/map.reverse.js";
+} from "./services/map.reverse.js?v=20260619-clear-map-address";
 
 import {
   setMapaInstance,
@@ -10,12 +10,12 @@ import {
 import {
   renderMotorista,
   removeMotorista
-} from "./ui/map.motorista.renderer.js?v=20260619-map-ref-button";
+} from "./ui/map.motorista.renderer.js?v=20260619-clear-map-address";
 
 import {
   renderMotoristas,
   clearMotoristas
-} from "./ui/map.motoristas.renderer.js?v=20260619-map-ref-button";
+} from "./ui/map.motoristas.renderer.js?v=20260619-clear-map-address";
 
 /*************************************************
  * 🗺️ SET MAPA

@@ -1,4 +1,4 @@
-import { motoIcon } from "../map.icons.js?v=20260619-map-ref-button";
+import { motoIcon } from "../map.icons.js?v=20260619-clear-map-address";
 import {
   motoristasCercanos
 } from "../state/map.motoristas.state.js";

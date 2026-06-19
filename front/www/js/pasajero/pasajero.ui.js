@@ -1,7 +1,7 @@
 // js/pasajero/pasajero.ui.js
 import { viajeState } from "../viaje/viaje.state.js";
 import { getServerUrl } from "../conexion.js";
-import { actualizarBotonViaje } from "./ui/boton/botonViaje.ui.js?v=20260606-legal-trust";
+import { actualizarBotonViaje } from "./ui/boton/botonViaje.ui.js?v=20260619-clear-map-address";
 import { mostrarPagoNoDisponible } from "./ui/modales/pagoNoDisponible.ui.js?v=20260606-payment-methods";
 
 export { actualizarBotonViaje };

@@ -2,7 +2,7 @@ import { viajeState } from "../../viaje/viaje.state.js";
 import { handleAsignado } from "./asignado.handler.js";
 import { handleIniciado } from "./iniciado.handler.js";
 import { handleLlego } from "./llego.handler.js";
-import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260619-map-ref-button";
+import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260619-clear-map-address";
 import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260615-smooth-autofinish";
 
 export const handleEstado = (data) => {

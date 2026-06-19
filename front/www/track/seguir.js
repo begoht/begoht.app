@@ -16,6 +16,17 @@ const HEADING_SMOOTHING = 0.58;
 const MIN_HEADING_MOVE_METERS = 2;
 const FOLLOW_PAUSE_MS = 12000;
 const MOVE_DURATION_MS = 900;
+const GENERIC_ADDRESS = new Set([
+  "origen",
+  "destino",
+  "origen no disponible",
+  "destino no disponible",
+  "ubicacion actual",
+  "tu ubicacion actual",
+  "punto en el mapa",
+  "punto seleccionado en mapa",
+  "destino seleccionado"
+]);
 
 let followPausedUntil = 0;
 
@@ -104,8 +115,9 @@ function iniciarSocket(token) {
 }
 
 function actualizarUI(viaje = {}) {
-  setText("originText", viaje.origen?.direccion || "Origen no disponible");
-  setText("destText", viaje.destino?.direccion || "Destino no disponible");
+  setText("originText", textoUbicacion(viaje.origen, "Origen no disponible"));
+  setText("destText", textoUbicacion(viaje.destino, "Destino no disponible"));
+  resolverDireccionesSeguimiento(viaje);
   setText("driverName", nombreMotorista(viaje.motorista));
   setText("carModel", descripcionVehiculo(viaje.motorista));
   setText("carPlate", placaMotorista(viaje.motorista));
@@ -154,7 +166,7 @@ function initMapa(viaje = {}) {
   const bounds = [];
 
   if (origen) {
-    L.marker(origen).addTo(map).bindTooltip("Origen", {
+    L.marker(origen).addTo(map).bindTooltip(streetLine(viaje.origen?.direccion || "Origen"), {
       permanent: true,
       direction: "top",
       className: "custom-label"
@@ -163,7 +175,7 @@ function initMapa(viaje = {}) {
   }
 
   if (destino) {
-    L.marker(destino).addTo(map).bindTooltip("Destino", {
+    L.marker(destino).addTo(map).bindTooltip(streetLine(viaje.destino?.direccion || "Destino"), {
       permanent: true,
       direction: "top",
       className: "custom-label"
@@ -360,6 +372,85 @@ function normalizarPunto(punto) {
 
   if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
   return [lat, lng];
+}
+
+function textoUbicacion(punto, fallback) {
+  const direccion = punto?.direccion || punto?.address || "";
+  return direccion && !esDireccionGenerica(direccion) ? direccion : fallback;
+}
+
+function esDireccionGenerica(value = "") {
+  return GENERIC_ADDRESS.has(
+    String(value)
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim()
+  );
+}
+
+function streetLine(value, fallback = "") {
+  const parts = String(value || "")
+    .split(",")
+    .map((part) => part.replace(/\s+/g, " ").trim())
+    .filter(Boolean);
+
+  if (!parts.length) return fallback;
+
+  const first = parts[0];
+  const startsWithNumber = first.match(/^(\d+[a-z0-9-]*)\s+(.+)$/i);
+  if (startsWithNumber) return `${startsWithNumber[2]} ${startsWithNumber[1]}`;
+
+  const endsWithNumber = first.match(/^(.+?)\s+(\d+[a-z0-9-]*)$/i);
+  if (endsWithNumber) return `${endsWithNumber[1]} ${endsWithNumber[2]}`;
+
+  return first;
+}
+
+async function resolverDireccionesSeguimiento(viaje = {}) {
+  const tareas = [
+    ["originText", viaje.origen, "Origen no disponible"],
+    ["destText", viaje.destino, "Destino no disponible"]
+  ];
+
+  await Promise.all(tareas.map(async ([id, punto, fallback]) => {
+    if (!punto?.lat || !punto?.lng) return;
+    const actual = textoUbicacion(punto, "");
+    if (actual) return;
+
+    const direccion = await reverseGeocodePublico(Number(punto.lat), Number(punto.lng));
+    setText(id, direccion || fallback);
+  }));
+}
+
+async function reverseGeocodePublico(lat, lng) {
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return "";
+
+  try {
+    const url =
+      `https://nominatim.openstreetmap.org/reverse` +
+      `?format=json&addressdetails=1&zoom=18` +
+      `&lat=${lat}&lon=${lng}` +
+      `&countrycodes=ht&accept-language=es,fr,en`;
+    const res = await fetch(url);
+    if (!res.ok) return "";
+    const data = await res.json();
+    const address = data?.address || {};
+    const calle =
+      address.road ||
+      address.highway ||
+      address.residential ||
+      address.pedestrian ||
+      address.cycleway ||
+      address.footway ||
+      address.path ||
+      "";
+    const numero = address.house_number || "";
+    if (calle) return `${calle} ${numero}`.trim();
+    return data?.display_name?.split(",")[0]?.trim() || "";
+  } catch {
+    return "";
+  }
 }
 
 function iconoMoto() {

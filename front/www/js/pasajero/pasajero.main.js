@@ -1,12 +1,12 @@
-import { initGeo } from "../map/map.geo.js?v=20260619-map-ref-button";
-import { initSeleccionDestino } from "../map/map.destino.js?v=20260619-map-ref-button";
+import { initGeo } from "../map/map.geo.js?v=20260619-clear-map-address";
+import { initSeleccionDestino } from "../map/map.destino.js?v=20260619-clear-map-address";
 import { actualizarBotonViaje } from "../pasajero/pasajero.ui.js?v=20260615-smooth-autofinish";
 import { initPaymentMethodSettings, initToggleMenuDriver, seleccionarPago } from "./pasajero.ui.js?v=20260615-smooth-autofinish";
 import { getSocket } from "../socket/socket.js?v=20260606-session-refresh";
-import { initPasajeroSocket } from "../socket/pasajero.socket.js?v=20260619-map-ref-button";
-import { setMapa, limpiarMotoristas } from "../map/map.motorista.js?v=20260619-map-ref-button";
-import { initSavedDestinations } from "../map/map.saved-destinations.js?v=20260619-map-ref-icon";
-import { initEnvioPaquete } from "./envio.paquete.js?v=20260606-legal-trust";
+import { initPasajeroSocket } from "../socket/pasajero.socket.js?v=20260619-clear-map-address";
+import { setMapa, limpiarMotoristas } from "../map/map.motorista.js?v=20260619-clear-map-address";
+import { initSavedDestinations } from "../map/map.saved-destinations.js?v=20260619-clear-map-address";
+import { initEnvioPaquete } from "./envio.paquete.js?v=20260619-clear-map-address";
 import { initHomeOffers } from "../promos/passenger-offers.js?v=20260604-admin-offers";
 import { initWalletDiscountUI } from "./wallet-discount.js?v=20260605-price-premium-cancel";
 import { viajeState } from "../viaje/viaje.state.js";
