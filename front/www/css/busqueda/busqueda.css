@@ -318,23 +318,18 @@ body[class*="route-"]:not(.route-home) .home-map-shell {
 }
 
 .route-home .destinos-fab {
-  position: fixed;
-  right: 18px;
-  top: calc(env(safe-area-inset-top) + 108px);
-  z-index: 1250;
-  width: auto;
-  min-width: 0;
-  height: 44px;
-  padding: 0 14px;
+  position: absolute;
+  right: 16px;
+  top: calc(env(safe-area-inset-top) + 88px);
+  z-index: 4;
+  width: 46px;
+  height: 46px;
+  padding: 0;
   border: 0;
-  border-radius: 999px;
-  display: inline-flex;
+  border-radius: 50%;
+  display: grid;
   color: #fff;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-size: 0.82rem;
-  font-weight: 900;
+  place-items: center;
   background:
     radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.3), transparent 16%),
     linear-gradient(135deg, var(--primary, #2563eb), var(--bg-main));
@@ -346,16 +341,15 @@ body[class*="route-"]:not(.route-home) .home-map-shell {
 
 .route-home .destinos-fab i {
   color: #bfdbfe;
-  font-size: 15px;
+  font-size: 17px;
 }
 
 @media (max-width: 380px) {
   .route-home .destinos-fab {
-    right: 12px;
-    top: calc(env(safe-area-inset-top) + 100px);
-    height: 42px;
-    padding: 0 12px;
-    font-size: 0.78rem;
+    right: 14px;
+    top: calc(env(safe-area-inset-top) + 82px);
+    width: 44px;
+    height: 44px;
   }
 }
 

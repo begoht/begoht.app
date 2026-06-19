@@ -52,7 +52,7 @@ function samePlace(a, b) {
 }
 
 function createShell() {
-  const fabHost = document.body;
+  const fabHost = document.querySelector(".home-map-shell") || document.body;
 
   let fab = document.getElementById("destinosFab");
   if (!fab) {
@@ -62,10 +62,7 @@ function createShell() {
     fab.type = "button";
     fab.setAttribute("aria-label", "Guardar referencia");
     fab.title = "Guardar referencia";
-    fab.innerHTML = `
-      <i class="fa-solid fa-bookmark"></i>
-      <span>Guardar referencia</span>
-    `;
+    fab.innerHTML = '<i class="fa-solid fa-bookmark"></i>';
   }
 
   if (fab.parentElement !== fabHost) {
