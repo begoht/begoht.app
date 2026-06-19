@@ -1,4 +1,4 @@
-export const DOWNLOAD_VERSION = "20260619-background-track-apk";
+export const DOWNLOAD_VERSION = "20260619-landing-app";
 
 export const DOWNLOAD_APPS = Object.freeze({
   passenger: Object.freeze({
