@@ -1,5 +1,5 @@
-import { renderPassengerDownloadButton } from "../downloads/downloads.module.js";
-import { renderDriverRegistrationButton, renderRegistrationQuickLinks } from "../registro/registro.module.js";
+import { renderDriverDownloadButton, renderPassengerDownloadButton } from "../downloads/downloads.module.js";
+import { renderRegistrationQuickLinks } from "../registro/registro.module.js";
 
 export function renderHero() {
   return `
@@ -17,7 +17,7 @@ export function renderHero() {
 
         <div class="btn-group">
           ${renderPassengerDownloadButton()}
-          ${renderDriverRegistrationButton()}
+          ${renderDriverDownloadButton({ className: "cta secondary", label: "Descargar motorista" })}
         </div>
 
         ${renderRegistrationQuickLinks()}

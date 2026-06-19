@@ -1,6 +1,6 @@
 import { bindLandingAnalytics, trackLandingEvent } from "../analytics/analytics.module.js";
 import { startHeroRuntime } from "./hero.runtime.js";
-import { renderLandingPage } from "./landing.view.js?v=20260619-mobility-steps";
+import { renderLandingPage } from "./landing.view.js?v=20260619-download-links";
 import { bindLandingNavigation } from "./navigation.js";
 
 const root = document.getElementById("landing-root");
@@ -14,6 +14,6 @@ if (root) {
   startHeroRuntime();
 
   trackLandingEvent("landing_loaded", {
-    moduleVersion: "20260616-landing-modules"
+    moduleVersion: "20260619-download-links"
   });
 }
