@@ -1,5 +1,5 @@
-import { initGeo } from "../map/map.geo.js?v=20260618-map-drag-bg";
-import { initSeleccionDestino } from "../map/map.destino.js?v=20260618-map-drag-bg";
+import { initGeo } from "../map/map.geo.js?v=20260619-map-reference";
+import { initSeleccionDestino } from "../map/map.destino.js?v=20260619-map-reference";
 import { actualizarBotonViaje } from "../pasajero/pasajero.ui.js?v=20260615-smooth-autofinish";
 import { initPaymentMethodSettings, initToggleMenuDriver, seleccionarPago } from "./pasajero.ui.js?v=20260615-smooth-autofinish";
 import { getSocket } from "../socket/socket.js?v=20260606-session-refresh";

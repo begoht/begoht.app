@@ -18,7 +18,7 @@ import {
 import {
   getMap,
   isMapReady
-} from "../map.singleton.js?v=20260618-map-drag-bg";
+} from "../map.singleton.js?v=20260619-map-reference";
 
 /*************************************************
  * 🎯 ESTADOS VÁLIDOS

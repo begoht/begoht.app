@@ -4,7 +4,7 @@ import { runCleanup, setCleanup } from "./router.cleanup.js";
 import { afterRender, pushURL, actualizarLinksActivos } from "./router.utils.js";
 import { runPageInit } from "../app/app.lifecycle.js?v=20260619-live-driver-home";
 import { AppState } from "../state.js";
-import { stopGeo } from "../../map/map.geo.js?v=20260618-map-drag-bg";
+import { stopGeo } from "../../map/map.geo.js?v=20260619-map-reference";
 
 let navigationId = 0;
 let routerReady = false;

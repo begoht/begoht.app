@@ -1,7 +1,7 @@
 import { viajeState } from "../../viaje/viaje.state.js";
 import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260606-legal-trust";
 import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260618-map-drag-bg";
-import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260618-map-drag-bg";
+import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260619-map-reference";
 import { limpiarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260618-map-drag-bg";
 import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260618-map-drag-bg";
 import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260615-smooth-autofinish";

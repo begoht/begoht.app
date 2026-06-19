@@ -1,4 +1,4 @@
-import { getMap } from "./map.singleton.js?v=20260618-map-drag-bg";
+import { getMap } from "./map.singleton.js?v=20260619-map-reference";
 
 import {
   mismaPosicion,

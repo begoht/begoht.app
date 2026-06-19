@@ -1,6 +1,6 @@
 import { BASE } from "./router.utils.js";
 import { AppState } from "../state.js";
-import { stopGeo } from "../../map/map.geo.js?v=20260618-map-drag-bg";
+import { stopGeo } from "../../map/map.geo.js?v=20260619-map-reference";
 
 import { renderWallet } from "../../../wallet/wallet.view.js?v=20260605-wallet-secure";
 import { initWallet } from "../../../wallet/wallet-init.js?v=20260605-wallet-secure";

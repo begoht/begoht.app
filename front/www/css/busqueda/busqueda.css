@@ -750,7 +750,7 @@ body[class*="route-"]:not(.route-home) .home-map-shell {
   min-height: 430px;
   margin: 0;
   z-index: 1;
-  background: #10151f;
+  background: #3b414b;
   overflow: hidden;
 }
 
@@ -760,7 +760,7 @@ body[class*="route-"]:not(.route-home) .home-map-shell {
   min-height: 100%;
   border: 0;
   border-radius: 0;
-  background-color: #343a43;
+  background-color: #3b414b;
   box-shadow: none;
 }
 
@@ -768,12 +768,18 @@ body[class*="route-"]:not(.route-home) .home-map-shell {
 .route-home #map .leaflet-pane,
 .route-home #map .leaflet-map-pane,
 .route-home #map .leaflet-tile-pane {
-  background: #343a43 !important;
+  background: #3b414b !important;
 }
 
-.route-home #map .leaflet-tile {
-  background: #343a43 !important;
-  filter: grayscale(1) brightness(1.22) contrast(0.9) saturate(0.55);
+.route-home #map .bego-map-base-tiles {
+  background: #3b414b !important;
+  filter: grayscale(1) brightness(1.24) contrast(0.72) saturate(0.48);
+  opacity: 0.98;
+}
+
+.route-home #map .bego-map-label-tiles {
+  filter: grayscale(1) brightness(1.72) contrast(1.72) saturate(0.2);
+  opacity: 0.96;
 }
 
 .route-home .home-map-shell::after {

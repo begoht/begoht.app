@@ -3,7 +3,7 @@ import { initModo } from "../../modo.js";
 import { initWalletUI } from "../../wallet.js";
 import { initLogout } from "../../logout.js";
 import { initHeader } from "../../components/header.init.js?v=20260601-huella-user";
-import { getMap } from "../../map/map.singleton.js?v=20260618-map-drag-bg";
+import { getMap } from "../../map/map.singleton.js?v=20260619-map-reference";
 import { restoreViajeUI } from "./app.restore.js?v=20260618-map-drag-bg";
 import { viajeState } from "../../viaje/viaje.state.js";
 
@@ -55,7 +55,7 @@ async function initHome(initId) {
     const map = getMap();
     if (!map) return;
 
-    const { initPasajero } = await import("../../pasajero/pasajero.main.js?v=20260619-live-driver-home");
+    const { initPasajero } = await import("../../pasajero/pasajero.main.js?v=20260619-map-reference");
 
     if (initId !== currentInitId) return;
 

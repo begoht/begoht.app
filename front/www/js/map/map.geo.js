@@ -24,6 +24,20 @@ let ubicacionButtonBound = false;
 let recenterButtonBound = false;
 let ultimaUbicacionGps = null;
 
+function escapeHtml(value = "") {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function shortAddress(value, fallback = "Origen") {
+  const clean = String(value || "").split(",")[0].trim();
+  return clean || fallback;
+}
+
 function viajeProtegido() {
   return ["buscando", "asignado", "reservado", "llego", "en_curso"].includes(viajeState.estado);
 }
@@ -54,6 +68,8 @@ function setInputInicio(direccion, { placeholder = false } = {}) {
 }
 
 function renderPasajeroMarker(map, lat, lng, direccion, { animate = false } = {}) {
+  const label = escapeHtml(shortAddress(direccion, "Origen"));
+
   if (!marcadorPasajero) {
     marcadorPasajero = L.marker([lat, lng], {
       icon: pasajeroIcon
@@ -68,10 +84,18 @@ function renderPasajeroMarker(map, lat, lng, direccion, { animate = false } = {}
     <div style="font-family:system-ui;">
       <b>Tu ubicacion</b><br/>
       <span style="color:#94a3b8;">
-        ${direccion}
+        ${escapeHtml(direccion)}
       </span>
     </div>
   `);
+
+  marcadorPasajero.bindTooltip(label, {
+    permanent: true,
+    direction: "right",
+    offset: [16, 0],
+    opacity: 1,
+    className: "bego-route-label bego-route-label-origin"
+  });
 }
 
 function limpiarOrigenSiLibre() {

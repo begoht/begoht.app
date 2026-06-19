@@ -10,7 +10,7 @@ import { destinoIcon } from "./map.icons.js?v=20260618-map-drag-bg";
 
 import { reverseGeocode } from "./services/map.reverse.js";
 
-import { getMap } from "./map.singleton.js?v=20260618-map-drag-bg";
+import { getMap } from "./map.singleton.js?v=20260619-map-reference";
 import { cityConfig, coordsInCity } from "./config/index.js";
 
 import {
@@ -21,6 +21,32 @@ import {
 let destinoRequestId = 0;
 
 let clickHandler = null;
+
+function escapeHtml(value = "") {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function shortAddress(value, fallback = "Destino") {
+  const clean = String(value || "").split(",")[0].trim();
+  return clean || fallback;
+}
+
+function setDestinoTooltip(marker, direccion) {
+  if (!marker) return;
+
+  marker.bindTooltip(escapeHtml(shortAddress(direccion, "Destino")), {
+    permanent: true,
+    direction: "left",
+    offset: [-16, 0],
+    opacity: 1,
+    className: "bego-route-label bego-route-label-destination"
+  });
+}
 
 export function mostrarDestinoEnMapa(destino) {
   const map = getMap();
@@ -48,6 +74,7 @@ export function mostrarDestinoEnMapa(destino) {
     map.hasLayer?.(viajeState.destinoMarker)
   ) {
     viajeState.destinoMarker.setLatLng(latlng);
+    setDestinoTooltip(viajeState.destinoMarker, destino.direccion || destino.address);
     return;
   }
 
@@ -60,6 +87,8 @@ export function mostrarDestinoEnMapa(destino) {
   viajeState.destinoMarker = L.marker(latlng, {
     icon: destinoIcon
   }).addTo(map);
+
+  setDestinoTooltip(viajeState.destinoMarker, destino.direccion || destino.address);
 }
 
 /*************************************************
@@ -113,12 +142,15 @@ export async function asignarDestino(
   if (viajeState.destinoMarker) {
 
     viajeState.destinoMarker.setLatLng(latlng);
+    setDestinoTooltip(viajeState.destinoMarker, nombre || "Destino");
 
   } else {
 
     viajeState.destinoMarker = L.marker(latlng, {
       icon: destinoIcon
     }).addTo(map);
+
+    setDestinoTooltip(viajeState.destinoMarker, nombre || "Destino");
   }
 
   map.flyTo(latlng, 15, {
@@ -157,6 +189,11 @@ export async function asignarDestino(
     if (input) {
       input.value = nombreReal;
     }
+
+    setDestinoTooltip(
+      viajeState.destinoMarker,
+      nombreReal
+    );
 
   })();
 
