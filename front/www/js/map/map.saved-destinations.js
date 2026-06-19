@@ -1,5 +1,5 @@
 import { viajeState } from "../viaje/viaje.state.js";
-import { asignarDestino } from "./map.destino.js?v=20260619-map-reference";
+import { asignarDestino } from "./map.destino.js?v=20260619-map-hotfix";
 import { coordsInCity } from "./config/index.js";
 
 const MAX_DESTINOS = 3;
@@ -52,8 +52,9 @@ function samePlace(a, b) {
 }
 
 function createShell() {
-  const mapShell = document.querySelector(".home-map-shell");
-  const fabHost = mapShell || document.body;
+  const fabHost = document.body;
+  const destinoInput = document.getElementById("inputDestino");
+  const destinoBox = destinoInput?.closest(".hacia") || destinoInput?.parentElement;
 
   let fab = document.getElementById("destinosFab");
   if (!fab) {
@@ -68,6 +69,22 @@ function createShell() {
 
   if (fab.parentElement !== fabHost) {
     fabHost.appendChild(fab);
+  }
+
+  let inline = document.getElementById("destinosInlineSave");
+  if (!inline) {
+    inline = document.createElement("button");
+    inline.id = "destinosInlineSave";
+    inline.className = "destinos-inline-save ripple";
+    inline.type = "button";
+    inline.innerHTML = `
+      <i class="fa-solid fa-bookmark"></i>
+      <span>Guardar referencia</span>
+    `;
+  }
+
+  if (destinoBox && inline.parentElement !== destinoBox) {
+    destinoBox.appendChild(inline);
   }
 
   if (document.getElementById("destinosPanel")) return;
@@ -212,11 +229,18 @@ export function initSavedDestinations(map) {
   createShell();
 
   const fab = document.getElementById("destinosFab");
+  const inline = document.getElementById("destinosInlineSave");
   const close = document.getElementById("destinosClose");
   const save = document.getElementById("destinosSave");
   const panel = document.getElementById("destinosPanel");
 
   if (fab) fab.onclick = () => openPanel(map);
+  if (inline) {
+    inline.onclick = () => {
+      openPanel(map);
+      saveCurrentDestination(map);
+    };
+  }
 
   if (close?.dataset.bound !== "1") {
     close.dataset.bound = "1";

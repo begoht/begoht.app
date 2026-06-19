@@ -1,10 +1,10 @@
-import { routes } from "./router.routes.js?v=20260619-emergency-secure";
+import { routes } from "./router.routes.js?v=20260619-map-hotfix";
 import { renderLayout } from "./router.render.js?v=20260606-legal-trust";
 import { runCleanup, setCleanup } from "./router.cleanup.js";
 import { afterRender, pushURL, actualizarLinksActivos } from "./router.utils.js";
-import { runPageInit } from "../app/app.lifecycle.js?v=20260619-live-driver-home";
+import { runPageInit } from "../app/app.lifecycle.js?v=20260619-map-hotfix";
 import { AppState } from "../state.js";
-import { stopGeo } from "../../map/map.geo.js?v=20260619-map-reference";
+import { stopGeo } from "../../map/map.geo.js?v=20260619-map-hotfix";
 
 let navigationId = 0;
 let routerReady = false;

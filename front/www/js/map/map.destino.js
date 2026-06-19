@@ -2,15 +2,15 @@
 
 import { viajeState } from "../viaje/viaje.state.js";
 
-import { dibujarRuta } from "./map.ruta.js?v=20260618-map-drag-bg";
+import { dibujarRuta } from "./map.ruta.js?v=20260619-map-hotfix";
 
 import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260606-legal-trust";
 
-import { destinoIcon } from "./map.icons.js?v=20260618-map-drag-bg";
+import { destinoIcon } from "./map.icons.js?v=20260619-map-hotfix";
 
 import { reverseGeocode } from "./services/map.reverse.js";
 
-import { getMap } from "./map.singleton.js?v=20260619-map-reference";
+import { getMap } from "./map.singleton.js?v=20260619-map-hotfix";
 import { cityConfig, coordsInCity } from "./config/index.js";
 
 import {
@@ -23,12 +23,15 @@ let destinoRequestId = 0;
 let clickHandler = null;
 
 function escapeHtml(value = "") {
-  return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+  const chars = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  };
+
+  return String(value).replace(/[&<>"']/g, (char) => chars[char]);
 }
 
 function shortAddress(value, fallback = "Destino") {

@@ -313,7 +313,8 @@ body[class*="route-"]:not(.route-home) .home-map-shell {
 }
 
 .destinos-fab,
-.destinos-panel {
+.destinos-panel,
+.destinos-inline-save {
   display: none;
 }
 
@@ -349,6 +350,29 @@ body[class*="route-"]:not(.route-home) .home-map-shell {
 
 .route-home .destinos-fab:active {
   transform: scale(0.94);
+}
+
+.route-home .destinos-inline-save {
+  width: 100%;
+  min-height: 42px;
+  margin-top: 9px;
+  border: 0;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  color: #f8fafc;
+  font-size: 0.9rem;
+  font-weight: 850;
+  background: rgba(37, 99, 235, 0.18);
+  box-shadow:
+    inset 0 0 0 1px rgba(96, 165, 250, 0.26),
+    0 10px 22px rgba(0, 0, 0, 0.22);
+}
+
+.route-home .destinos-inline-save i {
+  color: #93c5fd;
 }
 
 .route-home .destinos-panel {

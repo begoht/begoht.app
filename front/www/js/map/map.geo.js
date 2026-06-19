@@ -1,4 +1,4 @@
-import { pasajeroIcon } from "./map.icons.js?v=20260618-map-drag-bg";
+import { pasajeroIcon } from "./map.icons.js?v=20260619-map-hotfix";
 import { ACTIVE_CITY, cityConfig, coordsInCity, inferCityConfigFromCoords, persistDetectedCity } from "./config/index.js";
 import { viajeState } from "../viaje/viaje.state.js";
 import { reverseGeocode } from "./services/map.reverse.js";
@@ -9,7 +9,7 @@ import {
   layerReferencias
 } from "./layers/map.layers.js";
 
-import { renderPOILayer } from "./layers/map.poi.layer.js?v=20260618-map-drag-bg";
+import { renderPOILayer } from "./layers/map.poi.layer.js?v=20260619-map-hotfix";
 
 import {
   getCurrentPosition,
@@ -25,12 +25,15 @@ let recenterButtonBound = false;
 let ultimaUbicacionGps = null;
 
 function escapeHtml(value = "") {
-  return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+  const chars = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  };
+
+  return String(value).replace(/[&<>"']/g, (char) => chars[char]);
 }
 
 function shortAddress(value, fallback = "Origen") {

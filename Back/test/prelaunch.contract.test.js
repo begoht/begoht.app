@@ -67,6 +67,18 @@ test("Home y landing utilizan el color oficial", () => {
   assert.match(landing, /--bg:\s*#020616/i);
 });
 
+test("el mapa pasajero mantiene origen, destino y guardado compatibles con Android", () => {
+  const geo = readWorkspaceFile("front/www/js/map/map.geo.js");
+  const destino = readWorkspaceFile("front/www/js/map/map.destino.js");
+  const guardados = readWorkspaceFile("front/www/js/map/map.saved-destinations.js");
+  const css = readWorkspaceFile("front/www/css/busqueda/busqueda.css");
+
+  assert.doesNotMatch(geo, /replaceAll\(/);
+  assert.doesNotMatch(destino, /replaceAll\(/);
+  assert.match(guardados, /destinosInlineSave/);
+  assert.match(css, /destinos-inline-save/);
+});
+
 test("la app motorista muestra la divulgacion antes del permiso GPS", () => {
   const html = readWorkspaceFile("front-driver/www/index.html");
   const gps = readWorkspaceFile("front-driver/www/js/modules/gps.js");
