@@ -5,15 +5,15 @@ export function renderHero() {
   return `
     <main id="home" class="hero site-shell">
       <section class="hero-copy" aria-labelledby="heroTitle">
-        <p class="kicker">Ecosistema de movilidad inteligente</p>
-        <h1 id="heroTitle">BeGO para viajes, envios y pagos</h1>
+        <p class="kicker">Movilidad simple, segura y conectada</p>
+        <h1 id="heroTitle">Tu viaje, siempre bajo control</h1>
 
         <div class="dynamic-caption" aria-live="polite">
-          <span>Servicios en</span>
-          <strong class="word" id="changingText">Tiempo real</strong>
+          <span>Muévete con</span>
+          <strong class="word" id="changingText">confianza</strong>
         </div>
 
-        <p>Una plataforma preparada para crecer por negocios: moto taxi, colis, wallet, soporte y nuevos servicios sin tocar el nucleo publico.</p>
+        <p>Solicita un motorista cercano, sigue su ubicación en tiempo real y paga como prefieras. BeGO reúne viajes, envíos y wallet en una sola experiencia.</p>
 
         <div class="btn-group">
           ${renderPassengerDownloadButton()}
@@ -36,10 +36,10 @@ export function renderHero() {
             </div>
             <div class="sim-card">
               <div class="sim-card-row">
-                <span>Viaje Encontrado</span>
+                <span>Motorista asignado</span>
                 <span class="sim-card-state">En ruta</span>
               </div>
-              <p>Conexion optimizada de baja latencia</p>
+              <p>Ubicación actualizada en tiempo real</p>
             </div>
           </div>
         </div>

@@ -55,7 +55,7 @@ async function initHome(initId) {
     const map = getMap();
     if (!map) return;
 
-    const { initPasajero } = await import("../../pasajero/pasajero.main.js?v=20260618-map-drag-bg");
+    const { initPasajero } = await import("../../pasajero/pasajero.main.js?v=20260619-live-driver-home");
 
     if (initId !== currentInitId) return;
 

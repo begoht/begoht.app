@@ -779,7 +779,7 @@ body[class*="route-"]:not(.route-home) .home-map-shell {
   height: 120px;
   z-index: 2;
   pointer-events: none;
-  background: linear-gradient(180deg, rgba(17, 17, 19, 0), #111113 86%);
+  background: linear-gradient(180deg, rgba(2, 6, 22, 0), var(--bg-main) 86%);
 }
 
 .route-home #appMain.home-page {
@@ -801,7 +801,7 @@ body[class*="route-"]:not(.route-home) .home-map-shell {
   bottom: 0;
   z-index: -1;
   border-radius: 26px 26px 0 0;
-  background: #111113;
+  background: var(--bg-main);
   box-shadow: 0 -16px 34px rgba(0, 0, 0, 0.28);
 }
 
@@ -828,7 +828,7 @@ body[class*="route-"]:not(.route-home) .home-map-shell {
   padding: 20px 18px 14px 34px;
   border: 0;
   border-radius: 0;
-  background: #111113;
+  background: var(--bg-main);
   box-shadow: none;
   gap: 12px;
 }
@@ -874,7 +874,7 @@ body[class*="route-"]:not(.route-home) .home-map-shell {
   height: 12px;
   background: #f8fafc;
   border-radius: 50%;
-  box-shadow: inset 0 0 0 4px #111113, 0 0 0 2px #f8fafc;
+  box-shadow: inset 0 0 0 4px var(--bg-main), 0 0 0 2px #f8fafc;
 }
 
 .route-home .desde::after {
@@ -893,7 +893,7 @@ body[class*="route-"]:not(.route-home) .home-map-shell {
   height: 12px;
   border-radius: 2px;
   background: #f8fafc;
-  box-shadow: inset 0 0 0 4px #111113, 0 0 0 2px #f8fafc;
+  box-shadow: inset 0 0 0 4px var(--bg-main), 0 0 0 2px #f8fafc;
 }
 
 .route-home #btnUbicacion {
@@ -901,14 +901,14 @@ body[class*="route-"]:not(.route-home) .home-map-shell {
   padding: 12px 18px;
   border-radius: 0;
   color: #e5e7eb;
-  background: #111113;
+  background: var(--bg-main);
   box-shadow: none;
 }
 
 .route-home .titulo-pago,
 .route-home .pago-opciones,
 .route-home #appMain .home-promos {
-  background: #111113;
+  background: var(--bg-main);
 }
 
 @media (max-width: 380px) {

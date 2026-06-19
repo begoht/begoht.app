@@ -1,23 +1,23 @@
 const TECHNOLOGY_CARDS = Object.freeze([
   {
     icon: "bx bx-bolt-circle",
-    title: "Asignacion rapida",
-    body: "Emparejamiento por proximidad para conectar pasajeros, envios y motoristas disponibles."
+    title: "Asignación inteligente",
+    body: "Tecnología avanzada que conecta pasajeros y motoristas cercanos en cuestión de segundos."
   },
   {
-    icon: "bx bx-sync",
-    title: "Auto-recuperacion",
-    body: "Los estados importantes del viaje vuelven a cargarse si se cierra o reabre la app."
+    icon: "bx bx-radar",
+    title: "Seguimiento en tiempo real",
+    body: "Monitoreo preciso de cada viaje desde la aceptación hasta la llegada al destino."
   },
   {
     icon: "bx bx-shield-quarter",
-    title: "Flujos seguros",
-    body: "Validaciones de llegada, distancia y finalizacion pensadas para proteger el viaje."
+    title: "Seguridad avanzada",
+    body: "Procesos de validación y monitoreo diseñados para brindar confianza en cada trayecto."
   },
   {
     icon: "bx bx-line-chart",
-    title: "Crecimiento modular",
-    body: "Cada negocio puede tener su propia pantalla, analitica y acciones sin mezclar responsabilidades."
+    title: "Escalable y preparada para crecer",
+    body: "Una infraestructura moderna capaz de incorporar nuevos servicios y expandirse sin límites."
   }
 ]);
 
@@ -25,9 +25,12 @@ export function renderTechnologySection() {
   return `
     <section id="about" class="content-band site-shell" aria-labelledby="technologyTitle">
       <div class="section-head">
-        <p class="kicker">Infraestructura tecnologica</p>
-        <h2 id="technologyTitle" class="section-title">Disenada para produccion</h2>
-        <p>La landing ahora separa presentacion, descargas, wallet, soporte, registro y analitica en modulos claros.</p>
+        <p class="kicker">Tecnología de nueva generación</p>
+        <h2 id="technologyTitle" class="section-title">Movilidad impulsada por innovación</h2>
+        <p>
+          Construimos una plataforma sólida, rápida y confiable para ofrecer una experiencia
+          excepcional a pasajeros y motoristas en cada interacción.
+        </p>
       </div>
 
       <div class="about-split">
@@ -35,9 +38,12 @@ export function renderTechnologySection() {
           <div class="engine-status">
             <div class="pulse-dot" aria-hidden="true"></div>
             <div>
-              <span>Arquitectura publica</span>
-              <strong>Landing modular por negocio</strong>
-              <p>El nucleo solo arma la pagina. Los contenidos de negocio viven en sus modulos.</p>
+              <span>Plataforma inteligente</span>
+              <strong>Experiencia optimizada en tiempo real</strong>
+              <p>
+                Cada componente de BeGO está diseñado para ofrecer velocidad,
+                estabilidad y una experiencia premium desde la solicitud hasta el destino.
+              </p>
             </div>
           </div>
         </div>

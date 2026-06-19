@@ -1,5 +1,5 @@
 import { viajeState } from "../../viaje/viaje.state.js";
-import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260618-map-drag-bg";
+import { mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260619-live-driver-home";
 import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260618-map-drag-bg";
 import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260618-map-drag-bg";
 import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260618-map-drag-bg";
@@ -73,7 +73,6 @@ export const handleTrack = (data) => {
   /*************************************************
    * 1. MOTORISTA SIEMPRE
    *************************************************/
-  limpiarMotoristas();
   mostrarMotoristaEnMapa({ lat, lng, heading });
 
   /*************************************************

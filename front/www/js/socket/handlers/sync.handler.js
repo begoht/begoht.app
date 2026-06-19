@@ -6,7 +6,7 @@ import { limpiarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=2
 import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260618-map-drag-bg";
 import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260615-smooth-autofinish";
 
-export const handleSync = (data) => {
+export const handleSync = (data, socket) => {
 
   if (data?.activo && data?.viajeId && viajeFueFinalizado(data.viajeId)) {
     console.warn("Sync ignorado: viaje ya finalizado", data.viajeId);
@@ -56,6 +56,8 @@ export const handleSync = (data) => {
     proximoDestino: data.proximoDestino || null,
     precioConfirmado: true
   });
+
+  socket?.emit("join-room", `track:${data.viajeId}`);
 
   actualizarBotonViaje();
   actualizarUIDriver(data.motorista, data.estado);

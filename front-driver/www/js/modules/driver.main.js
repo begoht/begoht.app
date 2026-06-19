@@ -1,6 +1,6 @@
 import { initSocket } from "./socket.js?v=20260615-smooth-autofinish";
 import { initMap } from "./map.js?v=20260615-smooth-autofinish";
-import { initGPS } from "./gps.js?v=20260615-smooth-autofinish";
+import { initGPS } from "./gps.js?v=20260619-background-track";
 import { initOferta } from "./oferta/oferta.index.js?v=20260615-smooth-autofinish";
 import { initViajeInicio } from "./viajeInicio/viajeInicio.js?v=20260615-smooth-autofinish";
 import { initViajeFinalizar } from "./viajeFinalizar.js?v=20260615-smooth-autofinish";

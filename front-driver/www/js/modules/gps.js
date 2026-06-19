@@ -4,6 +4,10 @@ import { crearMotoIcon, motoIcon } from "./map.icons.js?v=20260615-smooth-autofi
 import {
   setMotorcycleMarkerPose
 } from "./map.motion.js?v=20260615-smooth-autofinish";
+import {
+  getDriverAccessToken,
+  refreshDriverAccessToken
+} from "../auth/session.js";
 
 let ultimaPosicion = null;
 let ultimaLectura = null;
@@ -15,6 +19,8 @@ let backgroundWatchId = null;
 let lifecycleBound = false;
 let capacitorLifecycleBound = false;
 let pendingPosition = null;
+let ultimaEmisionHttpTime = 0;
+let httpFallbackInFlight = false;
 
 const FRECUENCIA_MS = 4000;
 const HEARTBEAT_MS = 25000;
@@ -203,9 +209,20 @@ function emitPosition({ lat, lng, heading }, { force = false, source = "gps" } =
     return;
   }
 
+  const nativeBackground =
+    source === "background" &&
+    (document.hidden || document.visibilityState === "hidden");
+
+  if (nativeBackground) {
+    queuePendingPosition({ lat, lng, heading }, { force, source });
+    sendHttpFallback({ lat, lng, heading }, { force: true, source });
+    return;
+  }
+
   if (!socketRef?.connected) {
     queuePendingPosition({ lat, lng, heading }, { force, source });
     requestSocketReconnect();
+    sendHttpFallback({ lat, lng, heading }, { force, source });
     return;
   }
 
@@ -251,6 +268,64 @@ function requestSocketReconnect() {
   try {
     socketRef.connect?.();
   } catch {}
+}
+
+async function sendHttpFallback(position, { force = false, source = "gps" } = {}) {
+  const now = Date.now();
+  if (httpFallbackInFlight || (!force && now - ultimaEmisionHttpTime < FRECUENCIA_MS)) {
+    return;
+  }
+
+  httpFallbackInFlight = true;
+  ultimaEmisionHttpTime = now;
+
+  try {
+    let token = getDriverAccessToken();
+    let response = await requestDriverLocation(position, token, source);
+
+    if (response.status === 401) {
+      token = await refreshDriverAccessToken(getServerUrl());
+      response = await requestDriverLocation(position, token, source);
+    }
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    ultimaPosicion = { lat: position.lat, lng: position.lng };
+    ultimaEmisionTime = Date.now();
+    pendingPosition = null;
+  } catch (error) {
+    console.warn("Ubicacion en segundo plano pendiente:", error?.message || error);
+    queuePendingPosition(position, { force: true, source });
+  } finally {
+    httpFallbackInFlight = false;
+  }
+}
+
+function requestDriverLocation({ lat, lng, heading }, token, source) {
+  return fetch(`${getServerUrl()}/api/users/driver-location`, {
+    method: "PATCH",
+    headers: {
+      "Authorization": `Bearer ${token || ""}`,
+      "Content-Type": "application/json",
+      "ngrok-skip-browser-warning": "true"
+    },
+    body: JSON.stringify({
+      lat,
+      lng,
+      heading,
+      disponible: true,
+      source
+    }),
+    keepalive: true
+  });
+}
+
+function getServerUrl() {
+  return typeof window.getServerUrl === "function"
+    ? window.getServerUrl().replace(/\/$/, "")
+    : window.location.origin.replace(/\/$/, "");
 }
 
 function normalizePosition(posicion) {

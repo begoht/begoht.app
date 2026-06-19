@@ -3,7 +3,7 @@ import { viajeState } from "../viaje/viaje.state.js";
 
 import { handlePrecio } from "./handlers/precio.handler.js?v=20260615-smooth-autofinish";
 import { handleAsignado } from "./handlers/asignado.handler.js?v=20260618-map-drag-bg";
-import { handleTrack } from "./handlers/track.handler.js?v=20260618-map-drag-bg";
+import { handleTrack } from "./handlers/track.handler.js?v=20260619-live-driver-home";
 import { handleLlego } from "./handlers/llego.handler.js?v=20260618-map-drag-bg";
 import { handleIniciado } from "./handlers/iniciado.handler.js?v=20260618-map-drag-bg";
 import { handleFinalizado } from "./handlers/finalizado.handler.js?v=20260615-smooth-autofinish";
@@ -48,7 +48,10 @@ export function initPasajeroSocket() {
 
   bindForegroundSync(socket);
 
-  if (listenersRegistrados) return;
+  if (listenersRegistrados) {
+    requestPassengerSync(socket);
+    return;
+  }
 
   listenersRegistrados = true;
   console.log("Pasajero Socket: INIT PRO MODULAR");
@@ -89,13 +92,7 @@ export function initPasajeroSocket() {
 
   initPasajeroChat(socket);
 
-  if (socket.connected) {
-    if (viajeState.viajeId) {
-      socket.emit("join-room", `track:${viajeState.viajeId}`);
-    }
-
-    socket.emit("sync-pasajero");
-  }
+  requestPassengerSync(socket);
 }
 
 function bindForegroundSync(socket) {
@@ -116,11 +113,7 @@ function bindForegroundSync(socket) {
     if (now - lastSyncAt < 1000) return;
     lastSyncAt = now;
 
-    if (viajeState.viajeId) {
-      socket.emit("join-room", `track:${viajeState.viajeId}`);
-    }
-
-    socket.emit("sync-pasajero");
+    requestPassengerSync(socket);
   };
 
   document.addEventListener("visibilitychange", requestSync);
@@ -141,6 +134,21 @@ function bindForegroundSync(socket) {
     });
     bind("resume", requestSync);
   }
+}
+
+function requestPassengerSync(socket) {
+  if (!socket) return;
+
+  if (!socket.connected) {
+    socket.connect?.();
+    return;
+  }
+
+  if (viajeState.viajeId) {
+    socket.emit("join-room", `track:${viajeState.viajeId}`);
+  }
+
+  socket.emit("sync-pasajero");
 }
 
 function esEventoDuplicado(eventName, data = {}) {

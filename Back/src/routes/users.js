@@ -6,6 +6,9 @@ const bcrypt = require("bcryptjs");
 const multer = require("multer");
 const cloudinary = require("../config/cloudinary");
 const { requireInternationalPhone } = require("../utils/phone");
+const storeDriverLocation = require("../sockets/viajes/motorista/ubicacion/redisStore");
+const trackDriverLocation = require("../sockets/viajes/motorista/ubicacion/tracking");
+const trackReservedTrip = require("../sockets/viajes/motorista/ubicacion/reservado");
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
@@ -172,6 +175,53 @@ router.patch("/location", authHttp, async (req, res) => {
   } catch (err) {
     console.error("Error actualizando ubicacion:", err);
     res.status(500).json({ error: "Error actualizando ubicacion" });
+  }
+});
+
+// PATCH /api/users/driver-location
+// Native fallback used when Android keeps GPS alive but suspends the web socket.
+router.patch("/driver-location", authHttp, async (req, res) => {
+  try {
+    if (req.user.rol !== "motorista") {
+      return res.status(403).json({ error: "Solo disponible para motoristas" });
+    }
+
+    const lat = Number(req.body?.lat);
+    const lng = Number(req.body?.lng);
+    const heading = req.body?.heading == null ? null : Number(req.body.heading);
+
+    if (
+      !Number.isFinite(lat) ||
+      !Number.isFinite(lng) ||
+      Math.abs(lat) > 90 ||
+      Math.abs(lng) > 180
+    ) {
+      return res.status(400).json({ error: "Ubicacion invalida" });
+    }
+
+    const payload = {
+      lat,
+      lng,
+      heading: Number.isFinite(heading) ? heading : null,
+      disponible: req.body?.disponible !== false,
+      force: true,
+      source: "background-http"
+    };
+    const socketAdapter = {
+      id: `http:${req.user.id}`,
+      emit() {}
+    };
+
+    await storeDriverLocation(socketAdapter, req.user.id, payload);
+    await Promise.all([
+      trackDriverLocation(global.io, req.user.id, payload),
+      trackReservedTrip(global.io, req.user.id, payload)
+    ]);
+
+    res.json({ ok: true, timestamp: Date.now() });
+  } catch (err) {
+    console.error("Error actualizando ubicacion del motorista:", err);
+    res.status(500).json({ error: "Error actualizando ubicacion del motorista" });
   }
 });
 
