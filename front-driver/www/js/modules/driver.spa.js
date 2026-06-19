@@ -96,7 +96,10 @@ function initDriverPage(route) {
   if (route === "/wallet") loadDriverWallet();
   if (route === "/ganancias") loadDriverEarnings();
   if (route === "/creditos") loadDriverCredits();
-  if (route === "/cuenta") hydrateDriverAccount();
+  if (route === "/cuenta") {
+    hydrateDriverAccount();
+    bindDriverAccountSecurity();
+  }
   if (route === "/soporte") initDriverSupportChat();
 }
 
@@ -321,7 +324,67 @@ function renderCuenta() {
       ${listItem("Centro de seguridad", "PIN, huella y contactos de emergencia.", "fa-shield", "#/soporte")}
       ${listItem("Legal et confiance", "Conditions, confidentialite et contact officiel.", "fa-scale-balanced", "#/legal")}
     </section>
+
+    <section class="driver-panel">
+      <button class="driver-pay-commission-btn" id="driverLogoutBtn" type="button">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        Se deconnecter
+      </button>
+      <button class="driver-pay-commission-btn" id="driverDeleteAccountBtn" type="button">
+        <i class="fa-solid fa-user-slash"></i>
+        Supprimer mon compte
+      </button>
+      <small id="driverAccountSecurityHint"></small>
+    </section>
   `);
+}
+
+function bindDriverAccountSecurity() {
+  document.getElementById("driverLogoutBtn")?.addEventListener("click", async () => {
+    const token = getDriverAccessToken();
+    try {
+      await fetch(`${getServerUrl()}/api/driver/auth/logout`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token || ""}` },
+      });
+    } catch {}
+    clearDriverSession();
+    window.socket?.disconnect?.();
+    window.location.href = "login.html";
+  });
+
+  document.getElementById("driverDeleteAccountBtn")?.addEventListener("click", async () => {
+    const confirmation = window.prompt("Ecrivez ELIMINAR pour confirmer:");
+    if (String(confirmation || "").trim().toUpperCase() !== "ELIMINAR") return;
+    const password = window.prompt("Entrez votre mot de passe actuel:");
+    if (!password) return;
+
+    const hint = document.getElementById("driverAccountSecurityHint");
+    try {
+      const response = await fetch(`${getServerUrl()}/api/users/account`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${getDriverAccessToken() || ""}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ password, confirmation: "ELIMINAR" }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.ok) throw new Error(data.error || "Suppression impossible");
+      clearDriverSession();
+      window.socket?.disconnect?.();
+      alert("Votre compte a ete supprime.");
+      window.location.href = "login.html";
+    } catch (error) {
+      if (hint) hint.textContent = error.message || "Suppression impossible";
+    }
+  });
+}
+
+function getServerUrl() {
+  return typeof window.getServerUrl === "function"
+    ? window.getServerUrl().replace(/\/$/, "")
+    : window.location.origin.replace(/\/$/, "");
 }
 
 function renderAjustes() {

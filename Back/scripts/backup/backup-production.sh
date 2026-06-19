@@ -15,11 +15,17 @@ archive="$BACKUP_DIR/bego-backup-$timestamp.tar.gz"
 mkdir -p "$target_dir"
 chmod 700 "$BACKUP_DIR"
 
-if [[ -f "$ENV_FILE" ]]; then
-  set -a
-  # shellcheck disable=SC1090
-  source "$ENV_FILE"
-  set +a
+if [[ -z "${MONGO_URI:-}" && -f "$ENV_FILE" ]]; then
+  MONGO_URI="$(
+    cd "$BACK_ROOT"
+    ENV_FILE="$ENV_FILE" node -e '
+      const fs = require("fs");
+      const dotenv = require("dotenv");
+      const values = dotenv.parse(fs.readFileSync(process.env.ENV_FILE));
+      process.stdout.write(values.MONGO_URI || "");
+    '
+  )"
+  export MONGO_URI
 fi
 
 if [[ -z "${MONGO_URI:-}" ]]; then

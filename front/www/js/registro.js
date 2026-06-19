@@ -55,6 +55,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const loginTelefono = document.getElementById("loginTelefono");
   const loginPassword = document.getElementById("loginPassword");
   const msgLogin = document.getElementById("msgLogin");
+  const btnForgotPassword = document.getElementById("btnForgotPassword");
+  const passwordResetBox = document.getElementById("passwordResetBox");
+  const resetEmail = document.getElementById("resetEmail");
+  const resetCode = document.getElementById("resetCode");
+  const resetPassword = document.getElementById("resetPassword");
+  const btnSendResetCode = document.getElementById("btnSendResetCode");
+  const btnResetPassword = document.getElementById("btnResetPassword");
   setAuthMode("login");
 
   // =============================
@@ -336,72 +343,66 @@ document.addEventListener("DOMContentLoaded", () => {
     phoneOtpCode.value = phoneOtpCode.value.replace(/\D/g, "").slice(0, 6);
   });
 
-  // =============================
-  // REGISTRO FINAL
-  // =============================
+  resetCode?.addEventListener("input", () => {
+    resetCode.value = resetCode.value.replace(/\D/g, "").slice(0, 6);
+  });
 
-  btnRegistro?.addEventListener("click", async () => {
-
-    limpiarMsg(msgRegistro);
-
-    if (!password.value || password.value.length < 8) {
-      mostrarMsg(msgRegistro, "La contraseña debe tener mínimo 8 caracteres");
-      return;
+  btnForgotPassword?.addEventListener("click", () => {
+    passwordResetBox.hidden = !passwordResetBox.hidden;
+    if (!passwordResetBox.hidden) {
+      resetEmail.value = loginTelefono?.value.includes("@") ? loginTelefono.value.trim() : "";
+      resetEmail.focus();
     }
+  });
 
-    if (password.value !== confirmPassword.value) {
-      mostrarMsg(msgRegistro, "Las contraseñas no coinciden");
-      return;
+  btnSendResetCode?.addEventListener("click", async () => {
+    await passwordResetRequest(
+      "/api/auth/password/forgot",
+      { email: resetEmail?.value.trim().toLowerCase() },
+      btnSendResetCode,
+      "Codigo enviado. Revisa tu email."
+    );
+  });
+
+  btnResetPassword?.addEventListener("click", async () => {
+    const data = await passwordResetRequest(
+      "/api/auth/password/reset",
+      {
+        email: resetEmail?.value.trim().toLowerCase(),
+        code: resetCode?.value,
+        newPassword: resetPassword?.value,
+      },
+      btnResetPassword,
+      "Contrasena actualizada. Ya puedes iniciar sesion."
+    );
+
+    if (data?.ok) {
+      passwordResetBox.hidden = true;
+      resetCode.value = "";
+      resetPassword.value = "";
     }
+  });
 
-    if (!terminos.checked) {
-      mostrarMsg(msgRegistro, "Debes aceptar los términos");
-      return;
-    }
-
-    const usuario = {
-      nombre: nombre.value.trim(),
-      apellido: apellido.value.trim(),
-      telefono: normalizarTelefonoInternacional(telefono.value),
-      email: email.value.trim().toLowerCase() || null,
-      password: password.value.trim(),
-      rol: rol.value
-    };
-
-    btnRegistro.disabled = true;
-    btnRegistro.textContent = "Creando cuenta...";
-
+  async function passwordResetRequest(path, payload, button, successMessage) {
+    limpiarMsg(msgLogin);
+    button.disabled = true;
     try {
-
-      const res = await fetch(`${SERVER_URL}/api/auth/register`, {
+      const response = await fetch(`${SERVER_URL}${path}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(usuario),
+        body: JSON.stringify(payload),
       });
-
-      const data = await res.json().catch(() => null);
-
-      if (!res.ok) {
-        throw new Error(data?.error || data?.msg || "Error en registro");
-      }
-
-      mostrarMsg(msgRegistro, "Cuenta creada correctamente ✅", "ok");
-
-      setTimeout(() => {
-        registroBox?.classList.remove("active");
-        loginBox?.classList.add("active");
-        slider.style.transform = "translateX(0%)";
-        limpiarMsg(msgRegistro);
-      }, 1200);
-
-    } catch (err) {
-      mostrarMsg(msgRegistro, err.message || "Error de conexión");
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.msg || data.error || "Operation impossible");
+      mostrarMsg(msgLogin, successMessage, "ok");
+      return data;
+    } catch (error) {
+      mostrarMsg(msgLogin, error.message || "Operation impossible");
+      return null;
     } finally {
-      btnRegistro.disabled = false;
-      btnRegistro.textContent = "Crear Cuenta";
+      button.disabled = false;
     }
-
-  });
+  }
 
   // =============================
   // LOGIN

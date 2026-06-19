@@ -1,4 +1,4 @@
-const LAST_UPDATED = "6 juin 2026";
+const LAST_UPDATED = "19 juin 2026";
 
 function contactCards({ publicMode = false } = {}) {
   const supportHref = publicMode ? "registro.html" : "#/soporte";
@@ -93,8 +93,10 @@ export function renderLegalConfianza({ publicMode = false } = {}) {
         </div>
         <div class="legal-copy">
           <p>BeGO collecte les donnees necessaires au service: nom, telephone, email, role, photo de profil si ajoutee, position GPS pendant l'utilisation, adresses de depart et destination, historique de courses, wallet, paiements, recus, messages de support en direct et erreurs techniques de l'application.</p>
+          <p>Pour les motoristes, la position precise peut continuer en arriere-plan lorsqu'ils sont en ligne ou pendant une course. Cela permet au passager de voir l'arrivee et le trajet en temps reel, de proposer des courses proches et d'assurer le suivi de securite. Android peut afficher une notification permanente. Le motorista peut se mettre hors ligne ou retirer l'autorisation dans les reglages du telephone.</p>
           <p>Ces donnees servent a creer le compte, verifier l'identite, connecter passager et motorista, calculer le prix, afficher le suivi, generer les recus, proteger les wallets, prevenir la fraude, ameliorer la stabilite et assister l'utilisateur. Les donnees ne sont partagees qu'avec les personnes ou services necessaires: motorista assigne, passager concerne, support BeGO, prestataires techniques, paiement ou obligations legales.</p>
-          <p>Vous pouvez demander la correction, l'acces ou la suppression de vos donnees via le support officiel. Certaines informations peuvent etre conservees lorsqu'elles sont necessaires pour securite, comptabilite, litige, fraude, obligations legales ou fonctionnement du service.</p>
+          <p>Vous pouvez demander la correction, l'acces ou la suppression de vos donnees via le support officiel. Certaines informations peuvent etre conservees lorsqu'elles sont necessaires pour securite, comptabilite, litige, fraude, obligations legales ou fonctionnement du service. Les donnees ne sont conservees que pendant la duree necessaire a ces finalites.</p>
+          <p><a href="/delete-account.html">Supprimer mon compte en ligne</a>. Une course active ou un solde financier doit etre resolu avant la suppression.</p>
         </div>
       </section>
 

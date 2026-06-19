@@ -19,6 +19,9 @@ The script creates:
 - `manifest.txt`.
 - A final `bego-backup-*.tar.gz` plus `.sha256`.
 
+The `.env` file is parsed with `dotenv`; it is never executed as a shell
+script, so passwords and values containing spaces remain safe.
+
 By default `.env` is excluded. To include it in a restricted backup:
 
 ```bash

@@ -1,5 +1,7 @@
 const {
+  requestPasswordResetEmailOtp,
   requestRegisterEmailOtp,
+  resetPasswordWithEmailOtp,
   verifyRegisterEmailOtp,
 } = require("../services/emailVerification.service");
 
@@ -61,4 +63,46 @@ module.exports = {
   verifyPassengerRegistration: verifyForRole("pasajero"),
   startDriverRegistration: startForRole("motorista"),
   verifyDriverRegistration: verifyForRole("motorista"),
+  startPassengerPasswordReset: startPasswordResetForRole("pasajero"),
+  resetPassengerPassword: resetPasswordForRole("pasajero"),
+  startDriverPasswordReset: startPasswordResetForRole("motorista"),
+  resetDriverPassword: resetPasswordForRole("motorista"),
 };
+
+function startPasswordResetForRole(rol) {
+  return async (req, res) => {
+    try {
+      const result = await requestPasswordResetEmailOtp({
+        email: req.body?.email,
+        rol,
+        ip: getClientIp(req),
+        userAgent: req.get("user-agent"),
+      });
+      return res.json(result);
+    } catch (err) {
+      if (!err?.status || err.status >= 500) {
+        console.error("Password reset start error:", err);
+      }
+      return sendError(res, err);
+    }
+  };
+}
+
+function resetPasswordForRole(rol) {
+  return async (req, res) => {
+    try {
+      const result = await resetPasswordWithEmailOtp({
+        email: req.body?.email,
+        code: req.body?.code,
+        newPassword: req.body?.newPassword,
+        rol,
+      });
+      return res.json(result);
+    } catch (err) {
+      if (!err?.status || err.status >= 500) {
+        console.error("Password reset error:", err);
+      }
+      return sendError(res, err);
+    }
+  };
+}

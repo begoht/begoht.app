@@ -75,6 +75,7 @@ createBullBoard({
 const app = express();
 const server = http.createServer(app);
 app.set("trust proxy", 1);
+app.disable("x-powered-by");
 
 server.on("error", (err) => {
   if (err.code === "EADDRINUSE") {
@@ -232,6 +233,7 @@ app.use("/api/pagos", shareRoutes);
 app.use("/api/viajes", require("./routes/actividad"));
 app.use("/api/viajes", require("./routes/ratings"));
 app.use("/api/monitor", require("./routes/monitoring"));
+app.use("/api/emergency", require("./routes/emergency"));
 app.use("/api/cities", require("./routes/cities"));
 app.use("/api/ruta", require("./routes/ruta"));
 app.use("/api", require("./routes/launch"));
@@ -258,11 +260,11 @@ app.use("/api/*", (req, res) => {
 
 
 // ============================
-// 🔥 SPA FALLBACK (ÚLTIMO SIEMPRE)
+// 🔹 404 WEB (las rutas internas usan hash y no necesitan fallback)
 // ============================
 
 app.get("*", (req, res) => {
-  res.sendFile(path.join(pasajeroPath, "index.html"));
+  res.status(404).sendFile(path.join(pasajeroPath, "404.html"));
 });
 
 // ============================

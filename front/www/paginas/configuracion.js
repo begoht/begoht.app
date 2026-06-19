@@ -90,17 +90,14 @@ export function renderConfiguracion() {
             </span>
           </label>
 
-          <label class="config-toggle-row" for="notificationsMode">
+          <div class="config-toggle-row">
             <i class="fa-solid fa-bell"></i>
             <div>
-              <span>Notifications</span>
-              <p>Alertes de course, paiement et securite.</p>
+              <span>Alertes en temps reel</span>
+              <p>Actives pendant que BeGO est ouvert. Les notifications push seront activees apres validation du service mobile.</p>
             </div>
-            <span class="config-switch">
-              <input type="checkbox" id="notificationsMode" checked>
-              <span></span>
-            </span>
-          </label>
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
         </article>
       </section>
 
@@ -150,6 +147,11 @@ export function renderConfiguracion() {
       <button id="logoutBtn" class="config-logout ripple" type="button">
         <i class="fa-solid fa-right-from-bracket"></i>
         <span>Se deconnecter</span>
+      </button>
+
+      <button id="deleteAccountBtn" class="config-logout config-delete ripple" type="button">
+        <i class="fa-solid fa-user-slash"></i>
+        <span>Supprimer mon compte</span>
       </button>
 
       <div id="configActionModal" class="config-action-modal hidden" role="dialog" aria-modal="true" aria-labelledby="configActionTitle">

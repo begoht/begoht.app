@@ -1,6 +1,6 @@
 {
   "appId": "com.BeGO.driver",
-  "appName": "front-driver",
+  "appName": "BeGO Driver",
   "webDir": "www",
   "bundledWebRuntime": false,
   "plugins": {

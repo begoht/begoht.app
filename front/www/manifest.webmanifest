@@ -1,0 +1,18 @@
+{
+  "name": "BeGO",
+  "short_name": "BeGO",
+  "description": "Voyages, livraisons et wallet BeGO.",
+  "start_url": "/registro.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#020616",
+  "theme_color": "#020616",
+  "icons": [
+    {
+      "src": "/assets/logo_primcial.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -2318,6 +2318,97 @@ body[data-driver-availability="offline"] .oferta-panel {
   }
 }
 
+.driver-location-disclosure {
+  position: fixed;
+  inset: 0;
+  z-index: 12000;
+  display: grid;
+  place-items: center;
+  padding: max(20px, env(safe-area-inset-top)) 18px max(20px, env(safe-area-inset-bottom));
+  color: #f8fafc;
+  background: rgba(2, 6, 22, 0.96);
+}
+
+.driver-location-disclosure.hidden {
+  display: none;
+}
+
+.driver-location-disclosure-card {
+  width: min(440px, 100%);
+  max-height: calc(100dvh - 40px);
+  overflow: auto;
+  padding: 26px 22px;
+  border: 1px solid rgba(96, 165, 250, 0.28);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 90% 0%, rgba(37, 99, 235, 0.26), transparent 42%),
+    #07111f;
+  box-shadow: 0 26px 70px rgba(0, 0, 0, 0.52);
+}
+
+.driver-location-disclosure-icon {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 16px;
+  border-radius: 16px;
+  color: #bfdbfe;
+  background: rgba(37, 99, 235, 0.22);
+  font-size: 1.35rem;
+}
+
+.driver-location-disclosure-card h1 {
+  margin: 0 0 12px;
+  font-size: 1.45rem;
+  line-height: 1.2;
+}
+
+.driver-location-disclosure-card p,
+.driver-location-disclosure-card li {
+  color: #cbd5e1;
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.driver-location-disclosure-card ul {
+  display: grid;
+  gap: 8px;
+  margin: 16px 0;
+  padding-left: 20px;
+}
+
+.driver-location-disclosure-note {
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.driver-location-disclosure-actions {
+  display: grid;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.driver-location-disclosure-actions button {
+  min-height: 48px;
+  border: 0;
+  border-radius: 14px;
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+#driverLocationDisclosureAccept {
+  color: #ffffff;
+  background: linear-gradient(135deg, #2563eb, #0ea5e9);
+}
+
+#driverLocationDisclosureLater {
+  color: #cbd5e1;
+  background: rgba(255, 255, 255, 0.08);
+}
+
 @media (max-width: 480px) {
   .panel-superior.driver-home-topbar {
     left: calc(max(10px, env(safe-area-inset-left)) + 64px);

@@ -5,6 +5,13 @@ console.log("Login motorista cargado");
 document.addEventListener("DOMContentLoaded", () => {
   const btnLogin = document.getElementById("btnLogin");
   const msgLogin = document.getElementById("msgLogin");
+  const btnForgotPassword = document.getElementById("btnForgotPassword");
+  const passwordResetBox = document.getElementById("passwordResetBox");
+  const resetEmail = document.getElementById("resetEmail");
+  const resetCode = document.getElementById("resetCode");
+  const resetPassword = document.getElementById("resetPassword");
+  const btnSendResetCode = document.getElementById("btnSendResetCode");
+  const btnResetPassword = document.getElementById("btnResetPassword");
 
   function normalizarTelefonoInternacional(value = "") {
     const clean = String(value || "").replace(/[\s().-]/g, "").trim();
@@ -87,6 +94,57 @@ document.addEventListener("DOMContentLoaded", () => {
       btnLogin.innerText = "Ingresar";
     }
   });
+
+  btnForgotPassword?.addEventListener("click", () => {
+    passwordResetBox.hidden = !passwordResetBox.hidden;
+    if (!passwordResetBox.hidden) resetEmail?.focus();
+  });
+
+  resetCode?.addEventListener("input", () => {
+    resetCode.value = resetCode.value.replace(/\D/g, "").slice(0, 6);
+  });
+
+  btnSendResetCode?.addEventListener("click", () => passwordResetRequest(
+    "/api/driver/auth/password/forgot",
+    { email: resetEmail?.value.trim().toLowerCase() },
+    btnSendResetCode,
+    "Codigo enviado. Revisa tu email."
+  ));
+
+  btnResetPassword?.addEventListener("click", async () => {
+    const data = await passwordResetRequest(
+      "/api/driver/auth/password/reset",
+      {
+        email: resetEmail?.value.trim().toLowerCase(),
+        code: resetCode?.value,
+        newPassword: resetPassword?.value,
+      },
+      btnResetPassword,
+      "Contrasena actualizada. Ya puedes iniciar sesion."
+    );
+    if (data?.ok) passwordResetBox.hidden = true;
+  });
+
+  async function passwordResetRequest(path, payload, button, successMessage) {
+    button.disabled = true;
+    showMsg("");
+    try {
+      const response = await fetch(`${window.getServerUrl()}${path}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.msg || data.error || "Operation impossible");
+      showMsg(successMessage, "ok");
+      return data;
+    } catch (error) {
+      showMsg(error.message || "Operation impossible");
+      return null;
+    } finally {
+      button.disabled = false;
+    }
+  }
 
   function showMsg(text, type = "error") {
     if (!msgLogin) {

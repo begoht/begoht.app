@@ -47,13 +47,20 @@ module.exports = async (req, res, next) => {
      * 4️⃣ VALIDAR USUARIO REAL (EXTRA SEGURIDAD)
      *************************************************/
     const user = await User.findById(decoded.id).select(
-      "_id nombre alias rol saldoBloqueado tokenVersion"
+      "_id nombre alias rol saldoBloqueado tokenVersion verificado activo deletedAt"
     );
 
     if (!user) {
       return res.status(401).json({
         ok: false,
         msg: "Usuario no encontrado"
+      });
+    }
+
+    if (user.deletedAt || user.activo === false) {
+      return res.status(401).json({
+        ok: false,
+        msg: "Cuenta eliminada o desactivada"
       });
     }
 
@@ -78,7 +85,8 @@ module.exports = async (req, res, next) => {
       id: user._id.toString(),
       nombre: user.nombre,
       alias: user.alias,
-      rol: user.rol
+      rol: user.rol,
+      verificado: user.verificado === true,
     };
 
     next();

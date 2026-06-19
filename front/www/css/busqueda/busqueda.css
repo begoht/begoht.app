@@ -12,6 +12,12 @@
   margin-bottom: 5px;
 }
 
+body.route-home,
+body.route-home #appMain,
+body.route-home .home-page {
+  background-color: #020616;
+}
+
 /* 🗺️ MAPA (EFECTO ELEVADO) */
 .home-map-shell {
   position: relative;

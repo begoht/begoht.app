@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "android:harden": "node scripts/harden-android-generated.mjs"
+  },
   "dependencies": {
     "mongo": "^0.1.0"
   }

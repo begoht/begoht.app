@@ -1,6 +1,9 @@
 const { redis } = require("../../../../config/redis");
 const { inferCityFromPoint } = require("../../../../config/cities");
 const { getDriverCommissionStatus } = require("../../../../services/driverCommission.service");
+const {
+  getDriverVerificationStatus,
+} = require("../../../../services/driverVerification.service");
 
 const TTL_ONLINE_SECONDS = 60;
 const GPS_TIMEOUT_MS = 120000;
@@ -28,6 +31,15 @@ module.exports = async (socket, motoristaId, payload) => {
     const dataPrev = await redis.hgetall(`motorista:data:${motoristaId}`);
 
     if (disponible) {
+      const verification = await getDriverVerificationStatus(motoristaId);
+      if (!verification.verified) {
+        disponible = false;
+        socket.emit("driver:verification-required", {
+          code: "DRIVER_PENDING_VERIFICATION",
+          message: "Tu cuenta motorista esta pendiente de verificacion.",
+        });
+      }
+
       const commissionStatus = await disponibilidadPorComision(motoristaId);
       if (commissionStatus?.bloqueadoPorComision) {
         disponible = false;
@@ -49,10 +61,15 @@ module.exports = async (socket, motoristaId, payload) => {
 
     const pipeline = redis.pipeline();
 
-    pipeline.geoadd("motoristas:ubicacion", lng, lat, motoristaId);
+    if (disponible) {
+      pipeline.geoadd("motoristas:ubicacion", lng, lat, motoristaId);
 
-    if (city) {
-      pipeline.geoadd(`motoristas:ubicacion:${cityId}`, lng, lat, motoristaId);
+      if (city) {
+        pipeline.geoadd(`motoristas:ubicacion:${cityId}`, lng, lat, motoristaId);
+      }
+    } else {
+      pipeline.zrem("motoristas:ubicacion", motoristaId);
+      pipeline.zrem(`motoristas:ubicacion:${cityId}`, motoristaId);
     }
 
     pipeline.hset(`motorista:data:${motoristaId}`, {

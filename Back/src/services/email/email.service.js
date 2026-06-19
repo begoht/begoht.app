@@ -52,6 +52,8 @@ const transporter = smtpConfigured
       socketTimeout: Number(process.env.EMAIL_SOCKET_TIMEOUT || 20000),
     })
   : null;
+let resendDomainCache = null;
+let resendDomainCacheAt = 0;
 
 function maskEmail(email = "") {
   const [name, domain] = String(email).split("@");
@@ -147,6 +149,61 @@ async function sendWithResend({ to, subject, html, attachments = [], idempotency
   return { messageId: data.id, provider: "resend", raw: data };
 }
 
+function fromDomain() {
+  const match = String(emailConfig.from || "").match(/@([^>\s]+)/);
+  return match?.[1]?.toLowerCase() || "";
+}
+
+async function getResendDomainStatus({ force = false } = {}) {
+  if (!resendConfigured) {
+    return { ok: false, configured: false, provider: "resend" };
+  }
+
+  const now = Date.now();
+  if (!force && resendDomainCache && now - resendDomainCacheAt < 5 * 60 * 1000) {
+    return resendDomainCache;
+  }
+
+  try {
+    const response = await fetch(`${emailConfig.resendApiUrl.replace(/\/$/, "")}/domains`, {
+      headers: { Authorization: `Bearer ${emailConfig.resendApiKey}` },
+    });
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(payload.message || `Resend domains API ${response.status}`);
+    }
+
+    const domain = fromDomain();
+    const domains = Array.isArray(payload.data) ? payload.data : [];
+    const record = domains.find((item) =>
+      String(item.name || "").toLowerCase() === domain
+    );
+    resendDomainCache = {
+      ok: record?.status === "verified",
+      configured: true,
+      provider: "resend",
+      domain,
+      domainId: record?.id || null,
+      status: record?.status || "not_found",
+      message: record?.status === "verified"
+        ? "Dominio Resend verificado"
+        : `Dominio Resend no verificado: ${record?.status || "not_found"}`,
+    };
+  } catch (error) {
+    resendDomainCache = {
+      ok: false,
+      configured: true,
+      provider: "resend",
+      domain: fromDomain(),
+      status: "check_failed",
+      message: error.message,
+    };
+  }
+
+  resendDomainCacheAt = now;
+  return resendDomainCache;
+}
+
 async function sendEmail({ to, subject, html, attachments = [], idempotencyKey }) {
   if (resendConfigured) {
     return sendWithResend({ to, subject, html, attachments, idempotencyKey });
@@ -169,13 +226,11 @@ async function sendEmail({ to, subject, html, attachments = [], idempotencyKey }
 
 async function verificarConexionEmail() {
   if (resendConfigured) {
+    const domainStatus = await getResendDomainStatus();
     return {
-      ok: true,
-      configured: true,
-      provider: "resend",
+      ...domainStatus,
       apiUrl: emailConfig.resendApiUrl,
       from: emailConfig.from,
-      message: "Resend API configurado. Usa /api/admin/email/test para validar envio.",
     };
   }
 
@@ -411,23 +466,42 @@ async function enviarEmailPrueba(to) {
   });
 }
 
-async function enviarCodigoVerificacionEmail({ to, code, rol = "pasajero", idempotencyKey }) {
+async function enviarCodigoVerificacionEmail({
+  to,
+  code,
+  rol = "pasajero",
+  purpose = "register",
+  idempotencyKey,
+}) {
   if (!to) throw new Error("Destino requerido");
   if (!emailIsConfigured()) throw new Error(missingConfigMessage());
 
   const perfil = rol === "motorista" ? "chauffeur" : "passager";
+  const isPasswordReset = purpose === "password_reset";
+  const subject = isPasswordReset
+    ? "Votre code pour modifier le mot de passe BeGO"
+    : "Votre code de verification BeGO";
+  const heading = isPasswordReset
+    ? "Securite du compte"
+    : `Verification de compte ${perfil}`;
+  const instruction = isPasswordReset
+    ? "Utilisez ce code pour definir un nouveau mot de passe BeGO."
+    : "Utilisez ce code pour terminer votre inscription BeGO.";
+  const ignoredAction = isPasswordReset
+    ? "cette modification de mot de passe"
+    : "cette inscription";
 
   return sendEmail({
     to,
-    subject: "Votre code de verification BeGO",
+    subject,
     html: `
       <div style="display:none;max-height:0;overflow:hidden;color:transparent;">Votre code BeGO est ${escapeHtml(code)}. Il expire dans 10 minutes.</div>
       <div style="background:#f5f7fb;margin:0;padding:12px 8px;font-family:Arial,Helvetica,sans-serif;color:#0f172a;">
         <div style="max-width:520px;margin:0 auto;background:#ffffff;border:1px solid #dbeafe;border-radius:20px;overflow:hidden;box-shadow:0 12px 28px rgba(15,23,42,.10);">
           <div style="background:#07111f;padding:24px 20px;border-bottom:5px solid #2563eb;">
             <div style="font-size:32px;line-height:1;font-weight:900;color:#ffffff;">BeGO</div>
-            <div style="margin-top:10px;color:#93c5fd;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;">Verification de compte ${escapeHtml(perfil)}</div>
-            <div style="margin-top:14px;color:#cbd5e1;font-size:14px;line-height:1.55;">Utilisez ce code pour terminer votre inscription BeGO.</div>
+            <div style="margin-top:10px;color:#93c5fd;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;">${escapeHtml(heading)}</div>
+            <div style="margin-top:14px;color:#cbd5e1;font-size:14px;line-height:1.55;">${escapeHtml(instruction)}</div>
           </div>
           <div style="padding:24px 20px;">
             <div style="background:#eef5ff;border:1px solid #bfdbfe;border-radius:18px;padding:20px;text-align:center;">
@@ -435,7 +509,7 @@ async function enviarCodigoVerificacionEmail({ to, code, rol = "pasajero", idemp
               <div style="margin-top:12px;color:#0f172a;font-size:40px;line-height:1;font-weight:900;letter-spacing:.16em;">${escapeHtml(code)}</div>
               <div style="margin-top:14px;color:#475569;font-size:13px;">Ce code expire dans 10 minutes.</div>
             </div>
-            <p style="margin:18px 0 0;color:#64748b;font-size:13px;line-height:1.55;">Si vous n'avez pas demande cette inscription, ignorez cet email.</p>
+            <p style="margin:18px 0 0;color:#64748b;font-size:13px;line-height:1.55;">Si vous n'avez pas demande ${escapeHtml(ignoredAction)}, ignorez cet email.</p>
           </div>
           <div style="background:#f8fafc;border-top:1px solid #e2e8f0;padding:16px 20px;text-align:center;color:#64748b;font-size:12px;line-height:1.5;">
             BeGO Haiti
@@ -461,6 +535,7 @@ async function enviarAlertaMonitoreo({ to, subject, html, idempotencyKey }) {
 
 module.exports = {
   enviarCodigoVerificacionEmail,
+  getResendDomainStatus,
   enviarResumenViaje,
   enviarEmailPrueba,
   enviarAlertaMonitoreo,

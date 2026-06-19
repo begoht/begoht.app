@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#020616">
+  <title>BeGO - Supprimer mon compte</title>
+  <link rel="stylesheet" href="./css/registro.css?v=20260619-account-security">
+</head>
+<body>
+  <main class="auth-page">
+    <section class="auth-shell">
+      <aside class="auth-brand">
+        <div class="brand-mark"><span>BeGO</span></div>
+        <div class="brand-copy">
+          <p class="eyebrow">Confidentialite</p>
+          <h1>Supprimer votre compte BeGO</h1>
+          <p>La suppression desactive immediatement votre acces et anonymise vos donnees personnelles.</p>
+        </div>
+      </aside>
+
+      <section class="auth-panel">
+        <div class="auth-topline">
+          <div>
+            <span class="panel-kicker">Action definitive</span>
+            <h2>Confirmer votre identite</h2>
+          </div>
+          <a href="legal.html">Politique</a>
+        </div>
+
+        <div class="auth-box active">
+          <label class="field">
+            <span>Type de compte</span>
+            <select id="deleteRole">
+              <option value="pasajero">Passager</option>
+              <option value="motorista">Motorista</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Telephone, email ou alias</span>
+            <input id="deleteIdentifier" type="text" autocomplete="username" placeholder="+509... ou email">
+          </label>
+          <label class="field">
+            <span>Mot de passe</span>
+            <input id="deletePassword" type="password" autocomplete="current-password">
+          </label>
+          <label class="check">
+            <input id="deleteConfirm" type="checkbox">
+            <span>Je comprends que cette action est definitive.</span>
+          </label>
+          <button id="deleteAccountSubmit" class="primary-action" type="button">Supprimer mon compte</button>
+          <div id="deleteAccountMessage" class="msg" role="status" aria-live="polite"></div>
+          <p class="switch"><a href="registro.html">Retour a BeGO</a></p>
+        </div>
+      </section>
+    </section>
+  </main>
+  <script type="module" src="./js/delete-account.js?v=20260619-account-security"></script>
+</body>
+</html>

@@ -60,7 +60,28 @@
 
           <button class="btn" id="btnLogin" type="button">Ingresar</button>
           <button class="btn-huella" id="btnHuella" type="button">Ingresar con huella</button>
+          <button class="btn-huella" id="btnForgotPassword" type="button">Olvide mi contrasena</button>
           <div id="msgLogin" class="driver-msg" role="status" aria-live="polite"></div>
+
+          <div class="driver-note" id="passwordResetBox" hidden>
+            <div>
+              <strong>Recuperar contrasena</strong>
+              <div class="form-row">
+                <label for="resetEmail">Email</label>
+                <input id="resetEmail" type="email" autocomplete="email" placeholder="nombre@email.com">
+              </div>
+              <div class="form-row">
+                <label for="resetCode">Codigo</label>
+                <input id="resetCode" type="text" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="000000">
+              </div>
+              <div class="form-row">
+                <label for="resetPassword">Nueva contrasena</label>
+                <input id="resetPassword" type="password" autocomplete="new-password" placeholder="Minimo 8 caracteres">
+              </div>
+              <button class="btn-huella" id="btnSendResetCode" type="button">Enviar codigo</button>
+              <button class="btn-huella" id="btnResetPassword" type="button">Cambiar contrasena</button>
+            </div>
+          </div>
 
           <div class="driver-note">
             <span aria-hidden="true">GPS</span>
@@ -78,10 +99,10 @@
           <div class="download-block">
             <p class="download-title">Descargar app Android</p>
             <div class="download-links">
-              <a class="download-link driver" href="/download/bego-motorista.apk?v=20260615-smooth-autofinish-apk" download>
+              <a class="download-link driver" href="/download/bego-motorista.apk?v=20260619-background-track-apk" download>
                 <span>↓</span> App motorista
               </a>
-              <a class="download-link" href="/download/bego-pasajero.apk?v=20260615-smooth-autofinish-apk" download>
+              <a class="download-link" href="/download/bego-pasajero.apk?v=20260619-background-track-apk" download>
                 <span>↓</span> App pasajero
               </a>
             </div>
@@ -108,7 +129,7 @@
 
   <script src="./js/core/production-console.js?v=20260606-console-clean"></script>
   <script src="./js/core/conexion.js"></script>
-  <script src="./js/auth/login.js?v=20260614-prod-hardening"></script>
+  <script src="./js/auth/login.js?v=20260619-account-security"></script>
   <script type="module" src="./js/modules/huellas/huellas.login.js"></script>
   <script src="./js/i18n/fr.visual.js?v=20260601-fr"></script>
 </body>

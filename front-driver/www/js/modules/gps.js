@@ -26,7 +26,9 @@ const FRECUENCIA_MS = 4000;
 const HEARTBEAT_MS = 25000;
 const DISTANCIA_MINIMA_METROS = 0.00002;
 
-export function initGPS(socket) {
+const LOCATION_DISCLOSURE_KEY = "bego_driver_location_disclosure_v1";
+
+export async function initGPS(socket) {
   socketRef = socket;
   bindLifecycleRefresh();
 
@@ -36,6 +38,12 @@ export function initGPS(socket) {
       flushPendingPosition({ source: "reconnect" });
       refreshDriverLocation({ force: true });
     });
+  }
+
+  const accepted = await ensureLocationDisclosure();
+  if (!accepted) {
+    window.dispatchEvent(new CustomEvent("driver:gps-permission-deferred"));
+    return;
   }
 
   if (!startBackgroundGeolocation()) {
@@ -101,6 +109,44 @@ function startBackgroundGeolocation() {
   });
 
   return true;
+}
+
+function ensureLocationDisclosure() {
+  const nativePlugin = window.Capacitor?.Plugins?.BackgroundGeolocation;
+  if (!nativePlugin?.addWatcher) return Promise.resolve(true);
+
+  try {
+    if (localStorage.getItem(LOCATION_DISCLOSURE_KEY) === "accepted") {
+      return Promise.resolve(true);
+    }
+  } catch {}
+
+  const modal = document.getElementById("driverLocationDisclosure");
+  const accept = document.getElementById("driverLocationDisclosureAccept");
+  const later = document.getElementById("driverLocationDisclosureLater");
+  if (!modal || !accept || !later) return Promise.resolve(false);
+
+  modal.classList.remove("hidden");
+
+  return new Promise((resolve) => {
+    const finish = (accepted) => {
+      modal.classList.add("hidden");
+      accept.removeEventListener("click", onAccept);
+      later.removeEventListener("click", onLater);
+      if (accepted) {
+        try {
+          localStorage.setItem(LOCATION_DISCLOSURE_KEY, "accepted");
+        } catch {}
+      }
+      resolve(accepted);
+    };
+    const onAccept = () => finish(true);
+    const onLater = () => finish(false);
+
+    accept.addEventListener("click", onAccept);
+    later.addEventListener("click", onLater);
+    accept.focus();
+  });
 }
 
 function startWebGeolocation() {

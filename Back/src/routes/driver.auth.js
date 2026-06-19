@@ -14,6 +14,8 @@ const {
 } = require("../services/emailVerification.service");
 const emailVerification = require("../controllers/emailVerification.controller");
 const phoneVerification = require("../controllers/phoneVerification.controller");
+const authHttp = require("../middleware/authHttp");
+const authController = require("../controllers/auth.controller");
 const {
   generarAccessToken,
   generarRefreshToken,
@@ -34,6 +36,9 @@ router.post("/email/start", emailOtpLimiter, emailVerification.startDriverRegist
 router.post("/email/verify", emailOtpVerifyLimiter, emailVerification.verifyDriverRegistration);
 router.post("/phone/start", phoneOtpLimiter, phoneVerification.startDriverRegistration);
 router.post("/phone/verify", phoneOtpVerifyLimiter, phoneVerification.verifyDriverRegistration);
+router.post("/password/forgot", emailOtpLimiter, emailVerification.startDriverPasswordReset);
+router.post("/password/reset", emailOtpVerifyLimiter, emailVerification.resetDriverPassword);
+router.post("/logout", authHttp, authController.logout);
 
 router.post("/register", registerLimiter, async (req, res) => {
   try {
@@ -104,6 +109,10 @@ router.post("/register", registerLimiter, async (req, res) => {
       emailVerificado: true,
       telefonoVerificado: false,
       activo: true,
+      verificado: false,
+      verificadoAt: null,
+      verificadoPor: null,
+      disponible: false,
       saldoBloqueado: false,
       vehiculo: {
         marca: vehiculoMarca,
@@ -167,8 +176,19 @@ router.post("/login", authLimiter, async (req, res) => {
       return res.status(401).json({ msg: "Usuario no encontrado" });
     }
 
+    if (user.deletedAt || user.activo === false) {
+      return res.status(403).json({ msg: "Cuenta eliminada o desactivada" });
+    }
+
     if (user.saldoBloqueado) {
       return res.status(403).json({ msg: "Cuenta bloqueada" });
+    }
+
+    if (user.verificado !== true) {
+      return res.status(403).json({
+        code: "DRIVER_PENDING_VERIFICATION",
+        msg: "Cuenta pendiente de verificacion por BeGO",
+      });
     }
 
     const ok = await bcrypt.compare(password, user.password);
@@ -212,7 +232,7 @@ router.post("/refresh", refreshLimiter, async (req, res) => {
       rol: "motorista",
     });
 
-    if (!user || user.refreshToken !== refreshToken) {
+    if (!user || user.deletedAt || user.activo === false || user.refreshToken !== refreshToken) {
       return res.status(401).json({ msg: "Sesion invalida" });
     }
 
@@ -220,8 +240,11 @@ router.post("/refresh", refreshLimiter, async (req, res) => {
       return res.status(403).json({ msg: "Cuenta bloqueada" });
     }
 
-    if (user.aprobado === false) {
-      return res.status(403).json({ msg: "Cuenta pendiente de aprobacion" });
+    if (user.verificado !== true) {
+      return res.status(403).json({
+        code: "DRIVER_PENDING_VERIFICATION",
+        msg: "Cuenta pendiente de verificacion por BeGO",
+      });
     }
 
     const accessToken = generarAccessToken(user);

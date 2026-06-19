@@ -345,6 +345,13 @@
   font-weight: 950;
 }
 
+.config-delete {
+  margin-top: 10px;
+  color: #fecaca;
+  border-color: rgba(239, 68, 68, 0.34);
+  background: rgba(127, 29, 29, 0.18);
+}
+
 .config-action-modal {
   position: fixed;
   inset: 0;

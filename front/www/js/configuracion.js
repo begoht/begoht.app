@@ -45,8 +45,8 @@ const ACTIONS = {
 export function initConfiguracion() {
   const darkToggle = document.getElementById("darkMode");
   const simpleToggle = document.getElementById("simpleMode");
-  const notificationsToggle = document.getElementById("notificationsMode");
   const logoutBtn = document.getElementById("logoutBtn");
+  const deleteAccountBtn = document.getElementById("deleteAccountBtn");
 
   hydrateUser();
   initModal();
@@ -74,29 +74,14 @@ export function initConfiguracion() {
     });
   }
 
-  if (notificationsToggle) {
-    notificationsToggle.checked = localStorage.getItem("notificationsMode") !== "false";
-    notificationsToggle.addEventListener("change", async () => {
-      if (notificationsToggle.checked && "Notification" in window && Notification.permission === "default") {
-        try {
-          const permission = await Notification.requestPermission();
-          if (permission === "denied") {
-            notificationsToggle.checked = false;
-            localStorage.setItem("notificationsMode", "false");
-            showToast("Notifications refusees par le telephone.", "error");
-            return;
-          }
-        } catch {}
-      }
-
-      localStorage.setItem("notificationsMode", notificationsToggle.checked ? "true" : "false");
-      showToast(notificationsToggle.checked ? "Notifications activees." : "Notifications desactivees.", "success");
-    });
-  }
-
   if (logoutBtn && !logoutBtn.dataset.bound) {
     logoutBtn.dataset.bound = "1";
     logoutBtn.addEventListener("click", logout);
+  }
+
+  if (deleteAccountBtn && !deleteAccountBtn.dataset.bound) {
+    deleteAccountBtn.dataset.bound = "1";
+    deleteAccountBtn.addEventListener("click", deleteAccount);
   }
 }
 
@@ -335,6 +320,31 @@ async function logout() {
   clearSessionTokens();
   disconnectSocket();
   window.location.href = "registro.html";
+}
+
+async function deleteAccount() {
+  const confirmation = window.prompt(
+    "Cette action est definitive. Ecrivez ELIMINAR pour confirmer:"
+  );
+  if (String(confirmation || "").trim().toUpperCase() !== "ELIMINAR") return;
+
+  const password = window.prompt("Entrez votre mot de passe actuel:");
+  if (!password) return;
+
+  try {
+    const data = await api("/api/users/account", {
+      method: "DELETE",
+      body: { password, confirmation: "ELIMINAR" },
+    });
+
+    if (!data?.ok) throw new Error("Suppression impossible");
+    clearSessionTokens();
+    disconnectSocket();
+    alert("Votre compte a ete supprime.");
+    window.location.href = "registro.html";
+  } catch (error) {
+    showToast(error.message || "Suppression impossible.", "error");
+  }
 }
 
 function disconnectSocket() {

@@ -9,6 +9,9 @@ const { requireInternationalPhone } = require("../utils/phone");
 const storeDriverLocation = require("../sockets/viajes/motorista/ubicacion/redisStore");
 const trackDriverLocation = require("../sockets/viajes/motorista/ubicacion/tracking");
 const trackReservedTrip = require("../sockets/viajes/motorista/ubicacion/reservado");
+const Wallet = require("../models/Wallet");
+const Viaje = require("../models/Viaje");
+const { redis } = require("../config/redis");
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
@@ -20,6 +23,87 @@ function cleanUser(user) {
   delete userClean.refreshToken;
   return userClean;
 }
+
+router.delete("/account", authHttp, async (req, res) => {
+  try {
+    const password = String(req.body?.password || "");
+    const confirmation = String(req.body?.confirmation || "").trim().toUpperCase();
+
+    if (confirmation !== "ELIMINAR") {
+      return res.status(400).json({ error: "Escribe ELIMINAR para confirmar" });
+    }
+
+    const user = await User.findById(req.user.id).select("+password");
+    if (!user || user.deletedAt) {
+      return res.status(404).json({ error: "Cuenta no encontrada" });
+    }
+
+    if (!password || !(await bcrypt.compare(password, user.password))) {
+      return res.status(401).json({ error: "Contrasena incorrecta" });
+    }
+
+    const activeTrip = await Viaje.exists({
+      $or: [{ pasajero: user._id }, { motorista: user._id }],
+      estado: { $in: ["buscando", "ofertando", "reservado", "asignado", "llego", "en_curso"] },
+    });
+    if (activeTrip) {
+      return res.status(409).json({ error: "Finaliza o cancela tu viaje activo antes de eliminar la cuenta" });
+    }
+
+    const wallet = await Wallet.findOne({ userId: user._id }).lean();
+    const financialBalance = [
+      wallet?.saldo,
+      wallet?.saldoBloqueado,
+      wallet?.gananciaEfectivo,
+      wallet?.comisionPendiente,
+    ].some((value) => Math.abs(Number(value || 0)) > 0.009);
+
+    if (financialBalance) {
+      return res.status(409).json({
+        code: "ACCOUNT_HAS_BALANCE",
+        error: "Tu cuenta tiene fondos o movimientos pendientes. Contacta al soporte antes de eliminarla.",
+      });
+    }
+
+    const suffix = `${user._id}-${Date.now()}`;
+    const anonymizedPhone = `+999${Date.now().toString().slice(-12)}`;
+    user.nombre = "Cuenta eliminada";
+    user.apellido = "";
+    user.telefono = anonymizedPhone;
+    user.email = `deleted-${suffix}@deleted.bego.invalid`;
+    user.alias = `deleted${String(user._id).slice(-12)}`;
+    user.foto = null;
+    user.password = await bcrypt.hash(`${suffix}-${Math.random()}`, 12);
+    user.refreshToken = null;
+    user.tokenVersion = Number(user.tokenVersion || 0) + 1;
+    user.saldoBloqueado = true;
+    user.disponible = false;
+    user.online = false;
+    user.activo = false;
+    user.deletedAt = new Date();
+    user.verificado = false;
+    user.verificadoAt = null;
+    user.verificadoPor = null;
+    await user.save();
+
+    const pipeline = redis.multi()
+      .zrem("motoristas:ubicacion", user._id.toString())
+      .del(`motorista:online:${user._id}`)
+      .del(`motorista:pos:${user._id}`)
+      .del(`motorista:data:${user._id}`);
+    await pipeline.exec();
+
+    global.io?.in(`user:${user._id}`).emit("session:revoked", {
+      reason: "account_deleted",
+    });
+    global.io?.in(`user:${user._id}`).disconnectSockets(true);
+
+    return res.json({ ok: true, deletedAt: user.deletedAt });
+  } catch (error) {
+    console.error("Account deletion error:", error);
+    return res.status(500).json({ error: "No se pudo eliminar la cuenta" });
+  }
+});
 
 // PUT /api/users/profile
 router.put("/profile", authHttp, upload.single("foto"), async (req, res) => {
@@ -184,6 +268,13 @@ router.patch("/driver-location", authHttp, async (req, res) => {
   try {
     if (req.user.rol !== "motorista") {
       return res.status(403).json({ error: "Solo disponible para motoristas" });
+    }
+
+    if (!req.user.verificado) {
+      return res.status(403).json({
+        code: "DRIVER_PENDING_VERIFICATION",
+        error: "Cuenta motorista pendiente de verificacion",
+      });
     }
 
     const lat = Number(req.body?.lat);

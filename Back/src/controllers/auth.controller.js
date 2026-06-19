@@ -179,6 +179,10 @@ exports.login = async (req, res) => {
       return res.status(400).json({ msg: "Credenciales invalidas" });
     }
 
+    if (user.deletedAt || user.activo === false) {
+      return res.status(403).json({ msg: "Cuenta eliminada o desactivada" });
+    }
+
     if (user.saldoBloqueado) {
       return res.status(403).json({ msg: "Cuenta bloqueada" });
     }
@@ -277,7 +281,7 @@ exports.refresh = async (req, res) => {
     const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
     const user = await User.findById(decoded.id);
 
-    if (!user || user.refreshToken !== refreshToken) {
+    if (!user || user.deletedAt || user.activo === false || user.refreshToken !== refreshToken) {
       return res.status(401).json({ msg: "Sesion invalida" });
     }
 
@@ -302,5 +306,26 @@ exports.refresh = async (req, res) => {
       : "Sesion invalida";
 
     return res.status(401).json({ msg });
+  }
+};
+
+exports.logout = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) return res.json({ ok: true });
+
+    user.refreshToken = null;
+    user.tokenVersion = Number(user.tokenVersion || 0) + 1;
+    await user.save();
+
+    global.io?.in(`user:${user._id}`).emit("session:revoked", {
+      reason: "logout",
+    });
+    global.io?.in(`user:${user._id}`).disconnectSockets(true);
+
+    return res.json({ ok: true });
+  } catch (error) {
+    console.error("Logout error:", error);
+    return res.status(500).json({ error: "No se pudo cerrar la sesion" });
   }
 };

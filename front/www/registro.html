@@ -70,7 +70,34 @@
 
             <button id="btnLogin" class="primary-action" type="button">Ingresar</button>
             <button id="btnHuella" class="btn-huella" type="button">Ingresar con huella</button>
+            <button id="btnForgotPassword" class="btn-huella" type="button">Olvide mi contrasena</button>
             <div id="msgLogin" class="msg" role="status" aria-live="polite"></div>
+
+            <div class="phone-otp-card" id="passwordResetBox" hidden>
+              <div class="phone-otp-head">
+                <span class="phone-otp-icon">#</span>
+                <div>
+                  <strong>Recuperar contrasena</strong>
+                  <p>Recibe un codigo por email y crea una contrasena nueva.</p>
+                </div>
+              </div>
+              <label class="field">
+                <span>Email</span>
+                <input id="resetEmail" type="email" autocomplete="email" placeholder="nombre@email.com">
+              </label>
+              <label class="field">
+                <span>Codigo</span>
+                <input id="resetCode" type="text" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="000000">
+              </label>
+              <label class="field">
+                <span>Nueva contrasena</span>
+                <input id="resetPassword" type="password" autocomplete="new-password" placeholder="Minimo 8 caracteres">
+              </label>
+              <div class="phone-otp-actions">
+                <button id="btnSendResetCode" class="secondary-action" type="button">Enviar codigo</button>
+                <button id="btnResetPassword" class="secondary-action" type="button">Cambiar contrasena</button>
+              </div>
+            </div>
 
             <p class="switch">
               No tienes cuenta? <a id="irRegistro">Registrate</a>
@@ -144,7 +171,7 @@
                     </div>
                   </div>
                   <label class="field phone-otp-field">
-                    <span>Codigo SMS</span>
+                    <span>Codigo de email</span>
                     <input type="text" id="phoneOtpCode" inputmode="numeric" maxlength="6" placeholder="000000" autocomplete="one-time-code">
                   </label>
                   <div class="phone-otp-actions">
@@ -192,7 +219,7 @@
   </main>
 
   <script src="./js/core/production-console.js?v=20260606-console-clean"></script>
-  <script type="module" src="./js/registro.js?v=20260606-phone-otp"></script>
+  <script type="module" src="./js/registro.js?v=20260619-account-security"></script>
   <script type="module" src="./js/modules/huellas/huellas.login.js?v=20260601-huella-user"></script>
   <script src="./js/i18n/fr.visual.js?v=20260601-fr"></script>
 </body>

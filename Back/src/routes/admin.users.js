@@ -2,6 +2,10 @@ const express = require("express");
 const User = require("../models/User");
 const authAdmin = require("../middleware/authAdmin");
 const { logAdminAction } = require("../services/adminAudit.service");
+const { redis } = require("../config/redis");
+const {
+  invalidateDriverVerification,
+} = require("../services/driverVerification.service");
 
 const router = express.Router();
 
@@ -79,15 +83,57 @@ router.put("/usuarios/:id/bloqueo", authAdmin, async (req, res) => {
 router.put("/usuarios/:id/verificacion", authAdmin, async (req, res) => {
   try {
     const { verificado } = req.body;
+    const verified = verificado === true;
     const before = await User.findById(req.params.id)
       .select("verificado telefono nombre apellido rol")
       .lean();
 
+    if (!before) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    if (before.rol !== "motorista") {
+      return res.status(400).json({ error: "La verificacion solo aplica a motoristas" });
+    }
+
     const user = await User.findByIdAndUpdate(
       req.params.id,
-      { verificado: !!verificado },
+      {
+        $set: {
+          verificado: verified,
+          verificadoAt: verified ? new Date() : null,
+          verificadoPor: verified ? req.user._id : null,
+          ...(!verified ? { disponible: false } : {}),
+        },
+        $inc: { tokenVersion: 1 },
+        $unset: { refreshToken: "" },
+      },
       { new: true }
     ).select("-password -pinHash -refreshToken");
+
+    await invalidateDriverVerification(req.params.id);
+
+    if (!verified) {
+      const data = await redis.hgetall(`motorista:data:${req.params.id}`);
+      const pipeline = redis.multi()
+        .zrem("motoristas:ubicacion", req.params.id)
+        .hset(`motorista:data:${req.params.id}`, {
+          disponible: "false",
+          online: "false",
+        })
+        .del(`motorista:online:${req.params.id}`);
+
+      if (data?.city) {
+        pipeline.zrem(`motoristas:ubicacion:${data.city}`, req.params.id);
+      }
+
+      await pipeline.exec();
+      global.io?.to(`motorista:${req.params.id}`).emit("driver:verification-revoked", {
+        code: "DRIVER_VERIFICATION_REVOKED",
+        message: "La verificacion de tu cuenta fue retirada.",
+      });
+      global.io?.in(`motorista:${req.params.id}`).disconnectSockets(true);
+    }
 
     await logAdminAction(req, {
       action: "user.verification.update",

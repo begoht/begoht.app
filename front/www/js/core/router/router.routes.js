@@ -8,7 +8,7 @@ import { renderCuenta } from "../../../paginas/cuenta.js";
 import { renderConfiguracion } from "../../../paginas/configuracion.js?v=20260607-config-functional";
 import { initConfiguracion } from "../../configuracion.js?v=20260607-config-functional";
 import { renderSeguridad } from "../../../paginas/centro-seguridad.js?v=20260603-mobile-support";
-import { initSeguridad } from "../../seguridad.js?v=20260603-mobile-support";
+import { initSeguridad } from "../../seguridad.js?v=20260619-emergency-secure";
 import { renderAyuda } from "../../../paginas/ayuda.js?v=20260603-mobile-support";
 import { renderSoporte } from "../../../paginas/soporte.js?v=20260607-support-grid-fix";
 import { renderServicios } from "../../../paginas/servicios.js";

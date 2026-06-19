@@ -99,6 +99,48 @@ function setGradleString(source, key, value) {
   return source.replace(new RegExp(`(${key}\\s+)"[^"]+"`), `$1"${value}"`);
 }
 
+function hardenSigningConfig(source) {
+  let next = source
+    .replace(
+      /storePassword\s+System\.getenv\("BEGO_STORE_PASSWORD"\)\s*\?:\s*"[^"]*"/,
+      "storePassword begoStorePassword"
+    )
+    .replace(
+      /keyAlias\s+System\.getenv\("BEGO_KEY_ALIAS"\)\s*\?:\s*"[^"]*"/,
+      "keyAlias begoKeyAlias"
+    )
+    .replace(
+      /keyPassword\s+System\.getenv\("BEGO_KEY_PASSWORD"\)\s*\?:\s*"[^"]*"/,
+      "keyPassword begoKeyPassword"
+    );
+
+  if (!next.includes("def begoSigningConfigured")) {
+    next = next.replace(
+      "apply plugin: 'com.android.application'",
+      `apply plugin: 'com.android.application'
+
+def begoStorePassword = System.getenv("BEGO_STORE_PASSWORD") ?: ""
+def begoKeyAlias = System.getenv("BEGO_KEY_ALIAS") ?: ""
+def begoKeyPassword = System.getenv("BEGO_KEY_PASSWORD") ?: ""
+def begoSigningConfigured = begoStorePassword && begoKeyAlias && begoKeyPassword
+def begoReleaseRequested = gradle.startParameter.taskNames.any {
+    it.toLowerCase().contains("release")
+}`
+    );
+  }
+
+  next = next.replace(
+    /if \(begoReleaseKeystore\.exists\(\)\) \{\s*signingConfig signingConfigs\.release\s*\} else \{\s*logger\.warn\("[^"]*"\)\s*\}/,
+    `if (begoReleaseKeystore.exists() && begoSigningConfigured) {
+                signingConfig signingConfigs.release
+            } else if (begoReleaseRequested) {
+                throw new GradleException("Faltan keystore o variables BEGO_STORE_PASSWORD, BEGO_KEY_ALIAS y BEGO_KEY_PASSWORD.")
+            }`
+  );
+
+  return next;
+}
+
 function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
@@ -130,13 +172,15 @@ driverVariables = setGradleNumber(driverVariables, "targetSdkVersion", 36);
 changed = writeIfChanged(files.driverVariables, driverVariables) || changed;
 
 let driverBuild = read(files.driverBuild);
-driverBuild = setGradleNumber(driverBuild, "versionCode", 12);
-driverBuild = setGradleString(driverBuild, "versionName", "1.0.11");
+driverBuild = setGradleNumber(driverBuild, "versionCode", 14);
+driverBuild = setGradleString(driverBuild, "versionName", "1.0.13");
+driverBuild = hardenSigningConfig(driverBuild);
 changed = writeIfChanged(files.driverBuild, driverBuild) || changed;
 
 let passengerBuild = read(files.passengerBuild);
-passengerBuild = setGradleNumber(passengerBuild, "versionCode", 9);
-passengerBuild = setGradleString(passengerBuild, "versionName", "1.0.8");
+passengerBuild = setGradleNumber(passengerBuild, "versionCode", 10);
+passengerBuild = setGradleString(passengerBuild, "versionName", "1.0.9");
+passengerBuild = hardenSigningConfig(passengerBuild);
 changed = writeIfChanged(files.passengerBuild, passengerBuild) || changed;
 
 console.log(changed ? "Android generated project hardened." : "Android generated project already hardened.");

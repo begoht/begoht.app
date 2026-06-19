@@ -87,6 +87,10 @@ module.exports = async (socket, next) => {
       return next(new Error("User not found"));
     }
 
+    if (user.deletedAt || user.activo === false) {
+      return next(new Error("User account inactive"));
+    }
+
     if (user.tokenVersion !== decoded.tokenVersion) {
       console.warn("⛔ Token desactualizado");
       return next(new Error("Token outdated"));
@@ -95,6 +99,13 @@ module.exports = async (socket, next) => {
     if (user.saldoBloqueado) {
       console.warn("⛔ Usuario saldoBloqueado:", user._id.toString());
       return next(new Error("User blocked"));
+    }
+
+    if (user.rol === "motorista" && user.verificado !== true) {
+      console.warn("Motorista pendiente de verificacion:", user._id.toString());
+      const error = new Error("Driver verification required");
+      error.data = { code: "DRIVER_PENDING_VERIFICATION" };
+      return next(error);
     }
 
     const userId = user._id.toString();
@@ -107,6 +118,7 @@ module.exports = async (socket, next) => {
       _id: user._id,
       nombre: user.nombre,
       rol: user.rol,
+      verificado: user.verificado === true,
     };
 
     socket.data.userId = userId;

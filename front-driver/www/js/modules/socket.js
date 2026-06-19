@@ -41,6 +41,13 @@ export function initSocket(serverUrl, token) {
   socketInstance.on("connect_error", async (err) => {
     console.error("❌ Error conexión:", err.message);
 
+    if (String(err?.message || "").toLowerCase().includes("verification")) {
+      clearDriverSession();
+      alert("Compte en attente de verification par BeGO.");
+      window.location.href = "login.html";
+      return;
+    }
+
     if (!isAuthError(err)) return;
     if (refreshInFlight) return;
 
@@ -56,6 +63,22 @@ export function initSocket(serverUrl, token) {
       refreshInFlight = false;
     }
   });
+
+  const closeForSecurity = (message) => {
+    clearDriverSession();
+    socketInstance.disconnect();
+    if (message) alert(message);
+    window.location.href = "login.html";
+  };
+
+  socketInstance.on("session:revoked", () => closeForSecurity("Session fermee."));
+  socketInstance.on("sesion-reemplazada", () => closeForSecurity("Session ouverte sur un autre appareil."));
+  socketInstance.on("driver:verification-required", (payload) =>
+    closeForSecurity(payload?.message || "Compte en attente de verification.")
+  );
+  socketInstance.on("driver:verification-revoked", (payload) =>
+    closeForSecurity(payload?.message || "Verification retiree.")
+  );
 
   function enviarPosicionActual() {
     if (!navigator.geolocation) return;
@@ -115,6 +138,7 @@ function isAuthError(err) {
     message.includes("token") ||
     message.includes("expired") ||
     message.includes("outdated") ||
-    message.includes("invalid")
+    message.includes("invalid") ||
+    message.includes("verification")
   );
 }

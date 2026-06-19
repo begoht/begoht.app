@@ -1,5 +1,9 @@
 const Wallet = require("../models/Wallet");
 const { getCommissionDebtLimit } = require("./commission.service");
+const {
+  ensureDriverVerified,
+  filterVerifiedDriverIds,
+} = require("./driverVerification.service");
 
 function toMoney(value) {
   const amount = Number(value);
@@ -47,6 +51,8 @@ async function getDriverCommissionStatus(userId, options = {}) {
 }
 
 async function ensureDriverCanReceiveTrips(userId, options = {}) {
+  await ensureDriverVerified(userId);
+
   let wallet = options.wallet || null;
 
   if (!wallet) {
@@ -75,10 +81,13 @@ async function filterDriversByCommissionLimit(driverIds = []) {
   const ids = [...new Set(driverIds.map((id) => String(id)).filter(Boolean))];
   if (!ids.length) return new Set();
 
-  const debtLimit = await getCommissionDebtLimit();
-  if (debtLimit <= 0) return new Set(ids);
+  const verifiedIds = await filterVerifiedDriverIds(ids);
+  if (!verifiedIds.size) return verifiedIds;
 
-  const wallets = await Wallet.find({ userId: { $in: ids } })
+  const debtLimit = await getCommissionDebtLimit();
+  if (debtLimit <= 0) return verifiedIds;
+
+  const wallets = await Wallet.find({ userId: { $in: [...verifiedIds] } })
     .select("userId saldo comisionPendiente")
     .lean();
 
@@ -88,7 +97,7 @@ async function filterDriversByCommissionLimit(driverIds = []) {
       .map((wallet) => wallet.userId.toString())
   );
 
-  return new Set(ids.filter((id) => !blocked.has(id)));
+  return new Set([...verifiedIds].filter((id) => !blocked.has(id)));
 }
 
 module.exports = {

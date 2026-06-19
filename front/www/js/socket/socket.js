@@ -86,6 +86,18 @@ export function getSocket() {
     }
   });
 
+  socketInstance.on("session:revoked", () => {
+    clearSessionTokens();
+    socketInstance.disconnect();
+    window.location.replace("registro.html");
+  });
+
+  socketInstance.on("sesion-reemplazada", () => {
+    clearSessionTokens();
+    socketInstance.disconnect();
+    window.location.replace("registro.html");
+  });
+
   window.socket = socketInstance;
   return socketInstance;
 }

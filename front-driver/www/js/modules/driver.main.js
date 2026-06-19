@@ -1,4 +1,4 @@
-import { initSocket } from "./socket.js?v=20260615-smooth-autofinish";
+import { initSocket } from "./socket.js?v=20260619-account-security";
 import { initMap } from "./map.js?v=20260615-smooth-autofinish";
 import { initGPS } from "./gps.js?v=20260619-background-track";
 import { initOferta } from "./oferta/oferta.index.js?v=20260615-smooth-autofinish";
@@ -7,7 +7,7 @@ import { initViajeFinalizar } from "./viajeFinalizar.js?v=20260615-smooth-autofi
 import { initViajeControl } from "./viajeControl/viajeControl.js?v=20260615-smooth-autofinish";
 import { initDriverChat } from "./chat/viajeChat.js?v=20260608-trip-panel-compact";
 import { initDriverStatus } from "./driver.status.js?v=20260615-smooth-autofinish";
-import { initDriverSpa } from "./driver.spa.js?v=20260614-prod-hardening";
+import { initDriverSpa } from "./driver.spa.js?v=20260619-account-security";
 import { iniciarSonidoOfertaLoop } from "./oferta/oferta.ui.js?v=20260608-offer-net-cash";
 import { initLaunchCountdown } from "./launch-countdown.js?v=20260603-launch-gate";
 import {

@@ -10,6 +10,7 @@ const {
 
 const ALLOWED_ROLES = new Set(["pasajero", "motorista"]);
 const PURPOSE_REGISTER = "register";
+const PURPOSE_PASSWORD_RESET = "password_reset";
 
 function appError(message, status = 400, code = "EMAIL_VERIFICATION_ERROR") {
   const err = new Error(message);
@@ -217,6 +218,156 @@ async function verifyRegisterEmailOtp({ email, rol, code }) {
   };
 }
 
+async function requestPasswordResetEmailOtp({ email, rol, ip = "", userAgent = "" }) {
+  const cleanEmail = requireEmail(email);
+  const role = normalizeRole(rol);
+  const user = await User.findOne({ email: cleanEmail, rol: role })
+    .select("_id")
+    .lean();
+
+  // Respuesta neutra para no revelar si una cuenta existe.
+  if (!user) {
+    return {
+      ok: true,
+      email: maskEmail(cleanEmail),
+      expiresInSeconds: Number(process.env.EMAIL_OTP_TTL_MINUTES || 10) * 60,
+      resendAfterSeconds: Number(process.env.EMAIL_OTP_COOLDOWN_SECONDS || 60),
+    };
+  }
+
+  const cooldownSeconds = Number(process.env.EMAIL_OTP_COOLDOWN_SECONDS || 60);
+  const hourlyLimit = Number(process.env.EMAIL_OTP_HOURLY_LIMIT || 5);
+  const ttlMinutes = Number(process.env.EMAIL_OTP_TTL_MINUTES || 10);
+  const now = Date.now();
+  const hourAgo = new Date(now - 60 * 60 * 1000);
+  const [lastRequest, recentCount] = await Promise.all([
+    EmailVerification.findOne({
+      email: cleanEmail,
+      rol: role,
+      purpose: PURPOSE_PASSWORD_RESET,
+    }).sort({ createdAt: -1 }).lean(),
+    EmailVerification.countDocuments({
+      email: cleanEmail,
+      rol: role,
+      purpose: PURPOSE_PASSWORD_RESET,
+      createdAt: { $gte: hourAgo },
+    }),
+  ]);
+
+  if (lastRequest?.createdAt) {
+    const elapsed = Math.floor((now - new Date(lastRequest.createdAt).getTime()) / 1000);
+    if (elapsed < cooldownSeconds) {
+      throw appError(
+        `Espera ${cooldownSeconds - elapsed}s para reenviar el codigo`,
+        429,
+        "OTP_COOLDOWN"
+      );
+    }
+  }
+
+  if (recentCount >= hourlyLimit) {
+    throw appError(
+      "Demasiados codigos enviados. Intenta mas tarde.",
+      429,
+      "OTP_HOURLY_LIMIT"
+    );
+  }
+
+  const code = generateCode();
+  const record = await EmailVerification.create({
+    email: cleanEmail,
+    rol: role,
+    purpose: PURPOSE_PASSWORD_RESET,
+    codeHash: await bcrypt.hash(code, 12),
+    expiresAt: new Date(now + ttlMinutes * 60 * 1000),
+    ip,
+    userAgent: String(userAgent || "").slice(0, 300),
+  });
+
+  try {
+    const delivery = await enviarCodigoVerificacionEmail({
+      to: cleanEmail,
+      code,
+      rol: role,
+      purpose: PURPOSE_PASSWORD_RESET,
+      idempotencyKey: `password-reset-${record._id}`,
+    });
+    record.deliveryProvider = delivery.provider || "email";
+    record.deliveryId = delivery.messageId || "";
+    record.sentAt = new Date();
+    await record.save();
+  } catch (err) {
+    await EmailVerification.deleteOne({ _id: record._id }).catch(() => {});
+    throw appError(err.message || "No se pudo enviar el codigo", 502, "EMAIL_DELIVERY_FAILED");
+  }
+
+  return {
+    ok: true,
+    email: maskEmail(cleanEmail),
+    expiresInSeconds: ttlMinutes * 60,
+    resendAfterSeconds: cooldownSeconds,
+  };
+}
+
+async function resetPasswordWithEmailOtp({ email, rol, code, newPassword }) {
+  const cleanEmail = requireEmail(email);
+  const role = normalizeRole(rol);
+  const cleanCode = String(code || "").replace(/\D/g, "");
+  const password = String(newPassword || "");
+
+  if (!/^\d{6}$/.test(cleanCode)) {
+    throw appError("Codigo invalido", 400, "OTP_FORMAT_INVALID");
+  }
+  if (password.length < 8) {
+    throw appError("La contrasena debe tener minimo 8 caracteres", 400, "PASSWORD_WEAK");
+  }
+
+  const record = await EmailVerification.findOne({
+    email: cleanEmail,
+    rol: role,
+    purpose: PURPOSE_PASSWORD_RESET,
+    consumedAt: null,
+    expiresAt: { $gt: new Date() },
+  })
+    .sort({ createdAt: -1 })
+    .select("+codeHash");
+
+  if (!record) {
+    throw appError("Codigo vencido o inexistente", 400, "OTP_NOT_FOUND");
+  }
+
+  const maxAttempts = Number(process.env.EMAIL_OTP_MAX_ATTEMPTS || 5);
+  if (record.attempts >= maxAttempts) {
+    throw appError("Demasiados intentos. Solicita otro codigo.", 429, "OTP_MAX_ATTEMPTS");
+  }
+
+  if (!(await bcrypt.compare(cleanCode, record.codeHash))) {
+    record.attempts += 1;
+    await record.save();
+    throw appError("Codigo incorrecto", 400, "OTP_INCORRECT");
+  }
+
+  const user = await User.findOne({ email: cleanEmail, rol: role }).select("+password");
+  if (!user) {
+    throw appError("Codigo vencido o inexistente", 400, "OTP_NOT_FOUND");
+  }
+
+  user.password = await bcrypt.hash(password, 12);
+  user.refreshToken = null;
+  user.tokenVersion = Number(user.tokenVersion || 0) + 1;
+  await user.save();
+
+  record.consumedAt = new Date();
+  await record.save();
+
+  global.io?.in(`user:${user._id}`).emit("session:revoked", {
+    reason: "password_reset",
+  });
+  global.io?.in(`user:${user._id}`).disconnectSockets(true);
+
+  return { ok: true };
+}
+
 function verifyEmailVerificationToken({ token, email, rol }) {
   const cleanEmail = requireEmail(email);
   const role = normalizeRole(rol);
@@ -246,7 +397,9 @@ function verifyEmailVerificationToken({ token, email, rol }) {
 
 module.exports = {
   requestRegisterEmailOtp,
+  requestPasswordResetEmailOtp,
   requireEmail,
+  resetPasswordWithEmailOtp,
   verifyEmailVerificationToken,
   verifyRegisterEmailOtp,
 };

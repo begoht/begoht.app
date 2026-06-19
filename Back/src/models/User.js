@@ -145,7 +145,30 @@ const UserSchema = new mongoose.Schema(
 
     verificado: {
       type: Boolean,
-      default: false},
+      default: false,
+    },
+
+    verificadoAt: {
+      type: Date,
+      default: null,
+    },
+
+    verificadoPor: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+
+    activo: {
+      type: Boolean,
+      default: true,
+    },
+
+    deletedAt: {
+      type: Date,
+      default: null,
+      index: true,
+    },
 
    /**************** WALLET ID OPCIONAL FUTURO ****************/
     alias: {
