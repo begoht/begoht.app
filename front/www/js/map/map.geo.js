@@ -1,4 +1,4 @@
-import { pasajeroIcon } from "./map.icons.js?v=20260619-map-hotfix";
+import { pasajeroIcon } from "./map.icons.js?v=20260619-map-ref-button";
 import { ACTIVE_CITY, cityConfig, coordsInCity, inferCityConfigFromCoords, persistDetectedCity } from "./config/index.js";
 import { viajeState } from "../viaje/viaje.state.js";
 import { reverseGeocode } from "./services/map.reverse.js";
@@ -9,7 +9,7 @@ import {
   layerReferencias
 } from "./layers/map.layers.js";
 
-import { renderPOILayer } from "./layers/map.poi.layer.js?v=20260619-map-hotfix";
+import { renderPOILayer } from "./layers/map.poi.layer.js?v=20260619-map-ref-button";
 
 import {
   getCurrentPosition,
@@ -36,9 +36,29 @@ function escapeHtml(value = "") {
   return String(value).replace(/[&<>"']/g, (char) => chars[char]);
 }
 
-function shortAddress(value, fallback = "Origen") {
-  const clean = String(value || "").split(",")[0].trim();
-  return clean || fallback;
+function streetLine(value, fallback = "Origen") {
+  const parts = String(value || "")
+    .split(",")
+    .map((part) => part.replace(/\s+/g, " ").trim())
+    .filter(Boolean);
+
+  if (!parts.length) return fallback;
+
+  const first = parts[0];
+  const startsWithNumber = first.match(/^(\d+[a-z0-9-]*)\s+(.+)$/i);
+  if (startsWithNumber) {
+    return `${startsWithNumber[2]} ${startsWithNumber[1]}`;
+  }
+
+  const endsWithNumber = first.match(/^(.+?)\s+(\d+[a-z0-9-]*)$/i);
+  if (endsWithNumber) return `${endsWithNumber[1]} ${endsWithNumber[2]}`;
+
+  const numberPart = parts
+    .slice(1)
+    .map((part) => part.replace(/^n(?:o|°|º)?\.?\s*/i, "").trim())
+    .find((part) => /^\d+[a-z0-9-]*$/i.test(part));
+
+  return numberPart ? `${first} ${numberPart}` : first;
 }
 
 function viajeProtegido() {
@@ -71,7 +91,7 @@ function setInputInicio(direccion, { placeholder = false } = {}) {
 }
 
 function renderPasajeroMarker(map, lat, lng, direccion, { animate = false } = {}) {
-  const label = escapeHtml(shortAddress(direccion, "Origen"));
+  const label = escapeHtml(streetLine(direccion, "Origen"));
 
   if (!marcadorPasajero) {
     marcadorPasajero = L.marker([lat, lng], {

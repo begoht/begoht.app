@@ -1,5 +1,5 @@
 import { viajeState } from "../viaje/viaje.state.js";
-import { asignarDestino } from "./map.destino.js?v=20260619-map-hotfix";
+import { asignarDestino } from "./map.destino.js?v=20260619-map-ref-button";
 import { coordsInCity } from "./config/index.js";
 
 const MAX_DESTINOS = 3;
@@ -53,8 +53,6 @@ function samePlace(a, b) {
 
 function createShell() {
   const fabHost = document.body;
-  const destinoInput = document.getElementById("inputDestino");
-  const destinoBox = destinoInput?.closest(".hacia") || destinoInput?.parentElement;
 
   let fab = document.getElementById("destinosFab");
   if (!fab) {
@@ -62,29 +60,16 @@ function createShell() {
     fab.id = "destinosFab";
     fab.className = "destinos-fab ripple";
     fab.type = "button";
-    fab.setAttribute("aria-label", "Destinos guardados");
-    fab.title = "Destinos guardados";
-    fab.innerHTML = '<i class="fa-solid fa-bookmark"></i>';
-  }
-
-  if (fab.parentElement !== fabHost) {
-    fabHost.appendChild(fab);
-  }
-
-  let inline = document.getElementById("destinosInlineSave");
-  if (!inline) {
-    inline = document.createElement("button");
-    inline.id = "destinosInlineSave";
-    inline.className = "destinos-inline-save ripple";
-    inline.type = "button";
-    inline.innerHTML = `
+    fab.setAttribute("aria-label", "Guardar referencia");
+    fab.title = "Guardar referencia";
+    fab.innerHTML = `
       <i class="fa-solid fa-bookmark"></i>
       <span>Guardar referencia</span>
     `;
   }
 
-  if (destinoBox && inline.parentElement !== destinoBox) {
-    destinoBox.appendChild(inline);
+  if (fab.parentElement !== fabHost) {
+    fabHost.appendChild(fab);
   }
 
   if (document.getElementById("destinosPanel")) return;
@@ -106,11 +91,6 @@ function createShell() {
       </div>
 
       <div id="destinosList" class="destinos-list"></div>
-
-      <button type="button" id="destinosSave" class="destinos-save ripple">
-        <i class="fa-solid fa-plus"></i>
-        <span>Guardar destino actual</span>
-      </button>
       <p id="destinosMsg" class="destinos-msg"></p>
     </div>
   `;
@@ -229,14 +209,11 @@ export function initSavedDestinations(map) {
   createShell();
 
   const fab = document.getElementById("destinosFab");
-  const inline = document.getElementById("destinosInlineSave");
   const close = document.getElementById("destinosClose");
-  const save = document.getElementById("destinosSave");
   const panel = document.getElementById("destinosPanel");
 
-  if (fab) fab.onclick = () => openPanel(map);
-  if (inline) {
-    inline.onclick = () => {
+  if (fab) {
+    fab.onclick = () => {
       openPanel(map);
       saveCurrentDestination(map);
     };
@@ -246,9 +223,6 @@ export function initSavedDestinations(map) {
     close.dataset.bound = "1";
     close.addEventListener("click", closePanel);
   }
-
-  if (save) save.onclick = () => saveCurrentDestination(map);
-
   if (panel?.dataset.bound !== "1") {
     panel.dataset.bound = "1";
     panel.addEventListener("click", (event) => {

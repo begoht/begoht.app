@@ -1,4 +1,4 @@
-import { resetRutaCache } from "../map.ruta.js?v=20260619-map-hotfix";
+import { resetRutaCache } from "../map.ruta.js?v=20260619-map-ref-button";
 
 let lastEstado = null;
 

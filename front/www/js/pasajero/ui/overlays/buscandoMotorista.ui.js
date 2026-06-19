@@ -3,7 +3,7 @@ import { getMapaInstance } from "../../../map/state/map.motoristas.state.js";
 import {
   eliminarMotoristaDelMapa,
   mostrarMotoristaEnMapa
-} from "../../../map/map.motorista.js?v=20260619-map-hotfix";
+} from "../../../map/map.motorista.js?v=20260619-map-ref-button";
 import { viajeState } from "../../../viaje/viaje.state.js";
 import { actualizarBotonViaje } from "../boton/botonViaje.ui.js?v=20260606-legal-trust";
 

@@ -10,12 +10,12 @@ import {
 import {
   renderMotorista,
   removeMotorista
-} from "./ui/map.motorista.renderer.js?v=20260619-map-hotfix";
+} from "./ui/map.motorista.renderer.js?v=20260619-map-ref-button";
 
 import {
   renderMotoristas,
   clearMotoristas
-} from "./ui/map.motoristas.renderer.js?v=20260619-map-hotfix";
+} from "./ui/map.motoristas.renderer.js?v=20260619-map-ref-button";
 
 /*************************************************
  * 🗺️ SET MAPA

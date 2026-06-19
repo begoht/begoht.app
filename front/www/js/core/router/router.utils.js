@@ -1,4 +1,4 @@
-import { stopGeo } from "../../map/map.geo.js?v=20260619-map-hotfix";
+import { stopGeo } from "../../map/map.geo.js?v=20260619-map-ref-button";
 
 // ===============================
 // 🌍 BASE PATH ROBUSTO

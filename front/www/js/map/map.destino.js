@@ -2,15 +2,15 @@
 
 import { viajeState } from "../viaje/viaje.state.js";
 
-import { dibujarRuta } from "./map.ruta.js?v=20260619-map-hotfix";
+import { dibujarRuta } from "./map.ruta.js?v=20260619-map-ref-button";
 
 import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260606-legal-trust";
 
-import { destinoIcon } from "./map.icons.js?v=20260619-map-hotfix";
+import { destinoIcon } from "./map.icons.js?v=20260619-map-ref-button";
 
 import { reverseGeocode } from "./services/map.reverse.js";
 
-import { getMap } from "./map.singleton.js?v=20260619-map-hotfix";
+import { getMap } from "./map.singleton.js?v=20260619-map-ref-button";
 import { cityConfig, coordsInCity } from "./config/index.js";
 
 import {
@@ -34,15 +34,35 @@ function escapeHtml(value = "") {
   return String(value).replace(/[&<>"']/g, (char) => chars[char]);
 }
 
-function shortAddress(value, fallback = "Destino") {
-  const clean = String(value || "").split(",")[0].trim();
-  return clean || fallback;
+function streetLine(value, fallback = "Destino") {
+  const parts = String(value || "")
+    .split(",")
+    .map((part) => part.replace(/\s+/g, " ").trim())
+    .filter(Boolean);
+
+  if (!parts.length) return fallback;
+
+  const first = parts[0];
+  const startsWithNumber = first.match(/^(\d+[a-z0-9-]*)\s+(.+)$/i);
+  if (startsWithNumber) {
+    return `${startsWithNumber[2]} ${startsWithNumber[1]}`;
+  }
+
+  const endsWithNumber = first.match(/^(.+?)\s+(\d+[a-z0-9-]*)$/i);
+  if (endsWithNumber) return `${endsWithNumber[1]} ${endsWithNumber[2]}`;
+
+  const numberPart = parts
+    .slice(1)
+    .map((part) => part.replace(/^n(?:o|°|º)?\.?\s*/i, "").trim())
+    .find((part) => /^\d+[a-z0-9-]*$/i.test(part));
+
+  return numberPart ? `${first} ${numberPart}` : first;
 }
 
 function setDestinoTooltip(marker, direccion) {
   if (!marker) return;
 
-  marker.bindTooltip(escapeHtml(shortAddress(direccion, "Destino")), {
+  marker.bindTooltip(escapeHtml(streetLine(direccion, "Destino")), {
     permanent: true,
     direction: "left",
     offset: [-16, 0],

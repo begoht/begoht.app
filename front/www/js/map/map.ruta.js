@@ -1,4 +1,4 @@
-import { getMap } from "./map.singleton.js?v=20260619-map-hotfix";
+import { getMap } from "./map.singleton.js?v=20260619-map-ref-button";
 
 import {
   mismaPosicion,
@@ -15,7 +15,7 @@ import {
   renderRutaReserva,
   renderLineaRecta,
   limpiarRuta
-} from "./ui/map.route.renderer.js?v=20260619-map-hotfix";
+} from "./ui/map.route.renderer.js?v=20260619-map-ref-button";
 
 let ultimaRutaCalculada = 0;
 

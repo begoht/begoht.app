@@ -75,8 +75,11 @@ test("el mapa pasajero mantiene origen, destino y guardado compatibles con Andro
 
   assert.doesNotMatch(geo, /replaceAll\(/);
   assert.doesNotMatch(destino, /replaceAll\(/);
-  assert.match(guardados, /destinosInlineSave/);
-  assert.match(css, /destinos-inline-save/);
+  assert.match(geo, /startsWithNumber/);
+  assert.match(destino, /startsWithNumber/);
+  assert.match(guardados, /destinosFab/);
+  assert.doesNotMatch(guardados, /destinosInlineSave|destinosSave/);
+  assert.doesNotMatch(css, /destinos-inline-save/);
 });
 
 test("la app motorista muestra la divulgacion antes del permiso GPS", () => {
