@@ -436,14 +436,16 @@ svg {
   line-height: 1.7;
 }
 
-.about-split {
+.about-split,
+.mobility-split {
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
   gap: 26px;
   align-items: stretch;
 }
 
-.engine-section {
+.engine-section,
+.mobility-highlight {
   min-height: 100%;
   display: flex;
   align-items: center;
@@ -456,14 +458,16 @@ svg {
   box-shadow: var(--shadow);
 }
 
-.engine-status {
+.engine-status,
+.mobility-status {
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 16px;
   align-items: start;
 }
 
-.engine-status span {
+.engine-status span,
+.mobility-status span {
   display: block;
   color: var(--cyan);
   font-size: 0.82rem;
@@ -471,14 +475,16 @@ svg {
   text-transform: uppercase;
 }
 
-.engine-status strong {
+.engine-status strong,
+.mobility-status strong {
   display: block;
   margin: 8px 0;
   font-size: 1.6rem;
   line-height: 1.2;
 }
 
-.engine-status p {
+.engine-status p,
+.mobility-status p {
   color: var(--muted);
   line-height: 1.65;
 }
@@ -492,40 +498,116 @@ svg {
   box-shadow: 0 0 16px #00ff88;
 }
 
-.tech-badges {
+.tech-badges,
+.mobility-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
 }
 
 .tech-box,
+.mobility-card,
 .service-card {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.045);
 }
 
-.tech-box {
+.tech-box,
+.mobility-card {
   padding: 22px;
 }
 
-.tech-box i {
+.tech-box i,
+.mobility-card-icon {
   display: block;
+  width: 32px;
+  height: 32px;
   margin-bottom: 14px;
   color: var(--cyan);
   font-size: 2rem;
 }
 
-.tech-box h3 {
+.mobility-card.orange-theme .mobility-card-icon {
+  color: var(--orange);
+}
+
+.tech-box h3,
+.mobility-card h3 {
   margin-bottom: 8px;
   font-size: 1.04rem;
   overflow-wrap: anywhere;
 }
 
-.tech-box p {
+.tech-box p,
+.mobility-card p {
   color: var(--soft);
   font-size: 0.9rem;
   line-height: 1.58;
+}
+
+.trip-steps {
+  margin-top: 74px;
+  scroll-margin-top: 90px;
+}
+
+.trip-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.trip-step {
+  position: relative;
+  min-height: 250px;
+  padding: 24px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.trip-step-number {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  color: rgba(255, 255, 255, 0.08);
+  font-size: 3.6rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.trip-step-icon {
+  position: relative;
+  display: inline-grid;
+  width: 52px;
+  height: 52px;
+  place-items: center;
+  margin-bottom: 24px;
+  border: 1px solid rgba(18, 223, 240, 0.25);
+  border-radius: 8px;
+  color: var(--cyan);
+  background: rgba(18, 223, 240, 0.08);
+  padding: 12px;
+}
+
+.trip-step:nth-child(even) .trip-step-icon {
+  border-color: rgba(255, 152, 31, 0.28);
+  color: var(--orange);
+  background: rgba(255, 152, 31, 0.08);
+}
+
+.trip-step h3 {
+  position: relative;
+  margin-bottom: 10px;
+  font-size: 1.08rem;
+}
+
+.trip-step p {
+  position: relative;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.62;
 }
 
 .services-showcase {
@@ -709,7 +791,8 @@ svg {
 
 @media (max-width: 980px) {
   .hero,
-  .about-split {
+  .about-split,
+  .mobility-split {
     grid-template-columns: 1fr;
   }
 
@@ -737,6 +820,10 @@ svg {
 
   .services-showcase {
     grid-template-columns: 1fr;
+  }
+
+  .trip-steps-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .service-card {
@@ -821,12 +908,17 @@ svg {
   }
 
   .tech-badges,
+  .mobility-grid,
+  .trip-steps-grid,
   .footer-grid {
     grid-template-columns: 1fr;
   }
 
   .engine-section,
+  .mobility-highlight,
   .tech-box,
+  .mobility-card,
+  .trip-step,
   .service-card,
   .download-panel {
     padding: 22px;

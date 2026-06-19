@@ -1,7 +1,7 @@
 const NAV_ITEMS = Object.freeze([
   { href: "#home", label: "Inicio" },
-  { href: "#about", label: "Tecnologia" },
   { href: "#services", label: "Servicios" },
+  { href: "#how-it-works", label: "Cómo funciona" },
   { href: "#wallet", label: "Wallet" },
   { href: "#downloads", label: "Descargas" },
   { href: "#soporte", label: "Soporte" }

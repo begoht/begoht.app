@@ -1,6 +1,6 @@
 import { bindLandingAnalytics, trackLandingEvent } from "../analytics/analytics.module.js";
 import { startHeroRuntime } from "./hero.runtime.js";
-import { renderLandingPage } from "./landing.view.js";
+import { renderLandingPage } from "./landing.view.js?v=20260619-mobility-steps";
 import { bindLandingNavigation } from "./navigation.js";
 
 const root = document.getElementById("landing-root");
