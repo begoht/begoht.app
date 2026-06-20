@@ -8,6 +8,9 @@
       "enabled": true
     }
   },
+  "android": {
+    "useLegacyBridge": true
+  },
   "server": {
     "androidScheme": "https"
   }

@@ -1,4 +1,4 @@
-import { getUltimaPosicion, refreshDriverLocation } from "./gps.js?v=20260615-smooth-autofinish";
+import { getUltimaPosicion, refreshDriverLocation } from "./gps.js?v=20260620-driver-navigation";
 import {
   ARRIVAL_MAX_DISTANCE_METERS,
   FINISH_MAX_DISTANCE_METERS,

@@ -172,14 +172,14 @@ driverVariables = setGradleNumber(driverVariables, "targetSdkVersion", 36);
 changed = writeIfChanged(files.driverVariables, driverVariables) || changed;
 
 let driverBuild = read(files.driverBuild);
-driverBuild = setGradleNumber(driverBuild, "versionCode", 14);
-driverBuild = setGradleString(driverBuild, "versionName", "1.0.13");
+driverBuild = setGradleNumber(driverBuild, "versionCode", 15);
+driverBuild = setGradleString(driverBuild, "versionName", "1.0.14");
 driverBuild = hardenSigningConfig(driverBuild);
 changed = writeIfChanged(files.driverBuild, driverBuild) || changed;
 
 let passengerBuild = read(files.passengerBuild);
-passengerBuild = setGradleNumber(passengerBuild, "versionCode", 10);
-passengerBuild = setGradleString(passengerBuild, "versionName", "1.0.9");
+passengerBuild = setGradleNumber(passengerBuild, "versionCode", 11);
+passengerBuild = setGradleString(passengerBuild, "versionName", "1.0.10");
 passengerBuild = hardenSigningConfig(passengerBuild);
 changed = writeIfChanged(files.passengerBuild, passengerBuild) || changed;
 

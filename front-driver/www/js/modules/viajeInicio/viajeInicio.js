@@ -3,17 +3,17 @@ import {
     getViajeEnCursoId, setViajeEnCurso, 
     viajesActivos 
 } from "../viajeControl/viajeEstado.js"; 
-import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260615-smooth-autofinish";
-import { getUltimaPosicion } from "../gps.js?v=20260615-smooth-autofinish";
-import { dibujarRutaPremium } from "../map.js?v=20260615-smooth-autofinish";
+import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260620-driver-navigation";
+import { getUltimaPosicion } from "../gps.js?v=20260620-driver-navigation";
+import { dibujarRutaPremium } from "../map.js?v=20260620-driver-navigation";
 import {
     ARRIVAL_MAX_DISTANCE_METERS,
     validarCercaniaViaje,
     notificarGuardia
-} from "../tripGuards.js?v=20260613-trip-guards";
+} from "../tripGuards.js?v=20260620-driver-navigation";
 import { UI_REFS, llegadaTimeout } from "./viajeInicioEstado.js";
-import { limpiarInterfazViaje, redibujarRutaRecovery } from "./viajeInicioUI.js?v=20260615-smooth-autofinish";
-import { initViajeRecovery } from "./viajeRecovery.js?v=20260615-smooth-autofinish";
+import { limpiarInterfazViaje, redibujarRutaRecovery } from "./viajeInicioUI.js?v=20260620-driver-navigation";
+import { initViajeRecovery } from "./viajeRecovery.js?v=20260620-driver-navigation";
 
 export function initViajeInicio(socket, detenerSimulacionETA) {
     if (!socket) return console.error("Socket no disponible en ViajeInicio");

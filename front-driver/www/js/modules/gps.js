@@ -1,9 +1,14 @@
-import { map, getRutaActualCoords, consumirRutaDesde } from "./map.js?v=20260615-smooth-autofinish";
+import {
+  map,
+  getRutaActualCoords,
+  consumirRutaDesde,
+  seguirMotoristaEnMapa
+} from "./map.js?v=20260620-driver-navigation";
 import { isDriverOnline, updateDriverPosition } from "./driver.status.js?v=20260608-gps-accept";
-import { crearMotoIcon, motoIcon } from "./map.icons.js?v=20260615-smooth-autofinish";
+import { crearMotoIcon, motoIcon } from "./map.icons.js?v=20260620-driver-navigation";
 import {
   setMotorcycleMarkerPose
-} from "./map.motion.js?v=20260615-smooth-autofinish";
+} from "./map.motion.js?v=20260620-driver-navigation";
 import {
   getDriverAccessToken,
   refreshDriverAccessToken
@@ -46,6 +51,8 @@ export async function initGPS(socket) {
     return;
   }
 
+  await requestBackgroundNotificationPermission();
+
   if (!startBackgroundGeolocation()) {
     startWebGeolocation();
   }
@@ -86,11 +93,11 @@ function startBackgroundGeolocation() {
 
   plugin.addWatcher(
     {
-      backgroundMessage: "BeGO actualise votre position pendant la course.",
-      backgroundTitle: "BeGO Driver actif",
+      backgroundMessage: "Votre position reste active tant que vous etes en ligne.",
+      backgroundTitle: "BeGO Driver en ligne",
       requestPermissions: true,
       stale: false,
-      distanceFilter: 5
+      distanceFilter: 0
     },
     (location, error) => {
       if (error) {
@@ -234,6 +241,23 @@ function updateMapPosition({ lat, lng, heading }) {
     }
   );
   consumirRutaDesde(pose?.latLng || { lat, lng });
+  seguirMotoristaEnMapa(pose?.latLng || { lat, lng }, {
+    heading: pose?.heading ?? heading
+  });
+}
+
+async function requestBackgroundNotificationPermission() {
+  const plugin = window.Capacitor?.Plugins?.LocalNotifications;
+  if (!plugin?.checkPermissions || !plugin?.requestPermissions) return;
+
+  try {
+    const current = await plugin.checkPermissions();
+    if (current?.display === "prompt" || current?.display === "prompt-with-rationale") {
+      await plugin.requestPermissions();
+    }
+  } catch (error) {
+    console.warn("Permission notification GPS:", error?.message || error);
+  }
 }
 
 function emitPosition({ lat, lng, heading }, { force = false, source = "gps" } = {}) {
@@ -261,6 +285,7 @@ function emitPosition({ lat, lng, heading }, { force = false, source = "gps" } =
 
   if (nativeBackground) {
     queuePendingPosition({ lat, lng, heading }, { force, source });
+    requestSocketReconnect();
     sendHttpFallback({ lat, lng, heading }, { force: true, source });
     return;
   }

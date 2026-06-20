@@ -11,10 +11,10 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 // ICONO MOTORISTA
 // ===============================
 const motoIcon = L.icon({
-  iconUrl: "/assets/icons/moto-transparent.svg?v=20260615-smooth-autofinish",
+  iconUrl: "/assets/icons/moto-transparent.svg?v=20260620-car-navigation",
   iconSize: [44, 44],
   iconAnchor: [22, 22],
-  className: "bego-map-icon bego-map-icon-moto",
+  className: "bego-map-icon bego-map-icon-car",
 });
 
 // ===============================
@@ -166,7 +166,7 @@ function aplicarRumbo(marker, heading, source = null) {
       .replace(/(?:\s+)?rotate\([-0-9.]+deg\)/g, "")
       .trim();
     element.style.transformOrigin = "50% 50%";
-    element.style.transform = `${base} rotate(${(stableHeading - 90).toFixed(1)}deg)`;
+    element.style.transform = `${base} rotate(${stableHeading.toFixed(1)}deg)`;
   });
 }
 

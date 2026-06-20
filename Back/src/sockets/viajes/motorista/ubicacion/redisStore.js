@@ -29,6 +29,10 @@ module.exports = async (socket, motoristaId, payload) => {
     const headingValue = heading != null && Number.isFinite(heading) ? heading : null;
 
     const dataPrev = await redis.hgetall(`motorista:data:${motoristaId}`);
+    const incomingSocketId = String(socket?.id || "");
+    const socketId = incomingSocketId && !incomingSocketId.startsWith("http:")
+      ? incomingSocketId
+      : dataPrev?.socketId || "";
 
     if (disponible) {
       const verification = await getDriverVerificationStatus(motoristaId);
@@ -72,15 +76,20 @@ module.exports = async (socket, motoristaId, payload) => {
       pipeline.zrem(`motoristas:ubicacion:${cityId}`, motoristaId);
     }
 
-    pipeline.hset(`motorista:data:${motoristaId}`, {
-      socketId: socket.id,
+    const locationState = {
       disponible: disponible ? "true" : "false",
       lat: lat.toString(),
       lng: lng.toString(),
       heading: headingValue == null ? "" : headingValue.toString(),
       city: cityId,
       lastUpdate: now.toString()
-    });
+    };
+
+    if (socketId) {
+      locationState.socketId = socketId;
+    }
+
+    pipeline.hset(`motorista:data:${motoristaId}`, locationState);
 
     pipeline.set(
       `motorista:pos:${motoristaId}`,

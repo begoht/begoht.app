@@ -5,12 +5,17 @@ export let destinoMarkerRef = { current: null };
 
 const DEFAULT_MAP_CENTER = [18.2343, -72.5354];
 const DEFAULT_MAP_ZOOM = 14;
+const NAVIGATION_ZOOM = 17;
+const NAVIGATION_LEAD_METERS = 72;
+const FOLLOW_PAUSE_MS = 12000;
 const ROUTE_CONSUME_MAX_DISTANCE_METERS = 120;
 const ROUTE_CONSUME_FINISH_METERS = 12;
 
 let rutaActualCoords = [];
 let routeRequestId = 0;
 let recenterButtonBound = false;
+let rutaOutlineLayer = null;
+let followPausedUntil = 0;
 
 export function initMap() {
   if (!window.L?.map) {
@@ -21,15 +26,39 @@ export function initMap() {
   const mapElement = document.getElementById("map");
   if (!mapElement) return null;
 
-  map = L.map("map", { zoomControl: false })
+  map = L.map("map", {
+    zoomControl: false,
+    preferCanvas: true,
+    updateWhenIdle: false
+  })
     .setView(DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM);
 
   L.tileLayer(
-    "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
-    { maxZoom: 19 }
+    "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",
+    {
+      maxZoom: 19,
+      detectRetina: true,
+      keepBuffer: 8,
+      updateWhenIdle: false,
+      updateWhenZooming: true,
+      zIndex: 1
+    }
+  ).addTo(map);
+
+  L.tileLayer(
+    "https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png",
+    {
+      maxZoom: 19,
+      detectRetina: true,
+      keepBuffer: 8,
+      updateWhenIdle: false,
+      updateWhenZooming: true,
+      zIndex: 3
+    }
   ).addTo(map);
 
   L.control.zoom({ position: "bottomright" }).addTo(map);
+  bindNavigationFollow();
   bindRecenterButton();
 }
 
@@ -59,6 +88,7 @@ export function consumirRutaDesde(posicion, {
   if (distanciaMetros(snap.latLng, destino) <= finishDistanceMeters) {
     rutaActualCoords = [];
     rutaLayerRef.current.setLatLngs([]);
+    rutaOutlineLayer?.setLatLngs?.([]);
     return true;
   }
 
@@ -71,6 +101,9 @@ export function consumirRutaDesde(posicion, {
 
   rutaActualCoords = coordsRestantes;
   rutaLayerRef.current.setLatLngs(
+    coordsRestantes.map((coord) => [coord.lat, coord.lng])
+  );
+  rutaOutlineLayer?.setLatLngs?.(
     coordsRestantes.map((coord) => [coord.lat, coord.lng])
   );
 
@@ -88,6 +121,11 @@ export function borrarRuta() {
     rutaLayerRef.current = null;
   }
 
+  if (rutaOutlineLayer) {
+    map.removeLayer(rutaOutlineLayer);
+    rutaOutlineLayer = null;
+  }
+
   if (origenMarkerRef.current) {
     map.removeLayer(origenMarkerRef.current);
     origenMarkerRef.current = null;
@@ -103,6 +141,8 @@ export function borrarRuta() {
 
 export function recentrarMapaMotorista({ useGps = true } = {}) {
   if (!map) return Promise.resolve(false);
+
+  followPausedUntil = 0;
 
   if (!useGps || !navigator.geolocation) {
     recenterFallback();
@@ -157,17 +197,65 @@ function bindRecenterButton() {
   });
 }
 
+function bindNavigationFollow() {
+  if (!map || map._begoNavigationFollowBound) return;
+  map._begoNavigationFollowBound = true;
+
+  map.on("dragstart", () => {
+    followPausedUntil = Date.now() + FOLLOW_PAUSE_MS;
+  });
+
+  map.on("zoomstart", () => {
+    if (!map._begoProgrammaticMove) {
+      followPausedUntil = Date.now() + FOLLOW_PAUSE_MS;
+    }
+  });
+}
+
+export function seguirMotoristaEnMapa(posicion, {
+  heading = null,
+  force = false,
+  zoom = NAVIGATION_ZOOM
+} = {}) {
+  const point = normalizarCoord(posicion);
+  if (!map || !point || document.hidden) return false;
+  if (!force && Date.now() < followPausedUntil) return false;
+
+  const center = puntoAdelantado(point, heading, NAVIGATION_LEAD_METERS);
+  const nextZoom = Math.max(Number(map.getZoom?.()) || zoom, zoom);
+
+  map._begoProgrammaticMove = true;
+  map.setView([center.lat, center.lng], nextZoom, {
+    animate: true,
+    duration: 0.55,
+    noMoveStart: true
+  });
+  map.once?.("moveend", () => {
+    map._begoProgrammaticMove = false;
+  });
+  window.setTimeout(() => {
+    if (map) map._begoProgrammaticMove = false;
+  }, 900);
+
+  return true;
+}
+
 function setDriverMapView(lat, lng, zoom = 16) {
   if (!map) return;
 
+  map._begoProgrammaticMove = true;
   if (typeof map.flyTo === "function") {
     map.flyTo([lat, lng], Math.max(map.getZoom?.() || zoom, zoom), {
       duration: 0.65
+    });
+    map.once?.("moveend", () => {
+      map._begoProgrammaticMove = false;
     });
     return;
   }
 
   map.setView([lat, lng], zoom);
+  map._begoProgrammaticMove = false;
 }
 
 function recenterFallback() {
@@ -206,7 +294,7 @@ export async function dibujarRutaPremium(origen, destino) {
   ];
 
   renderRutaCoords(fallbackCoords, {
-    color: "#00F5FF",
+    color: "#3b9cff",
     dashArray: "10, 10",
     fit: true
   });
@@ -216,7 +304,7 @@ export async function dibujarRutaPremium(origen, destino) {
     if (requestId !== routeRequestId || !coords?.length) return;
 
     renderRutaCoords(coords, {
-      color: "#00F5FF",
+      color: "#3b9cff",
       dashArray: null,
       fit: false
     });
@@ -235,13 +323,29 @@ function renderRutaCoords(coords, { color, dashArray, fit } = {}) {
     rutaLayerRef.current = null;
   }
 
+  if (rutaOutlineLayer) {
+    map.removeLayer(rutaOutlineLayer);
+    rutaOutlineLayer = null;
+  }
+
   rutaActualCoords = normalizarCoords(coords);
 
-  rutaLayerRef.current = L.polyline(coords, {
-    color: color || "#00F5FF",
-    weight: 5,
-    opacity: 0.85,
+  rutaOutlineLayer = L.polyline(coords, {
+    color: "#0b4ea2",
+    weight: 11,
+    opacity: 0.92,
     dashArray: dashArray || undefined,
+    lineCap: "round",
+    lineJoin: "round",
+    interactive: false
+  }).addTo(map);
+
+  rutaLayerRef.current = L.polyline(coords, {
+    color: color || "#3b9cff",
+    weight: 6,
+    opacity: 1,
+    dashArray: dashArray || undefined,
+    lineCap: "round",
     lineJoin: "round"
   }).addTo(map);
 
@@ -280,6 +384,32 @@ function normalizarCoords(coords = []) {
   return coords
     .map(normalizarCoord)
     .filter(Boolean);
+}
+
+function puntoAdelantado(point, heading, distanceMeters) {
+  const bearing = Number(heading);
+  if (!Number.isFinite(bearing) || bearing < 0 || !distanceMeters) {
+    return point;
+  }
+
+  const earth = 6371000;
+  const angularDistance = distanceMeters / earth;
+  const bearingRad = bearing * Math.PI / 180;
+  const lat1 = point.lat * Math.PI / 180;
+  const lng1 = point.lng * Math.PI / 180;
+  const lat2 = Math.asin(
+    Math.sin(lat1) * Math.cos(angularDistance) +
+    Math.cos(lat1) * Math.sin(angularDistance) * Math.cos(bearingRad)
+  );
+  const lng2 = lng1 + Math.atan2(
+    Math.sin(bearingRad) * Math.sin(angularDistance) * Math.cos(lat1),
+    Math.cos(angularDistance) - Math.sin(lat1) * Math.sin(lat2)
+  );
+
+  return {
+    lat: lat2 * 180 / Math.PI,
+    lng: lng2 * 180 / Math.PI
+  };
 }
 
 function normalizarCoord(coord) {

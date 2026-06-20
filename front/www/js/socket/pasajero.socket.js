@@ -2,8 +2,8 @@ import { getSocket } from "./socket.js?v=20260606-session-refresh";
 import { viajeState } from "../viaje/viaje.state.js";
 
 import { handlePrecio } from "./handlers/precio.handler.js?v=20260615-smooth-autofinish";
-import { handleAsignado } from "./handlers/asignado.handler.js?v=20260619-clear-map-address";
-import { handleTrack } from "./handlers/track.handler.js?v=20260619-clear-map-address";
+import { handleAsignado } from "./handlers/asignado.handler.js?v=20260620-car-navigation";
+import { handleTrack } from "./handlers/track.handler.js?v=20260620-car-navigation";
 import { handleLlego } from "./handlers/llego.handler.js?v=20260619-clear-map-address";
 import { handleIniciado } from "./handlers/iniciado.handler.js?v=20260619-clear-map-address";
 import { handleFinalizado } from "./handlers/finalizado.handler.js?v=20260615-smooth-autofinish";
@@ -12,7 +12,7 @@ import { handleError } from "./handlers/error.handler.js?v=20260619-clear-map-ad
 import { handleNoMotorista } from "./handlers/noMotorista.handler.js?v=20260615-smooth-autofinish";
 import { handleCancelado } from "./handlers/cancelado.handler.js?v=20260605-price-premium-cancel";
 import { handleExpirado } from "./handlers/expirado.handler.js";
-import { handleSync } from "./handlers/sync.handler.js?v=20260619-clear-map-address";
+import { handleSync } from "./handlers/sync.handler.js?v=20260620-car-navigation";
 import { handleEstado } from "./handlers/estado.handler.js?v=20260619-clear-map-address";
 import { handleMotoristaCandidato } from "./handlers/candidato.handler.js?v=20260615-smooth-autofinish";
 import { handleBuscando } from "./handlers/buscando.handler.js?v=20260615-smooth-autofinish";

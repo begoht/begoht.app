@@ -55,7 +55,7 @@ async function initHome(initId) {
     const map = getMap();
     if (!map) return;
 
-    const { initPasajero } = await import("../../pasajero/pasajero.main.js?v=20260619-clear-map-address");
+    const { initPasajero } = await import("../../pasajero/pasajero.main.js?v=20260620-car-navigation");
 
     if (initId !== currentInitId) return;
 

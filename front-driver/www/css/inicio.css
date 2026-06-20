@@ -1439,9 +1439,21 @@ a {
   inset: 0;
   z-index: 2;
   pointer-events: none;
-  background:
-    linear-gradient(180deg, rgba(2, 6, 23, 0.76) 0%, rgba(2, 6, 23, 0.14) 34%, rgba(2, 6, 23, 0.74) 100%),
-    linear-gradient(90deg, rgba(2, 6, 23, 0.52) 0%, transparent 28%, transparent 72%, rgba(2, 6, 23, 0.28) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(2, 6, 23, 0.42) 0%,
+    transparent 25%,
+    transparent 68%,
+    rgba(2, 6, 23, 0.48) 100%
+  );
+}
+
+.leaflet-marker-icon.bego-map-icon-navigation {
+  background: transparent !important;
+  border: 0 !important;
+  filter: none !important;
+  transition: transform 220ms linear;
+  will-change: transform;
 }
 
 .leaflet-control-container .leaflet-bottom.leaflet-right {
