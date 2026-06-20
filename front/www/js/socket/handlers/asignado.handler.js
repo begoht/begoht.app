@@ -1,10 +1,10 @@
 import { viajeState } from "../../viaje/viaje.state.js";
 import { cerrarBuscandoMotorista, animarMotoristaEncontrado } from "../../pasajero/pasajero.ui.js";
 import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260619-clear-map-address";
-import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260620-car-navigation";
-import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260619-clear-map-address";
-import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260619-clear-map-address";
-import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260619-clear-map-address";
+import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260620-map-rotation";
+import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260620-map-rotation";
+import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260620-map-rotation";
+import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260620-map-rotation";
 import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260615-smooth-autofinish";
 
 const ORDEN_ESTADO = {

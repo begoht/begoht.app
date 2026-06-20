@@ -3,17 +3,17 @@ import {
     getViajeEnCursoId, setViajeEnCurso, 
     viajesActivos 
 } from "../viajeControl/viajeEstado.js"; 
-import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260620-driver-navigation";
-import { getUltimaPosicion } from "../gps.js?v=20260620-driver-navigation";
-import { dibujarRutaPremium } from "../map.js?v=20260620-driver-navigation";
+import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260620-map-rotation";
+import { getUltimaPosicion } from "../gps.js?v=20260620-map-rotation";
+import { dibujarRutaPremium } from "../map.js?v=20260620-map-rotation";
 import {
     ARRIVAL_MAX_DISTANCE_METERS,
     validarCercaniaViaje,
     notificarGuardia
-} from "../tripGuards.js?v=20260620-driver-navigation";
+} from "../tripGuards.js?v=20260620-map-rotation";
 import { UI_REFS, llegadaTimeout } from "./viajeInicioEstado.js";
-import { limpiarInterfazViaje, redibujarRutaRecovery } from "./viajeInicioUI.js?v=20260620-driver-navigation";
-import { initViajeRecovery } from "./viajeRecovery.js?v=20260620-driver-navigation";
+import { limpiarInterfazViaje, redibujarRutaRecovery } from "./viajeInicioUI.js?v=20260620-map-rotation";
+import { initViajeRecovery } from "./viajeRecovery.js?v=20260620-map-rotation";
 
 export function initViajeInicio(socket, detenerSimulacionETA) {
     if (!socket) return console.error("Socket no disponible en ViajeInicio");

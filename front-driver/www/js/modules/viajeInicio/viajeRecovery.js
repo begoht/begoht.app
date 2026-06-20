@@ -9,9 +9,9 @@ import {
     persistirViajeEstado,
     limpiarViajePersistido
 } from "../viajeControl/viajeEstado.js";
-import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260620-driver-navigation";
-import { getUltimaPosicion, refreshDriverLocation } from "../gps.js?v=20260620-driver-navigation";
-import { redibujarRutaRecovery } from "./viajeInicioUI.js?v=20260620-driver-navigation";
+import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260620-map-rotation";
+import { getUltimaPosicion, refreshDriverLocation } from "../gps.js?v=20260620-map-rotation";
+import { redibujarRutaRecovery } from "./viajeInicioUI.js?v=20260620-map-rotation";
 
 let ultimoSyncProcesado = null;
 let ultimoSyncTs = 0;

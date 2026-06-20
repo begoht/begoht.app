@@ -3,7 +3,7 @@ import { motoIcon } from "../map.icons.js?v=20260620-car-navigation";
 import { getRutaActualCoords } from "./map.route.renderer.js?v=20260619-clear-map-address";
 import {
   setMotorcycleMarkerPose
-} from "../utils/map.motorcycle.motion.js?v=20260620-car-navigation";
+} from "../utils/map.motorcycle.motion.js?v=20260620-map-rotation";
 
 const FOLLOW_PAUSE_MS = 12000;
 let followPausedUntil = 0;

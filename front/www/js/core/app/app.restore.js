@@ -1,9 +1,9 @@
 import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260619-clear-map-address";
-import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260620-car-navigation";
-import { getMap } from "../../map/map.singleton.js?v=20260619-clear-map-address";
-import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260619-clear-map-address";
+import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260620-map-rotation";
+import { getMap } from "../../map/map.singleton.js?v=20260620-map-rotation";
+import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260620-map-rotation";
 import { viajeState } from "../../viaje/viaje.state.js";
-import { actualizarUIDriver, mostrarModalFinalizado } from "../../socket/pasajero.utils.js?v=20260619-clear-map-address";
+import { actualizarUIDriver, mostrarModalFinalizado } from "../../socket/pasajero.utils.js?v=20260620-map-rotation";
 import {
   obtenerFinalizacionPendiente,
   viajeFueFinalizado

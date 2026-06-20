@@ -24,7 +24,7 @@
   </script>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="./css/inicio.css?v=20260608-trip-panel-compact" />
+  <link rel="stylesheet" href="./css/inicio.css?v=20260620-map-rotation" />
 
   <link id="bego-leaflet-css" rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
@@ -168,6 +168,9 @@
         <button id="driverRecenterMap" class="driver-map-recenter" type="button" aria-label="Reprendre le suivi GPS" title="Reprendre le suivi GPS">
           <i class="fa-solid fa-location-arrow" aria-hidden="true"></i>
         </button>
+        <button id="driverResetBearing" class="driver-map-recenter driver-map-compass" type="button" aria-label="Remettre la carte vers le nord" title="Remettre la carte vers le nord">
+          <i class="fa-solid fa-compass" aria-hidden="true"></i>
+        </button>
       </section>
 
       <section class="panel-superior driver-home-topbar" aria-label="Etat du motorista">
@@ -277,9 +280,9 @@
 
   <script src="./js/core/production-console.js?v=20260606-console-clean"></script>
   <script src="./js/core/conexion.js"></script>
-  <script src="./js/core/native-runtime-loader.js?v=20260615-smooth-autofinish"></script>
+  <script src="./js/core/native-runtime-loader.js?v=20260620-map-rotation"></script>
   <script type="module" src="./js/monitoring/frontend-monitor.js?v=20260607-monitor-suspend"></script>
-  <script type="module" src="js/modules/driver.main.js?v=20260620-driver-navigation"></script>
+  <script type="module" src="js/modules/driver.main.js?v=20260620-map-rotation"></script>
   <script src="./js/i18n/fr.visual.js?v=20260601-fr"></script>
 
   <script>

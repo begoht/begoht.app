@@ -3,6 +3,7 @@ import { cityConfig } from "./config/index.js";
 let mapInstance = null;
 let currentContainer = null;
 let mapReady = false;
+let compassButtonBound = false;
 
 /*************************************************
  * 📍 GET MAP (SIEMPRE SEGURO)
@@ -120,6 +121,11 @@ export function createMap(container) {
     tap: true,
     touchZoom: true,
     minZoom: minZoom || 12,
+    rotate: true,
+    bearing: 0,
+    touchRotate: true,
+    rotateControl: false,
+    shiftKeyRotate: true,
 
     // 🔒 limitar navegación
     maxBounds: bounds,
@@ -143,6 +149,8 @@ export function createMap(container) {
       className: "bego-map-tiles bego-map-base-tiles"
     }
   ).addTo(mapInstance);
+
+  bindCompassButton(mapInstance);
 
   L.tileLayer(
     "https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png",
@@ -204,4 +212,26 @@ export function createMap(container) {
   });
 
   return mapInstance;
+}
+
+function bindCompassButton(map) {
+  const btn = document.getElementById("btnNorteMapa");
+  if (!btn || compassButtonBound || !map) return;
+
+  compassButtonBound = true;
+  const icon = btn.querySelector("i");
+
+  const render = () => {
+    const bearing = Number(map.getBearing?.()) || 0;
+    btn.classList.toggle("is-rotated", Math.abs(bearing) > 0.5);
+    if (icon) icon.style.transform = `rotate(${-bearing}deg)`;
+  };
+
+  btn.addEventListener("click", () => {
+    map.setBearing?.(0);
+    render();
+  });
+
+  map.on?.("rotate", render);
+  render();
 }

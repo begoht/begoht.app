@@ -45,7 +45,7 @@ body.route-home .home-page {
   overflow: hidden;
   position: relative;
   z-index: 1;
-  touch-action: pan-x pan-y;
+  touch-action: none;
 }
 
 #map .leaflet-control-container {
@@ -102,8 +102,22 @@ body.route-home .home-page {
   animation: mapRecenterSpin 0.8s linear infinite;
 }
 
+.map-compass-btn {
+  right: 72px;
+}
+
+.map-compass-btn i {
+  transition: transform 0.18s ease;
+}
+
+.map-compass-btn.is-rotated {
+  color: #ffffff;
+  border-color: rgba(96, 165, 250, 0.58);
+  background: rgba(30, 64, 175, 0.94);
+}
+
 body[class*="route-"]:not(.route-home) .map-recenter-btn,
-#map.hidden + .map-recenter-btn {
+#map.hidden ~ .map-recenter-btn {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -837,6 +851,10 @@ body[class*="route-"]:not(.route-home) .home-map-shell {
     inset 0 0 0 2px rgba(255, 255, 255, 0.08);
 }
 
+.route-home .map-compass-btn {
+  right: 84px;
+}
+
 .route-home .map-recenter-btn i {
   font-size: 23px;
 }
@@ -951,5 +969,9 @@ body[class*="route-"]:not(.route-home) .home-map-shell {
     right: 14px;
     width: 52px;
     height: 52px;
+  }
+
+  .route-home .map-compass-btn {
+    right: 76px;
   }
 }

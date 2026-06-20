@@ -178,6 +178,14 @@ export function applyMotorcycleHeading(marker, heading, { source = null } = {}) 
   marker._begoHeading = stableHeading;
   marker._begoHeadingSource = source;
 
+  if (typeof marker.setRotation === "function") {
+    marker.options.rotateWithView = true;
+    marker.setRotation(
+      (stableHeading - DEFAULT_ICON_HEADING_DEG) * Math.PI / 180
+    );
+    return;
+  }
+
   requestAnimationFrame(() => {
     const element = marker.getElement?.();
     if (!element) return;

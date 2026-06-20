@@ -1432,6 +1432,7 @@ a {
   height: 100%;
   z-index: 1;
   background: #07111f;
+  touch-action: none;
 }
 
 .driver-map-vignette {
@@ -1704,6 +1705,20 @@ body[data-driver-availability="syncing"] .status {
 
 .driver-map-recenter:active {
   transform: scale(0.95);
+}
+
+.driver-map-compass {
+  top: calc(max(12px, env(safe-area-inset-top)) + 128px);
+}
+
+.driver-map-compass i {
+  transition: transform 0.18s ease;
+}
+
+.driver-map-compass.is-rotated {
+  color: #ffffff;
+  border-color: rgba(96, 165, 250, 0.58);
+  background: rgba(30, 64, 175, 0.92);
 }
 
 .reserva-badge {
@@ -2327,6 +2342,18 @@ body[data-driver-availability="offline"] .oferta-panel {
     width: 188px;
     max-width: none;
     margin-left: 0;
+  }
+}
+
+@media (min-width: 760px) {
+  .driver-map-compass {
+    top: 154px;
+  }
+}
+
+@media (max-width: 480px) {
+  .driver-map-compass {
+    top: calc(max(10px, env(safe-area-inset-top)) + 118px);
   }
 }
 

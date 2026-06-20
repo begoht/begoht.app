@@ -65,25 +65,42 @@
   }
 
   async function ensureLeaflet() {
-    if (window.L?.map) return true;
+    if (!window.L?.map) {
+      loadStyleOnce("bego-leaflet-css", "https://unpkg.com/leaflet/dist/leaflet.css");
 
-    loadStyleOnce("bego-leaflet-css", "https://unpkg.com/leaflet/dist/leaflet.css");
+      const sources = [
+        "https://unpkg.com/leaflet/dist/leaflet.js",
+        "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"
+      ];
 
-    const sources = [
-      "https://unpkg.com/leaflet/dist/leaflet.js",
-      "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"
-    ];
-
-    for (const src of sources) {
-      try {
-        await loadScript(src);
-        if (window.L?.map) return true;
-      } catch (err) {
-        console.warn("Leaflet no disponible desde", src, err?.message || err);
+      for (const src of sources) {
+        try {
+          await loadScript(src);
+          if (window.L?.map) break;
+        } catch (err) {
+          console.warn("Leaflet no disponible desde", src, err?.message || err);
+        }
       }
     }
 
-    return false;
+    if (!window.L?.map) return false;
+    if (typeof window.L?.Map?.prototype?.setBearing === "function") return true;
+
+    const rotateSources = [
+      "https://unpkg.com/leaflet-rotate@0.2.8/dist/leaflet-rotate.js",
+      "https://cdn.jsdelivr.net/npm/leaflet-rotate@0.2.8/dist/leaflet-rotate.js"
+    ];
+
+    for (const src of rotateSources) {
+      try {
+        await loadScript(src);
+        if (typeof window.L?.Map?.prototype?.setBearing === "function") return true;
+      } catch (err) {
+        console.warn("Rotacion Leaflet no disponible desde", src, err?.message || err);
+      }
+    }
+
+    return true;
   }
 
   window.begoSocketIoReady = ensureSocketIo();

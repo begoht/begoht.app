@@ -14,6 +14,7 @@ const ROUTE_CONSUME_FINISH_METERS = 12;
 let rutaActualCoords = [];
 let routeRequestId = 0;
 let recenterButtonBound = false;
+let compassButtonBound = false;
 let rutaOutlineLayer = null;
 let followPausedUntil = 0;
 
@@ -29,7 +30,12 @@ export function initMap() {
   map = L.map("map", {
     zoomControl: false,
     preferCanvas: true,
-    updateWhenIdle: false
+    updateWhenIdle: false,
+    rotate: true,
+    bearing: 0,
+    touchRotate: true,
+    rotateControl: false,
+    shiftKeyRotate: true
   })
     .setView(DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM);
 
@@ -60,6 +66,7 @@ export function initMap() {
   L.control.zoom({ position: "bottomright" }).addTo(map);
   bindNavigationFollow();
   bindRecenterButton();
+  bindCompassButton();
 }
 
 export function getRutaActualCoords() {
@@ -195,6 +202,28 @@ function bindRecenterButton() {
       btn.classList.remove("is-loading");
     }
   });
+}
+
+function bindCompassButton() {
+  const btn = document.getElementById("driverResetBearing");
+  if (!btn || compassButtonBound || !map) return;
+
+  compassButtonBound = true;
+  const icon = btn.querySelector("i");
+
+  const render = () => {
+    const bearing = Number(map.getBearing?.()) || 0;
+    btn.classList.toggle("is-rotated", Math.abs(bearing) > 0.5);
+    if (icon) icon.style.transform = `rotate(${-bearing}deg)`;
+  };
+
+  btn.addEventListener("click", () => {
+    map.setBearing?.(0);
+    render();
+  });
+
+  map.on?.("rotate", render);
+  render();
 }
 
 function bindNavigationFollow() {

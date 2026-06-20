@@ -13,7 +13,7 @@
   <!-- CSS -->
   <link rel="stylesheet" href="./css/fouter/footer.css?v=20260602-home-blue">
 <link rel="stylesheet" href="./css/main.css?v=20260619-clear-map-address">
-<link rel="stylesheet" href="./css/busqueda/busqueda.css?v=20260619-clear-map-address">
+<link rel="stylesheet" href="./css/busqueda/busqueda.css?v=20260620-map-rotation">
   <link rel="stylesheet" href="./wallet/wallet.css?v=20260607-mobile-pages-2x2">
   <!-- LEAFLET -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
@@ -27,6 +27,7 @@
     body:not(.app-ready) #app,
     body:not(.app-ready) #map,
     body:not(.app-ready) #btnRecentrarMapa,
+    body:not(.app-ready) #btnNorteMapa,
     body:not(.app-ready) #appMain,
     body:not(.app-ready) #appFooter,
     body:not(.app-ready) #overlayBuscando,
@@ -149,6 +150,9 @@
     <div id="map"></div>
     <button id="btnRecentrarMapa" class="map-recenter-btn" type="button" aria-label="Recentrer la carte" title="Recentrer la carte">
       <i class="fa-solid fa-location-crosshairs" aria-hidden="true"></i>
+    </button>
+    <button id="btnNorteMapa" class="map-recenter-btn map-compass-btn" type="button" aria-label="Remettre la carte vers le nord" title="Remettre la carte vers le nord">
+      <i class="fa-solid fa-compass" aria-hidden="true"></i>
     </button>
   </div>
   <main id="appMain" class="home-page">
@@ -432,10 +436,11 @@
 <!-- JS -->
 <script src="./js/core/production-console.js?v=20260606-console-clean"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-rotate@0.2.8/dist/leaflet-rotate.js"></script>
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 <script type="module" src="./js/monitoring/frontend-monitor.js?v=20260607-monitor-suspend"></script>
 <script type="module">
-  import { initApp } from "./js/core/app/app.js?v=20260620-car-navigation";
+  import { initApp } from "./js/core/app/app.js?v=20260620-map-rotation";
   initApp();
 </script>
 

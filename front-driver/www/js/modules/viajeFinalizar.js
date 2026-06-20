@@ -4,12 +4,12 @@ import {
     setViajeEnCurso
 } from "./viajeControl/viajeEstado.js";
 
-import { limpiarViajeMain } from "./viajeControl/viajeUI.js?v=20260620-driver-navigation";
-import { borrarRuta } from "./map.js?v=20260620-driver-navigation";
+import { limpiarViajeMain } from "./viajeControl/viajeUI.js?v=20260620-map-rotation";
+import { borrarRuta } from "./map.js?v=20260620-map-rotation";
 import {
     FINISH_MAX_DISTANCE_METERS,
     validarCercaniaViaje
-} from "./tripGuards.js?v=20260620-driver-navigation";
+} from "./tripGuards.js?v=20260620-map-rotation";
 
 const viajesFinalizadosProcesados = new Set();
 const finalizacionesPendientes = new Map();

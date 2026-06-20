@@ -1,4 +1,4 @@
-import { getMap } from "./map.singleton.js?v=20260619-clear-map-address";
+import { getMap } from "./map.singleton.js?v=20260620-map-rotation";
 
 import {
   mismaPosicion,
