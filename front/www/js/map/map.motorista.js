@@ -10,12 +10,12 @@ import {
 import {
   renderMotorista,
   removeMotorista
-} from "./ui/map.motorista.renderer.js?v=20260620-map-rotation";
+} from "./ui/map.motorista.renderer.js?v=20260621-route-moto";
 
 import {
   renderMotoristas,
   clearMotoristas
-} from "./ui/map.motoristas.renderer.js?v=20260620-map-rotation";
+} from "./ui/map.motoristas.renderer.js?v=20260621-route-moto";
 
 /*************************************************
  * 🗺️ SET MAPA

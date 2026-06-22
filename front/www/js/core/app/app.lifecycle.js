@@ -55,7 +55,7 @@ async function initHome(initId) {
     const map = getMap();
     if (!map) return;
 
-    const { initPasajero } = await import("../../pasajero/pasajero.main.js?v=20260620-map-rotation");
+    const { initPasajero } = await import("../../pasajero/pasajero.main.js?v=20260621-route-moto");
 
     if (initId !== currentInitId) return;
 

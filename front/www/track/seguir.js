@@ -455,7 +455,7 @@ async function reverseGeocodePublico(lat, lng) {
 
 function iconoMoto() {
   return L.icon({
-    iconUrl: "/assets/icons/moto-transparent.svg?v=20260620-car-navigation",
+    iconUrl: "/assets/icons/moto-transparent.svg?v=20260621-top-moto",
     iconSize: [44, 44],
     iconAnchor: [22, 22],
     className: "moto-live-icon"

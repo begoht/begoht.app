@@ -89,7 +89,8 @@ export function resolveMotorcyclePose(map, rawLatLng, {
     latLng,
     heading: headingSelection.heading,
     headingSource: headingSelection.source,
-    snapped: !!snapped
+    snapped: !!snapped,
+    routeProgress: snapped?.progress || null
   };
 }
 
@@ -104,7 +105,19 @@ export function setMotorcycleMarkerPose(marker, map, rawLatLng, options = {}) {
 
   if (!pose) return null;
 
-  moveMarker(marker, previousLatLng, pose.latLng, options);
+  const previousRouteSnap = snapToRoute(
+    map,
+    previousLatLng,
+    options.routeCoords,
+    options.maxSnapDistanceMeters ?? DEFAULT_MAX_SNAP_METERS
+  );
+
+  moveMarker(marker, previousLatLng, pose.latLng, {
+    ...options,
+    routeFromProgress: previousRouteSnap?.progress || marker._begoRouteProgress || null,
+    routeToProgress: pose.routeProgress
+  });
+  marker._begoRouteProgress = pose.routeProgress || null;
   applyMotorcycleHeading(marker, pose.heading, {
     source: pose.headingSource
   });
@@ -114,7 +127,10 @@ export function setMotorcycleMarkerPose(marker, map, rawLatLng, options = {}) {
 
 function moveMarker(marker, fromLatLng, toLatLng, {
   animate = true,
-  durationMs = DEFAULT_MOVE_DURATION_MS
+  durationMs = DEFAULT_MOVE_DURATION_MS,
+  routeCoords = [],
+  routeFromProgress = null,
+  routeToProgress = null
 } = {}) {
   const from = normalizeLatLng(fromLatLng);
   const to = normalizeLatLng(toLatLng);
@@ -142,14 +158,18 @@ function moveMarker(marker, fromLatLng, toLatLng, {
 
   const startedAt = performance.now();
   marker._begoMoveTarget = to;
+  const routePath = buildRouteAnimationPath(
+    routeCoords,
+    routeFromProgress,
+    routeToProgress
+  );
 
   const tick = (now) => {
     const elapsed = now - startedAt;
     const progress = easeInOutCubic(Math.min(1, elapsed / durationMs));
-    const lat = from.lat + (to.lat - from.lat) * progress;
-    const lng = from.lng + (to.lng - from.lng) * progress;
+    const next = interpolateMovePoint(from, to, routePath, progress);
 
-    marker.setLatLng([lat, lng]);
+    marker.setLatLng([next.lat, next.lng]);
 
     if (progress < 1) {
       marker._begoMoveFrame = requestAnimationFrame(tick);
@@ -167,6 +187,88 @@ function easeInOutCubic(t) {
   return t < 0.5
     ? 4 * t * t * t
     : 1 - ((-2 * t + 2) ** 3) / 2;
+}
+
+function interpolateMovePoint(from, to, routePath, progress) {
+  const onRoute = interpolateAlongPath(routePath, progress);
+  if (onRoute) return onRoute;
+
+  return {
+    lat: from.lat + (to.lat - from.lat) * progress,
+    lng: from.lng + (to.lng - from.lng) * progress
+  };
+}
+
+function buildRouteAnimationPath(routeCoords, fromProgress, toProgress) {
+  const route = normalizarRouteCoords(routeCoords);
+  if (!route.length || !fromProgress || !toProgress) return null;
+
+  const fromIndex = Number(fromProgress.segmentIndex);
+  const toIndex = Number(toProgress.segmentIndex);
+  const fromT = Number(fromProgress.segmentT);
+  const toT = Number(toProgress.segmentT);
+
+  if (
+    !Number.isFinite(fromIndex) ||
+    !Number.isFinite(toIndex) ||
+    !Number.isFinite(fromT) ||
+    !Number.isFinite(toT)
+  ) {
+    return null;
+  }
+
+  const fromAbs = fromIndex + fromT;
+  const toAbs = toIndex + toT;
+
+  if (toAbs < fromAbs || toAbs - fromAbs < 0.0001) return null;
+
+  const points = [normalizeLatLng(fromProgress.latLng)];
+
+  for (let i = fromIndex + 1; i <= toIndex && i < route.length; i++) {
+    points.push(route[i]);
+  }
+
+  points.push(normalizeLatLng(toProgress.latLng));
+
+  return compactRoutePath(points);
+}
+
+function interpolateAlongPath(path, progress) {
+  if (!Array.isArray(path) || path.length < 2) return null;
+
+  const segments = [];
+  let total = 0;
+
+  for (let i = 0; i < path.length - 1; i++) {
+    const start = normalizeLatLng(path[i]);
+    const end = normalizeLatLng(path[i + 1]);
+    if (!start || !end) continue;
+
+    const length = distanceMeters(start, end);
+    if (!Number.isFinite(length) || length <= 0) continue;
+
+    segments.push({ start, end, length });
+    total += length;
+  }
+
+  if (!segments.length || total <= 0) return null;
+
+  let remaining = total * Math.max(0, Math.min(1, progress));
+
+  for (const segment of segments) {
+    if (remaining > segment.length) {
+      remaining -= segment.length;
+      continue;
+    }
+
+    const segmentProgress = remaining / segment.length;
+    return {
+      lat: segment.start.lat + (segment.end.lat - segment.start.lat) * segmentProgress,
+      lng: segment.start.lng + (segment.end.lng - segment.start.lng) * segmentProgress
+    };
+  }
+
+  return segments[segments.length - 1].end;
 }
 
 export function applyMotorcycleHeading(marker, heading, { source = null } = {}) {
@@ -280,14 +382,20 @@ function snapToRoute(map, rawLatLng, routeCoords, maxDistanceMeters) {
     const pointA = map.latLngToLayerPoint(a);
     const pointB = map.latLngToLayerPoint(b);
     const projected = projectPointOnSegment(rawPoint, pointA, pointB);
-    const pixelDistance = rawPoint.distanceTo(projected);
+    const pixelDistance = rawPoint.distanceTo(projected.point);
 
     if (!best || pixelDistance < best.pixelDistance) {
-      const latLng = map.layerPointToLatLng(projected);
+      const latLng = map.layerPointToLatLng(projected.point);
+      const normalizedLatLng = { lat: latLng.lat, lng: latLng.lng };
       best = {
-        latLng: { lat: latLng.lat, lng: latLng.lng },
+        latLng: normalizedLatLng,
         pixelDistance,
-        heading: bearingDeg(a, b)
+        heading: bearingDeg(a, b),
+        progress: {
+          segmentIndex: i,
+          segmentT: projected.t,
+          latLng: normalizedLatLng
+        }
       };
     }
   }
@@ -303,12 +411,44 @@ function projectPointOnSegment(point, start, end) {
   const dy = end.y - start.y;
   const lengthSq = dx * dx + dy * dy;
 
-  if (!lengthSq) return start;
+  if (!lengthSq) {
+    return {
+      point: start,
+      t: 0
+    };
+  }
 
   const t = Math.max(
     0,
     Math.min(1, ((point.x - start.x) * dx + (point.y - start.y) * dy) / lengthSq)
   );
 
-  return L.point(start.x + t * dx, start.y + t * dy);
+  return {
+    point: L.point(start.x + t * dx, start.y + t * dy),
+    t
+  };
+}
+
+function normalizarRouteCoords(routeCoords = []) {
+  if (!Array.isArray(routeCoords)) return [];
+
+  return routeCoords
+    .map(normalizeLatLng)
+    .filter(Boolean);
+}
+
+function compactRoutePath(points = []) {
+  const compacted = [];
+
+  points.forEach((point) => {
+    const normalized = normalizeLatLng(point);
+    if (!normalized) return;
+
+    const previous = compacted[compacted.length - 1];
+    if (previous && distanceMeters(previous, normalized) < 0.35) return;
+
+    compacted.push(normalized);
+  });
+
+  return compacted.length >= 2 ? compacted : null;
 }

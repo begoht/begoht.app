@@ -1,26 +1,26 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 96">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <defs>
-    <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
+    <linearGradient id="moto-body" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#ffffff"/>
-      <stop offset="1" stop-color="#dbe3ea"/>
+      <stop offset="1" stop-color="#dbeafe"/>
     </linearGradient>
-    <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#1f2937"/>
-      <stop offset="1" stop-color="#64748b"/>
+    <linearGradient id="moto-blue" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#60a5fa"/>
+      <stop offset="1" stop-color="#1d4ed8"/>
     </linearGradient>
-    <filter id="shadow" x="-40%" y="-30%" width="180%" height="180%">
-      <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#020617" flood-opacity=".48"/>
+    <filter id="moto-shadow" x="-45%" y="-45%" width="190%" height="190%">
+      <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#020617" flood-opacity=".46"/>
     </filter>
   </defs>
-  <g filter="url(#shadow)">
-    <path d="M18 14C20 7 25 3 32 3s12 4 14 11l7 24v43c0 6-5 11-11 11H22c-6 0-11-5-11-11V38l7-24z" fill="url(#body)" stroke="#111827" stroke-width="2"/>
-    <path d="M21 17c2-5 5-7 11-7s9 2 11 7l4 15H17l4-15z" fill="url(#glass)"/>
-    <path d="M17 39h30v25H17z" fill="#f8fafc"/>
-    <path d="M19 41h26l-3 19H22l-3-19z" fill="url(#glass)"/>
-    <path d="M17 67h30l2 14c1 4-3 6-7 6H22c-4 0-8-2-7-6l2-14z" fill="#eef2f6"/>
-    <path d="M14 70h5v12h-5zM45 70h5v12h-5z" fill="#111827"/>
-    <path d="M19 82h8v4h-8zM37 82h8v4h-8z" rx="2" fill="#ef4444"/>
-    <path d="M19 34h7v4h-7zM38 34h7v4h-7z" rx="2" fill="#f8fafc" stroke="#cbd5e1"/>
-    <path d="M10 43h5v15h-3c-2 0-3-2-3-4v-8c0-2 0-3 1-3zM49 43h5c1 0 1 1 1 3v8c0 2-1 4-3 4h-3V43z" fill="#e2e8f0" stroke="#111827" stroke-width="1.5"/>
+  <g filter="url(#moto-shadow)" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M32 4.5c3.8 0 6.4 2.8 6.4 7.2v5.8c0 2.7-2.1 4.8-6.4 4.8s-6.4-2.1-6.4-4.8v-5.8c0-4.4 2.6-7.2 6.4-7.2z" fill="#111827"/>
+    <path d="M21.5 27.5 13 31.2M42.5 27.5l8.5 3.7" fill="none" stroke="#0f172a" stroke-width="5.2"/>
+    <path d="M18 30h9M37 30h9" fill="none" stroke="#e5e7eb" stroke-width="3.4"/>
+    <path d="M32 13c5.9 0 10.2 4.7 11.1 12.4l1.2 10.8c.9 8.5-4 18.1-12.3 23.3-8.3-5.2-13.2-14.8-12.3-23.3l1.2-10.8C21.8 17.7 26.1 13 32 13z" fill="url(#moto-blue)" stroke="#0f172a" stroke-width="2.2"/>
+    <path d="M25.2 19.2c1.2-3.1 3.4-5.1 6.8-5.1s5.6 2 6.8 5.1l1.7 7.9h-17l1.7-7.9z" fill="url(#moto-body)" stroke="#dbeafe" stroke-width="1.5"/>
+    <path d="M25.5 32.5c1.6-4 3.7-6 6.5-6s4.9 2 6.5 6l1.6 12.2c-1.3 3.9-4.1 7.2-8.1 9.8-4-2.6-6.8-5.9-8.1-9.8l1.6-12.2z" fill="#0f172a" stroke="#e5e7eb" stroke-width="1.5"/>
+    <path d="M28 35.2h8M27.1 46.5h9.8" fill="none" stroke="#64748b" stroke-width="2.1"/>
+    <path d="M27.7 55.1h8.6" stroke="#ef4444" stroke-width="3.2"/>
+    <path d="M32 8.5v45" stroke="#ffffff" stroke-width="1.5" opacity=".28"/>
   </g>
 </svg>
