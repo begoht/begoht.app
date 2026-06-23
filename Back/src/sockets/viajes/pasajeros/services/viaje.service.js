@@ -11,6 +11,10 @@ const {
 const {
   assertPaymentMethodCanPay,
 } = require("../../../../services/paymentMethodSettings.service");
+const {
+  aplicarIdaVueltaACotizacion,
+  wantsIdaVuelta,
+} = require("../../../../services/idaVuelta.service");
 
 const MAX_PESO_ENVIO_KG = 5;
 
@@ -82,7 +86,7 @@ module.exports = {
   /*************************************************
    * 🧠 COTIZAR (Cálculo puro, sin guardar)
    *************************************************/
-  async cotizar(socket, { origen, destino, metodoPago, city, tipo, paquete }) {
+  async cotizar(socket, { origen, destino, metodoPago, city, tipo, paquete, idaVuelta }) {
     const pasajeroId = socket.user.id || socket.user._id;
     const tipoServicio = normalizarTipo(tipo);
     const metodoPagoNormalizado = await assertPaymentMethodCanPay(metodoPago);
@@ -136,13 +140,7 @@ module.exports = {
     const walletDiscount = metodoPagoNormalizado === "wallet"
       ? applyWalletDiscount(precioBase, walletDiscountConfig)
       : applyWalletDiscount(precioBase, { enabled: false });
-    const precio = walletDiscount.finalPrice;
-
-    const walletInfo = metodoPagoNormalizado === "wallet"
-      ? await validarSaldoWallet(pasajeroId, precio)
-      : null;
-
-    return {
+    const cotizacion = {
       origen: {
         lat: origen.lat,
         lng: origen.lng,
@@ -155,17 +153,33 @@ module.exports = {
       } : null,
       distanciaKm,
       duracionMin,
-      precio,
+      precio: walletDiscount.finalPrice,
       precioBase,
       descuentoWallet: walletDiscount.discountAmount,
       descuentoWalletRate: walletDiscount.rate,
       walletDiscount: walletDiscount.enabled ? walletDiscount : null,
       metodoPago: metodoPagoNormalizado,
-      wallet: walletInfo,
+      wallet: null,
       ciudad: cityConfig.id,
       tipo: tipoServicio,
       paquete: paqueteNormalizado
     };
+
+    aplicarIdaVueltaACotizacion({
+      cotizacion,
+      solicitarIdaVuelta: wantsIdaVuelta(idaVuelta, tipoServicio),
+      precioBaseIda: precioBase,
+      distanciaIdaKm: distanciaKm,
+      duracionIdaMin: duracionMin,
+      metodoPago: metodoPagoNormalizado,
+      walletDiscountConfig
+    });
+
+    cotizacion.wallet = metodoPagoNormalizado === "wallet"
+      ? await validarSaldoWallet(pasajeroId, cotizacion.precio)
+      : null;
+
+    return cotizacion;
   },
 
   /*************************************************
@@ -189,6 +203,11 @@ module.exports = {
       pasajeroSocket: socket.id,
       metodoPago: cotizacion.metodoPago,
       tipo: cotizacion.tipo || "viaje",
+      idaVuelta: cotizacion.idaVuelta || {
+        disponible: false,
+        solicitada: false,
+        estado: "no_aplica"
+      },
       paquete: cotizacion.tipo === "envio"
         ? {
             ...(cotizacion.paquete || {}),

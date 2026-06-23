@@ -5,6 +5,7 @@ const snapshotMotorista = require(
     "../services/motoristaSnapshot.service"
 );
 const { getDriverEarningsForViaje } = require("../../../../services/driverEarnings.service");
+const { prepararIdaVueltaPayload } = require("../../../../services/idaVuelta.service");
 
 module.exports = (io, socket) => {
     return async () => {
@@ -58,12 +59,14 @@ async function sanitizarViajeMotorista(viaje) {
     if ((viaje.tipo || "viaje") !== "envio" || !viaje.paquete) {
         return {
             ...viaje,
+            idaVuelta: prepararIdaVueltaPayload(viaje),
             ...earnings
         };
     }
 
     return {
         ...viaje,
+        idaVuelta: prepararIdaVueltaPayload(viaje),
         ...earnings,
         paquete: {
             pesoKg: viaje.paquete.pesoKg,

@@ -3,7 +3,7 @@ import {
     getViajeEnCursoId, setViajeEnCurso, 
     viajesActivos 
 } from "../viajeControl/viajeEstado.js"; 
-import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260620-map-rotation";
+import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260623-roundtrip";
 import { getUltimaPosicion } from "../gps.js?v=20260620-map-rotation";
 import { dibujarRutaPremium } from "../map.js?v=20260620-map-rotation";
 import {
@@ -12,8 +12,8 @@ import {
     notificarGuardia
 } from "../tripGuards.js?v=20260620-map-rotation";
 import { UI_REFS, llegadaTimeout } from "./viajeInicioEstado.js";
-import { limpiarInterfazViaje, redibujarRutaRecovery } from "./viajeInicioUI.js?v=20260620-map-rotation";
-import { initViajeRecovery } from "./viajeRecovery.js?v=20260620-map-rotation";
+import { limpiarInterfazViaje, redibujarRutaRecovery } from "./viajeInicioUI.js?v=20260623-roundtrip";
+import { initViajeRecovery } from "./viajeRecovery.js?v=20260623-roundtrip";
 
 export function initViajeInicio(socket, detenerSimulacionETA) {
     if (!socket) return console.error("Socket no disponible en ViajeInicio");
@@ -94,8 +94,9 @@ export function initViajeInicio(socket, detenerSimulacionETA) {
         UI_REFS.btnIniciar.disabled = false;
 
         const pos = getUltimaPosicion();
-        if (pos && data.destino) {
-            setTimeout(() => dibujarRutaPremium(pos, data.destino), 300);
+        const target = data.proximoDestino || data.destino;
+        if (pos && target) {
+            setTimeout(() => dibujarRutaPremium(pos, target), 300);
         }
     });
 

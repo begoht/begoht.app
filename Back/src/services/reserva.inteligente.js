@@ -4,6 +4,7 @@ const { calcularDistanciaMetros } = require("../utils/geo");
 const crypto = require("crypto");
 const mongoose = require("mongoose");
 const { getDriverEarningsForViaje } = require("./driverEarnings.service");
+const { prepararIdaVueltaPayload } = require("./idaVuelta.service");
 
 const RADIO_CERCANIA_DESTINO = 800;
 
@@ -85,6 +86,7 @@ module.exports = async function reservaInteligente({ io, motoristaId, nuevoViaje
                     ...payload,
                     ...driverEarnings,
                     viajeId: reservado._id,
+                    idaVuelta: prepararIdaVueltaPayload(payload),
                     esReserva: true
                 });
             }

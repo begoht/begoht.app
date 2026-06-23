@@ -1,6 +1,7 @@
 const viajeRepo = require("../repositories/viaje.repository");
 const formatMotorista = require("../../../../utils/formatMotorista");
 const { redis } = require("../../../../config/redis");
+const { prepararIdaVueltaPayload } = require("../../../../services/idaVuelta.service");
 
 const ESTADOS_BUSQUEDA = ["buscando", "ofertando"];
 const ESTADOS_ACTIVOS = ["reservado", "asignado", "llego", "en_curso"];
@@ -41,6 +42,7 @@ module.exports = async function replayViaje(socket) {
         metodoPago: viaje.metodoPago,
         tipo: viaje.tipo || "viaje",
         paquete: prepararPaquetePasajero(viaje),
+        idaVuelta: prepararIdaVueltaPayload(viaje),
         origen: viaje.origen?.direccion,
         destino: viaje.destino?.direccion,
         estado: "buscando",
@@ -51,6 +53,7 @@ module.exports = async function replayViaje(socket) {
         viajeId,
         tipo: viaje.tipo || "viaje",
         paquete: prepararPaquetePasajero(viaje),
+        idaVuelta: prepararIdaVueltaPayload(viaje),
         mensaje: "Buscando al motorista mas cercano..."
       });
 
@@ -86,6 +89,7 @@ module.exports = async function replayViaje(socket) {
       estadoPago: viaje.estadoPago,
       tipo: viaje.tipo || "viaje",
       paquete: prepararPaquetePasajero(viaje),
+      idaVuelta: prepararIdaVueltaPayload(viaje),
       rutaGeometria: viaje.rutaGeometria || null,
       isReplay: true
     };
@@ -105,6 +109,7 @@ module.exports = async function replayViaje(socket) {
         proximoDestino,
         tipo: viaje.tipo || "viaje",
         paquete: prepararPaquetePasajero(viaje),
+        idaVuelta: prepararIdaVueltaPayload(viaje),
         timestamp: Date.now(),
         isReplay: true
       });
@@ -118,6 +123,7 @@ module.exports = async function replayViaje(socket) {
         origen: viaje.origen,
         destino: viaje.destino,
         proximoDestino,
+        idaVuelta: prepararIdaVueltaPayload(viaje),
         estado: viaje.estado,
         isReplay: true,
         timestamp: Date.now(),
@@ -143,7 +149,8 @@ module.exports = async function replayViaje(socket) {
       metodoPago: viaje.metodoPago,
       estadoPago: viaje.estadoPago,
       tipo: viaje.tipo || "viaje",
-      paquete: prepararPaquetePasajero(viaje)
+      paquete: prepararPaquetePasajero(viaje),
+      idaVuelta: prepararIdaVueltaPayload(viaje)
     });
 
     console.log(`Replay: estado ${viaje.estado} recuperado para ${pasajeroId}`);
@@ -229,6 +236,7 @@ async function obtenerProximoDestino(viajeId, viaje) {
   }
 
   if (["asignado", "llego"].includes(viaje.estado)) return viaje.origen || null;
+  if (viaje.estado === "en_curso" && viaje.idaVuelta?.estado === "retorno_en_curso") return viaje.origen || null;
   if (viaje.estado === "en_curso") return viaje.destino || null;
   if (viaje.estado === "reservado") return viaje.proximoDestino || viaje.origen || null;
   return null;
@@ -242,6 +250,7 @@ async function guardarContexto(viajeId, viaje, motoristaId, proximoDestino) {
       origen: viaje.origen || null,
       destino: viaje.destino || null,
       proximoDestino,
+      idaVuelta: prepararIdaVueltaPayload(viaje),
       motoristaId: motoristaId || null,
       pasajeroId: viaje.pasajero?.toString() || null
     }),

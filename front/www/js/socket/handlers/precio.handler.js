@@ -1,14 +1,20 @@
 // handlers/precio.handler.js
 import { viajeState } from "../../viaje/viaje.state.js";
 import { mostrarModalPrecio, mostrarBuscandoMotorista } from "../../pasajero/pasajero.ui.js";
-import { guardarSesionViaje, limpiarSesionViaje } from "../pasajero.utils.js?v=20260607-finalized-guard";
-import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260619-clear-map-address";
+import { guardarSesionViaje, limpiarSesionViaje } from "../pasajero.utils.js?v=20260623-roundtrip";
+import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260623-roundtrip";
 import { cityConfig } from "../../map/config/index.js";
-import { resolverCotizacionPendiente } from "../../viaje/viaje.actions.js?v=20260619-clear-map-address";
+import { resolverCotizacionPendiente } from "../../viaje/viaje.actions.js?v=20260623-roundtrip";
 import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260607-finalized-guard";
+import {
+  aplicarSeleccionIdaVuelta,
+  distanciaSegunSeleccion,
+  normalizarIdaVuelta,
+  precioSegunSeleccion
+} from "../../viaje/idaVuelta.js?v=20260623-roundtrip";
 
 // ✅ Agregamos 'rutaGeometria' desestructurada del backend
-export const handlePrecio = ({ quoteId, viajeId, precio, precioBase, descuentoWallet, descuentoWalletRate, walletDiscount, distanciaKm, metodoPago, rutaGeometria, tipo, paquete }, socket) => {
+export const handlePrecio = ({ quoteId, viajeId, precio, precioBase, descuentoWallet, descuentoWalletRate, walletDiscount, distanciaKm, metodoPago, rutaGeometria, tipo, paquete, idaVuelta }, socket) => {
   if (viajeId && viajeFueFinalizado(viajeId)) {
     console.warn("Precio ignorado: viaje ya finalizado", viajeId);
     return;
@@ -32,6 +38,7 @@ export const handlePrecio = ({ quoteId, viajeId, precio, precioBase, descuentoWa
     descuentoWallet: descuentoWallet || 0,
     descuentoWalletRate: descuentoWalletRate || 0,
     walletDiscount: walletDiscount || null,
+    idaVuelta: normalizarIdaVuelta(idaVuelta),
     // ✅ Guardamos la geometría en el state global para consumirla después sin lag
     rutaDestinoCache: rutaGeometria || null 
   });
@@ -46,13 +53,32 @@ export const handlePrecio = ({ quoteId, viajeId, precio, precioBase, descuentoWa
     metodoPago,
     tipo: viajeState.tipoServicio,
     paquete: viajeState.paquete,
-    onConfirm: () => {
+    idaVuelta: viajeState.idaVuelta,
+    onConfirm: (confirmacion = {}) => {
+      const idaVueltaConfirmada = aplicarSeleccionIdaVuelta(
+        viajeState.idaVuelta,
+        confirmacion?.idaVuelta?.solicitada === true
+      );
+      const precioConfirmado = precioSegunSeleccion(
+        idaVueltaConfirmada,
+        idaVueltaConfirmada?.solicitada === true,
+        precio
+      );
+      const distanciaConfirmada = distanciaSegunSeleccion(
+        idaVueltaConfirmada,
+        idaVueltaConfirmada?.solicitada === true,
+        distanciaKm
+      );
+
       Object.assign(viajeState, { 
         precioConfirmado: true, 
         activo: true, 
         buscando: true, 
         estado: "buscando",
-        viajeId 
+        viajeId,
+        idaVuelta: idaVueltaConfirmada,
+        precio: precioConfirmado,
+        distanciaKm: distanciaConfirmada
       });
 
       guardarSesionViaje("buscando");
@@ -66,7 +92,10 @@ export const handlePrecio = ({ quoteId, viajeId, precio, precioBase, descuentoWa
         metodoPago: metodoPago,
         city: cityConfig.id,
         tipo: viajeState.tipoServicio || "viaje",
-        paquete: viajeState.tipoServicio === "envio" ? viajeState.paquete : null
+        paquete: viajeState.tipoServicio === "envio" ? viajeState.paquete : null,
+        idaVuelta: idaVueltaConfirmada
+          ? { solicitada: idaVueltaConfirmada.solicitada === true }
+          : { solicitada: false }
       });
     },
     onCancel: () => {

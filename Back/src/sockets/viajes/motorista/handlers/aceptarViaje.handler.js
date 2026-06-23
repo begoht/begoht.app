@@ -5,6 +5,7 @@ const obtenerMotoristaInfo = require("../services/motoristaInfo.service");
 const snapshotMotorista = require("../services/motoristaSnapshot.service");
 const calcularETA = require("../../pasajeros/services/tracking/calcularETA");
 const { getDriverEarningsForViaje } = require("../../../../services/driverEarnings.service");
+const { prepararIdaVueltaPayload } = require("../../../../services/idaVuelta.service");
 
 module.exports = (io, socket) => {
     return async ({ viajeId }) => {
@@ -95,6 +96,7 @@ module.exports = (io, socket) => {
                         metodoPago: result.viaje.metodoPago,
                         estadoPago: result.viaje.estadoPago,
                         tipo: result.viaje.tipo || "viaje",
+                        idaVuelta: prepararIdaVueltaPayload(result.viaje),
                         paquete: prepararPaquetePasajero(result.viaje),
                         motorista: motoristaInfo,
                         timestamp: Date.now()
@@ -120,6 +122,7 @@ module.exports = (io, socket) => {
                         metodoPago: result.viaje.metodoPago,
                         estadoPago: result.viaje.estadoPago,
                         tipo: result.viaje.tipo || "viaje",
+                        idaVuelta: prepararIdaVueltaPayload(result.viaje),
                         paquete: prepararPaquetePasajero(result.viaje),
                         motorista: motoristaInfo,
                         proximoDestino: result.proximoDestino || null,
@@ -185,6 +188,7 @@ async function prepararViajeMotorista(viaje) {
     return {
         ...raw,
         ...earnings,
+        idaVuelta: prepararIdaVueltaPayload(raw),
         paquete: prepararPaqueteMotorista(viaje)
     };
 }
@@ -216,6 +220,7 @@ function emitirTrackInicialPasajero(io, viaje, motoristaInfo, estado, proximoDes
         origen: viaje.origen || null,
         destino: viaje.destino || null,
         proximoDestino: target,
+        idaVuelta: prepararIdaVueltaPayload(viaje),
         distancia: calc.distanciaKm ?? null,
         eta: calc.eta ?? null,
         immediate: true,

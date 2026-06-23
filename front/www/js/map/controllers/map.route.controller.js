@@ -106,7 +106,8 @@ export function processRouteFlow({
 
   if (estadoNorm === "en_curso") {
 
-    targetActual = destino;
+    targetActual =
+      proximoDestino || destino;
 
   } else if (
     estadoNorm === "asignado" ||
@@ -193,11 +194,14 @@ export function processRouteFlow({
 
     case "en_curso": {
 
-      if (destino) {
+      const destinoReal =
+        proximoDestino || destino;
+
+      if (destinoReal) {
 
         dibujarRuta(
           posMotorista,
-          destino,
+          destinoReal,
           cambioEstado
         );
 

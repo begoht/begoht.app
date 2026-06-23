@@ -5,6 +5,7 @@ const { serializeWallet } = require("../../../../services/wallet.presenter");
 const { asignarViaje } = require("../../../../services/matching_services/matching.service");
 const { matchingQueue } = require("../../../../config/queues");
 const { redis } = require("../../../../config/redis");
+const { prepararIdaVueltaPayload } = require("../../../../services/idaVuelta.service");
 
 module.exports = async function confirmarViaje(socket, io, data) {
   const userId = socket.user.id;
@@ -103,6 +104,7 @@ module.exports = async function confirmarViaje(socket, io, data) {
     session.endSession();
 
     const viajeId = viaje._id.toString();
+    const idaVueltaPayload = prepararIdaVueltaPayload(viaje);
 
     await redis.multi()
       .set(`viaje:status:${viajeId}`, "buscando", "EX", 300)
@@ -114,6 +116,7 @@ module.exports = async function confirmarViaje(socket, io, data) {
         descuentoWalletRate: viaje.descuentoWalletRate || 0,
         metodoPago: viaje.metodoPago,
         tipo: viaje.tipo || "viaje",
+        idaVuelta: idaVueltaPayload ? JSON.stringify(idaVueltaPayload) : "",
         paquete: viaje.paquete ? JSON.stringify({
           pesoKg: viaje.paquete.pesoKg,
           descripcion: viaje.paquete.descripcion || "",
@@ -160,6 +163,7 @@ module.exports = async function confirmarViaje(socket, io, data) {
     socket.emit("viaje-buscando", {
       viajeId,
       tipo: viaje.tipo || "viaje",
+      idaVuelta: idaVueltaPayload,
       paquete: viaje.paquete ? {
         pesoKg: viaje.paquete.pesoKg,
         descripcion: viaje.paquete.descripcion || "",

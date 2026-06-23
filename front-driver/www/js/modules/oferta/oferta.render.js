@@ -138,6 +138,7 @@ export async function renderOferta(viaje, opts = {}) {
     }
 
     renderPaqueteOferta(viaje);
+    renderIdaVueltaOferta(viaje);
 
     /*************************************************
      * 🎨 MOSTRAR UI
@@ -235,6 +236,34 @@ function renderPaqueteOferta(viaje) {
 
   const card = document.createElement("div");
   card.id = "ofertaPaqueteInfo";
+  card.className = "oferta-paquete-info";
+  card.innerHTML = html;
+  body.insertBefore(card, body.querySelector(".rutas-box"));
+}
+
+function renderIdaVueltaOferta(viaje) {
+  const body = document.querySelector(".oferta-body");
+  if (!body) return;
+
+  const existente = document.getElementById("ofertaIdaVueltaInfo");
+  if (viaje.idaVuelta?.solicitada !== true) {
+    existente?.remove();
+    return;
+  }
+
+  const html = `
+    <small>IDA Y VUELTA</small>
+    <strong>${formatGourdes(viaje.idaVuelta.precioTotal || viaje.precio || 0)}</strong>
+    <span>Al llegar, el pasajero puede hacer la vuelta o anularla y pagar solo la ida.</span>
+  `;
+
+  if (existente) {
+    existente.innerHTML = html;
+    return;
+  }
+
+  const card = document.createElement("div");
+  card.id = "ofertaIdaVueltaInfo";
   card.className = "oferta-paquete-info";
   card.innerHTML = html;
   body.insertBefore(card, body.querySelector(".rutas-box"));

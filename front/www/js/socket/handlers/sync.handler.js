@@ -1,9 +1,9 @@
 import { viajeState } from "../../viaje/viaje.state.js";
-import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260619-clear-map-address";
+import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260623-roundtrip";
 import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260621-route-moto";
 import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260620-map-rotation";
-import { limpiarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260620-map-rotation";
-import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260620-map-rotation";
+import { limpiarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260623-roundtrip";
+import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260623-roundtrip";
 import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260615-smooth-autofinish";
 
 export const handleSync = (data, socket) => {
@@ -53,6 +53,16 @@ export const handleSync = (data, socket) => {
     destino: data.destino || null,
     tipoServicio: data.tipo || "viaje",
     paquete: data.paquete || null,
+    idaVuelta: data.idaVuelta || null,
+    precio: data.precio ?? viajeState.precio ?? null,
+    precioBase: data.precioBase ?? viajeState.precioBase ?? null,
+    descuentoWallet: data.descuentoWallet || 0,
+    descuentoWalletRate: data.descuentoWalletRate || 0,
+    walletDiscount: data.walletDiscount || null,
+    distanciaKm: data.distanciaKm ?? viajeState.distanciaKm ?? null,
+    duracionMin: data.duracionMin ?? viajeState.duracionMin ?? null,
+    metodoPago: data.metodoPago ?? viajeState.metodoPago ?? null,
+    estadoPago: data.estadoPago ?? viajeState.estadoPago ?? null,
     proximoDestino: data.proximoDestino || null,
     precioConfirmado: true
   });
@@ -60,9 +70,22 @@ export const handleSync = (data, socket) => {
   socket?.emit("join-room", `track:${data.viajeId}`);
 
   actualizarBotonViaje();
-  actualizarUIDriver(data.motorista, data.estado);
+  actualizarUIDriver(data.motorista, data.estado, {
+    precio: data.precio,
+    precioBase: data.precioBase,
+    descuentoWallet: data.descuentoWallet,
+    descuentoWalletRate: data.descuentoWalletRate,
+    distanciaKm: data.distanciaKm,
+    duracionMin: data.duracionMin,
+    metodoPago: data.metodoPago,
+    estadoPago: data.estadoPago,
+    tipoServicio: data.tipo || "viaje",
+    paquete: data.paquete || null,
+    idaVuelta: data.idaVuelta || null,
+    proximoDestino: data.proximoDestino || null
+  });
 
-  mostrarDestinoEnMapa(data.destino);
+  mostrarDestinoEnMapa(data.estado === "en_curso" ? (data.proximoDestino || data.destino) : data.destino);
 
   /*************************************************
    * 🔄 RESET CONTROLLER (CLAVE 🔥)
@@ -114,6 +137,7 @@ export const handleSync = (data, socket) => {
         motorista: data.motorista,
         tipoServicio: data.tipo || "viaje",
         paquete: data.paquete || null,
+        idaVuelta: data.idaVuelta || null,
         proximoDestino: data.proximoDestino || null
       })
     );

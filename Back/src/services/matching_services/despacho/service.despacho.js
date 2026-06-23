@@ -21,7 +21,7 @@ async function ejecutar(viajeId, candidatos, despachoKey) {
 
     try {
         const viajeActual = await Viaje.findById(viajeId)
-            .select("estado origen destino precio pasajero")
+            .select("estado origen destino precio precioBase descuentoWallet descuentoWalletRate metodoPago estadoPago distanciaKm duracionMin pasajero tipo paquete idaVuelta")
             .lean();
 
         if (!viajeActual || viajeActual.estado !== "ofertando") return;

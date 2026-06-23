@@ -19,13 +19,18 @@ export function reconstruirUIDesdeEstado() {
     const estado = getEstadoViaje();
     const btnIniciar = document.getElementById("btnIniciarViaje");
     const btnFinalizar = document.getElementById("btnFinalizar");
+    const btnIniciarVuelta = document.getElementById("btnIniciarVuelta");
+    const btnAnularVuelta = document.getElementById("btnAnularVuelta");
     const estadoBox = document.getElementById("estadoViaje");
     const panel = document.getElementById("panelViajeControl");
     const viajeActual = obtenerViajeActualUI();
+    const estadoIdaVuelta = viajeActual?.idaVuelta?.estado || "";
 
     if (!estado) {
         if (btnIniciar) btnIniciar.style.display = "none";
         if (btnFinalizar) btnFinalizar.style.display = "none";
+        if (btnIniciarVuelta) btnIniciarVuelta.style.display = "none";
+        if (btnAnularVuelta) btnAnularVuelta.style.display = "none";
         if (panel) panel.style.display = "none";
         if (estadoBox) estadoBox.innerText = "En attente de courses";
         actualizarBotonCobro(null, null);
@@ -35,6 +40,8 @@ export function reconstruirUIDesdeEstado() {
     panel?.classList.remove("hidden");
     panel && (panel.style.display = "block");
     actualizarBotonCobro(viajeActual, estado);
+    if (btnIniciarVuelta) btnIniciarVuelta.style.display = "none";
+    if (btnAnularVuelta) btnAnularVuelta.style.display = "none";
 
     switch (estado) {
         case "reservado":
@@ -76,11 +83,29 @@ export function reconstruirUIDesdeEstado() {
 
         case "en_curso": {
             const esEnvio = viajeActual?.tipo === "envio";
-            estadoBox && (estadoBox.innerText = esEnvio ? "Livraison en cours - demandez le code" : "Course en cours vers destination");
+            if (estadoIdaVuelta === "retorno_pendiente") {
+                estadoBox && (estadoBox.innerText = "Vuelta pendiente");
+                if (btnIniciar) btnIniciar.style.display = "none";
+                if (btnFinalizar) btnFinalizar.style.display = "none";
+                if (btnIniciarVuelta) {
+                    btnIniciarVuelta.style.display = "block";
+                    btnIniciarVuelta.disabled = false;
+                }
+                if (btnAnularVuelta) {
+                    btnAnularVuelta.style.display = "block";
+                    btnAnularVuelta.disabled = false;
+                }
+                break;
+            }
+
+            const vaDeVuelta = estadoIdaVuelta === "retorno_en_curso";
+            estadoBox && (estadoBox.innerText = vaDeVuelta
+                ? "Vuelta en cours vers l'origine"
+                : esEnvio ? "Livraison en cours - demandez le code" : "Course en cours vers destination");
             if (btnIniciar) btnIniciar.style.display = "none";
             if (btnFinalizar) {
                 btnFinalizar.style.display = "block";
-                btnFinalizar.innerText = esEnvio ? "Confirmer livraison" : "Finaliser la course";
+                btnFinalizar.innerText = vaDeVuelta ? "Finaliser la vuelta" : esEnvio ? "Confirmer livraison" : "Finaliser la course";
             }
             break;
         }
@@ -102,7 +127,7 @@ export function limpiarViajeMain(ui = {}) {
     clearTimeout(llegadaRetryTimeout);
     setLlegadaRetryTimeout(null);
 
-    import("../oferta/oferta.render.js?v=20260615-smooth-autofinish").then(mod => {
+    import("../oferta/oferta.render.js?v=20260623-roundtrip").then(mod => {
         mod.limpiarOferta();
     }).catch(err => {
         console.warn("No se pudo limpiar oferta:", err);
@@ -110,6 +135,8 @@ export function limpiarViajeMain(ui = {}) {
 
     if (ui.btnIniciar) ui.btnIniciar.style.display = "none";
     if (ui.btnFinalizar) ui.btnFinalizar.style.display = "none";
+    document.getElementById("btnIniciarVuelta")?.style && (document.getElementById("btnIniciarVuelta").style.display = "none");
+    document.getElementById("btnAnularVuelta")?.style && (document.getElementById("btnAnularVuelta").style.display = "none");
     actualizarBotonCobro(null, null);
 
     if (ui.panelControl) {

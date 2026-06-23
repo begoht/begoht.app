@@ -39,6 +39,47 @@ const PaqueteSchema = new mongoose.Schema(
   { _id: false }
 );
 
+const IdaVueltaSchema = new mongoose.Schema(
+  {
+    disponible: { type: Boolean, default: false },
+    solicitada: { type: Boolean, default: false },
+    estado: {
+      type: String,
+      enum: [
+        "no_aplica",
+        "ida",
+        "retorno_pendiente",
+        "retorno_en_curso",
+        "retorno_cancelado",
+        "completado",
+      ],
+      default: "no_aplica",
+    },
+    precioIda: { type: Number, default: 0, min: 0 },
+    precioVuelta: { type: Number, default: 0, min: 0 },
+    precioTotal: { type: Number, default: 0, min: 0 },
+    precioBaseIda: { type: Number, default: 0, min: 0 },
+    precioBaseTotal: { type: Number, default: 0, min: 0 },
+    descuentoWalletIda: { type: Number, default: 0, min: 0 },
+    descuentoWalletTotal: { type: Number, default: 0, min: 0 },
+    descuentoWalletRate: { type: Number, default: 0, min: 0, max: 0.5 },
+    distanciaIdaKm: { type: Number, default: 0, min: 0 },
+    distanciaTotalKm: { type: Number, default: 0, min: 0 },
+    duracionIdaMin: { type: Number, default: 0, min: 0 },
+    duracionTotalMin: { type: Number, default: 0, min: 0 },
+    retornoPendienteAt: { type: Date, default: null },
+    retornoIniciadoAt: { type: Date, default: null },
+    retornoCanceladoAt: { type: Date, default: null },
+    retornoCompletadoAt: { type: Date, default: null },
+    canceladoPor: {
+      type: String,
+      enum: ["pasajero", "motorista", "admin", null],
+      default: null,
+    },
+  },
+  { _id: false }
+);
+
 const RatingViajeSchema = new mongoose.Schema(
   {
     score: { type: Number, min: 1, max: 5, default: null },
@@ -96,6 +137,11 @@ const ViajeSchema = new mongoose.Schema(
     paquete: {
       type: PaqueteSchema,
       default: null,
+    },
+
+    idaVuelta: {
+      type: IdaVueltaSchema,
+      default: () => ({ disponible: false, solicitada: false, estado: "no_aplica" }),
     },
 
     ciudad: {

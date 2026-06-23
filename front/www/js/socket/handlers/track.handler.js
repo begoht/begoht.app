@@ -1,8 +1,8 @@
 import { viajeState } from "../../viaje/viaje.state.js";
 import { mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260621-route-moto";
 import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260620-map-rotation";
-import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260620-map-rotation";
-import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260620-map-rotation";
+import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260623-roundtrip";
+import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260623-roundtrip";
 import { getMap } from "../../map/map.singleton.js?v=20260620-map-rotation";
 import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260615-smooth-autofinish";
 
@@ -61,6 +61,7 @@ export const handleTrack = (data) => {
     origen,
     destino,
     proximoDestino,
+    idaVuelta,
     distancia,
     eta
   } = data;
@@ -111,20 +112,27 @@ export const handleTrack = (data) => {
   if (origen) viajeState.origen = origen;
   if (destino) {
     viajeState.destino = destino;
-    mostrarDestinoEnMapa(destino);
   }
   if (proximoDestino) viajeState.proximoDestino = proximoDestino;
+  if (idaVuelta) viajeState.idaVuelta = idaVuelta;
 
   /*************************************************
    * 4. CONDICIÓN DE RUTA (FIX CLAVE 🔥)
    *************************************************/
   const estadoFinal = viajeState.estado;
+  const targetVisual = estadoFinal === "en_curso"
+    ? (viajeState.proximoDestino || viajeState.destino)
+    : viajeState.destino;
+
+  if (targetVisual) {
+    mostrarDestinoEnMapa(targetVisual);
+  }
 
   const tieneTargetAsignado =
     proximoDestino || viajeState.origen;
 
   const puedeRenderizar =
-    (estadoFinal === "en_curso" && viajeState.destino) ||
+    (estadoFinal === "en_curso" && (viajeState.proximoDestino || viajeState.destino)) ||
     (["asignado", "aceptado"].includes(estadoFinal) && tieneTargetAsignado) ||
     (estadoFinal === "reservado" && viajeState.origen) ||
     estadoFinal === "llego";
@@ -152,7 +160,8 @@ export const handleTrack = (data) => {
     distancia,
     origen: viajeState.origen,
     destino: viajeState.destino,
-    proximoDestino: proximoDestino || viajeState.proximoDestino || null
+    proximoDestino: proximoDestino || viajeState.proximoDestino || null,
+    idaVuelta: viajeState.idaVuelta || null
   });
   actualizarTextoEstado(estadoFinal, distancia, eta);
 

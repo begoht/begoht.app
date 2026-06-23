@@ -9,6 +9,7 @@ const updateContext = require(
     "../services/viajeContext.service"
 );
 const calcularETA = require("../../pasajeros/services/tracking/calcularETA");
+const { prepararIdaVueltaPayload } = require("../../../../services/idaVuelta.service");
 
 async function guardarPuntoTrayectoria(viajeId, lat, lng) {
     const nLat = Number(lat);
@@ -78,6 +79,7 @@ module.exports = (io, socket) => {
                 origen: viaje.origen,
                 destino: viaje.destino,
                 proximoDestino: viaje.destino,
+                idaVuelta: prepararIdaVueltaPayload(viaje),
                 motoristaId,
                 pasajeroId: viaje.pasajero?.toString() || null
             });
@@ -87,6 +89,7 @@ module.exports = (io, socket) => {
                 estado: "en_curso",
                 origen: viaje.origen,
                 destino: viaje.destino,
+                idaVuelta: prepararIdaVueltaPayload(viaje),
                 timestamp: Date.now()
             };
 
@@ -120,6 +123,7 @@ module.exports = (io, socket) => {
                     origen: viaje.origen || null,
                     destino: viaje.destino || null,
                     proximoDestino: viaje.destino || null,
+                    idaVuelta: prepararIdaVueltaPayload(viaje),
                     distancia: calc.distanciaKm ?? null,
                     eta: calc.eta ?? null,
                     immediate: true,

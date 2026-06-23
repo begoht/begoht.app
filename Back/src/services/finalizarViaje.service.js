@@ -11,6 +11,14 @@ const { enviarResumenViaje } = require("./email/email.service");
 const { getCommissionRate, calculateCommission } = require("./commission.service");
 const { normalizeLegacyWalletDebt } = require("./driverCommission.service");
 const {
+  debePausarParaRetorno,
+  destinoOperacion,
+  marcarRetornoPendiente,
+  marcarCompletado,
+  prepararIdaVueltaPayload,
+  ESTADO_RETORNO_PENDIENTE
+} = require("./idaVuelta.service");
+const {
   FINISH_MAX_DISTANCE_METERS,
   validarCercaniaMotorista
 } = require("./tripProximity.service");
@@ -120,7 +128,7 @@ function pushPuntoSiEsNuevo(puntos, punto, distanciaMinimaMetros = 3) {
   }
 }
 
-function construirTrayectoriaFinal({ viaje, trayectoriaReal, ultimaPosicion }) {
+function construirTrayectoriaFinal({ viaje, trayectoriaReal, ultimaPosicion, targetDestino = null }) {
   const puntos = Array.isArray(trayectoriaReal) ? [...trayectoriaReal] : [];
 
   if (!puntos.length) {
@@ -141,7 +149,7 @@ function construirTrayectoriaFinal({ viaje, trayectoriaReal, ultimaPosicion }) {
   if (distanciaCalculada <= 0) {
     pushPuntoSiEsNuevo(
       puntos,
-      crearPuntoTrayectoria(viaje.destino, new Date()),
+      crearPuntoTrayectoria(targetDestino || viaje.destino, new Date()),
       0
     );
     distanciaCalculada = calcularDistanciaTrayectoria(puntos);
@@ -304,6 +312,7 @@ function crearPayloadFinalizado({ viaje, viajeId, neto }) {
       paBeGOrista: neto,
       metodoPago: viaje.metodoPago,
       tipo: viaje.tipo || "viaje",
+      idaVuelta: prepararIdaVueltaPayload(viaje),
       paquete: esEnvio && viaje.paquete ? {
         pesoKg: viaje.paquete.pesoKg,
         descripcion: viaje.paquete.descripcion || "",
@@ -417,14 +426,22 @@ module.exports = async function finalizarViaje({
       throw new Error("El viaje ya fue procesado o no es valido para finalizar");
     }
 
+    if (viaje.idaVuelta?.solicitada === true && viaje.idaVuelta.estado === ESTADO_RETORNO_PENDIENTE) {
+      const err = new Error("La vuelta esta pendiente. Inicia la vuelta o anularla para cobrar solo la ida.");
+      err.code = "IDA_VUELTA_PENDIENTE";
+      throw err;
+    }
+
+    const targetFinal = destinoOperacion(viaje);
+
     if (enforceProximity) {
       await validarCercaniaMotorista({
         motoristaId,
-        target: viaje.destino,
+        target: targetFinal,
         fallbackPosition: { lat, lng },
         maxDistanceMeters: FINISH_MAX_DISTANCE_METERS,
         code: "DISTANCIA_DESTINO",
-        message: "Estas lejos del destino. Acercate para finalizar el viaje."
+        message: "Estas lejos del punto final. Acercate para continuar."
       });
     }
 
@@ -432,12 +449,32 @@ module.exports = async function finalizarViaje({
       validarCodigoEntrega(viaje, codigoEntrega);
     }
 
+    if (debePausarParaRetorno(viaje)) {
+      const retornoPayload = await marcarRetornoPendiente({
+        io,
+        socket,
+        viaje,
+        motoristaId,
+        session
+      });
+
+      await session.commitTransaction();
+
+      return {
+        ok: true,
+        viajeId,
+        estado: "retorno_pendiente",
+        idaVuelta: retornoPayload.idaVuelta
+      };
+    }
+
     const trayectoriaRedis = await obtenerTrayectoriaReal(viajeId);
     const ultimaPosicion = await obtenerUltimaPosicionMotorista(motoristaId);
     const trayectoriaFinal = construirTrayectoriaFinal({
       viaje,
       trayectoriaReal: trayectoriaRedis,
-      ultimaPosicion
+      ultimaPosicion,
+      targetDestino: targetFinal
     });
     const total = Number(viaje.escrow || viaje.precio || 0);
     const commissionRate = await getCommissionRate({ session });
@@ -458,6 +495,7 @@ module.exports = async function finalizarViaje({
     viaje.finalizacionMotivo = String(motivo || defaultFinishReason(source)).slice(0, 160);
     viaje.finalizadoPorAdmin = adminId || null;
     viaje.finalizadoAutomaticamente = normalizeFinishSource(source) === "auto";
+    await marcarCompletado(viaje);
     viaje.comision = comision;
     viaje.pagoMotorista = neto;
     viaje.paBeGOrista = neto;

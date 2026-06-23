@@ -1,7 +1,7 @@
 import { viajeState } from "../../viaje/viaje.state.js";
-import { mostrarBuscandoMotorista } from "../../pasajero/pasajero.ui.js?v=20260608-search-modal";
-import { guardarSesionViaje } from "../pasajero.utils.js?v=20260607-finalized-guard";
-import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260619-clear-map-address";
+import { mostrarBuscandoMotorista } from "../../pasajero/pasajero.ui.js?v=20260623-roundtrip";
+import { guardarSesionViaje } from "../pasajero.utils.js?v=20260623-roundtrip";
+import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260623-roundtrip";
 import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260607-finalized-guard";
 
 export const handleBuscando = (data = {}) => {
@@ -18,6 +18,7 @@ export const handleBuscando = (data = {}) => {
     asignado: false,
     tipoServicio: data.tipo || viajeState.tipoServicio || "viaje",
     paquete: data.paquete || viajeState.paquete || null,
+    idaVuelta: data.idaVuelta || viajeState.idaVuelta || null,
     precioConfirmado: true
   });
 

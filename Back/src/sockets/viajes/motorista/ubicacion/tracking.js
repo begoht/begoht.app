@@ -43,17 +43,22 @@ module.exports = async (io, motoristaId, { lat, lng, heading = null }) => {
       (ctx.estado === "en_curso" && !ctx.destino)
     ) {
       const viaje = await Viaje.findById(viajeId)
-        .select("estado origen destino pasajero")
+        .select("estado origen destino pasajero idaVuelta")
         .lean();
       if (!viaje) return;
+
+      const vaDeVuelta = viaje.idaVuelta?.estado === "retorno_en_curso";
 
       ctx = {
         estado: viaje.estado,
         origen: viaje.origen || null,
         destino: viaje.destino || null,
+        idaVuelta: viaje.idaVuelta || null,
         pasajeroId: viaje.pasajero?.toString() || null,
         proximoDestino:
-          ["asignado", "reservado"].includes(viaje.estado) ? viaje.origen : (viaje.destino || null)
+          vaDeVuelta
+            ? viaje.origen
+            : ["asignado", "reservado"].includes(viaje.estado) ? viaje.origen : (viaje.destino || null)
       };
 
       await redis.set(ctxKey, JSON.stringify(ctx), "EX", 600);
@@ -61,7 +66,7 @@ module.exports = async (io, motoristaId, { lat, lng, heading = null }) => {
 
     const vaAlOrigen = ["asignado", "reservado", "llego"].includes(ctx.estado) ||
       ["asignado", "reservado", "llego"].includes(estadoInterno);
-    const target = vaAlOrigen ? ctx.origen : ctx.destino;
+    const target = ctx.proximoDestino || (vaAlOrigen ? ctx.origen : ctx.destino);
 
     const { distancia, distanciaKm, eta } = calcularETA({
       motoristaLat: nLat,
@@ -161,6 +166,7 @@ module.exports = async (io, motoristaId, { lat, lng, heading = null }) => {
       origen: ctx.origen,
       destino: ctx.destino,
       proximoDestino: target,
+      idaVuelta: ctx.idaVuelta || null,
       distancia: distanciaKm,
       eta,
       timestamp: Date.now()

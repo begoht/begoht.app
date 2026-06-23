@@ -1,11 +1,11 @@
 // pasajero/ui.js
 import { viajeState } from "../viaje/viaje.state.js";
-import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260619-clear-map-address";
+import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260623-roundtrip";
 import { cerrarBuscandoMotorista } from "../pasajero/pasajero.ui.js";
 import { limpiarViajePasajero } from "../socket/viaje.limpieza.js";
 import { limpiarRutas } from "../map/map.ruta.js?v=20260620-map-rotation";
 import { initDriverMinimize } from "../ui/driver.minimize.js";
-import { resetRutaController } from "../map/map.route.flow.js?v=20260620-map-rotation";
+import { resetRutaController } from "../map/map.route.flow.js?v=20260623-roundtrip";
 import { actualizarETA, resetETA } from "../pasajero/pasajero.eta.js";
 import { queuePendingRating, submitViajeRating } from "../rating/rating.api.js?v=20260605-rating-premium";
 import {
@@ -38,6 +38,7 @@ export function guardarSesionViaje(estadoStr) {
       estadoPago: viajeState.estadoPago,
       tipoServicio: viajeState.tipoServicio || "viaje",
       paquete: viajeState.paquete || null,
+      idaVuelta: viajeState.idaVuelta || null,
       precioConfirmado: viajeState.precioConfirmado,
       origen: viajeState.origen,
       destino: viajeState.destino,
@@ -62,6 +63,7 @@ export function limpiarSesionViaje() {
     distanciaKm: null, duracionMin: null,
     metodoPago: null, estadoPago: null,
     tipoServicio: "viaje", paquete: null,
+    idaVuelta: null,
     metodoPagosaldoBloqueado: false, destino: null, estado: null,
     finalizado: false, cancelado: false, expirado: false,
     proximoDestino: null
@@ -126,6 +128,7 @@ export function actualizarUIDriver(motoristaInfo, estado, viajeInfo = {}) {
     viajeId: viajeState.viajeId,
     tipoServicio: viajeState.tipoServicio || "viaje",
     paquete: viajeState.paquete || null,
+    idaVuelta: viajeState.idaVuelta || null,
     ...viajeInfo
   };
 

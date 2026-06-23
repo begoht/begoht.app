@@ -4,7 +4,7 @@ import {
     setViajeEnCurso
 } from "./viajeControl/viajeEstado.js";
 
-import { limpiarViajeMain } from "./viajeControl/viajeUI.js?v=20260620-map-rotation";
+import { limpiarViajeMain } from "./viajeControl/viajeUI.js?v=20260623-roundtrip";
 import { borrarRuta } from "./map.js?v=20260620-map-rotation";
 import {
     FINISH_MAX_DISTANCE_METERS,
@@ -61,6 +61,9 @@ export function initViajeFinalizar(socket) {
 
   socket.off("error-finalizar", onErrorFinalizar);
   socket.on("error-finalizar", onErrorFinalizar);
+
+  socket.off("ida-vuelta:pendiente", onRetornoPendiente);
+  socket.on("ida-vuelta:pendiente", onRetornoPendiente);
 }
 
 function onClickFinalizar(e) {
@@ -91,15 +94,21 @@ async function procesarClickFinalizar(e) {
 
     const viajeActual = obtenerViajeActual(viajeId);
     const esEnvio = viajeActual.tipo === "envio";
+    const vaDeVuelta = viajeActual.idaVuelta?.estado === "retorno_en_curso";
+    const targetKey = vaDeVuelta ? "origen" : "destino";
     let codigoEntrega = null;
 
     const guard = await validarCercaniaViaje({
         viaje: viajeActual,
-        targetKey: "destino",
+        targetKey,
         maxDistanceMeters: FINISH_MAX_DISTANCE_METERS,
-        missingTargetMessage: "Impossible de verifier la destination de cette course.",
+        missingTargetMessage: vaDeVuelta
+            ? "Impossible de verifier l'origine de cette course."
+            : "Impossible de verifier la destination de cette course.",
         farMessage: (distancia, limite) =>
-            `Tu es encore a ${distancia} de la destination. Rapproche-toi a ${limite} pour finaliser.`
+            vaDeVuelta
+                ? `Tu es encore a ${distancia} de l'origine. Rapproche-toi a ${limite} pour finaliser.`
+                : `Tu es encore a ${distancia} de la destination. Rapproche-toi a ${limite} pour finaliser.`
     });
 
     if (!guard.ok) return;
@@ -194,6 +203,13 @@ function onViajeFinalizado(data = {}) {
     if (typeof borrarRuta === "function") borrarRuta();
 
     window.dispatchEvent(new CustomEvent("driver:trip-finalized", { detail: data }));
+}
+
+function onRetornoPendiente(data = {}) {
+    const viajeId = normalizarId(data.viajeId || getViajeEnCursoId());
+    if (!viajeId) return;
+
+    limpiarTimerFinalizacion(viajeId);
 }
 
 function onErrorFinalizar(err = {}) {

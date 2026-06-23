@@ -1,3 +1,11 @@
+import {
+    aplicarSeleccionIdaVuelta,
+    distanciaSegunSeleccion,
+    idaVueltaDisponible,
+    normalizarIdaVuelta,
+    precioSegunSeleccion
+} from "../../../viaje/idaVuelta.js?v=20260623-roundtrip";
+
 function escapeHtml(value) {
     return String(value ?? "")
         .replace(/&/g, "&amp;")
@@ -31,15 +39,24 @@ function getPaymentLabel(metodoPago) {
 /*************************************************
  * MODAL CONFIRMAR VIAJE (PREMIUM)
  *************************************************/
-export function mostrarModalPrecio({ precio, precioBase = null, descuentoWallet = 0, walletDiscount = null, distanciaKm, metodoPago, tipo = "viaje", paquete = null, onConfirm, onCancel }) {
+export function mostrarModalPrecio({ precio, precioBase = null, descuentoWallet = 0, walletDiscount = null, distanciaKm, metodoPago, tipo = "viaje", paquete = null, idaVuelta = null, onConfirm, onCancel }) {
     cerrarModalPrecio();
 
     const esEnvio = tipo === "envio";
+    const idaVueltaInfo = normalizarIdaVuelta(idaVuelta);
+    const puedeIdaVuelta = idaVueltaDisponible(idaVueltaInfo, tipo);
+    let idaVueltaSeleccionada = puedeIdaVuelta && idaVueltaInfo?.solicitada === true;
     const peso = Number(paquete?.pesoKg || 0);
-    const ahorroWallet = Number(descuentoWallet || walletDiscount?.discountAmount || 0);
-    const precioOriginal = Number(precioBase || walletDiscount?.basePrice || precio || 0);
+    const ahorroWalletIda = Number(descuentoWallet || walletDiscount?.discountAmount || idaVueltaInfo?.descuentoWalletIda || 0);
+    const ahorroWalletTotal = Number(idaVueltaInfo?.descuentoWalletTotal || 0);
+    const precioBaseIda = Number(precioBase || walletDiscount?.basePrice || idaVueltaInfo?.precioBaseIda || precio || 0);
+    const precioBaseTotal = Number(idaVueltaInfo?.precioBaseTotal || 0);
+    const ahorroWallet = idaVueltaSeleccionada ? (ahorroWalletTotal || ahorroWalletIda) : ahorroWalletIda;
+    const precioOriginal = idaVueltaSeleccionada ? (precioBaseTotal || precioBaseIda) : precioBaseIda;
+    const precioMostrado = precioSegunSeleccion(idaVueltaInfo, idaVueltaSeleccionada, precio);
+    const distanciaMostrada = distanciaSegunSeleccion(idaVueltaInfo, idaVueltaSeleccionada, distanciaKm);
     const metodo = String(metodoPago || "").toLowerCase();
-    const tieneDescuentoWallet = metodo === "wallet" && ahorroWallet > 0;
+    const tieneDescuentoWallet = metodo === "wallet" && (ahorroWallet > 0 || ahorroWalletTotal > 0 || ahorroWalletIda > 0);
     const labelDescuento = escapeHtml(walletDiscount?.label || "Remise Wallet");
     const descripcionPaquete = escapeHtml(paquete?.descripcion || "");
     const instruccionesPaquete = escapeHtml(paquete?.instrucciones || "");
@@ -48,9 +65,9 @@ export function mostrarModalPrecio({ precio, precioBase = null, descuentoWallet 
       <div class="precio-wallet">
         <div>
           <span>${labelDescuento}</span>
-          <strong>-${money(ahorroWallet)}</strong>
+          <strong id="precioWalletAhorro">-${money(ahorroWallet)}</strong>
         </div>
-        <p>Prix avant remise: <s>${money(precioOriginal)}</s></p>
+        <p>Prix avant remise: <s id="precioWalletBase">${money(precioOriginal)}</s></p>
       </div>
     ` : "";
 
@@ -63,6 +80,25 @@ export function mostrarModalPrecio({ precio, precioBase = null, descuentoWallet 
           ${descripcionPaquete ? `<p>${descripcionPaquete}</p>` : ""}
           ${instruccionesPaquete ? `<p>${instruccionesPaquete}</p>` : ""}
           <small>Le code de livraison sera genere apres confirmation.</small>
+        </div>
+      </div>
+    ` : "";
+
+    const idaVueltaHtml = puedeIdaVuelta ? `
+      <div class="precio-ida-vuelta">
+        <label class="precio-return-row" for="precioIdaVuelta">
+          <span class="precio-return-icon"><i class="fa-solid fa-arrows-rotate"></i></span>
+          <span class="precio-return-copy">
+            <strong>Ida y vuelta</strong>
+            <small>Si al llegar no quieres volver, se anula y pagas solo la ida.</small>
+          </span>
+          <input id="precioIdaVuelta" type="checkbox" ${idaVueltaSeleccionada ? "checked" : ""}>
+          <span class="precio-return-switch" aria-hidden="true"></span>
+        </label>
+        <div class="precio-return-breakdown">
+          <span>Ida ${money(idaVueltaInfo.precioIda || precio)}</span>
+          <span>Vuelta ${money(idaVueltaInfo.precioVuelta)}</span>
+          <strong>Total ${money(idaVueltaInfo.precioTotal || precio)}</strong>
         </div>
       </div>
     ` : "";
@@ -90,14 +126,14 @@ export function mostrarModalPrecio({ precio, precioBase = null, descuentoWallet 
 
         <div class="precio-total">
           <span>Total</span>
-          <strong>${money(precio)}</strong>
+          <strong id="precioTotalValor">${money(precioMostrado)}</strong>
         </div>
 
         <div class="precio-grid">
           <div>
             <i class="fa-solid fa-route"></i>
             <span>Distance</span>
-            <strong>${formatKm(distanciaKm)}</strong>
+            <strong id="precioDistanciaValor">${formatKm(distanciaMostrada)}</strong>
           </div>
           <div>
             <i class="fa-solid fa-wallet"></i>
@@ -107,6 +143,7 @@ export function mostrarModalPrecio({ precio, precioBase = null, descuentoWallet 
         </div>
 
         ${descuentoHtml}
+        ${idaVueltaHtml}
         ${paqueteHtml}
 
         <div class="precio-note">
@@ -263,6 +300,7 @@ export function mostrarModalPrecio({ precio, precioBase = null, descuentoWallet 
       }
 
       .precio-wallet,
+      .precio-ida-vuelta,
       .precio-paquete,
       .precio-note {
         margin-top: 12px;
@@ -277,6 +315,111 @@ export function mostrarModalPrecio({ precio, precioBase = null, descuentoWallet 
         background: linear-gradient(180deg, rgba(20, 83, 45, 0.28), rgba(15, 23, 42, 0.72));
       }
 
+      .precio-ida-vuelta {
+        padding: 13px;
+        border-color: rgba(96, 165, 250, 0.2);
+        background: rgba(15, 23, 42, 0.7);
+      }
+
+      .precio-return-row {
+        display: grid;
+        grid-template-columns: 42px 1fr 48px;
+        align-items: center;
+        gap: 11px;
+        cursor: pointer;
+      }
+
+      .precio-return-icon {
+        width: 42px;
+        height: 42px;
+        display: grid;
+        place-items: center;
+        border-radius: 15px;
+        color: #dbeafe;
+        background: rgba(37, 99, 235, 0.18);
+        border: 1px solid rgba(96, 165, 250, 0.2);
+      }
+
+      .precio-return-copy {
+        min-width: 0;
+        display: grid;
+      }
+
+      .precio-return-copy strong {
+        color: #f8fafc;
+        font-size: 0.96rem;
+        line-height: 1.15;
+      }
+
+      .precio-return-copy small {
+        display: block;
+        font-size: 0.78rem;
+      }
+
+      .precio-return-row input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .precio-return-switch {
+        width: 48px;
+        height: 28px;
+        border-radius: 999px;
+        position: relative;
+        background: rgba(51, 65, 85, 0.95);
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        transition: background 0.18s ease, border-color 0.18s ease;
+      }
+
+      .precio-return-switch::after {
+        content: "";
+        position: absolute;
+        width: 22px;
+        height: 22px;
+        left: 3px;
+        top: 2px;
+        border-radius: 50%;
+        background: #e2e8f0;
+        transition: transform 0.18s ease;
+      }
+
+      .precio-return-row input:checked + .precio-return-switch {
+        background: linear-gradient(135deg, #2563eb, #0891b2);
+        border-color: rgba(147, 197, 253, 0.4);
+      }
+
+      .precio-return-row input:checked + .precio-return-switch::after {
+        transform: translateX(20px);
+        background: #ffffff;
+      }
+
+      .precio-return-breakdown {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .precio-return-breakdown span,
+      .precio-return-breakdown strong {
+        min-height: 34px;
+        display: grid;
+        place-items: center;
+        padding: 0 8px;
+        border-radius: 12px;
+        color: #cbd5e1;
+        background: rgba(2, 6, 23, 0.42);
+        font-size: 0.72rem;
+        font-weight: 850;
+        line-height: 1.1;
+        text-align: center;
+      }
+
+      .precio-return-breakdown strong {
+        color: #dbeafe;
+      }
+
       .precio-wallet strong {
         color: #86efac;
         font-size: 1.05rem;
@@ -286,6 +429,7 @@ export function mostrarModalPrecio({ precio, precioBase = null, descuentoWallet 
       .precio-wallet p,
       .precio-paquete p,
       .precio-paquete small,
+      .precio-return-copy small,
       .precio-note span {
         margin: 6px 0 0;
         color: #cbd5e1;
@@ -388,6 +532,14 @@ export function mostrarModalPrecio({ precio, precioBase = null, descuentoWallet 
         .precio-actions {
           display: grid;
         }
+
+        .precio-return-row {
+          grid-template-columns: 38px 1fr 46px;
+        }
+
+        .precio-return-breakdown {
+          grid-template-columns: 1fr;
+        }
       }
 
       @keyframes precioFade { from { opacity: 0 } to { opacity: 1 } }
@@ -405,12 +557,38 @@ export function mostrarModalPrecio({ precio, precioBase = null, descuentoWallet 
     const btnConfirmar = modal.querySelector("#btnConfirmarPrecio");
     const btnCancelar = modal.querySelector("#btnCancelarPrecio");
     const btnCerrar = modal.querySelector("#btnCancelarPrecioTop");
+    const inputIdaVuelta = modal.querySelector("#precioIdaVuelta");
+    const totalValor = modal.querySelector("#precioTotalValor");
+    const distanciaValor = modal.querySelector("#precioDistanciaValor");
+    const walletAhorro = modal.querySelector("#precioWalletAhorro");
+    const walletBase = modal.querySelector("#precioWalletBase");
+
+    const renderSeleccionIdaVuelta = () => {
+        const precioActual = precioSegunSeleccion(idaVueltaInfo, idaVueltaSeleccionada, precio);
+        const distanciaActual = distanciaSegunSeleccion(idaVueltaInfo, idaVueltaSeleccionada, distanciaKm);
+        const ahorroActual = idaVueltaSeleccionada ? (ahorroWalletTotal || ahorroWalletIda) : ahorroWalletIda;
+        const baseActual = idaVueltaSeleccionada ? (precioBaseTotal || precioBaseIda) : precioBaseIda;
+
+        if (totalValor) totalValor.textContent = money(precioActual);
+        if (distanciaValor) distanciaValor.textContent = formatKm(distanciaActual);
+        if (walletAhorro) walletAhorro.textContent = `-${money(ahorroActual)}`;
+        if (walletBase) walletBase.textContent = money(baseActual);
+    };
+
+    inputIdaVuelta?.addEventListener("change", () => {
+        idaVueltaSeleccionada = inputIdaVuelta.checked === true;
+        renderSeleccionIdaVuelta();
+    });
 
     btnConfirmar?.addEventListener("click", () => {
         btnConfirmar.disabled = true;
         if (btnCancelar) btnCancelar.disabled = true;
         if (btnCerrar) btnCerrar.disabled = true;
-        onConfirm?.();
+        onConfirm?.({
+            idaVuelta: puedeIdaVuelta
+                ? aplicarSeleccionIdaVuelta(idaVueltaInfo, idaVueltaSeleccionada)
+                : { solicitada: false }
+        });
         cerrarModalPrecio();
     }, { once: true });
 

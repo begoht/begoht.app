@@ -1,9 +1,9 @@
-import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260619-clear-map-address";
+import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260623-roundtrip";
 import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260621-route-moto";
 import { getMap } from "../../map/map.singleton.js?v=20260620-map-rotation";
-import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260620-map-rotation";
+import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260623-roundtrip";
 import { viajeState } from "../../viaje/viaje.state.js";
-import { actualizarUIDriver, mostrarModalFinalizado } from "../../socket/pasajero.utils.js?v=20260620-map-rotation";
+import { actualizarUIDriver, mostrarModalFinalizado } from "../../socket/pasajero.utils.js?v=20260623-roundtrip";
 import {
   obtenerFinalizacionPendiente,
   viajeFueFinalizado
@@ -77,6 +77,7 @@ export async function restoreViajeUI() {
       estadoPago: data.estadoPago ?? null,
       tipoServicio: data.tipoServicio || data.tipo || "viaje",
       paquete: data.paquete || null,
+      idaVuelta: data.idaVuelta || null,
       origen: data.origen || null,
       destino: data.destino || null,
       proximoDestino: data.proximoDestino || null,
@@ -140,7 +141,8 @@ export async function restoreViajeUI() {
         motorista: data.motorista,
         origen: data.origen,
         destino: data.destino,
-        proximoDestino: data.proximoDestino || null
+        proximoDestino: data.proximoDestino || null,
+        idaVuelta: data.idaVuelta || null
       });
     }
 

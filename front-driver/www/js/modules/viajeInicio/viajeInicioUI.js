@@ -1,6 +1,6 @@
 import { borrarRuta, dibujarRutaPremium } from "../map.js?v=20260620-map-rotation";
 import { setViajeEnCurso, setEstadoViaje,viajesActivos,setViajeReservadoId} from "../viajeControl/viajeEstado.js";
-import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260620-map-rotation";
+import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260623-roundtrip";
 import { llegadaTimeout } from "./viajeInicioEstado.js";
 
 export const limpiarInterfazViaje = (detenerSimulacionETA) => {
@@ -42,9 +42,10 @@ export const redibujarRutaRecovery = (estado, data, pos) => {
         punto = data.origen;
     }
 
-    if (estado === "en_curso" && data.destino) {
-        tipoRuta = "destino";
-        punto = data.destino;
+    if (estado === "en_curso") {
+        const vaDeVuelta = data.idaVuelta?.estado === "retorno_en_curso";
+        punto = vaDeVuelta ? (data.proximoDestino || data.origen) : (data.proximoDestino || data.destino);
+        tipoRuta = vaDeVuelta ? "retorno" : "destino";
     }
 
     if (!tipoRuta || !punto) return;

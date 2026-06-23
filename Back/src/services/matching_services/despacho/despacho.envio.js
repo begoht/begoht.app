@@ -10,6 +10,7 @@ const {
     getOfferSetKey
 } = require("../offerLock.service");
 const { getDriverEarningsForViaje } = require("../../driverEarnings.service");
+const { prepararIdaVueltaPayload } = require("../../idaVuelta.service");
 
 const GPS_TIMEOUT_MS = 120000;
 
@@ -133,6 +134,7 @@ async function enviarWave({
                 ...driverEarnings,
                 tipo: viajeActual.tipo || "viaje",
                 paquete: prepararPaqueteMotorista(viajeActual),
+                idaVuelta: prepararIdaVueltaPayload(viajeActual),
                 isReserva: enViaje,
                 expira
             };

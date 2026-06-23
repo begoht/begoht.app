@@ -1,4 +1,5 @@
 const Viaje = require("../../../../models/Viaje");
+const { prepararIdaVueltaPayload } = require("../../../../services/idaVuelta.service");
 
 module.exports = (io, socket) => {
     return async () => {
@@ -26,7 +27,17 @@ module.exports = (io, socket) => {
                 estado: viaje.estado,
                 motorista: viaje.motorista,
                 origen: viaje.origen,
-                destino: viaje.destino
+                destino: viaje.destino,
+                precio: viaje.precio,
+                precioBase: viaje.precioBase || viaje.precio,
+                descuentoWallet: viaje.descuentoWallet || 0,
+                descuentoWalletRate: viaje.descuentoWalletRate || 0,
+                distanciaKm: viaje.distanciaKm,
+                duracionMin: viaje.duracionMin,
+                metodoPago: viaje.metodoPago,
+                estadoPago: viaje.estadoPago,
+                tipo: viaje.tipo || "viaje",
+                idaVuelta: prepararIdaVueltaPayload(viaje)
             });
         } catch (err) {
             console.error(

@@ -1,7 +1,7 @@
 import { getSocket } from "../socket/socket.js?v=20260606-session-refresh";
 import { viajeState } from "./viaje.state.js";
 import { limpiarViajePasajero } from "../socket/viaje.limpieza.js";
-import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260619-clear-map-address";
+import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260623-roundtrip";
 import { cerrarBuscandoMotorista } from "../pasajero/ui/overlays/buscandoMotorista.ui.js?v=20260608-search-modal";
 import { cityConfig } from "../map/config/index.js";
 import { reverseGeocode } from "../map/services/map.reverse.js?v=20260619-clear-map-address";
@@ -90,6 +90,7 @@ export function resetCotizacionPendiente({ notify = false } = {}) {
     descuentoWallet: 0,
     descuentoWalletRate: 0,
     walletDiscount: null,
+    idaVuelta: null,
     distanciaKm: null,
     duracionMin: null,
     precioConfirmado: false
@@ -163,6 +164,7 @@ export async function pedirViaje() {
     estado: "cotizando",
     viajeId: null,
     quoteId,
+    idaVuelta: null,
     precioConfirmado: false
   });
 

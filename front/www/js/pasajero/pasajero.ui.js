@@ -1,7 +1,7 @@
 // js/pasajero/pasajero.ui.js
 import { viajeState } from "../viaje/viaje.state.js";
 import { getServerUrl } from "../conexion.js";
-import { actualizarBotonViaje } from "./ui/boton/botonViaje.ui.js?v=20260619-clear-map-address";
+import { actualizarBotonViaje } from "./ui/boton/botonViaje.ui.js?v=20260623-roundtrip";
 import { mostrarPagoNoDisponible } from "./ui/modales/pagoNoDisponible.ui.js?v=20260606-payment-methods";
 
 export { actualizarBotonViaje };
@@ -14,7 +14,7 @@ export {
 } from "./ui/overlays/buscandoMotorista.ui.js?v=20260608-search-modal";
 
 export { mostrarModalConfirmacion } from "./ui/modales/modalConfirmacion.ui.js";
-export { mostrarModalPrecio } from "./ui/modales/modalPrecio.ui.js?v=20260605-price-premium-cancel";
+export { mostrarModalPrecio } from "./ui/modales/modalPrecio.ui.js?v=20260623-roundtrip";
 export { mostrarModalConfirmarCancelacion } from "./ui/modales/modalCancelacion.ui.js";
 
 export {

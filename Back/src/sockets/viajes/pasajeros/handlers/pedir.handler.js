@@ -31,6 +31,7 @@ module.exports = async function pedirViaje(socket, io, data) {
       wallet: cotizacion.wallet || null,
       tipo: cotizacion.tipo,
       paquete: cotizacion.paquete,
+      idaVuelta: cotizacion.idaVuelta || null,
       origen: cotizacion.origen.direccion,
       destino: cotizacion.destino?.direccion,
       ciudad: cotizacion.ciudad,

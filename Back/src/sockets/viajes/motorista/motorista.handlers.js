@@ -9,6 +9,7 @@ const {
     scanKeys
 } = require("../../../services/matching_services/offerLock.service");
 const { getDriverEarningsForViaje } = require("../../../services/driverEarnings.service");
+const { prepararIdaVueltaPayload } = require("../../../services/idaVuelta.service");
 
 module.exports = (io, socket) => {
     const motoristaId = socket.user.id.toString();
@@ -79,6 +80,7 @@ module.exports = (io, socket) => {
                         estadoPago: viaje.estadoPago,
                         distanciaKm: viaje.distanciaKm,
                         duracionMin: viaje.duracionMin,
+                        idaVuelta: prepararIdaVueltaPayload(viaje),
                         pasajero: viaje.pasajero,
                         ...earnings
                     });
