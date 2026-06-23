@@ -4,7 +4,7 @@ import {
     setViajeEnCurso
 } from "./viajeControl/viajeEstado.js";
 
-import { limpiarViajeMain } from "./viajeControl/viajeUI.js?v=20260623-roundtrip";
+import { limpiarViajeMain } from "./viajeControl/viajeUI.js?v=20260623-roundtrip-v2";
 import { borrarRuta } from "./map.js?v=20260620-map-rotation";
 import {
     FINISH_MAX_DISTANCE_METERS,

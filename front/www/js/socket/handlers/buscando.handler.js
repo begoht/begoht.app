@@ -1,7 +1,7 @@
 import { viajeState } from "../../viaje/viaje.state.js";
-import { mostrarBuscandoMotorista } from "../../pasajero/pasajero.ui.js?v=20260623-roundtrip";
-import { guardarSesionViaje } from "../pasajero.utils.js?v=20260623-roundtrip";
-import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260623-roundtrip";
+import { mostrarBuscandoMotorista } from "../../pasajero/pasajero.ui.js?v=20260623-roundtrip-v2";
+import { guardarSesionViaje } from "../pasajero.utils.js?v=20260623-roundtrip-v2";
+import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260623-roundtrip-v2";
 import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260607-finalized-guard";
 
 export const handleBuscando = (data = {}) => {

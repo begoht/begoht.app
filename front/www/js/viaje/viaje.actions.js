@@ -1,7 +1,7 @@
 import { getSocket } from "../socket/socket.js?v=20260606-session-refresh";
 import { viajeState } from "./viaje.state.js";
 import { limpiarViajePasajero } from "../socket/viaje.limpieza.js";
-import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260623-roundtrip";
+import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260623-roundtrip-v2";
 import { cerrarBuscandoMotorista } from "../pasajero/ui/overlays/buscandoMotorista.ui.js?v=20260608-search-modal";
 import { cityConfig } from "../map/config/index.js";
 import { reverseGeocode } from "../map/services/map.reverse.js?v=20260619-clear-map-address";

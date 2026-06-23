@@ -127,7 +127,7 @@ export function limpiarViajeMain(ui = {}) {
     clearTimeout(llegadaRetryTimeout);
     setLlegadaRetryTimeout(null);
 
-    import("../oferta/oferta.render.js?v=20260623-roundtrip").then(mod => {
+    import("../oferta/oferta.render.js?v=20260623-roundtrip-v2").then(mod => {
         mod.limpiarOferta();
     }).catch(err => {
         console.warn("No se pudo limpiar oferta:", err);

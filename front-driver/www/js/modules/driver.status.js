@@ -77,7 +77,7 @@ export function setDriverAvailability(nextOnline, { silent = false } = {}) {
 
   if (!online) {
     Promise.all([
-      import("./oferta/oferta.render.js?v=20260623-roundtrip"),
+      import("./oferta/oferta.render.js?v=20260623-roundtrip-v2"),
       import("./oferta/oferta.queue.js")
     ])
       .then(([{ limpiarOferta }, { limpiarColaOfertas }]) => {

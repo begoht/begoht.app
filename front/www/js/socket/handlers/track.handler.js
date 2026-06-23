@@ -1,8 +1,8 @@
 import { viajeState } from "../../viaje/viaje.state.js";
 import { mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260621-route-moto";
 import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260620-map-rotation";
-import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260623-roundtrip";
-import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260623-roundtrip";
+import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260623-roundtrip-v2";
+import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260623-roundtrip-v2";
 import { getMap } from "../../map/map.singleton.js?v=20260620-map-rotation";
 import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260615-smooth-autofinish";
 

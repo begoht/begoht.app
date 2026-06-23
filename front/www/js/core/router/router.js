@@ -2,7 +2,7 @@ import { routes } from "./router.routes.js?v=20260619-clear-map-address";
 import { renderLayout } from "./router.render.js?v=20260619-clear-map-address";
 import { runCleanup, setCleanup } from "./router.cleanup.js";
 import { afterRender, pushURL, actualizarLinksActivos } from "./router.utils.js";
-import { runPageInit } from "../app/app.lifecycle.js?v=20260620-map-rotation";
+import { runPageInit } from "../app/app.lifecycle.js?v=20260623-roundtrip-v2";
 import { AppState } from "../state.js";
 import { stopGeo } from "../../map/map.geo.js?v=20260619-clear-map-address";
 

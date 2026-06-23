@@ -4,7 +4,7 @@ import {
     idaVueltaDisponible,
     normalizarIdaVuelta,
     precioSegunSeleccion
-} from "../../../viaje/idaVuelta.js?v=20260623-roundtrip";
+} from "../../../viaje/idaVuelta.js?v=20260623-roundtrip-v2";
 
 function escapeHtml(value) {
     return String(value ?? "")

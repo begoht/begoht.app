@@ -4,7 +4,7 @@ import { initWalletUI } from "../../wallet.js";
 import { initLogout } from "../../logout.js";
 import { initHeader } from "../../components/header.init.js?v=20260601-huella-user";
 import { getMap } from "../../map/map.singleton.js?v=20260620-map-rotation";
-import { restoreViajeUI } from "./app.restore.js?v=20260623-roundtrip";
+import { restoreViajeUI } from "./app.restore.js?v=20260623-roundtrip-v2";
 import { viajeState } from "../../viaje/viaje.state.js";
 
 let currentInitId = 0;
@@ -55,7 +55,7 @@ async function initHome(initId) {
     const map = getMap();
     if (!map) return;
 
-    const { initPasajero } = await import("../../pasajero/pasajero.main.js?v=20260623-roundtrip");
+    const { initPasajero } = await import("../../pasajero/pasajero.main.js?v=20260623-roundtrip-v2");
 
     if (initId !== currentInitId) return;
 

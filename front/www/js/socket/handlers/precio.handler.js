@@ -1,17 +1,17 @@
 // handlers/precio.handler.js
 import { viajeState } from "../../viaje/viaje.state.js";
 import { mostrarModalPrecio, mostrarBuscandoMotorista } from "../../pasajero/pasajero.ui.js";
-import { guardarSesionViaje, limpiarSesionViaje } from "../pasajero.utils.js?v=20260623-roundtrip";
-import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260623-roundtrip";
+import { guardarSesionViaje, limpiarSesionViaje } from "../pasajero.utils.js?v=20260623-roundtrip-v2";
+import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260623-roundtrip-v2";
 import { cityConfig } from "../../map/config/index.js";
-import { resolverCotizacionPendiente } from "../../viaje/viaje.actions.js?v=20260623-roundtrip";
+import { resolverCotizacionPendiente } from "../../viaje/viaje.actions.js?v=20260623-roundtrip-v2";
 import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260607-finalized-guard";
 import {
   aplicarSeleccionIdaVuelta,
   distanciaSegunSeleccion,
   normalizarIdaVuelta,
   precioSegunSeleccion
-} from "../../viaje/idaVuelta.js?v=20260623-roundtrip";
+} from "../../viaje/idaVuelta.js?v=20260623-roundtrip-v2";
 
 // ✅ Agregamos 'rutaGeometria' desestructurada del backend
 export const handlePrecio = ({ quoteId, viajeId, precio, precioBase, descuentoWallet, descuentoWalletRate, walletDiscount, distanciaKm, metodoPago, rutaGeometria, tipo, paquete, idaVuelta }, socket) => {

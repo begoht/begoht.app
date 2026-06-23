@@ -1,7 +1,7 @@
 import { viajeState } from "../../viaje/viaje.state.js";
-import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260623-roundtrip";
+import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260623-roundtrip-v2";
 import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260620-map-rotation";
-import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260623-roundtrip";
+import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260623-roundtrip-v2";
 
 export function handleIdaVueltaPendiente(data = {}, socket = null) {
   if (!esViajeActual(data)) return;

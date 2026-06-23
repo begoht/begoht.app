@@ -1,5 +1,5 @@
 import { viajeState } from "../../../viaje/viaje.state.js";
-import { pedirViaje, cancelarViaje } from "../../../viaje/viaje.actions.js?v=20260623-roundtrip";
+import { pedirViaje, cancelarViaje } from "../../../viaje/viaje.actions.js?v=20260623-roundtrip-v2";
 import { mostrarModalConfirmarCancelacion } from "../modales/modalCancelacion.ui.js";
 
 export function actualizarBotonViaje() {

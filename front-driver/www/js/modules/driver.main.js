@@ -1,11 +1,11 @@
 import { initSocket } from "./socket.js?v=20260619-account-security";
 import { initMap } from "./map.js?v=20260620-map-rotation";
 import { initGPS } from "./gps.js?v=20260620-map-rotation";
-import { initOferta } from "./oferta/oferta.index.js?v=20260623-roundtrip";
-import { initViajeInicio } from "./viajeInicio/viajeInicio.js?v=20260623-roundtrip";
-import { initViajeFinalizar } from "./viajeFinalizar.js?v=20260623-roundtrip";
-import { initViajeControl } from "./viajeControl/viajeControl.js?v=20260623-roundtrip";
-import { initIdaVueltaDriver } from "./idaVuelta/idaVuelta.driver.js?v=20260623-roundtrip";
+import { initOferta } from "./oferta/oferta.index.js?v=20260623-roundtrip-v2";
+import { initViajeInicio } from "./viajeInicio/viajeInicio.js?v=20260623-roundtrip-v2";
+import { initViajeFinalizar } from "./viajeFinalizar.js?v=20260623-roundtrip-v2";
+import { initViajeControl } from "./viajeControl/viajeControl.js?v=20260623-roundtrip-v2";
+import { initIdaVueltaDriver } from "./idaVuelta/idaVuelta.driver.js?v=20260623-roundtrip-v2";
 import { initDriverChat } from "./chat/viajeChat.js?v=20260608-trip-panel-compact";
 import { initDriverStatus } from "./driver.status.js?v=20260615-smooth-autofinish";
 import { initDriverSpa } from "./driver.spa.js?v=20260619-account-security";

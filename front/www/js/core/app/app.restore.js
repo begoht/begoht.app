@@ -1,9 +1,9 @@
-import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260623-roundtrip";
+import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260623-roundtrip-v2";
 import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260621-route-moto";
 import { getMap } from "../../map/map.singleton.js?v=20260620-map-rotation";
-import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260623-roundtrip";
+import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260623-roundtrip-v2";
 import { viajeState } from "../../viaje/viaje.state.js";
-import { actualizarUIDriver, mostrarModalFinalizado } from "../../socket/pasajero.utils.js?v=20260623-roundtrip";
+import { actualizarUIDriver, mostrarModalFinalizado } from "../../socket/pasajero.utils.js?v=20260623-roundtrip-v2";
 import {
   obtenerFinalizacionPendiente,
   viajeFueFinalizado
