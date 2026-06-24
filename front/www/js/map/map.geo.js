@@ -23,6 +23,7 @@ let marcadorPasajero = null;
 let ubicacionButtonBound = false;
 let recenterButtonBound = false;
 let ultimaUbicacionGps = null;
+const GPS_ORIGEN_MAX_AGE_MS = 15000;
 
 function escapeHtml(value = "") {
   const chars = {
@@ -145,10 +146,18 @@ function mostrarCentroServicio(map, mensaje) {
 }
 
 function aplicarUbicacionGps(map, lat, lng, direccion, { center = false, animate = false } = {}) {
-  ultimaUbicacionGps = { lat, lng, direccion };
+  const origenGps = {
+    lat,
+    lng,
+    direccion,
+    source: "gps",
+    updatedAt: Date.now()
+  };
+
+  ultimaUbicacionGps = origenGps;
 
   if (!viajeProtegido()) {
-    viajeState.origen = { lat, lng, direccion };
+    viajeState.origen = origenGps;
   }
 
   if (center || !marcadorPasajero) {
@@ -199,10 +208,10 @@ function switchCityFromGpsIfNeeded(lat, lng) {
   return false;
 }
 
-async function tomarUbicacionActual(map, { center = false, fromButton = false } = {}) {
+async function tomarUbicacionActual(map, { center = false, fromButton = false, timeout = null } = {}) {
   const pos = await getCurrentPosition({
     maximumAge: 0,
-    timeout: fromButton ? 18000 : 14000
+    timeout: timeout ?? (fromButton ? 18000 : 14000)
   });
 
   const lat = Number(pos.coords.latitude);
@@ -232,6 +241,39 @@ async function tomarUbicacionActual(map, { center = false, fromButton = false } 
 
   aplicarUbicacionGps(map, lat, lng, direccion, { center });
   return true;
+}
+
+export async function asegurarOrigenGpsReal(map, {
+  center = false,
+  fromButton = false,
+  timeout = 12000,
+  maxAgeMs = GPS_ORIGEN_MAX_AGE_MS
+} = {}) {
+  if (!map || viajeProtegido()) {
+    return !!viajeState.origen;
+  }
+
+  const age = ultimaUbicacionGps?.updatedAt
+    ? Date.now() - ultimaUbicacionGps.updatedAt
+    : Infinity;
+
+  if (ultimaUbicacionGps && age <= maxAgeMs) {
+    aplicarUbicacionGps(
+      map,
+      Number(ultimaUbicacionGps.lat),
+      Number(ultimaUbicacionGps.lng),
+      ultimaUbicacionGps.direccion || "Tu ubicacion actual",
+      { center }
+    );
+    return true;
+  }
+
+  try {
+    return await tomarUbicacionActual(map, { center, fromButton, timeout });
+  } catch (err) {
+    console.warn("No se pudo asegurar GPS real:", err);
+    return false;
+  }
 }
 
 function bindUbicacionButton(map) {

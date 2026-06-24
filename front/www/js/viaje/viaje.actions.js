@@ -5,6 +5,8 @@ import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20
 import { cerrarBuscandoMotorista } from "../pasajero/ui/overlays/buscandoMotorista.ui.js?v=20260608-search-modal";
 import { cityConfig } from "../map/config/index.js";
 import { reverseGeocode } from "../map/services/map.reverse.js?v=20260619-clear-map-address";
+import { getMap } from "../map/map.singleton.js?v=20260620-map-rotation";
+import { asegurarOrigenGpsReal } from "../map/map.geo.js?v=20260624-origin-gps";
 
 let socket = null;
 let cotizacionTimer = null;
@@ -125,7 +127,19 @@ export function resolverCotizacionPendiente(quoteId = null) {
  */
 export async function pedirViaje() {
   if (viajeState.cotizando || viajeState.estado === "cotizando") return;
-  if (viajeState.activo || !viajeState.origen || !viajeState.destino) return;
+  if (viajeState.activo || !viajeState.destino) return;
+
+  const gpsOk = await asegurarOrigenGpsReal(getMap(), {
+    center: false,
+    timeout: 12000,
+    maxAgeMs: 8000
+  });
+
+  if (!gpsOk || !viajeState.origen) {
+    alert("No pudimos tomar tu ubicacion real. Activa el GPS y vuelve a intentar.");
+    actualizarBotonViaje();
+    return;
+  }
 
   if (viajeState.tipoServicio === "envio" && !viajeState.paquete?.reglasAceptadas) {
     alert("Vous devez accepter les regles des colis avant de continuer.");

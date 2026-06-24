@@ -1,4 +1,4 @@
-import { stopGeo } from "../../map/map.geo.js?v=20260619-clear-map-address";
+import { stopGeo } from "../../map/map.geo.js?v=20260624-origin-gps";
 
 // ===============================
 // 🌍 BASE PATH ROBUSTO

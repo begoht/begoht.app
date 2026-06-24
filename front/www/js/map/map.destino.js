@@ -12,6 +12,7 @@ import { reverseGeocode } from "./services/map.reverse.js?v=20260619-clear-map-a
 
 import { getMap } from "./map.singleton.js?v=20260620-map-rotation";
 import { cityConfig, coordsInCity } from "./config/index.js";
+import { asegurarOrigenGpsReal } from "./map.geo.js?v=20260624-origin-gps";
 
 import {
   initAutocomplete,
@@ -146,7 +147,20 @@ export async function asignarDestino(
  
   if (viajeBloqueado) return;
 
-  if (!viajeState.origen) return;
+  const gpsOk = await asegurarOrigenGpsReal(map, {
+    center: false,
+    timeout: 12000,
+    maxAgeMs: 8000
+  });
+
+  if (!gpsOk || !viajeState.origen) {
+    const input = document.getElementById("inputInicio");
+    if (input) {
+      input.value = "";
+      input.placeholder = "Activa GPS real para marcar tu origen";
+    }
+    return;
+  }
 
   if (!coordsInCity(latlng)) {
     const input = document.getElementById("inputDestino");
@@ -223,8 +237,9 @@ export async function asignarDestino(
   /*************************************************
    * 🛣️ RUTA
    *************************************************/
+  const origenActual = viajeState.origen;
   const tareaRuta = dibujarRuta(
-    viajeState.origen,
+    origenActual,
     {
       lat: latlng.lat,
       lng: latlng.lng
