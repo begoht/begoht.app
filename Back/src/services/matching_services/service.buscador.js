@@ -90,6 +90,7 @@ async function obtenerCandidatos(viaje, radioKm = DISTANCIA_MAX_KM) {
     candidatos.forEach((c) => {
       pipe.hgetall(`motorista:data:${c.id}`);
       pipe.get(`lock:cola:${c.id}`);
+      pipe.exists(`motorista:online:${c.id}`);
     });
 
     const res = await pipe.exec();
@@ -97,10 +98,15 @@ async function obtenerCandidatos(viaje, radioKm = DISTANCIA_MAX_KM) {
 
     for (let i = 0; i < candidatos.length; i++) {
       const { id, dist } = candidatos[i];
-      const data = res[i * 2]?.[1];
-      const lock = res[i * 2 + 1]?.[1];
+      const data = res[i * 3]?.[1];
+      const lock = res[i * 3 + 1]?.[1];
+      const online = Number(res[i * 3 + 2]?.[1]) === 1;
 
       if (!data || Object.keys(data).length === 0) continue;
+      if (!online || data.online === "false") {
+        await limpiarMotoristaNoDisponible(id, data, geoKey);
+        continue;
+      }
 
       if (viaje.ciudad && data.city && data.city !== viaje.ciudad) continue;
 
@@ -108,30 +114,12 @@ async function obtenerCandidatos(viaje, radioKm = DISTANCIA_MAX_KM) {
       const ahora = Date.now();
 
       if (ultimaAct !== 0 && ahora - ultimaAct > GPS_TIMEOUT_MS) {
-        const online = await redis.exists(`motorista:online:${id}`);
-
-        if (online) {
-          await redis.hset(`motorista:data:${id}`, "lastUpdate", ahora.toString());
-
-          if (data.lat && data.lng) {
-            await redis.call("GEOADD", geoKey, data.lng, data.lat, id);
-          }
-
-          data.lastUpdate = ahora.toString();
-        } else {
-          if (DEBUG) {
-            console.log(`Motorista ${id} descartado por GPS viejo`);
-          }
-
-          await redis.zrem(GEO_KEY, id);
-          await redis.zrem(geoKey, id);
-          await redis.hset(`motorista:data:${id}`, {
-            disponible: "false",
-            online: "false"
-          });
-
-          continue;
+        if (DEBUG) {
+          console.log(`Motorista ${id} descartado por GPS viejo`);
         }
+
+        await limpiarMotoristaNoDisponible(id, data, geoKey);
+        continue;
       }
 
       const tieneReserva = !!lock;
@@ -190,6 +178,25 @@ async function obtenerCandidatos(viaje, radioKm = DISTANCIA_MAX_KM) {
     console.error("obtenerCandidatos crash:", err);
     return [];
   }
+}
+
+async function limpiarMotoristaNoDisponible(id, data = {}, geoKey = null) {
+  const pipe = redis.multi()
+    .zrem(GEO_KEY, id)
+    .hset(`motorista:data:${id}`, {
+      disponible: "false",
+      online: "false"
+    });
+
+  if (geoKey) {
+    pipe.zrem(geoKey, id);
+  }
+
+  if (data?.city) {
+    pipe.zrem(`${GEO_KEY}:${data.city}`, id);
+  }
+
+  await pipe.exec();
 }
 
 module.exports = { obtenerCandidatos };

@@ -45,6 +45,14 @@ module.exports = (io, socket) => {
                     return socket.emit("viaje:oferta-cerrada", { viajeId });
                 }
 
+                if (["motorista_offline", "motorista_no_disponible"].includes(result.error)) {
+                    socket.emit("viaje:oferta-cerrada", { viajeId });
+                    return socket.emit("error-operacion", {
+                        code: result.error,
+                        msg: "Passe en ligne pour recevoir et accepter des courses."
+                    });
+                }
+
                 if (result.error === "commission_limit_reached") {
                     socket.emit("driver:commission-blocked", {
                         viajeId,

@@ -16,6 +16,18 @@ const PASSENGER_NEARBY_DRIVERS_ENABLED =
   process.env.PASSENGER_NEARBY_DRIVERS_ENABLED === "true";
 
 module.exports = (io, socket, motoristaId) => {
+  socket.on("driver:availability", async (payload = {}) => {
+    try {
+      if (payload.disponible === false || payload.disponible === "false") {
+        await storeRedis.markUnavailable(socket, motoristaId);
+      } else if (payload.disponible === true || payload.disponible === "true") {
+        await redis.del(storeRedis.getManualAvailabilityKey(motoristaId));
+      }
+    } catch (error) {
+      console.error("❌ Error actualizando disponibilidad:", error);
+    }
+  });
+
   socket.on("motoristas:ubicacion", async (payload) => {
     try {
       const accepted = await shouldAcceptLocation(motoristaId, payload);

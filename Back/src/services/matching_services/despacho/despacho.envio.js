@@ -51,6 +51,7 @@ async function enviarWave({
         const online = res[idx++]?.[1];
 
         if (!mData || Object.keys(mData).length === 0) continue;
+        if (mData.online === "false") continue;
 
         let ultimaAct = parseInt(mData.lastUpdate || 0);
 
@@ -103,11 +104,26 @@ async function enviarWave({
                 return;
             }
 
+            let estadoActual = await estadoMotoristaParaOferta(motoristaId);
+            if (!estadoActual.ok) {
+                console.log(`Oferta omitida: motorista ${motoristaId} no disponible (${estadoActual.reason})`);
+                return;
+            }
+
             const lockAcquired = await acquireOfferLock({ viajeId, motoristaId });
             if (!lockAcquired) {
                 console.log(`Oferta omitida: motorista ${motoristaId} ya tiene oferta activa`);
                 return;
             }
+
+            estadoActual = await estadoMotoristaParaOferta(motoristaId);
+            if (!estadoActual.ok) {
+                await releaseOfferLock({ viajeId, motoristaId });
+                console.log(`Oferta cancelada: motorista ${motoristaId} cambio a ${estadoActual.reason}`);
+                return;
+            }
+
+            data = estadoActual.data || data;
 
             const statusDespuesLock = await redis.get(`viaje:status:${viajeId}`);
             if (
@@ -210,6 +226,33 @@ async function enviarWave({
 }
 
 module.exports = { enviarWave };
+
+async function estadoMotoristaParaOferta(motoristaId) {
+    const [[, data], [, online]] = await redis.multi()
+        .hgetall(`motorista:data:${motoristaId}`)
+        .exists(`motorista:online:${motoristaId}`)
+        .exec();
+
+    if (!data || Object.keys(data).length === 0) {
+        return { ok: false, reason: "sin_data" };
+    }
+
+    if (!online || data.online === "false") {
+        return { ok: false, reason: "offline" };
+    }
+
+    const ultimaAct = parseInt(data.lastUpdate || 0);
+    if (!ultimaAct || Number.isNaN(ultimaAct) || Date.now() - ultimaAct > GPS_TIMEOUT_MS) {
+        return { ok: false, reason: "gps_viejo" };
+    }
+
+    const enViaje = data.viajeActualId && data.viajeActualId !== "null";
+    if (data.disponible !== "true" && !enViaje) {
+        return { ok: false, reason: "no_disponible" };
+    }
+
+    return { ok: true, data };
+}
 
 function prepararPaqueteMotorista(viaje) {
     if ((viaje.tipo || "viaje") !== "envio" || !viaje.paquete) return null;

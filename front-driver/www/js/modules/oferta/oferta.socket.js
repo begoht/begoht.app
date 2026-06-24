@@ -1,12 +1,12 @@
-import { renderOferta, limpiarOferta } from "./oferta.render.js?v=20260623-roundtrip-v2";
+import { renderOferta, limpiarOferta } from "./oferta.render.js?v=20260624-matching-offline";
 import { agregarACola } from "./oferta.queue.js";
 import { seenOfertas, ofertaState, CONFIG, getViajeId } from "./oferta.state.js";
 import { notificar, reproducirSonido } from "./oferta.ui.js?v=20260608-offer-net-cash";
 import { registrarViaje } from "../viajeControl/viajeControl.js?v=20260608-offer-net-cash";
 import { setViajeEnCurso } from "../viajeControl/viajeEstado.js";
 import { dibujarRutaPremium } from "../map.js?v=20260624-map-light";
-import { getUltimaPosicion, refreshDriverLocation } from "../gps.js?v=20260620-map-rotation";
-import { isDriverOnline } from "../driver.status.js?v=20260608-gps-accept";
+import { getUltimaPosicion, refreshDriverLocation } from "../gps.js?v=20260624-matching-offline";
+import { isDriverOnline } from "../driver.status.js?v=20260624-matching-offline";
 import { normalizarPunto, notificarGuardia } from "../tripGuards.js?v=20260620-map-rotation";
 
 const viajesTomadosProcesados = new Set();
@@ -128,6 +128,21 @@ export function initSocketEventos(socket) {
   // ============================
   // ❌ YA TOMADO (legacy)
   // ============================
+  socket.off("viaje:oferta-cerrada");
+  socket.on("viaje:oferta-cerrada", ({ viajeId } = {}) => {
+    const mostrado = getViajeId(ofertaState.viajeMostradoId);
+    if (viajeId && mostrado && mostrado !== viajeId) return;
+
+    ofertaState.aceptando = false;
+    ofertaState.viajeMostradoId = null;
+
+    if (ofertaState.failSafeTimer) {
+      clearTimeout(ofertaState.failSafeTimer);
+    }
+
+    limpiarOferta({ resetViaje: false });
+  });
+
   socket.on("viaje-ya-tomado", () => {
 
     if (ofertaState.failSafeTimer) clearTimeout(ofertaState.failSafeTimer);

@@ -4,7 +4,6 @@ const motoristaHandlers = require("./motorista/motorista.handlers");
 const chatHandlers = require("./chat.socket");
 const Viaje = require("../../models/Viaje");
 const { redis } = require("../../config/redis");
-const { inferCityFromPoint } = require("../../config/cities");
 
 // 🔥 Estados coherentes con Redis
 const ESTADOS_MATCHING = ["buscando", "ofertando"];
@@ -42,23 +41,11 @@ module.exports = (io, socket) => {
       nombre: socket.user?.nombre || "Desconocido",
       lat: tienePosicion ? loc.lat : null,
       lng: tienePosicion ? loc.lng : null,
-      disponible: true,
+      disponible: false,
       conectadoEn: new Date(),
     });
 
     motoristaHandlers(io, socket, userId);
-
-    // 📍 GEO Redis
-    if (tienePosicion && redis) {
-      const city = inferCityFromPoint({ lat: loc.lat, lng: loc.lng });
-      redis.geoadd("motoristas:ubicacion", loc.lng, loc.lat, userId)
-        .catch(() => {});
-      if (city) {
-        redis.geoadd(`motoristas:ubicacion:${city.id}`, loc.lng, loc.lat, userId)
-          .catch(() => {});
-        redis.hset(`motorista:data:${userId}`, "city", city.id).catch(() => {});
-      }
-    }
 
     socket.emit("motorista:verificar-estado-trigger");
     console.log(`🟢 Motorista conectado: ${socket.user?.nombre || socket.id}`);

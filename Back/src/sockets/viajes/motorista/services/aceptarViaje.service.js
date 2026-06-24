@@ -19,6 +19,7 @@ const {
 const {
     getOfferKey,
     getOfferLockKey,
+    getOfferSetKey,
     releaseOfferLock
 } = require("../../../../services/matching_services/offerLock.service");
 
@@ -47,6 +48,29 @@ module.exports = async ({
             data = {};
         }
 
+        const enViajeActivo =
+            data?.viajeActualId &&
+            data.viajeActualId !== "null" &&
+            data.viajeActualId !== "";
+        const viajeActualId = enViajeActivo ? data.viajeActualId : null;
+        const online = await redis.exists(`motorista:online:${motoristaId}`);
+
+        if (!online || data.online === "false") {
+            await limpiarOfertaMotorista(viajeId, motoristaId, ofertaKey);
+            return {
+                success: false,
+                error: "motorista_offline"
+            };
+        }
+
+        if (!enViajeActivo && data.disponible !== "true") {
+            await limpiarOfertaMotorista(viajeId, motoristaId, ofertaKey);
+            return {
+                success: false,
+                error: "motorista_no_disponible"
+            };
+        }
+
         try {
             await ensureDriverCanReceiveTrips(motoristaId);
         } catch (err) {
@@ -60,12 +84,6 @@ module.exports = async ({
 
             throw err;
         }
-
-        const enViajeActivo =
-            data?.viajeActualId &&
-            data.viajeActualId !== "null" &&
-            data.viajeActualId !== "";
-        const viajeActualId = enViajeActivo ? data.viajeActualId : null;
 
         const nuevoEstadoDB = enViajeActivo
             ? "reservado"
@@ -273,3 +291,13 @@ module.exports = async ({
         };
     }
 };
+
+async function limpiarOfertaMotorista(viajeId, motoristaId, ofertaKey) {
+    await redis.multi()
+        .del(ofertaKey)
+        .hdel(`motorista:data:${motoristaId}`, "ofertaPendienteKey")
+        .srem(getOfferSetKey(viajeId), motoristaId)
+        .exec();
+
+    await releaseOfferLock({ viajeId, motoristaId });
+}

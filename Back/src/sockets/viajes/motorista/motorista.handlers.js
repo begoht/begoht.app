@@ -20,21 +20,12 @@ module.exports = (io, socket) => {
     global.motoristasActivos.set(motoristaId, {
         socketId: socket.id,
         lat: null, lng: null,
-        disponible: true, conectado: true,
+        disponible: false, conectado: true,
         lastUpdate: Date.now(),
     });
 
     socket.join(`motorista:${motoristaId}`);
     socket.join(`motorista:${motoristaId}`); 
-
-    redis.set(
-        `motorista:online:${motoristaId}`,
-        "1",
-        "EX",
-        60
-    ).catch(err => {
-        console.error("❌ online presence:", err);
-    });
 
     (async () => {
         try {

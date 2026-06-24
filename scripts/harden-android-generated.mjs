@@ -192,8 +192,8 @@ passengerVariables = passengerVariables.replace(
 changed = writeIfChanged(files.passengerVariables, passengerVariables) || changed;
 
 let driverBuild = read(files.driverBuild);
-driverBuild = setGradleNumber(driverBuild, "versionCode", 17);
-driverBuild = setGradleString(driverBuild, "versionName", "1.0.16");
+driverBuild = setGradleNumber(driverBuild, "versionCode", 18);
+driverBuild = setGradleString(driverBuild, "versionName", "1.0.17");
 driverBuild = hardenSigningConfig(driverBuild);
 changed = writeIfChanged(files.driverBuild, driverBuild) || changed;
 

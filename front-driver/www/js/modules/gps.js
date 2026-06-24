@@ -4,7 +4,7 @@ import {
   consumirRutaDesde,
   seguirMotoristaEnMapa
 } from "./map.js?v=20260624-map-light";
-import { isDriverOnline, updateDriverPosition } from "./driver.status.js?v=20260608-gps-accept";
+import { isDriverOnline, updateDriverPosition } from "./driver.status.js?v=20260624-matching-offline";
 import { crearMotoIcon, motoIcon } from "./map.icons.js?v=20260620-driver-navigation";
 import {
   setMotorcycleMarkerPose

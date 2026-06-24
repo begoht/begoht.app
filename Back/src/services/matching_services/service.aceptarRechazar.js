@@ -72,6 +72,32 @@ async function aceptar(viajeId, motoristaId, socketId, io) {
             data.viajeActualId !== "null" &&
             data.viajeActualId !== "";
 
+        const online = await redis.exists(`motorista:online:${motoristaId}`);
+
+        if (!online || data.online === "false") {
+            await redis.del(ofertaKey);
+            await redis.hdel(`motorista:data:${motoristaId}`, "ofertaPendienteKey");
+            await redis.srem(getOfferSetKey(viajeId), motoristaId);
+            await releaseOfferLock({ viajeId, motoristaId });
+
+            return {
+                success: false,
+                error: "motorista_offline"
+            };
+        }
+
+        if (!enViajeActivo && data.disponible !== "true") {
+            await redis.del(ofertaKey);
+            await redis.hdel(`motorista:data:${motoristaId}`, "ofertaPendienteKey");
+            await redis.srem(getOfferSetKey(viajeId), motoristaId);
+            await releaseOfferLock({ viajeId, motoristaId });
+
+            return {
+                success: false,
+                error: "motorista_no_disponible"
+            };
+        }
+
         const nuevoEstadoDB =
             enViajeActivo
                 ? "reservado"

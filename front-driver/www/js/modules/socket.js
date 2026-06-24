@@ -1,4 +1,4 @@
-import { isDriverOnline, updateDriverPosition } from "./driver.status.js?v=20260608-gps-accept";
+import { isDriverOnline, updateDriverPosition } from "./driver.status.js?v=20260624-matching-offline";
 import {
   clearDriverSession,
   refreshDriverAccessToken,
@@ -35,6 +35,7 @@ export function initSocket(serverUrl, token) {
   socketInstance.on("connect", () => {
     console.log("🟢 Socket conectado:", socketInstance.id);
     socketInstance.emit("wallet:subscribe");
+    socketInstance.emit("driver:availability", { disponible: isDriverOnline() });
     enviarPosicionActual();
   });
   
@@ -90,6 +91,7 @@ export function initSocket(serverUrl, token) {
           lat: pos.coords.latitude,
           lng: pos.coords.longitude
         });
+        socketInstance.emit("driver:availability", { disponible: isDriverOnline() });
         socketInstance.emit("motoristas:ubicacion", {
           lat: pos.coords.latitude,
           lng: pos.coords.longitude,
