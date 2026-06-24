@@ -57,7 +57,7 @@ export function renderGanancias() {
             <i class="fa-solid fa-arrow-right"></i>
             <span>Commencer</span>
           </button>
-          <a class="ganancias-secondary ripple" href="https://bego.com.ht/download/bego-motorista.apk?v=20260624-install-fix" download>
+          <a class="ganancias-secondary ripple" href="https://bego.com.ht/download/bego-motorista.apk?v=20260624-passenger-install" download>
             <i class="fa-solid fa-download"></i>
             <span>App chauffeur</span>
           </a>

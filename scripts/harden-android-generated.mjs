@@ -9,6 +9,7 @@ const files = {
   driverVariables: path.join(root, "front-driver/android/variables.gradle"),
   passengerManifest: path.join(root, "front/android/app/src/main/AndroidManifest.xml"),
   passengerBuild: path.join(root, "front/android/app/build.gradle"),
+  passengerVariables: path.join(root, "front/android/variables.gradle"),
 };
 
 function read(file) {
@@ -114,6 +115,15 @@ function hardenSigningConfig(source) {
       "keyPassword begoKeyPassword"
     );
 
+  if (!next.includes("v1SigningEnabled true")) {
+    next = next.replace(
+      /keyPassword begoKeyPassword/,
+      `keyPassword begoKeyPassword
+            v1SigningEnabled true
+            v2SigningEnabled true`
+    );
+  }
+
   if (!next.includes("def begoSigningConfigured")) {
     next = next.replace(
       "apply plugin: 'com.android.application'",
@@ -171,6 +181,12 @@ driverVariables = setGradleNumber(driverVariables, "compileSdkVersion", 36);
 driverVariables = setGradleNumber(driverVariables, "targetSdkVersion", 36);
 changed = writeIfChanged(files.driverVariables, driverVariables) || changed;
 
+let passengerVariables = read(files.passengerVariables);
+passengerVariables = setGradleNumber(passengerVariables, "minSdkVersion", 24);
+passengerVariables = setGradleNumber(passengerVariables, "compileSdkVersion", 36);
+passengerVariables = setGradleNumber(passengerVariables, "targetSdkVersion", 36);
+changed = writeIfChanged(files.passengerVariables, passengerVariables) || changed;
+
 let driverBuild = read(files.driverBuild);
 driverBuild = setGradleNumber(driverBuild, "versionCode", 16);
 driverBuild = setGradleString(driverBuild, "versionName", "1.0.15");
@@ -178,8 +194,8 @@ driverBuild = hardenSigningConfig(driverBuild);
 changed = writeIfChanged(files.driverBuild, driverBuild) || changed;
 
 let passengerBuild = read(files.passengerBuild);
-passengerBuild = setGradleNumber(passengerBuild, "versionCode", 12);
-passengerBuild = setGradleString(passengerBuild, "versionName", "1.0.11");
+passengerBuild = setGradleNumber(passengerBuild, "versionCode", 13);
+passengerBuild = setGradleString(passengerBuild, "versionName", "1.0.12");
 passengerBuild = hardenSigningConfig(passengerBuild);
 changed = writeIfChanged(files.passengerBuild, passengerBuild) || changed;
 

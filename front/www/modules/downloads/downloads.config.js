@@ -1,4 +1,4 @@
-export const DOWNLOAD_VERSION = "20260624-install-fix";
+export const DOWNLOAD_VERSION = "20260624-passenger-install";
 
 export const DOWNLOAD_APPS = Object.freeze({
   passenger: Object.freeze({
