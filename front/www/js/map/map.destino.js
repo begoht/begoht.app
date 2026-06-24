@@ -10,9 +10,9 @@ import { destinoIcon } from "./map.icons.js?v=20260619-clear-map-address";
 
 import { reverseGeocode } from "./services/map.reverse.js?v=20260624-cordoba-gps";
 
-import { getMap } from "./map.singleton.js?v=20260624-cordoba-gps";
+import { getMap } from "./map.singleton.js?v=20260624-map-light";
 import { cityConfig, coordsInCity } from "./config/index.js?v=20260624-cordoba-gps";
-import { asegurarOrigenGpsReal } from "./map.geo.js?v=20260624-trip-ready";
+import { asegurarOrigenGpsReal } from "./map.geo.js?v=20260624-map-light";
 
 import {
   initAutocomplete,
@@ -22,6 +22,7 @@ import {
 let destinoRequestId = 0;
 
 let clickHandler = null;
+let clickMap = null;
 
 function escapeHtml(value = "") {
   const chars = {
@@ -276,6 +277,7 @@ export function initSeleccionDestino(map) {
   };
 
   map.on("click", clickHandler);
+  clickMap = map;
   console.log("🗺️ Click destino listener ACTIVADO");
 
   initAutocomplete({
@@ -297,9 +299,10 @@ export function cleanupSeleccionDestino() {
   if (clickHandler) {
 
     try {
-      map?.off("click", clickHandler);
+      clickMap?.off("click", clickHandler);
     } catch {}
 
     clickHandler = null;
+    clickMap = null;
   }
 }

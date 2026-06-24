@@ -1,4 +1,4 @@
-export const DOWNLOAD_VERSION = "20260624-android6";
+export const DOWNLOAD_VERSION = "20260624-map-light";
 
 export const DOWNLOAD_APPS = Object.freeze({
   passenger: Object.freeze({

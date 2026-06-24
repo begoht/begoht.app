@@ -1,9 +1,9 @@
 import { viajeState } from "../../viaje/viaje.state.js";
 import { mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260621-route-moto";
-import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260624-trip-ready";
+import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260624-map-light";
 import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260623-roundtrip-v2";
 import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260623-roundtrip-v2";
-import { getMap } from "../../map/map.singleton.js?v=20260624-cordoba-gps";
+import { getMap } from "../../map/map.singleton.js?v=20260624-map-light";
 import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260615-smooth-autofinish";
 
 let lastEstadoPersistido = null;

@@ -1,4 +1,4 @@
-import { getMap } from "./map.singleton.js?v=20260624-cordoba-gps";
+import { getMap } from "./map.singleton.js?v=20260624-map-light";
 
 import {
   mismaPosicion,

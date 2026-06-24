@@ -5,7 +5,7 @@ import {
 } from "../viajeControl/viajeEstado.js"; 
 import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260623-roundtrip-v2";
 import { getUltimaPosicion } from "../gps.js?v=20260620-map-rotation";
-import { dibujarRutaPremium } from "../map.js?v=20260620-map-rotation";
+import { dibujarRutaPremium } from "../map.js?v=20260624-map-light";
 import {
     ARRIVAL_MAX_DISTANCE_METERS,
     validarCercaniaViaje,

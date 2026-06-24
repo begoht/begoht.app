@@ -27,10 +27,14 @@ export function initMap() {
   const mapElement = document.getElementById("map");
   if (!mapElement) return null;
 
+  if (map && mapElement._leaflet_id) {
+    return map;
+  }
+
   map = L.map("map", {
     zoomControl: false,
     preferCanvas: true,
-    updateWhenIdle: false,
+    updateWhenIdle: true,
     rotate: true,
     bearing: 0,
     touchRotate: true,
@@ -43,10 +47,11 @@ export function initMap() {
     "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",
     {
       maxZoom: 19,
-      detectRetina: true,
-      keepBuffer: 8,
-      updateWhenIdle: false,
-      updateWhenZooming: true,
+      detectRetina: false,
+      keepBuffer: 4,
+      updateWhenIdle: true,
+      updateWhenZooming: false,
+      updateInterval: 180,
       zIndex: 1
     }
   ).addTo(map);
@@ -55,10 +60,11 @@ export function initMap() {
     "https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png",
     {
       maxZoom: 19,
-      detectRetina: true,
-      keepBuffer: 8,
-      updateWhenIdle: false,
-      updateWhenZooming: true,
+      detectRetina: false,
+      keepBuffer: 4,
+      updateWhenIdle: true,
+      updateWhenZooming: false,
+      updateInterval: 180,
       zIndex: 3
     }
   ).addTo(map);

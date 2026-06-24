@@ -10,11 +10,10 @@ export function renderMotoristas(map, drivers) {
   if (!map || !Array.isArray(drivers)) return;
 
   const driversUnicos = normalizarDrivers(drivers);
+  const idsVisibles = new Set(driversUnicos.map((driver) => String(driver.id || driver._id)));
 
   Object.keys(motoristasCercanos).forEach((id) => {
-    const existe = driversUnicos.find((d) => (d.id || d._id) === id);
-
-    if (!existe) {
+    if (!idsVisibles.has(String(id))) {
       map.removeLayer(motoristasCercanos[id]);
       delete motoristasCercanos[id];
     }

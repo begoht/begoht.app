@@ -4,6 +4,7 @@ let mapInstance = null;
 let currentContainer = null;
 let mapReady = false;
 let compassButtonBound = false;
+let mapListenerCleanup = [];
 
 /*************************************************
  * 📍 GET MAP (SIEMPRE SEGURO)
@@ -29,19 +30,27 @@ export function waitForMap() {
   }
 
   return new Promise((resolve) => {
-
-    const interval = setInterval(() => {
-
-      if (mapReady && mapInstance) {
-
-        clearInterval(interval);
-        resolve(mapInstance);
-
-      }
-
-    }, 50);
-
+    window.addEventListener(
+      "map-ready",
+      () => resolve(mapInstance),
+      { once: true }
+    );
   });
+}
+
+function cleanupMapListeners() {
+  mapListenerCleanup.forEach((cleanup) => {
+    try {
+      cleanup();
+    } catch {}
+  });
+  mapListenerCleanup = [];
+  compassButtonBound = false;
+}
+
+function addManagedListener(target, event, handler, options) {
+  target?.addEventListener?.(event, handler, options);
+  mapListenerCleanup.push(() => target?.removeEventListener?.(event, handler, options));
 }
 
 /*************************************************
@@ -93,6 +102,7 @@ export function createMap(container) {
 
     try {
 
+      cleanupMapListeners();
       mapInstance.off();
       mapInstance.remove();
 
@@ -140,11 +150,11 @@ export function createMap(container) {
     "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",
     {
       attribution: "&copy; OpenStreetMap &copy; CARTO",
-      detectRetina: true,
-      updateWhenIdle: false,
-      updateWhenZooming: true,
-      updateInterval: 80,
-      keepBuffer: 8,
+      detectRetina: false,
+      updateWhenIdle: true,
+      updateWhenZooming: false,
+      updateInterval: 180,
+      keepBuffer: 4,
       zIndex: 1,
       className: "bego-map-tiles bego-map-base-tiles"
     }
@@ -156,11 +166,11 @@ export function createMap(container) {
     "https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png",
     {
       attribution: "",
-      detectRetina: true,
-      updateWhenIdle: false,
-      updateWhenZooming: true,
-      updateInterval: 80,
-      keepBuffer: 8,
+      detectRetina: false,
+      updateWhenIdle: true,
+      updateWhenZooming: false,
+      updateInterval: 180,
+      keepBuffer: 4,
       zIndex: 2,
       className: "bego-map-tiles bego-map-label-tiles"
     }
@@ -205,11 +215,12 @@ export function createMap(container) {
 
   };
 
-  window.addEventListener("resize", invalidate, { passive: true });
-  window.visualViewport?.addEventListener("resize", invalidate, { passive: true });
-  document.addEventListener("visibilitychange", () => {
+  addManagedListener(window, "resize", invalidate, { passive: true });
+  addManagedListener(window.visualViewport, "resize", invalidate, { passive: true });
+  const onVisible = () => {
     if (!document.hidden) setTimeout(invalidate, 150);
-  });
+  };
+  addManagedListener(document, "visibilitychange", onVisible);
 
   return mapInstance;
 }
@@ -227,11 +238,14 @@ function bindCompassButton(map) {
     if (icon) icon.style.transform = `rotate(${-bearing}deg)`;
   };
 
-  btn.addEventListener("click", () => {
+  const resetBearing = () => {
     map.setBearing?.(0);
     render();
-  });
+  };
+
+  addManagedListener(btn, "click", resetBearing);
 
   map.on?.("rotate", render);
+  mapListenerCleanup.push(() => map.off?.("rotate", render));
   render();
 }

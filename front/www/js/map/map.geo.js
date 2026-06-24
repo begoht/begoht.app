@@ -23,8 +23,12 @@ let marcadorPasajero = null;
 let ubicacionButtonBound = false;
 let recenterButtonBound = false;
 let ultimaUbicacionGps = null;
+let ultimoOrigenRender = null;
+let ultimoOrigenLabel = "";
+let ultimoOrigenPopup = "";
 const GPS_ORIGEN_MAX_AGE_MS = 15000;
 const GPS_ORIGEN_RUTA_LOCK_METERS = 80;
+const GPS_ORIGEN_MIN_RENDER_METERS = 8;
 const GPS_MAX_ACCURACY_METERS = 90;
 
 function escapeHtml(value = "") {
@@ -117,6 +121,24 @@ function setInputInicio(direccion, { placeholder = false } = {}) {
 
 function renderPasajeroMarker(map, lat, lng, direccion, { animate = false } = {}) {
   const label = escapeHtml(streetLine(direccion, "Origen"));
+  const popup = `
+    <div style="font-family:system-ui;">
+      <b>Tu ubicacion</b><br/>
+      <span style="color:#94a3b8;">
+        ${escapeHtml(direccion)}
+      </span>
+    </div>
+  `;
+
+  if (
+    marcadorPasajero &&
+    ultimoOrigenRender &&
+    distanciaMetros(ultimoOrigenRender, { lat, lng }) < 1 &&
+    ultimoOrigenLabel === label &&
+    ultimoOrigenPopup === popup
+  ) {
+    return;
+  }
 
   if (!marcadorPasajero) {
     marcadorPasajero = L.marker([lat, lng], {
@@ -128,22 +150,27 @@ function renderPasajeroMarker(map, lat, lng, direccion, { animate = false } = {}
     marcadorPasajero.setLatLng([lat, lng]);
   }
 
-  marcadorPasajero.bindPopup(`
-    <div style="font-family:system-ui;">
-      <b>Tu ubicacion</b><br/>
-      <span style="color:#94a3b8;">
-        ${escapeHtml(direccion)}
-      </span>
-    </div>
-  `);
+  if (ultimoOrigenPopup !== popup) {
+    marcadorPasajero.bindPopup(popup);
+    ultimoOrigenPopup = popup;
+  }
 
-  marcadorPasajero.bindTooltip(label, {
-    permanent: true,
-    direction: "right",
-    offset: [16, 0],
-    opacity: 1,
-    className: "bego-route-label bego-route-label-origin"
-  });
+  if (ultimoOrigenLabel !== label || !marcadorPasajero.getTooltip?.()) {
+    if (marcadorPasajero.getTooltip?.()) {
+      marcadorPasajero.setTooltipContent(label);
+    } else {
+      marcadorPasajero.bindTooltip(label, {
+        permanent: true,
+        direction: "right",
+        offset: [16, 0],
+        opacity: 1,
+        className: "bego-route-label bego-route-label-origin"
+      });
+    }
+    ultimoOrigenLabel = label;
+  }
+
+  ultimoOrigenRender = { lat, lng };
 }
 
 function limpiarOrigenSiLibre() {
@@ -195,6 +222,16 @@ function aplicarUbicacionGps(map, lat, lng, direccion, { center = false, animate
   const tieneDestino = coordsValidas(viajeState.destino);
   const origenActual = viajeState.origen;
   const distanciaDesdeOrigen = distanciaMetros(origenActual, origenGps);
+
+  if (
+    !center &&
+    !tieneDestino &&
+    coordsValidas(origenActual) &&
+    distanciaDesdeOrigen < GPS_ORIGEN_MIN_RENDER_METERS
+  ) {
+    setInputInicio(origenActual.direccion || direccion);
+    return;
+  }
 
   if (
     !center &&

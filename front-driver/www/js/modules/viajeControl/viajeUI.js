@@ -1,4 +1,4 @@
-import { borrarRuta } from "../map.js?v=20260620-map-rotation";
+import { borrarRuta } from "../map.js?v=20260624-map-light";
 import {
     getEstadoViaje,
     getViajeEnCursoId,
