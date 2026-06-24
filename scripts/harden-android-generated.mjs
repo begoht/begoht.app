@@ -182,9 +182,13 @@ driverVariables = setGradleNumber(driverVariables, "targetSdkVersion", 36);
 changed = writeIfChanged(files.driverVariables, driverVariables) || changed;
 
 let passengerVariables = read(files.passengerVariables);
-passengerVariables = setGradleNumber(passengerVariables, "minSdkVersion", 24);
+passengerVariables = setGradleNumber(passengerVariables, "minSdkVersion", 23);
 passengerVariables = setGradleNumber(passengerVariables, "compileSdkVersion", 36);
 passengerVariables = setGradleNumber(passengerVariables, "targetSdkVersion", 36);
+passengerVariables = passengerVariables.replace(
+  /cordovaAndroidVersion\s*=\s*'[^']+'/,
+  "cordovaAndroidVersion = '10.1.1'"
+);
 changed = writeIfChanged(files.passengerVariables, passengerVariables) || changed;
 
 let driverBuild = read(files.driverBuild);
@@ -194,8 +198,8 @@ driverBuild = hardenSigningConfig(driverBuild);
 changed = writeIfChanged(files.driverBuild, driverBuild) || changed;
 
 let passengerBuild = read(files.passengerBuild);
-passengerBuild = setGradleNumber(passengerBuild, "versionCode", 13);
-passengerBuild = setGradleString(passengerBuild, "versionName", "1.0.12");
+passengerBuild = setGradleNumber(passengerBuild, "versionCode", 14);
+passengerBuild = setGradleString(passengerBuild, "versionName", "1.0.13");
 passengerBuild = hardenSigningConfig(passengerBuild);
 changed = writeIfChanged(files.passengerBuild, passengerBuild) || changed;
 
