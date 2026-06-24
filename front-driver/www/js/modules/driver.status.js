@@ -77,7 +77,7 @@ export function setDriverAvailability(nextOnline, { silent = false } = {}) {
 
   if (!online) {
     Promise.all([
-      import("./oferta/oferta.render.js?v=20260624-matching-offline"),
+      import("./oferta/oferta.render.js?v=20260624-matching-heartbeat"),
       import("./oferta/oferta.queue.js")
     ])
       .then(([{ limpiarOferta }, { limpiarColaOfertas }]) => {
@@ -125,6 +125,11 @@ function bindSocketEvents() {
   socketRef.on("disconnect", () => {
     renderAvailability();
     notifySubscribers();
+  });
+
+  socketRef.on("driver:availability-sync", (payload = {}) => {
+    const nextOnline = payload.disponible === true || payload.disponible === "true";
+    setDriverAvailability(nextOnline, { silent: true });
   });
 
   socketRef.on("driver:commission-blocked", (status = {}) => {

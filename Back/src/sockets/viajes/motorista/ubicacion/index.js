@@ -5,6 +5,7 @@ const broadcast = require("./broadcast");
 const reservado = require("./reservado");
 const onDisconnect = require("./disconnect");
 const { redis } = require("../../../../config/redis");
+const User = require("../../../../models/User");
 
 const LOCATION_MIN_INTERVAL_MS = Math.max(
   0,
@@ -20,8 +21,20 @@ module.exports = (io, socket, motoristaId) => {
     try {
       if (payload.disponible === false || payload.disponible === "false") {
         await storeRedis.markUnavailable(socket, motoristaId);
+        await User.updateOne(
+          { _id: motoristaId },
+          { $set: { disponible: false, online: false } }
+        );
       } else if (payload.disponible === true || payload.disponible === "true") {
         await redis.del(storeRedis.getManualAvailabilityKey(motoristaId));
+        await User.updateOne(
+          { _id: motoristaId },
+          { $set: { disponible: true } }
+        );
+        socket.emit("driver:location-refresh-required", {
+          reason: "availability",
+          timestamp: Date.now(),
+        });
       }
     } catch (error) {
       console.error("❌ Error actualizando disponibilidad:", error);

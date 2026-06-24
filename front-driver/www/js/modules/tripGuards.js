@@ -1,4 +1,4 @@
-import { getUltimaPosicion, refreshDriverLocation } from "./gps.js?v=20260624-matching-offline";
+import { getUltimaPosicion, refreshDriverLocation } from "./gps.js?v=20260624-matching-heartbeat";
 import {
   ARRIVAL_MAX_DISTANCE_METERS,
   FINISH_MAX_DISTANCE_METERS,

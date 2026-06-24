@@ -26,6 +26,10 @@ module.exports = (io, socket) => {
 
     socket.join(`motorista:${motoristaId}`);
     socket.join(`motorista:${motoristaId}`); 
+    socket.emit("driver:location-refresh-required", {
+        reason: "connect",
+        timestamp: Date.now(),
+    });
 
     (async () => {
         try {

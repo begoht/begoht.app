@@ -303,7 +303,17 @@ router.patch("/driver-location", authHttp, async (req, res) => {
       emit() {}
     };
 
+    if (payload.disponible) {
+      await redis.del(storeDriverLocation.getManualAvailabilityKey(req.user.id));
+    }
+
     await storeDriverLocation(socketAdapter, req.user.id, payload);
+    await User.updateOne(
+      { _id: req.user.id },
+      payload.disponible
+        ? { $set: { disponible: true } }
+        : { $set: { disponible: false, online: false } }
+    );
     await Promise.all([
       trackDriverLocation(global.io, req.user.id, payload),
       trackReservedTrip(global.io, req.user.id, payload)

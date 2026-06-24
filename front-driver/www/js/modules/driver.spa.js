@@ -1,4 +1,4 @@
-import { getDriverAvailability, onDriverAvailabilityChange } from "./driver.status.js?v=20260624-matching-offline";
+import { getDriverAvailability, onDriverAvailabilityChange } from "./driver.status.js?v=20260624-matching-heartbeat";
 import { initDriverSupportChat } from "./support/supportChat.js?v=20260604-live-support";
 import {
   clearDriverSession,

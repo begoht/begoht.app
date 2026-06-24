@@ -6,6 +6,11 @@ const { redis } = require("../config/redis");
 const {
   invalidateDriverVerification,
 } = require("../services/driverVerification.service");
+const {
+  applyDriverAvailabilityState,
+  getManualAvailabilityKey,
+  isFreshDriverData,
+} = require("../services/driverAvailabilityState.service");
 
 const router = express.Router();
 
@@ -13,9 +18,10 @@ router.get("/usuarios", authAdmin, async (req, res) => {
   try {
     const users = await User.find()
       .select("-password -pinHash -refreshToken")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
 
-    res.json(users);
+    res.json(await decorateRealtimeDriverStatus(users));
   } catch (err) {
     res.status(500).json({ error: "Error obteniendo usuarios" });
   }
@@ -152,15 +158,28 @@ router.put("/usuarios/:id/verificacion", authAdmin, async (req, res) => {
 router.put("/usuarios/:id/disponibilidad", authAdmin, async (req, res) => {
   try {
     const { disponible } = req.body;
+    const nextDisponible = disponible === true || disponible === "true";
     const before = await User.findById(req.params.id)
-      .select("disponible telefono nombre apellido rol")
+      .select("disponible online telefono nombre apellido rol")
       .lean();
+
+    if (!before) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
 
     const user = await User.findByIdAndUpdate(
       req.params.id,
-      { disponible: !!disponible },
+      nextDisponible
+        ? { disponible: true }
+        : { disponible: false, online: false },
       { new: true }
     ).select("-password -pinHash -refreshToken");
+
+    if (before.rol === "motorista") {
+      await applyDriverAvailabilityState(req.params.id, nextDisponible, {
+        source: "admin",
+      });
+    }
 
     await logAdminAction(req, {
       action: "user.availability.update",
@@ -197,5 +216,39 @@ router.delete("/usuarios/:id", authAdmin, async (req, res) => {
     res.status(400).json({ error: "Error eliminando usuario" });
   }
 });
+
+async function decorateRealtimeDriverStatus(users) {
+  const result = users.map((user) => ({ ...user }));
+  const drivers = result.filter((user) => user.rol === "motorista");
+
+  if (!drivers.length) return result;
+
+  const pipe = redis.multi();
+  drivers.forEach((driver) => {
+    const id = driver._id.toString();
+    pipe.hgetall(`motorista:data:${id}`);
+    pipe.exists(`motorista:online:${id}`);
+    pipe.get(getManualAvailabilityKey(id));
+  });
+
+  const replies = await pipe.exec();
+  let idx = 0;
+
+  drivers.forEach((driver) => {
+    const data = replies[idx++]?.[1] || {};
+    const onlineKey = Number(replies[idx++]?.[1]) === 1;
+    const manualOffline = replies[idx++]?.[1] === "offline";
+    const hasRedisData = Object.keys(data).length > 0;
+
+    if (!hasRedisData && !manualOffline && !onlineKey) return;
+
+    const redisDisponible = data.disponible === "true";
+    const fresh = isFreshDriverData(data);
+    driver.disponible = redisDisponible && !manualOffline;
+    driver.online = onlineKey && data.online !== "false" && fresh;
+  });
+
+  return result;
+}
 
 module.exports = router;

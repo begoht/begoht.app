@@ -5,12 +5,15 @@ const {
   getDriverVerificationStatus,
 } = require("../../../../services/driverVerification.service");
 const {
+  DRIVER_GPS_TIMEOUT_MS,
+  DRIVER_ONLINE_TTL_SECONDS,
+  getManualAvailabilityKey,
+} = require("../../../../services/driverAvailabilityState.service");
+const {
   getOfferSetKey,
   releaseOfferLock,
 } = require("../../../../services/matching_services/offerLock.service");
 
-const TTL_ONLINE_SECONDS = 60;
-const GPS_TIMEOUT_MS = 120000;
 const MANUAL_AVAILABILITY_TTL_SECONDS = 60 * 60 * 6;
 
 async function storeRedis(socket, motoristaId, payload) {
@@ -75,7 +78,7 @@ async function storeRedis(socket, motoristaId, payload) {
     if (dataPrev?.lastUpdate) {
       const diff = now - parseInt(dataPrev.lastUpdate, 10);
 
-      if (diff > GPS_TIMEOUT_MS * 2) {
+      if (diff > DRIVER_GPS_TIMEOUT_MS * 2) {
         console.log(`Limpiando GEO viejo de ${motoristaId}`);
         await redis.zrem("motoristas:ubicacion", motoristaId);
         if (dataPrev.city) {
@@ -138,7 +141,7 @@ async function storeRedis(socket, motoristaId, payload) {
         `motorista:online:${motoristaId}`,
         "1",
         "EX",
-        TTL_ONLINE_SECONDS
+        DRIVER_ONLINE_TTL_SECONDS
       );
     } else {
       pipeline.del(`motorista:online:${motoristaId}`);
@@ -201,10 +204,6 @@ async function clearPendingOffer(motoristaId, ofertaPendienteKey) {
     .exec();
 
   await releaseOfferLock({ viajeId, motoristaId });
-}
-
-function getManualAvailabilityKey(motoristaId) {
-  return `motorista:availability:manual:${motoristaId}`;
 }
 
 async function disponibilidadPorComision(motoristaId) {

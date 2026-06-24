@@ -11,8 +11,9 @@ const {
 } = require("../offerLock.service");
 const { getDriverEarningsForViaje } = require("../../driverEarnings.service");
 const { prepararIdaVueltaPayload } = require("../../idaVuelta.service");
-
-const GPS_TIMEOUT_MS = 120000;
+const {
+    DRIVER_GPS_TIMEOUT_MS,
+} = require("../../driverAvailabilityState.service");
 
 async function enviarWave({
     lista,
@@ -56,7 +57,7 @@ async function enviarWave({
         let ultimaAct = parseInt(mData.lastUpdate || 0);
 
         const diff = Date.now() - ultimaAct;
-        if (!ultimaAct || isNaN(ultimaAct) || diff > GPS_TIMEOUT_MS) continue;
+        if (!ultimaAct || isNaN(ultimaAct) || diff > DRIVER_GPS_TIMEOUT_MS) continue;
 
         
         if (!online) continue;
@@ -242,7 +243,7 @@ async function estadoMotoristaParaOferta(motoristaId) {
     }
 
     const ultimaAct = parseInt(data.lastUpdate || 0);
-    if (!ultimaAct || Number.isNaN(ultimaAct) || Date.now() - ultimaAct > GPS_TIMEOUT_MS) {
+    if (!ultimaAct || Number.isNaN(ultimaAct) || Date.now() - ultimaAct > DRIVER_GPS_TIMEOUT_MS) {
         return { ok: false, reason: "gps_viejo" };
     }
 

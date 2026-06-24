@@ -1,13 +1,13 @@
-import { initSocket } from "./socket.js?v=20260624-matching-offline";
+import { initSocket } from "./socket.js?v=20260624-matching-heartbeat";
 import { initMap } from "./map.js?v=20260624-map-light";
-import { initGPS } from "./gps.js?v=20260624-matching-offline";
-import { initOferta } from "./oferta/oferta.index.js?v=20260624-matching-offline";
+import { initGPS } from "./gps.js?v=20260624-matching-heartbeat";
+import { initOferta } from "./oferta/oferta.index.js?v=20260624-matching-heartbeat";
 import { initViajeInicio } from "./viajeInicio/viajeInicio.js?v=20260623-roundtrip-v2";
 import { initViajeFinalizar } from "./viajeFinalizar.js?v=20260624-trip-ready";
 import { initViajeControl } from "./viajeControl/viajeControl.js?v=20260623-roundtrip-v2";
 import { initIdaVueltaDriver } from "./idaVuelta/idaVuelta.driver.js?v=20260623-roundtrip-v2";
 import { initDriverChat } from "./chat/viajeChat.js?v=20260608-trip-panel-compact";
-import { initDriverStatus } from "./driver.status.js?v=20260624-matching-offline";
+import { initDriverStatus } from "./driver.status.js?v=20260624-matching-heartbeat";
 import { initDriverSpa } from "./driver.spa.js?v=20260619-account-security";
 import { iniciarSonidoOfertaLoop } from "./oferta/oferta.ui.js?v=20260608-offer-net-cash";
 import { initLaunchCountdown } from "./launch-countdown.js?v=20260603-launch-gate";

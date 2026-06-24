@@ -4,6 +4,9 @@ const motoristaHandlers = require("./motorista/motorista.handlers");
 const chatHandlers = require("./chat.socket");
 const Viaje = require("../../models/Viaje");
 const { redis } = require("../../config/redis");
+const {
+  getManualAvailabilityKey,
+} = require("../../services/driverAvailabilityState.service");
 
 // 🔥 Estados coherentes con Redis
 const ESTADOS_MATCHING = ["buscando", "ofertando"];
@@ -73,15 +76,27 @@ module.exports = (io, socket) => {
 
         try {
           const data = await redis.hgetall(`motorista:data:${mId}`);
-          await redis.multi()
-            .hset(`motorista:data:${mId}`, {
-              disponible: "false",
-              online: "false"
-            })
-            .zrem("motoristas:ubicacion", mId)
-            .zrem(data?.city ? `motoristas:ubicacion:${data.city}` : "motoristas:ubicacion:unknown", mId)
-            .del(`motorista:online:${mId}`)
-            .exec();
+          const [manualOffline, onlineKey] = await Promise.all([
+            redis.get(getManualAvailabilityKey(mId)),
+            redis.exists(`motorista:online:${mId}`),
+          ]);
+
+          if (manualOffline === "offline" || !onlineKey) {
+            await redis.multi()
+              .hset(`motorista:data:${mId}`, {
+                disponible: "false",
+                online: "false"
+              })
+              .zrem("motoristas:ubicacion", mId)
+              .zrem(data?.city ? `motoristas:ubicacion:${data.city}` : "motoristas:ubicacion:unknown", mId)
+              .del(`motorista:online:${mId}`)
+              .exec();
+          } else {
+            await redis.hset(`motorista:data:${mId}`, {
+              estadoInterno: "background",
+              lastSocketDisconnect: Date.now().toString(),
+            });
+          }
         } catch {}
 
         motoristas.delete(socket.id);

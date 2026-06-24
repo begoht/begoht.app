@@ -4,7 +4,7 @@ import {
   consumirRutaDesde,
   seguirMotoristaEnMapa
 } from "./map.js?v=20260624-map-light";
-import { isDriverOnline, updateDriverPosition } from "./driver.status.js?v=20260624-matching-offline";
+import { isDriverOnline, updateDriverPosition } from "./driver.status.js?v=20260624-matching-heartbeat";
 import { crearMotoIcon, motoIcon } from "./map.icons.js?v=20260620-driver-navigation";
 import {
   setMotorcycleMarkerPose
@@ -26,6 +26,8 @@ let capacitorLifecycleBound = false;
 let pendingPosition = null;
 let ultimaEmisionHttpTime = 0;
 let httpFallbackInFlight = false;
+let heartbeatTimer = null;
+let heartbeatInFlight = false;
 
 const FRECUENCIA_MS = 4000;
 const HEARTBEAT_MS = 25000;
@@ -43,6 +45,10 @@ export async function initGPS(socket) {
       flushPendingPosition({ source: "reconnect" });
       refreshDriverLocation({ force: true });
     });
+    socketRef.on("driver:location-refresh-required", () => {
+      flushPendingPosition({ source: "server-refresh" });
+      refreshDriverLocation({ force: true });
+    });
   }
 
   const accepted = await ensureLocationDisclosure();
@@ -56,6 +62,8 @@ export async function initGPS(socket) {
   if (!startBackgroundGeolocation()) {
     startWebGeolocation();
   }
+
+  startLocationHeartbeat();
 }
 
 export function getUltimaPosicion() {
@@ -168,6 +176,21 @@ function startWebGeolocation() {
       timeout: 10000
     }
   );
+}
+
+function startLocationHeartbeat() {
+  if (heartbeatTimer) return;
+
+  heartbeatTimer = window.setInterval(async () => {
+    if (!isDriverOnline() || heartbeatInFlight) return;
+    heartbeatInFlight = true;
+
+    try {
+      await refreshDriverLocation({ force: true });
+    } finally {
+      heartbeatInFlight = false;
+    }
+  }, HEARTBEAT_MS);
 }
 
 function bindLifecycleRefresh() {

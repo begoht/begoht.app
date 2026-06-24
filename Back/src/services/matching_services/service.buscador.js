@@ -4,6 +4,9 @@ const {
   evaluarElegibilidadReserva
 } = require("./reservaEligibility.service");
 const { filterDriversByCommissionLimit } = require("../driverCommission.service");
+const {
+  DRIVER_GPS_TIMEOUT_MS,
+} = require("../driverAvailabilityState.service");
 
 const GEO_KEY = "motoristas:ubicacion";
 const DEBUG = true;
@@ -12,7 +15,6 @@ const B2B_MEDIO_KM = 2.5;
 const DISTANCIA_MAX_KM = 5;
 const EXTRA_BUFFER_KM = 1.5;
 const MAX_POOL = 5;
-const GPS_TIMEOUT_MS = 120000;
 
 const safeNumber = (val, def = 999) => {
   const n = parseFloat(val);
@@ -113,7 +115,7 @@ async function obtenerCandidatos(viaje, radioKm = DISTANCIA_MAX_KM) {
       const ultimaAct = parseInt(data.lastUpdate || 0);
       const ahora = Date.now();
 
-      if (ultimaAct !== 0 && ahora - ultimaAct > GPS_TIMEOUT_MS) {
+      if (ultimaAct !== 0 && ahora - ultimaAct > DRIVER_GPS_TIMEOUT_MS) {
         if (DEBUG) {
           console.log(`Motorista ${id} descartado por GPS viejo`);
         }
