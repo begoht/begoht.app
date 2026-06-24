@@ -6,6 +6,7 @@ import {
 
 import { limpiarViajeMain } from "./viajeControl/viajeUI.js?v=20260623-roundtrip-v2";
 import { borrarRuta } from "./map.js?v=20260620-map-rotation";
+import { formatGourdes, getPaymentLabel, isCashMethod } from "./oferta/oferta.money.js?v=20260608-offer-net-cash";
 import {
     FINISH_MAX_DISTANCE_METERS,
     validarCercaniaViaje
@@ -13,6 +14,7 @@ import {
 
 const viajesFinalizadosProcesados = new Set();
 const finalizacionesPendientes = new Map();
+const MODAL_COBRO_RETORNO_ID = "modalCobroRetornoAnulado";
 let socketActual = null;
 let clickFinalizarInicializado = false;
 
@@ -46,6 +48,89 @@ function limpiarTimerFinalizacion(viajeId) {
 
 function obtenerViajeActual(viajeId) {
   return viajesActivos.get(viajeId) || viajesActivos.get(String(viajeId)) || {};
+}
+
+function esRetornoCancelado(data = {}) {
+    const idaVuelta = data?.viaje?.idaVuelta || data?.idaVuelta || {};
+    return idaVuelta?.estado === "retorno_cancelado";
+}
+
+function obtenerTotalFinal(data = {}) {
+    const viaje = data.viaje || {};
+    const idaVuelta = viaje.idaVuelta || data.idaVuelta || {};
+    return data.total ?? viaje.precio ?? idaVuelta.precioIda ?? idaVuelta.precioTotal ?? 0;
+}
+
+function mostrarModalCobroRetornoCancelado(data = {}) {
+    if (!esRetornoCancelado(data) || !document.body) return;
+
+    document.getElementById(MODAL_COBRO_RETORNO_ID)?.remove();
+
+    const viaje = data.viaje || {};
+    const metodoPago = viaje.metodoPago || data.metodoPago || "efectivo";
+    const total = obtenerTotalFinal(data);
+    const pagoEnEfectivo = isCashMethod(metodoPago);
+    const modal = document.createElement("div");
+
+    modal.id = MODAL_COBRO_RETORNO_ID;
+    modal.setAttribute("role", "dialog");
+    modal.setAttribute("aria-modal", "true");
+    modal.innerHTML = `
+        <div style="
+            position:fixed;
+            inset:0;
+            z-index:99999;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:18px;
+            background:rgba(15,23,42,.68);
+            backdrop-filter:blur(10px);
+        ">
+            <div style="
+                width:min(92vw,390px);
+                border-radius:22px;
+                background:#ffffff;
+                color:#0f172a;
+                box-shadow:0 24px 70px rgba(2,6,23,.38);
+                padding:24px;
+                font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+                text-align:center;
+            ">
+                <div style="font-size:13px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#64748b;">
+                    Vuelta anulada
+                </div>
+                <div style="margin-top:10px;font-size:21px;font-weight:950;line-height:1.18;">
+                    ${pagoEnEfectivo ? "Cobrar solo la ida" : "Precio final de la ida"}
+                </div>
+                <div style="margin-top:18px;font-size:42px;font-weight:1000;line-height:1;color:#0f766e;">
+                    ${formatGourdes(total)}
+                </div>
+                <div style="margin-top:14px;font-size:14px;font-weight:800;color:#475569;">
+                    ${pagoEnEfectivo ? "Pago en efectivo" : getPaymentLabel(metodoPago)}
+                </div>
+                <button id="btnCerrarCobroRetornoAnulado" type="button" style="
+                    width:100%;
+                    margin-top:22px;
+                    border:0;
+                    border-radius:16px;
+                    background:#0f172a;
+                    color:white;
+                    font-weight:950;
+                    font-size:16px;
+                    padding:15px 18px;
+                    cursor:pointer;
+                ">
+                    Entendido
+                </button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+    document.getElementById("btnCerrarCobroRetornoAnulado")?.addEventListener("click", () => {
+        modal.remove();
+    });
 }
 
 export function initViajeFinalizar(socket) {
@@ -175,6 +260,8 @@ function onViajeFinalizado(data = {}) {
 
     viajesFinalizadosProcesados.add(idFinalizado);
     console.log("Confirmacion de fin de viaje recibida:", idFinalizado);
+
+    mostrarModalCobroRetornoCancelado(data);
 
     if (typeof Toastify !== "undefined") {
         const esEnvio = data?.viaje?.tipo === "envio";

@@ -1,7 +1,7 @@
 import { getSocket } from "./socket.js?v=20260606-session-refresh";
 import { viajeState } from "../viaje/viaje.state.js";
 
-import { handlePrecio } from "./handlers/precio.handler.js?v=20260624-cordoba-gps";
+import { handlePrecio } from "./handlers/precio.handler.js?v=20260624-trip-ready";
 import { handleAsignado } from "./handlers/asignado.handler.js?v=20260624-cordoba-gps";
 import { handleTrack } from "./handlers/track.handler.js?v=20260624-cordoba-gps";
 import { handleLlego } from "./handlers/llego.handler.js?v=20260620-map-rotation";

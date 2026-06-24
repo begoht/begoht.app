@@ -1,6 +1,6 @@
 import { viajeState } from "../../viaje/viaje.state.js";
 import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260623-roundtrip-v2";
-import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260624-cordoba-gps";
+import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260624-trip-ready";
 import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260623-roundtrip-v2";
 
 export function handleIdaVueltaPendiente(data = {}, socket = null) {

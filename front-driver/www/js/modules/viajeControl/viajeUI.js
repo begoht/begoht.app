@@ -176,6 +176,8 @@ function actualizarBotonCobro(viaje, estado) {
     if (!mostrar) {
         btnCobrar.classList.add("hidden");
         btnCobrar.style.display = "none";
+        btnCobrar.disabled = true;
+        btnCobrar.setAttribute("aria-disabled", "true");
         btnCobrar.removeAttribute("data-monto");
         montoCobrar.textContent = "0 G";
         return;
@@ -184,6 +186,8 @@ function actualizarBotonCobro(viaje, estado) {
     const monto = formatGourdes(money.totalCobrar);
     montoCobrar.textContent = monto;
     btnCobrar.dataset.monto = monto;
+    btnCobrar.disabled = false;
+    btnCobrar.removeAttribute("aria-disabled");
     btnCobrar.classList.remove("hidden");
     btnCobrar.style.display = "flex";
 

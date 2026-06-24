@@ -4,7 +4,7 @@ import { runCleanup, setCleanup } from "./router.cleanup.js";
 import { afterRender, pushURL, actualizarLinksActivos } from "./router.utils.js";
 import { runPageInit } from "../app/app.lifecycle.js?v=20260624-cordoba-gps";
 import { AppState } from "../state.js";
-import { stopGeo } from "../../map/map.geo.js?v=20260624-cordoba-gps";
+import { stopGeo } from "../../map/map.geo.js?v=20260624-trip-ready";
 
 let navigationId = 0;
 let routerReady = false;

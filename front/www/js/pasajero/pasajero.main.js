@@ -1,5 +1,5 @@
-import { initGeo } from "../map/map.geo.js?v=20260624-cordoba-gps";
-import { initSeleccionDestino } from "../map/map.destino.js?v=20260624-cordoba-gps";
+import { initGeo } from "../map/map.geo.js?v=20260624-trip-ready";
+import { initSeleccionDestino } from "../map/map.destino.js?v=20260624-trip-ready";
 import { actualizarBotonViaje } from "../pasajero/pasajero.ui.js?v=20260624-cordoba-gps";
 import { initPaymentMethodSettings, initToggleMenuDriver, seleccionarPago } from "./pasajero.ui.js?v=20260624-cordoba-gps";
 import { getSocket } from "../socket/socket.js?v=20260606-session-refresh";

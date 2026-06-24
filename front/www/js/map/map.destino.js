@@ -12,7 +12,7 @@ import { reverseGeocode } from "./services/map.reverse.js?v=20260624-cordoba-gps
 
 import { getMap } from "./map.singleton.js?v=20260624-cordoba-gps";
 import { cityConfig, coordsInCity } from "./config/index.js?v=20260624-cordoba-gps";
-import { asegurarOrigenGpsReal } from "./map.geo.js?v=20260624-cordoba-gps";
+import { asegurarOrigenGpsReal } from "./map.geo.js?v=20260624-trip-ready";
 
 import {
   initAutocomplete,

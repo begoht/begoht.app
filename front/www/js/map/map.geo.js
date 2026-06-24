@@ -24,6 +24,8 @@ let ubicacionButtonBound = false;
 let recenterButtonBound = false;
 let ultimaUbicacionGps = null;
 const GPS_ORIGEN_MAX_AGE_MS = 15000;
+const GPS_ORIGEN_RUTA_LOCK_METERS = 80;
+const GPS_MAX_ACCURACY_METERS = 90;
 
 function escapeHtml(value = "") {
   const chars = {
@@ -64,6 +66,28 @@ function streetLine(value, fallback = "Origen") {
 
 function viajeProtegido() {
   return ["buscando", "asignado", "reservado", "llego", "en_curso"].includes(viajeState.estado);
+}
+
+function coordsValidas(punto) {
+  return Number.isFinite(Number(punto?.lat)) && Number.isFinite(Number(punto?.lng));
+}
+
+function distanciaMetros(a, b) {
+  if (!coordsValidas(a) || !coordsValidas(b)) return Infinity;
+
+  const radioTierra = 6371000;
+  const toRad = (value) => value * Math.PI / 180;
+  const dLat = toRad(Number(b.lat) - Number(a.lat));
+  const dLng = toRad(Number(b.lng) - Number(a.lng));
+  const lat1 = toRad(Number(a.lat));
+  const lat2 = toRad(Number(b.lat));
+  const h =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1) *
+      Math.cos(lat2) *
+      Math.sin(dLng / 2) ** 2;
+
+  return 2 * radioTierra * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
 }
 
 function getCiudadCentro() {
@@ -156,6 +180,38 @@ function aplicarUbicacionGps(map, lat, lng, direccion, { center = false, animate
 
   ultimaUbicacionGps = origenGps;
 
+  if (viajeProtegido() && coordsValidas(viajeState.origen)) {
+    const origenFijo = viajeState.origen;
+    setInputInicio(origenFijo.direccion || direccion);
+    renderPasajeroMarker(
+      map,
+      Number(origenFijo.lat),
+      Number(origenFijo.lng),
+      origenFijo.direccion || direccion
+    );
+    return;
+  }
+
+  const tieneDestino = coordsValidas(viajeState.destino);
+  const origenActual = viajeState.origen;
+  const distanciaDesdeOrigen = distanciaMetros(origenActual, origenGps);
+
+  if (
+    !center &&
+    tieneDestino &&
+    coordsValidas(origenActual) &&
+    distanciaDesdeOrigen < GPS_ORIGEN_RUTA_LOCK_METERS
+  ) {
+    setInputInicio(origenActual.direccion || direccion);
+    renderPasajeroMarker(
+      map,
+      Number(origenActual.lat),
+      Number(origenActual.lng),
+      origenActual.direccion || direccion
+    );
+    return;
+  }
+
   if (!viajeProtegido()) {
     viajeState.origen = origenGps;
   }
@@ -166,6 +222,12 @@ function aplicarUbicacionGps(map, lat, lng, direccion, { center = false, animate
 
   setInputInicio(direccion);
   renderPasajeroMarker(map, lat, lng, direccion, { animate });
+
+  if (!center && tieneDestino && distanciaDesdeOrigen >= GPS_ORIGEN_RUTA_LOCK_METERS) {
+    import("./map.ruta.js?v=20260624-trip-ready")
+      .then(({ dibujarRuta }) => dibujarRuta(origenGps, viajeState.destino, true))
+      .catch((err) => console.warn("No se pudo reajustar la ruta al GPS:", err));
+  }
 }
 
 function centrarMapaEn(map, punto, zoom = 16) {
@@ -231,9 +293,14 @@ async function tomarUbicacionActual(map, { center = false, fromButton = false, t
 
   const lat = Number(pos.coords.latitude);
   const lng = Number(pos.coords.longitude);
+  const accuracy = Number(pos.coords.accuracy);
 
   if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
     throw new Error("GPS invalido");
+  }
+
+  if (Number.isFinite(accuracy) && accuracy > GPS_MAX_ACCURACY_METERS && coordsValidas(viajeState.origen)) {
+    return true;
   }
 
   if (switchCityFromGpsIfNeeded(lat, lng)) {
@@ -380,8 +447,10 @@ export async function initGeo(map) {
     (pos) => {
       const lat = Number(pos.coords.latitude);
       const lng = Number(pos.coords.longitude);
+      const accuracy = Number(pos.coords.accuracy);
 
       if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+      if (Number.isFinite(accuracy) && accuracy > GPS_MAX_ACCURACY_METERS && coordsValidas(viajeState.origen)) return;
 
       if (switchCityFromGpsIfNeeded(lat, lng)) return;
 
