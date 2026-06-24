@@ -19,6 +19,7 @@ function persistCityPreference(cityId) {
   if (!cityId || !targetCity) return false;
 
   localStorage.setItem("BEGO_CITY", cityId);
+  localStorage.setItem("CITY", cityId);
 
   if (targetCity.test) {
     localStorage.setItem(TEST_CITY_FLAG, "1");

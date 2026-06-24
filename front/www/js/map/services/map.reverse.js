@@ -1,4 +1,4 @@
-import { cityConfig, coordsInCity } from "../config/index.js";
+import { cityConfig, coordsInCity } from "../config/index.js?v=20260624-cordoba-gps";
 
 const reverseCache = new Map();
 

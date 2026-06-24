@@ -1,4 +1,4 @@
-import { getMap } from "./map.singleton.js?v=20260620-map-rotation";
+import { getMap } from "./map.singleton.js?v=20260624-cordoba-gps";
 
 import {
   mismaPosicion,
@@ -8,7 +8,7 @@ import {
 import {
   fetchRutaSimple,
   fetchRutaReserva
-} from "./services/map.route.js";
+} from "./services/map.route.js?v=20260624-cordoba-gps";
 
 import {
   renderRuta,

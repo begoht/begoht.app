@@ -3,10 +3,10 @@ import { viajeState } from "./viaje.state.js";
 import { limpiarViajePasajero } from "../socket/viaje.limpieza.js";
 import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260623-roundtrip-v2";
 import { cerrarBuscandoMotorista } from "../pasajero/ui/overlays/buscandoMotorista.ui.js?v=20260608-search-modal";
-import { cityConfig } from "../map/config/index.js";
-import { reverseGeocode } from "../map/services/map.reverse.js?v=20260619-clear-map-address";
-import { getMap } from "../map/map.singleton.js?v=20260620-map-rotation";
-import { asegurarOrigenGpsReal } from "../map/map.geo.js?v=20260624-origin-gps";
+import { cityConfig } from "../map/config/index.js?v=20260624-cordoba-gps";
+import { reverseGeocode } from "../map/services/map.reverse.js?v=20260624-cordoba-gps";
+import { getMap } from "../map/map.singleton.js?v=20260624-cordoba-gps";
+import { asegurarOrigenGpsReal } from "../map/map.geo.js?v=20260624-cordoba-gps";
 
 let socket = null;
 let cotizacionTimer = null;

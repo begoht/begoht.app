@@ -1,6 +1,6 @@
 import { viajeState } from "../viaje/viaje.state.js";
-import { asignarDestino } from "./map.destino.js?v=20260624-origin-gps";
-import { coordsInCity } from "./config/index.js";
+import { asignarDestino } from "./map.destino.js?v=20260624-cordoba-gps";
+import { coordsInCity } from "./config/index.js?v=20260624-cordoba-gps";
 
 const MAX_DESTINOS = 3;
 const BASE_KEY = "BeGO_destinos_guardados";

@@ -1,5 +1,5 @@
 import { getServerUrl } from "../conexion.js";
-import { cityConfig } from "../map/config/index.js";
+import { cityConfig } from "../map/config/index.js?v=20260624-cordoba-gps";
 
 const FALLBACK_OFFERS = [
   {

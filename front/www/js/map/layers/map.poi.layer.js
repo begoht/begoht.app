@@ -1,7 +1,7 @@
 import { createPOIIcon } from "../map.icons.js?v=20260619-clear-map-address";
 
 
-import { cityConfig } from "../config/index.js";
+import { cityConfig } from "../config/index.js?v=20260624-cordoba-gps";
 
 import {
   layerReferencias

@@ -3,8 +3,8 @@ import { viajeState } from "../../viaje/viaje.state.js";
 import { mostrarModalPrecio, mostrarBuscandoMotorista } from "../../pasajero/pasajero.ui.js";
 import { guardarSesionViaje, limpiarSesionViaje } from "../pasajero.utils.js?v=20260623-roundtrip-v2";
 import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260623-roundtrip-v2";
-import { cityConfig } from "../../map/config/index.js";
-import { resolverCotizacionPendiente } from "../../viaje/viaje.actions.js?v=20260624-origin-gps";
+import { cityConfig } from "../../map/config/index.js?v=20260624-cordoba-gps";
+import { resolverCotizacionPendiente } from "../../viaje/viaje.actions.js?v=20260624-cordoba-gps";
 import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260607-finalized-guard";
 import {
   aplicarSeleccionIdaVuelta,

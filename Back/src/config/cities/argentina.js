@@ -10,10 +10,10 @@ const argentinaCities = {
     center: { lat: -31.4167, lng: -64.1833 },
     zoom: 13,
     bounds: {
-      south: -31.60,
-      west: -64.40,
-      north: -31.25,
-      east: -63.95
+      south: -31.75,
+      west: -64.65,
+      north: -31.05,
+      east: -63.70
     }
   }
 };

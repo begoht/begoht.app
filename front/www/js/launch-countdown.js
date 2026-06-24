@@ -1,5 +1,5 @@
 import { getServerUrl } from "./conexion.js";
-import { cityConfig, inferCityConfigFromCoords, persistDetectedCity } from "./map/config/index.js";
+import { cityConfig, inferCityConfigFromCoords, persistDetectedCity } from "./map/config/index.js?v=20260624-cordoba-gps";
 
 let gatePromise = null;
 let countdownTimer = null;

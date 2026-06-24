@@ -2,7 +2,7 @@ import {
   cityConfig,
   coordsInCity,
   getSearchViewbox
-} from "../config/index.js";
+} from "../config/index.js?v=20260624-cordoba-gps";
 
 let searchController = null;
 

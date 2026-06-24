@@ -1,5 +1,5 @@
 import { getServerUrl } from "../../conexion.js";
-import { cityConfig } from "../config/index.js";
+import { cityConfig } from "../config/index.js?v=20260624-cordoba-gps";
 
 import { fetchSeguro } from "../utils/map.request.js";
 

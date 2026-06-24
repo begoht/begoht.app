@@ -1,7 +1,7 @@
 import { pasajeroIcon } from "./map.icons.js?v=20260619-clear-map-address";
-import { ACTIVE_CITY, cityConfig, coordsInCity, inferCityConfigFromCoords, persistDetectedCity } from "./config/index.js";
+import { ACTIVE_CITY, cityConfig, coordsInCity, inferCityConfigFromCoords, persistDetectedCity } from "./config/index.js?v=20260624-cordoba-gps";
 import { viajeState } from "../viaje/viaje.state.js";
-import { reverseGeocode } from "./services/map.reverse.js?v=20260619-clear-map-address";
+import { reverseGeocode } from "./services/map.reverse.js?v=20260624-cordoba-gps";
 
 import {
   layerPasajero,
@@ -9,7 +9,7 @@ import {
   layerReferencias
 } from "./layers/map.layers.js";
 
-import { renderPOILayer } from "./layers/map.poi.layer.js?v=20260619-clear-map-address";
+import { renderPOILayer } from "./layers/map.poi.layer.js?v=20260624-cordoba-gps";
 
 import {
   getCurrentPosition,
@@ -192,20 +192,35 @@ function centrarMapaEn(map, punto, zoom = 16) {
 function switchCityFromGpsIfNeeded(lat, lng) {
   const detectedCity = inferCityConfigFromCoords({ lat, lng });
 
-  if (!detectedCity || detectedCity.id === ACTIVE_CITY || viajeProtegido()) {
+  if (!detectedCity || viajeProtegido()) {
     return false;
   }
 
   const reloadKey = `BEGO_CITY_RELOAD_${detectedCity.id}`;
-  if (sessionStorage.getItem(reloadKey) === "1") return false;
 
-  if (persistDetectedCity(detectedCity.id)) {
-    sessionStorage.setItem(reloadKey, "1");
-    window.location.reload();
-    return true;
+  if (detectedCity.id === ACTIVE_CITY) {
+    sessionStorage.removeItem(reloadKey);
+    return false;
   }
 
-  return false;
+  const reloads = Number(sessionStorage.getItem(reloadKey) || 0);
+  if (reloads >= 2) return false;
+
+  setInputInicio(`Cambiando a ${detectedCity.name}...`, { placeholder: true });
+
+  if (!persistDetectedCity(detectedCity.id)) return false;
+
+  sessionStorage.setItem(reloadKey, String(reloads + 1));
+
+  try {
+    const url = new URL(window.location.href);
+    url.searchParams.set("city", detectedCity.id);
+    window.location.replace(url.toString());
+  } catch {
+    window.location.reload();
+  }
+
+  return true;
 }
 
 async function tomarUbicacionActual(map, { center = false, fromButton = false, timeout = null } = {}) {

@@ -18,7 +18,7 @@ import {
 import {
   getMap,
   isMapReady
-} from "../map.singleton.js?v=20260620-map-rotation";
+} from "../map.singleton.js?v=20260624-cordoba-gps";
 
 /*************************************************
  * 🎯 ESTADOS VÁLIDOS

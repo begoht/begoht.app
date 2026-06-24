@@ -1,4 +1,4 @@
-import { stopGeo } from "../../map/map.geo.js?v=20260624-origin-gps";
+import { stopGeo } from "../../map/map.geo.js?v=20260624-cordoba-gps";
 
 // ===============================
 // 🌍 BASE PATH ROBUSTO

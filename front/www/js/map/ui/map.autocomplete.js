@@ -1,6 +1,6 @@
 // /map/ui/map.autocomplete.js
 
-import { buscarLugares, cancelarBusqueda } from "../services/map.search.js";
+import { buscarLugares, cancelarBusqueda } from "../services/map.search.js?v=20260624-cordoba-gps";
 
 let inputHandler = null;
 let docHandler = null;

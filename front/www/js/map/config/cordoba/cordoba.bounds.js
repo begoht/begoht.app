@@ -6,8 +6,8 @@ export const cordobaBounds = {
   zoom: 13,
 
   bounds: [
-    [-31.60, -64.40], // SW
-    [-31.25, -63.95]  // NE
+    [-31.75, -64.65], // SW
+    [-31.05, -63.70]  // NE
   ],
 
   countryCode: "ar"
