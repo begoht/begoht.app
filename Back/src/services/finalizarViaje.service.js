@@ -13,7 +13,7 @@ const { normalizeLegacyWalletDebt } = require("./driverCommission.service");
 const {
   debePausarParaRetorno,
   destinoOperacion,
-  marcarRetornoEnCurso,
+  marcarRetornoPendiente,
   marcarCompletado,
   prepararIdaVueltaPayload,
   ESTADO_RETORNO_PENDIENTE
@@ -450,7 +450,7 @@ module.exports = async function finalizarViaje({
     }
 
     if (debePausarParaRetorno(viaje)) {
-      const retornoPayload = await marcarRetornoEnCurso({
+      const retornoPayload = await marcarRetornoPendiente({
         io,
         socket,
         viaje,
@@ -463,7 +463,7 @@ module.exports = async function finalizarViaje({
       return {
         ok: true,
         viajeId,
-        estado: "retorno_en_curso",
+        estado: "retorno_pendiente",
         idaVuelta: retornoPayload.idaVuelta
       };
     }

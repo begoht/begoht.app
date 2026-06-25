@@ -21,7 +21,7 @@ import {
   handleIdaVueltaPendiente,
   handleRetornoAnulado,
   handleRetornoIniciado
-} from "./handlers/idaVuelta.handler.js?v=20260625-map-instant";
+} from "./handlers/idaVuelta.handler.js?v=20260625-return-cancel";
 import { initPasajeroChat } from "../chat/viajeChat.pasajero.js";
 
 let listenersRegistrados = false;

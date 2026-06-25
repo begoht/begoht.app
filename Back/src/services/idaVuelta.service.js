@@ -178,7 +178,7 @@ async function marcarRetornoPendiente({ io, socket, viaje, motoristaId, session 
 
   const payload = crearPayloadRetorno(viaje, motoristaId, "ida-vuelta:pendiente", {
     proximoDestino: viaje.origen,
-    mensaje: "Llegaste al destino. Confirma si el pasajero hace la vuelta."
+    mensaje: "Llegaste al destino. El pasajero puede anular la vuelta antes de iniciar el regreso."
   });
 
   await guardarContextoRetorno(viaje, motoristaId, viaje.origen);

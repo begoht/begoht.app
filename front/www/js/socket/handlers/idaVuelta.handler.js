@@ -3,15 +3,17 @@ import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.ro
 import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260625-map-instant";
 import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260625-map-instant";
 
+const RETORNO_AUTO_START_MS = 10000;
+const MODAL_RETORNO_ID = "modalIdaVueltaDecision";
+
+let retornoDecisionTimer = null;
+let retornoDecisionViajeId = null;
+
 export function handleIdaVueltaPendiente(data = {}, socket = null) {
   if (!esViajeActual(data)) return;
 
   aplicarPayload(data);
-  cerrarDecisionRetorno();
-  socket?.emit?.("ida-vuelta:iniciar-retorno", {
-    viajeId: data.viajeId || viajeState.viajeId
-  });
-  notificar("La vuelta ya estaba seleccionada. Iniciando regreso.");
+  mostrarDecisionRetorno(data, socket);
 }
 
 export function handleRetornoIniciado(data = {}) {
@@ -73,7 +75,131 @@ function esViajeActual(data = {}) {
 }
 
 function cerrarDecisionRetorno() {
-  document.getElementById("modalIdaVueltaDecision")?.remove();
+  if (retornoDecisionTimer) {
+    clearTimeout(retornoDecisionTimer);
+    retornoDecisionTimer = null;
+  }
+
+  retornoDecisionViajeId = null;
+  document.getElementById(MODAL_RETORNO_ID)?.remove();
+}
+
+function mostrarDecisionRetorno(data = {}, socket = null) {
+  if (!document.body) {
+    iniciarRetornoAutomatico(socket, data.viajeId || viajeState.viajeId);
+    return;
+  }
+
+  const viajeId = data.viajeId || viajeState.viajeId;
+  if (!viajeId) return;
+
+  cerrarDecisionRetorno();
+  retornoDecisionViajeId = String(viajeId);
+
+  const modal = document.createElement("div");
+  modal.id = MODAL_RETORNO_ID;
+  modal.setAttribute("role", "dialog");
+  modal.setAttribute("aria-modal", "true");
+  modal.innerHTML = `
+    <div style="
+      position:fixed;
+      inset:0;
+      z-index:99999;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      background:rgba(15,23,42,.66);
+      backdrop-filter:blur(10px);
+    ">
+      <div style="
+        width:min(92vw,390px);
+        border-radius:22px;
+        background:#ffffff;
+        color:#0f172a;
+        box-shadow:0 24px 70px rgba(2,6,23,.38);
+        padding:24px;
+        font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+        text-align:center;
+      ">
+        <div style="font-size:13px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#64748b;">
+          Ida finalizada
+        </div>
+        <div style="margin-top:10px;font-size:22px;font-weight:950;line-height:1.18;">
+          La vuelta esta lista
+        </div>
+        <div style="margin-top:12px;font-size:14px;font-weight:750;line-height:1.45;color:#475569;">
+          Si ya no quieres regresar, puedes anular la vuelta ahora. Si no, el regreso empieza automaticamente.
+        </div>
+        <button id="btnAnularVueltaPasajero" type="button" style="
+          width:100%;
+          margin-top:22px;
+          border:0;
+          border-radius:16px;
+          background:#dc2626;
+          color:white;
+          font-weight:950;
+          font-size:16px;
+          padding:15px 18px;
+          cursor:pointer;
+        ">
+          Anular vuelta
+        </button>
+        <div id="idaVueltaDecisionStatus" style="margin-top:12px;font-size:12px;font-weight:800;color:#64748b;">
+          El regreso comenzara en unos segundos.
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  document.getElementById("btnAnularVueltaPasajero")?.addEventListener("click", () => {
+    const btn = document.getElementById("btnAnularVueltaPasajero");
+    const status = document.getElementById("idaVueltaDecisionStatus");
+
+    if (retornoDecisionTimer) {
+      clearTimeout(retornoDecisionTimer);
+      retornoDecisionTimer = null;
+    }
+
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "Anulando...";
+      btn.style.opacity = "0.74";
+      btn.style.cursor = "wait";
+    }
+
+    if (status) {
+      status.textContent = "Confirmando anulacion...";
+    }
+
+    socket?.emit?.("ida-vuelta:anular-retorno", { viajeId });
+  });
+
+  retornoDecisionTimer = setTimeout(() => {
+    iniciarRetornoAutomatico(socket, viajeId);
+  }, RETORNO_AUTO_START_MS);
+}
+
+function iniciarRetornoAutomatico(socket, viajeId) {
+  if (!viajeId || (retornoDecisionViajeId && String(viajeId) !== retornoDecisionViajeId)) return;
+
+  const btn = document.getElementById("btnAnularVueltaPasajero");
+  const status = document.getElementById("idaVueltaDecisionStatus");
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = "Regreso en curso";
+    btn.style.opacity = "0.74";
+    btn.style.cursor = "wait";
+  }
+
+  if (status) {
+    status.textContent = "Iniciando regreso...";
+  }
+
+  socket?.emit?.("ida-vuelta:iniciar-retorno", { viajeId });
+  retornoDecisionTimer = null;
 }
 
 function notificar(text) {
