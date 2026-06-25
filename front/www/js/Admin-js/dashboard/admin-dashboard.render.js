@@ -91,11 +91,6 @@
       setRows("activeTripsRows", rows, 10, "No hay viajes activos", (trip) => tripRow(trip, { active: true }));
     }
 
-    function renderUsers() {
-      const rows = filterRows(state.usuarios || [], userSearchText);
-      setRows("userRows", rows, 8, "No hay usuarios para mostrar", userRow);
-    }
-
     function renderTrips() {
       const rows = filterRows(state.viajes || [], tripSearchText);
       setRows("tripRows", rows, 11, "No hay viajes para este filtro", (trip) => tripRow(trip, { full: true }));

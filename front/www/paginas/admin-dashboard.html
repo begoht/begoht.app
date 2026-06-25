@@ -1159,6 +1159,7 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="../css/admin-dashboard.css?v=20260625-admin-roles" />
 </head>
 <body>
   <div class="admin-shell">
@@ -1337,19 +1338,56 @@
           <article class="kpi-card"><div class="kpi-top"><span>Bloqueados</span><i class="fa-solid fa-lock"></i></div><strong id="mBlocked">0</strong><span class="trend">Control de riesgo</span></article>
         </div>
 
-        <section class="panel">
+        <section class="panel admin-users-panel">
           <div class="panel-head">
             <div>
-              <h2>Usuarios de ambas apps</h2>
-              <p class="muted">Roles, verificacion, bloqueo y disponibilidad.</p>
+              <h2>Pasajeros</h2>
+              <p class="muted">Cuentas de la app pasajero, verificacion y bloqueo.</p>
             </div>
+            <span class="status activo" id="passengerUserCount">0</span>
           </div>
           <div class="table-wrap">
             <table>
               <thead>
-                <tr><th>Usuario</th><th>Contacto</th><th>Rol</th><th>Estado</th><th>Verificado</th><th>Motorista</th><th>Alta</th><th>Acciones</th></tr>
+                <tr><th>Pasajero</th><th>Contacto</th><th>Estado</th><th>Verificado</th><th>Alta</th><th>Acciones</th></tr>
               </thead>
-              <tbody id="userRows"></tbody>
+              <tbody id="passengerRows"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel admin-users-panel">
+          <div class="panel-head">
+            <div>
+              <h2>Motoristas</h2>
+              <p class="muted">Disponibilidad, verificacion, rating y control operativo.</p>
+            </div>
+            <span class="status online" id="driverUserCount">0</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Motorista</th><th>Contacto</th><th>Verificado</th><th>Estado app</th><th>Rating</th><th>Alta</th><th>Acciones</th></tr>
+              </thead>
+              <tbody id="driverRows"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel admin-users-panel">
+          <div class="panel-head">
+            <div>
+              <h2>Admins</h2>
+              <p class="muted">Equipo interno con acceso al centro de comando.</p>
+            </div>
+            <span class="status verificado" id="adminUserCount">0</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Admin</th><th>Contacto</th><th>Estado</th><th>Alta</th><th>Acciones</th></tr>
+              </thead>
+              <tbody id="adminRows"></tbody>
             </table>
           </div>
         </section>
@@ -1863,7 +1901,8 @@
   <script src="../js/Admin-js/dashboard/admin-dashboard.api.js?v=20260615-smooth-autofinish"></script>
   <script src="../js/Admin-js/dashboard/admin-dashboard.utils.js?v=20260615-smooth-autofinish"></script>
   <script src="../js/Admin-js/dashboard/admin-dashboard.rows.js?v=20260615-smooth-autofinish"></script>
-  <script src="../js/Admin-js/dashboard/admin-dashboard.render.js?v=20260615-smooth-autofinish"></script>
+  <script src="../js/Admin-js/dashboard/admin-dashboard.users.js?v=20260625-admin-roles"></script>
+  <script src="../js/Admin-js/dashboard/admin-dashboard.render.js?v=20260625-admin-roles"></script>
   <script src="../js/Admin-js/dashboard/admin-dashboard.finance.js?v=20260615-smooth-autofinish"></script>
   <script src="../js/Admin-js/dashboard/admin-dashboard.launch.js?v=20260615-smooth-autofinish"></script>
   <script src="../js/Admin-js/dashboard/admin-dashboard.actions.js?v=20260615-smooth-autofinish"></script>

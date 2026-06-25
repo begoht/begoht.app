@@ -1,25 +1,4 @@
 // Admin dashboard table row renderers.
-    function userRow(user) {
-      const isDriver = user.rol === "motorista";
-      return row([
-        cell("Usuario", `<span class="row-main">${escapeHtml(fullName(user))}</span><span class="row-sub">${escapeHtml(user.alias || shortId(user._id))}</span>`),
-        cell("Contacto", `${escapeHtml(user.telefono || "-")}<span class="row-sub">${escapeHtml(user.email || "")}</span>`),
-        cell("Rol", `<span class="status">${escapeHtml(user.rol || "-")}</span>`),
-        cell("Estado", user.saldoBloqueado ? `<span class="status bloqueado">Bloqueado</span>` : `<span class="status activo">Activo</span>`),
-        cell("Verificado", user.verificado ? `<span class="status verificado">Verificado</span>` : `<span class="status pendiente">Pendiente</span>`),
-        cell("Motorista", isDriver ? `${user.online ? `<span class="status online">Online</span>` : `<span class="status offline">Offline</span>`}<span class="row-sub">${user.disponible ? "Disponible" : "No disponible"} - ${Number(user.rating || 0).toFixed(1)} estrellas</span>` : "-"),
-        cell("Alta", formatDate(user.createdAt)),
-        cell("Acciones", `
-          <div class="actions">
-            <button class="btn small secondary" type="button" onclick="changeRole('${user._id}')"><i class="fa-solid fa-user-gear"></i>Rol</button>
-            <button class="btn small ${user.saldoBloqueado ? "good" : "danger"}" type="button" onclick="toggleBlock('${user._id}', ${!!user.saldoBloqueado})">${user.saldoBloqueado ? "Desbloquear" : "Bloquear"}</button>
-            <button class="btn small blue" type="button" onclick="toggleVerify('${user._id}', ${!!user.verificado})">${user.verificado ? "Quitar check" : "Verificar"}</button>
-            ${isDriver ? `<button class="btn small warn" type="button" onclick="toggleAvailability('${user._id}', ${!!user.disponible})">${user.disponible ? "Pausar" : "Activar"}</button>` : ""}
-          </div>
-        `)
-      ]);
-    }
-
     function tripRow(trip, mode = {}) {
       if (mode.full) {
         return row([

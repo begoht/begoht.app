@@ -160,11 +160,11 @@
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: { labels: { usePointStyle: true, boxWidth: 8, color: "#334155", font: { weight: 700 } } }
+          legend: { labels: { usePointStyle: true, boxWidth: 8, color: "#cbd5e1", font: { weight: 700 } } }
         },
         scales: dualAxis ? {
-          y: { beginAtZero: true, grid: { color: "#edf2f7" }, ticks: { color: "#64748b" } },
-          y1: { beginAtZero: true, position: "right", grid: { display: false }, ticks: { color: "#64748b" } }
+          y: { beginAtZero: true, grid: { color: "rgba(148, 163, 184, 0.16)" }, ticks: { color: "#94a3b8" } },
+          y1: { beginAtZero: true, position: "right", grid: { display: false }, ticks: { color: "#94a3b8" } }
         } : undefined
       };
     }
