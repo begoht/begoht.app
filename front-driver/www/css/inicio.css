@@ -37,8 +37,10 @@ body {
   border: 0 !important;
   box-shadow: none !important;
   filter: drop-shadow(0 8px 10px rgba(37, 99, 235, 0.28));
-  transition: transform 220ms linear;
+  transition: none;
   will-change: transform;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
 }
 
 /* =========================================
@@ -1453,8 +1455,10 @@ a {
   background: transparent !important;
   border: 0 !important;
   filter: none !important;
-  transition: transform 220ms linear;
+  transition: none;
   will-change: transform;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
 }
 
 .leaflet-control-container .leaflet-bottom.leaflet-right {

@@ -3,12 +3,12 @@ import {
   getRutaActualCoords,
   consumirRutaDesde,
   seguirMotoristaEnMapa
-} from "./map.js?v=20260624-map-light";
+} from "./map.js?v=20260625-map-instant";
 import { isDriverOnline, updateDriverPosition } from "./driver.status.js?v=20260624-matching-heartbeat";
 import { crearMotoIcon, motoIcon } from "./map.icons.js?v=20260620-driver-navigation";
 import {
   setMotorcycleMarkerPose
-} from "./map.motion.js?v=20260620-map-rotation";
+} from "./map.motion.js?v=20260625-map-instant";
 import {
   getDriverAccessToken,
   refreshDriverAccessToken

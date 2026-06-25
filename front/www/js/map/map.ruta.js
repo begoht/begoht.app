@@ -1,4 +1,4 @@
-import { getMap } from "./map.singleton.js?v=20260624-map-light";
+import { getMap } from "./map.singleton.js?v=20260625-map-instant";
 
 import {
   mismaPosicion,
@@ -15,7 +15,7 @@ import {
   renderRutaReserva,
   renderLineaRecta,
   limpiarRuta
-} from "./ui/map.route.renderer.js?v=20260619-clear-map-address";
+} from "./ui/map.route.renderer.js?v=20260625-map-instant";
 
 let ultimaRutaCalculada = 0;
 

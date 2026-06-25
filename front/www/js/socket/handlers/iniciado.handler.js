@@ -1,7 +1,8 @@
 import { viajeState } from "../../viaje/viaje.state.js";
-import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260623-roundtrip-v2";
-import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260624-map-light";
-import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260623-roundtrip-v2";
+import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260625-map-instant";
+import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260625-map-instant";
+import { ocultarOrigenEnMapa } from "../../map/map.geo.js?v=20260625-map-instant";
+import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260625-map-instant";
 import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260615-smooth-autofinish";
 
 let lastIniciadoViajeId = null;
@@ -50,6 +51,8 @@ export const handleIniciado = (data = {}) => {
   if (cambioFase) {
     resetRutaController();
   }
+
+  ocultarOrigenEnMapa();
 
   guardarSesionViaje("en_curso");
   actualizarUIDriver(viajeState.motorista, "en_curso", {

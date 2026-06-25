@@ -1,4 +1,4 @@
-import { borrarRuta } from "../map.js?v=20260624-map-light";
+import { borrarRuta } from "../map.js?v=20260625-map-instant";
 import {
     getEstadoViaje,
     getViajeEnCursoId,
@@ -84,17 +84,11 @@ export function reconstruirUIDesdeEstado() {
         case "en_curso": {
             const esEnvio = viajeActual?.tipo === "envio";
             if (estadoIdaVuelta === "retorno_pendiente") {
-                estadoBox && (estadoBox.innerText = "Vuelta pendiente");
+                estadoBox && (estadoBox.innerText = "En attente de la decision du passager");
                 if (btnIniciar) btnIniciar.style.display = "none";
                 if (btnFinalizar) btnFinalizar.style.display = "none";
-                if (btnIniciarVuelta) {
-                    btnIniciarVuelta.style.display = "block";
-                    btnIniciarVuelta.disabled = false;
-                }
-                if (btnAnularVuelta) {
-                    btnAnularVuelta.style.display = "block";
-                    btnAnularVuelta.disabled = false;
-                }
+                if (btnIniciarVuelta) btnIniciarVuelta.style.display = "none";
+                if (btnAnularVuelta) btnAnularVuelta.style.display = "none";
                 break;
             }
 

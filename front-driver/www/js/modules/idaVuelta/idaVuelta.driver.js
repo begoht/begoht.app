@@ -4,9 +4,8 @@ import {
   setViajeEnCurso,
   viajesActivos
 } from "../viajeControl/viajeEstado.js";
-import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260623-roundtrip-v2";
-import { getUltimaPosicion } from "../gps.js?v=20260624-matching-heartbeat";
-import { dibujarRutaPremium } from "../map.js?v=20260624-map-light";
+import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260625-map-instant";
+import { dibujarRutaPremium } from "../map.js?v=20260625-map-instant";
 
 let socketRef = null;
 let clicksBound = false;
@@ -35,7 +34,7 @@ function onRetornoPendiente(data = {}) {
 
   setEstadoViaje("en_curso");
   reconstruirUIDesdeEstado();
-  notificar("Llegaste al destino. Confirma si el pasajero hace la vuelta.");
+  notificar("Llegaste al destino. Esperando la decision del pasajero.");
 }
 
 function onRetornoIniciado(data = {}) {
@@ -76,21 +75,12 @@ function onClickIdaVuelta(event) {
   if (!viajeId || !socketRef) return;
 
   if (iniciar) {
-    iniciar.disabled = true;
-    socketRef.emit("ida-vuelta:iniciar-retorno", { viajeId });
+    notificar("La vuelta se inicia automaticamente si el pasajero la eligio al confirmar el precio.");
     return;
   }
 
   if (anular) {
-    if (!confirm("Confirmer que le passager annule la vuelta?")) return;
-
-    const pos = getUltimaPosicion() || {};
-    anular.disabled = true;
-    socketRef.emit("ida-vuelta:anular-retorno", {
-      viajeId,
-      lat: pos.lat,
-      lng: pos.lng
-    });
+    notificar("La vuelta ya fue definida al confirmar el precio.");
   }
 }
 

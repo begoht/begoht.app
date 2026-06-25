@@ -1,4 +1,4 @@
-import { pasajeroIcon } from "./map.icons.js?v=20260619-clear-map-address";
+import { pasajeroIcon } from "./map.icons.js?v=20260625-map-instant";
 import { ACTIVE_CITY, cityConfig, coordsInCity, inferCityConfigFromCoords, persistDetectedCity } from "./config/index.js?v=20260624-cordoba-gps";
 import { viajeState } from "../viaje/viaje.state.js";
 import { reverseGeocode } from "./services/map.reverse.js?v=20260624-cordoba-gps";
@@ -120,6 +120,11 @@ function setInputInicio(direccion, { placeholder = false } = {}) {
 }
 
 function renderPasajeroMarker(map, lat, lng, direccion, { animate = false } = {}) {
+  if (origenDebeOcultarse()) {
+    ocultarOrigenEnMapa();
+    return;
+  }
+
   const label = escapeHtml(streetLine(direccion, "Origen"));
   const popup = `
     <div style="font-family:system-ui;">
@@ -171,6 +176,27 @@ function renderPasajeroMarker(map, lat, lng, direccion, { animate = false } = {}
   }
 
   ultimoOrigenRender = { lat, lng };
+}
+
+function origenDebeOcultarse() {
+  return viajeState.estado === "en_curso";
+}
+
+export function ocultarOrigenEnMapa() {
+  if (marcadorPasajero) {
+    try {
+      marcadorPasajero.remove();
+    } catch {
+      try {
+        layerPasajero.removeLayer(marcadorPasajero);
+      } catch {}
+    }
+  }
+
+  marcadorPasajero = null;
+  ultimoOrigenRender = null;
+  ultimoOrigenLabel = "";
+  ultimoOrigenPopup = "";
 }
 
 function limpiarOrigenSiLibre() {
@@ -261,7 +287,7 @@ function aplicarUbicacionGps(map, lat, lng, direccion, { center = false, animate
   renderPasajeroMarker(map, lat, lng, direccion, { animate });
 
   if (!center && tieneDestino && distanciaDesdeOrigen >= GPS_ORIGEN_RUTA_LOCK_METERS) {
-    import("./map.ruta.js?v=20260624-trip-ready")
+    import("./map.ruta.js?v=20260625-map-instant")
       .then(({ dibujarRuta }) => dibujarRuta(origenGps, viajeState.destino, true))
       .catch((err) => console.warn("No se pudo reajustar la ruta al GPS:", err));
   }

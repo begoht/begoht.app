@@ -1,8 +1,8 @@
 // js/viaje/viaje.limpieza.js
 import { viajeState } from "../viaje/viaje.state.js";
-import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260619-clear-map-address";
-import { eliminarMotoristaDelMapa } from "../map/map.motorista.js?v=20260621-route-moto";
-import { getMap } from "../map/map.singleton.js?v=20260624-map-light";
+import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260625-map-instant";
+import { eliminarMotoristaDelMapa } from "../map/map.motorista.js?v=20260625-map-instant";
+import { getMap } from "../map/map.singleton.js?v=20260625-map-instant";
 import { getSocket } from "../socket/socket.js?v=20260606-session-refresh";
 import { destroyPasajeroSocket } from "./pasajero.socket.js";
 

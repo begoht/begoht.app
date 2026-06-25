@@ -1,27 +1,44 @@
 const Viaje = require("../../../../models/Viaje");
 const finalizarViaje = require("../../../../services/finalizarViaje.service");
 const {
-  anularRetorno
+  anularRetorno,
+  iniciarRetorno
 } = require("../../../../services/idaVuelta.service");
+
+function iniciarRetornoPasajeroHandler(io, socket) {
+  return async ({ viajeId } = {}) => {
+    try {
+      const pasajeroId = (socket.user.id || socket.user._id).toString();
+      const viaje = await buscarViajeRetornoPendiente({ pasajeroId, viajeId });
+
+      if (!viaje?.motorista) {
+        return socket.emit("viaje-error", {
+          code: "IDA_VUELTA_NO_PENDIENTE",
+          mensaje: "La vuelta no esta pendiente para este viaje."
+        });
+      }
+
+      await iniciarRetorno({
+        io,
+        socket,
+        viajeId: viaje._id.toString(),
+        motoristaId: viaje.motorista.toString()
+      });
+    } catch (error) {
+      console.error("Error iniciar retorno pasajero:", error);
+      socket.emit("viaje-error", {
+        code: error.code || "IDA_VUELTA_ERROR",
+        mensaje: error.message || "No se pudo iniciar la vuelta."
+      });
+    }
+  };
+}
 
 function anularRetornoPasajeroHandler(io, socket) {
   return async ({ viajeId } = {}) => {
     try {
       const pasajeroId = (socket.user.id || socket.user._id).toString();
-      const query = {
-        pasajero: pasajeroId,
-        estado: "en_curso",
-        "idaVuelta.solicitada": true,
-        "idaVuelta.estado": "retorno_pendiente"
-      };
-
-      if (viajeId) {
-        query._id = viajeId;
-      }
-
-      const viaje = await Viaje.findOne(query)
-        .select("_id motorista")
-        .lean();
+      const viaje = await buscarViajeRetornoPendiente({ pasajeroId, viajeId });
 
       if (!viaje?.motorista) {
         return socket.emit("viaje-error", {
@@ -68,6 +85,24 @@ function anularRetornoPasajeroHandler(io, socket) {
   };
 }
 
+function buscarViajeRetornoPendiente({ pasajeroId, viajeId }) {
+  const query = {
+    pasajero: pasajeroId,
+    estado: "en_curso",
+    "idaVuelta.solicitada": true,
+    "idaVuelta.estado": "retorno_pendiente"
+  };
+
+  if (viajeId) {
+    query._id = viajeId;
+  }
+
+  return Viaje.findOne(query)
+    .select("_id motorista")
+    .lean();
+}
+
 module.exports = {
+  iniciarRetornoPasajeroHandler,
   anularRetornoPasajeroHandler
 };

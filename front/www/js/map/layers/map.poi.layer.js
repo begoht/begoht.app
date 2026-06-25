@@ -1,4 +1,4 @@
-import { createPOIIcon } from "../map.icons.js?v=20260619-clear-map-address";
+import { createPOIIcon } from "../map.icons.js?v=20260625-map-instant";
 
 
 import { cityConfig } from "../config/index.js?v=20260624-cordoba-gps";

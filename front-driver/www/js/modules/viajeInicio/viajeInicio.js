@@ -3,14 +3,14 @@ import {
     getViajeEnCursoId, setViajeEnCurso, 
     viajesActivos 
 } from "../viajeControl/viajeEstado.js"; 
-import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260623-roundtrip-v2";
+import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260625-map-instant";
 import { getUltimaPosicion } from "../gps.js?v=20260624-matching-heartbeat";
-import { dibujarRutaPremium } from "../map.js?v=20260624-map-light";
+import { dibujarRutaPremium } from "../map.js?v=20260625-map-instant";
 import {
     ARRIVAL_MAX_DISTANCE_METERS,
     validarCercaniaViaje,
     notificarGuardia
-} from "../tripGuards.js?v=20260620-map-rotation";
+} from "../tripGuards.js?v=20260625-map-instant";
 import { UI_REFS, llegadaTimeout } from "./viajeInicioEstado.js";
 import { limpiarInterfazViaje, redibujarRutaRecovery } from "./viajeInicioUI.js?v=20260623-roundtrip-v2";
 import { initViajeRecovery } from "./viajeRecovery.js?v=20260623-roundtrip-v2";

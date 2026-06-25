@@ -34,7 +34,7 @@ export function initMap() {
   map = L.map("map", {
     zoomControl: false,
     preferCanvas: true,
-    updateWhenIdle: true,
+    updateWhenIdle: false,
     rotate: true,
     bearing: 0,
     touchRotate: true,
@@ -48,10 +48,10 @@ export function initMap() {
     {
       maxZoom: 19,
       detectRetina: false,
-      keepBuffer: 4,
-      updateWhenIdle: true,
-      updateWhenZooming: false,
-      updateInterval: 180,
+      keepBuffer: 6,
+      updateWhenIdle: false,
+      updateWhenZooming: true,
+      updateInterval: 64,
       zIndex: 1
     }
   ).addTo(map);
@@ -61,10 +61,10 @@ export function initMap() {
     {
       maxZoom: 19,
       detectRetina: false,
-      keepBuffer: 4,
-      updateWhenIdle: true,
-      updateWhenZooming: false,
-      updateInterval: 180,
+      keepBuffer: 6,
+      updateWhenIdle: false,
+      updateWhenZooming: true,
+      updateInterval: 64,
       zIndex: 3
     }
   ).addTo(map);
@@ -73,6 +73,7 @@ export function initMap() {
   bindNavigationFollow();
   bindRecenterButton();
   bindCompassButton();
+  bindRotationRefresh();
 }
 
 export function getRutaActualCoords() {
@@ -232,6 +233,31 @@ function bindCompassButton() {
   render();
 }
 
+function bindRotationRefresh() {
+  if (!map || map._begoRotationRefreshBound) return;
+
+  map._begoRotationRefreshBound = true;
+  let frame = 0;
+
+  const refresh = () => {
+    if (frame) return;
+
+    frame = window.requestAnimationFrame(() => {
+      frame = 0;
+
+      try {
+        map.eachLayer((layer) => {
+          if (typeof layer.redraw === "function") {
+            layer.redraw();
+          }
+        });
+      } catch {}
+    });
+  };
+
+  map.on?.("rotate", refresh);
+}
+
 function bindNavigationFollow() {
   if (!map || map._begoNavigationFollowBound) return;
   map._begoNavigationFollowBound = true;
@@ -353,6 +379,30 @@ export async function dibujarRutaPremium(origen, destino) {
 function renderRutaCoords(coords, { color, dashArray, fit } = {}) {
   if (!map || !Array.isArray(coords) || coords.length < 2) return;
 
+  rutaActualCoords = normalizarCoords(coords);
+
+  if (
+    rutaLayerRef.current?.setLatLngs &&
+    rutaOutlineLayer?.setLatLngs
+  ) {
+    rutaOutlineLayer.setLatLngs(coords);
+    rutaOutlineLayer.setStyle?.({
+      dashArray: dashArray || undefined
+    });
+    rutaLayerRef.current.setLatLngs(coords);
+    rutaLayerRef.current.setStyle?.({
+      color: color || "#3b9cff",
+      dashArray: dashArray || undefined
+    });
+
+    if (fit) {
+      map.fitBounds(rutaLayerRef.current.getBounds(), {
+        padding: [50, 50]
+      });
+    }
+    return;
+  }
+
   if (rutaLayerRef.current) {
     map.removeLayer(rutaLayerRef.current);
     rutaLayerRef.current = null;
@@ -362,8 +412,6 @@ function renderRutaCoords(coords, { color, dashArray, fit } = {}) {
     map.removeLayer(rutaOutlineLayer);
     rutaOutlineLayer = null;
   }
-
-  rutaActualCoords = normalizarCoords(coords);
 
   rutaOutlineLayer = L.polyline(coords, {
     color: "#0b4ea2",

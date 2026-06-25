@@ -1,10 +1,10 @@
-import { routes } from "./router.routes.js?v=20260619-clear-map-address";
-import { renderLayout } from "./router.render.js?v=20260619-clear-map-address";
+import { routes } from "./router.routes.js?v=20260625-map-instant";
+import { renderLayout } from "./router.render.js?v=20260625-map-instant";
 import { runCleanup, setCleanup } from "./router.cleanup.js";
 import { afterRender, pushURL, actualizarLinksActivos } from "./router.utils.js";
-import { runPageInit } from "../app/app.lifecycle.js?v=20260624-map-light";
+import { runPageInit } from "../app/app.lifecycle.js?v=20260625-map-instant";
 import { AppState } from "../state.js";
-import { stopGeo } from "../../map/map.geo.js?v=20260624-map-light";
+import { stopGeo } from "../../map/map.geo.js?v=20260625-map-instant";
 
 let navigationId = 0;
 let routerReady = false;

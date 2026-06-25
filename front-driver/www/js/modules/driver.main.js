@@ -1,11 +1,11 @@
 import { initSocket } from "./socket.js?v=20260624-matching-heartbeat";
-import { initMap } from "./map.js?v=20260624-map-light";
+import { initMap } from "./map.js?v=20260625-map-instant";
 import { initGPS } from "./gps.js?v=20260624-matching-heartbeat";
 import { initOferta } from "./oferta/oferta.index.js?v=20260624-matching-heartbeat";
 import { initViajeInicio } from "./viajeInicio/viajeInicio.js?v=20260623-roundtrip-v2";
-import { initViajeFinalizar } from "./viajeFinalizar.js?v=20260624-trip-ready";
-import { initViajeControl } from "./viajeControl/viajeControl.js?v=20260623-roundtrip-v2";
-import { initIdaVueltaDriver } from "./idaVuelta/idaVuelta.driver.js?v=20260623-roundtrip-v2";
+import { initViajeFinalizar } from "./viajeFinalizar.js?v=20260625-map-instant";
+import { initViajeControl } from "./viajeControl/viajeControl.js?v=20260625-map-instant";
+import { initIdaVueltaDriver } from "./idaVuelta/idaVuelta.driver.js?v=20260625-map-instant";
 import { initDriverChat } from "./chat/viajeChat.js?v=20260608-trip-panel-compact";
 import { initDriverStatus } from "./driver.status.js?v=20260624-matching-heartbeat";
 import { initDriverSpa } from "./driver.spa.js?v=20260619-account-security";

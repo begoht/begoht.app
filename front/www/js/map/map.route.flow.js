@@ -1,7 +1,7 @@
 export {
   processRouteFlow as actualizarRutaSegunEstado
-} from "./controllers/map.route.controller.js?v=20260623-roundtrip-v2";
+} from "./controllers/map.route.controller.js?v=20260625-map-instant";
 
 export {
   resetRouteState as resetRutaController
-} from "./state/map.route.state.js?v=20260620-map-rotation";
+} from "./state/map.route.state.js?v=20260625-map-instant";

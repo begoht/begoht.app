@@ -1,9 +1,10 @@
 import { viajeState } from "../../viaje/viaje.state.js";
-import { mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260621-route-moto";
-import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260624-map-light";
-import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260623-roundtrip-v2";
-import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260623-roundtrip-v2";
-import { getMap } from "../../map/map.singleton.js?v=20260624-map-light";
+import { mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260625-map-instant";
+import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260625-map-instant";
+import { ocultarOrigenEnMapa } from "../../map/map.geo.js?v=20260625-map-instant";
+import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260625-map-instant";
+import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260625-map-instant";
+import { getMap } from "../../map/map.singleton.js?v=20260625-map-instant";
 import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260615-smooth-autofinish";
 
 let lastEstadoPersistido = null;
@@ -120,6 +121,10 @@ export const handleTrack = (data) => {
    * 4. CONDICIÓN DE RUTA (FIX CLAVE 🔥)
    *************************************************/
   const estadoFinal = viajeState.estado;
+  if (estadoFinal === "en_curso") {
+    ocultarOrigenEnMapa();
+  }
+
   const targetVisual = estadoFinal === "en_curso"
     ? (viajeState.proximoDestino || viajeState.destino)
     : viajeState.destino;

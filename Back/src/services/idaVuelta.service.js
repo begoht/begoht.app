@@ -193,6 +193,37 @@ async function marcarRetornoPendiente({ io, socket, viaje, motoristaId, session 
   return payload;
 }
 
+async function marcarRetornoEnCurso({ io, socket, viaje, motoristaId, session }) {
+  viaje.idaVuelta.estado = ESTADO_RETORNO_EN_CURSO;
+  viaje.idaVuelta.retornoIniciadoAt = new Date();
+  await viaje.save({ session });
+
+  const payload = crearPayloadRetorno(viaje, motoristaId, "ida-vuelta:retorno-iniciado", {
+    proximoDestino: viaje.origen,
+    mensaje: "Vuelta iniciada hacia el origen."
+  });
+  const pasajeroId = viaje.pasajero?._id?.toString?.() || viaje.pasajero?.toString?.() || null;
+
+  await guardarContextoRetorno(viaje, motoristaId, viaje.origen);
+
+  io.to(`viaje:${viaje._id}`)
+    .to(`motorista:${motoristaId}`)
+    .to(`track:${viaje._id}`)
+    .emit("ida-vuelta:retorno-iniciado", payload);
+
+  if (pasajeroId) {
+    io.to(`pasajero:${pasajeroId}`).emit("viaje:iniciado", {
+      ...payload,
+      estado: "en_curso",
+      timestamp: Date.now()
+    });
+  }
+
+  socket?.emit?.("ida-vuelta:retorno-iniciado", payload);
+
+  return payload;
+}
+
 async function iniciarRetorno({ io, socket, viajeId, motoristaId }) {
   const viaje = await Viaje.findOne({
     _id: viajeId,
@@ -371,6 +402,7 @@ module.exports = {
   estaRetornando,
   destinoOperacion,
   marcarRetornoPendiente,
+  marcarRetornoEnCurso,
   iniciarRetorno,
   anularRetorno,
   marcarCompletado

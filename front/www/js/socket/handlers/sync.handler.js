@@ -1,9 +1,10 @@
 import { viajeState } from "../../viaje/viaje.state.js";
 import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260623-roundtrip-v2";
-import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260621-route-moto";
-import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260624-map-light";
-import { limpiarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260623-roundtrip-v2";
-import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260623-roundtrip-v2";
+import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260625-map-instant";
+import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260625-map-instant";
+import { ocultarOrigenEnMapa } from "../../map/map.geo.js?v=20260625-map-instant";
+import { limpiarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260625-map-instant";
+import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260625-map-instant";
 import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260615-smooth-autofinish";
 
 export const handleSync = (data, socket) => {
@@ -86,6 +87,9 @@ export const handleSync = (data, socket) => {
   });
 
   mostrarDestinoEnMapa(data.estado === "en_curso" ? (data.proximoDestino || data.destino) : data.destino);
+  if (data.estado === "en_curso") {
+    ocultarOrigenEnMapa();
+  }
 
   /*************************************************
    * 🔄 RESET CONTROLLER (CLAVE 🔥)

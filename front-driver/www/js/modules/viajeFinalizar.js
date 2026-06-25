@@ -4,13 +4,13 @@ import {
     setViajeEnCurso
 } from "./viajeControl/viajeEstado.js";
 
-import { limpiarViajeMain } from "./viajeControl/viajeUI.js?v=20260623-roundtrip-v2";
-import { borrarRuta } from "./map.js?v=20260624-map-light";
+import { limpiarViajeMain } from "./viajeControl/viajeUI.js?v=20260625-map-instant";
+import { borrarRuta } from "./map.js?v=20260625-map-instant";
 import { formatGourdes, getPaymentLabel, isCashMethod } from "./oferta/oferta.money.js?v=20260608-offer-net-cash";
 import {
     FINISH_MAX_DISTANCE_METERS,
     validarCercaniaViaje
-} from "./tripGuards.js?v=20260620-map-rotation";
+} from "./tripGuards.js?v=20260625-map-instant";
 
 const viajesFinalizadosProcesados = new Set();
 const finalizacionesPendientes = new Map();
@@ -149,6 +149,9 @@ export function initViajeFinalizar(socket) {
 
   socket.off("ida-vuelta:pendiente", onRetornoPendiente);
   socket.on("ida-vuelta:pendiente", onRetornoPendiente);
+
+  socket.off("ida-vuelta:retorno-iniciado", onRetornoIniciado);
+  socket.on("ida-vuelta:retorno-iniciado", onRetornoIniciado);
 }
 
 function onClickFinalizar(e) {
@@ -293,6 +296,13 @@ function onViajeFinalizado(data = {}) {
 }
 
 function onRetornoPendiente(data = {}) {
+    const viajeId = normalizarId(data.viajeId || getViajeEnCursoId());
+    if (!viajeId) return;
+
+    limpiarTimerFinalizacion(viajeId);
+}
+
+function onRetornoIniciado(data = {}) {
     const viajeId = normalizarId(data.viajeId || getViajeEnCursoId());
     if (!viajeId) return;
 

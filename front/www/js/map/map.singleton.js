@@ -151,26 +151,27 @@ export function createMap(container) {
     {
       attribution: "&copy; OpenStreetMap &copy; CARTO",
       detectRetina: false,
-      updateWhenIdle: true,
-      updateWhenZooming: false,
-      updateInterval: 180,
-      keepBuffer: 4,
+      updateWhenIdle: false,
+      updateWhenZooming: true,
+      updateInterval: 64,
+      keepBuffer: 6,
       zIndex: 1,
       className: "bego-map-tiles bego-map-base-tiles"
     }
   ).addTo(mapInstance);
 
   bindCompassButton(mapInstance);
+  bindRotationRefresh(mapInstance);
 
   L.tileLayer(
     "https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png",
     {
       attribution: "",
       detectRetina: false,
-      updateWhenIdle: true,
-      updateWhenZooming: false,
-      updateInterval: 180,
-      keepBuffer: 4,
+      updateWhenIdle: false,
+      updateWhenZooming: true,
+      updateInterval: 64,
+      keepBuffer: 6,
       zIndex: 2,
       className: "bego-map-tiles bego-map-label-tiles"
     }
@@ -248,4 +249,34 @@ function bindCompassButton(map) {
   map.on?.("rotate", render);
   mapListenerCleanup.push(() => map.off?.("rotate", render));
   render();
+}
+
+function bindRotationRefresh(map) {
+  if (!map || map._begoRotationRefreshBound) return;
+
+  map._begoRotationRefreshBound = true;
+  let frame = 0;
+
+  const refresh = () => {
+    if (frame) return;
+
+    frame = window.requestAnimationFrame(() => {
+      frame = 0;
+
+      try {
+        map.eachLayer((layer) => {
+          if (typeof layer.redraw === "function") {
+            layer.redraw();
+          }
+        });
+      } catch {}
+    });
+  };
+
+  map.on?.("rotate", refresh);
+  mapListenerCleanup.push(() => {
+    map.off?.("rotate", refresh);
+    if (frame) window.cancelAnimationFrame(frame);
+    map._begoRotationRefreshBound = false;
+  });
 }

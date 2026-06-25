@@ -22,30 +22,39 @@ async function validarCercaniaMotorista({
     });
   }
 
-  const posicion = await obtenerUltimaPosicionMotorista(motoristaId, fallbackPosition);
+  const posiciones = await obtenerPosicionesMotorista(motoristaId, fallbackPosition);
 
-  if (!posicion) {
+  if (!posiciones.length) {
     throw crearError({
       code: `${code}_SIN_GPS`,
       message: "No se pudo validar tu GPS. Activa la ubicacion e intenta de nuevo."
     });
   }
 
-  const distancia = calcularDistanciaMetros(
-    posicion.lat,
-    posicion.lng,
-    destino.lat,
-    destino.lng
-  );
+  const evaluaciones = posiciones
+    .map((posicion) => ({
+      posicion,
+      distanciaMetros: Math.round(calcularDistanciaMetros(
+        posicion.lat,
+        posicion.lng,
+        destino.lat,
+        destino.lng
+      ))
+    }))
+    .filter((item) => Number.isFinite(item.distanciaMetros));
 
-  if (!Number.isFinite(distancia)) {
+  if (!evaluaciones.length) {
     throw crearError({
       code: `${code}_INVALIDA`,
       message: "No se pudo calcular la distancia del viaje."
     });
   }
 
-  const distanciaMetros = Math.round(distancia);
+  const enRango = evaluaciones
+    .filter((item) => item.distanciaMetros <= maxDistanceMeters)
+    .sort((a, b) => a.distanciaMetros - b.distanciaMetros)[0];
+  const mejor = enRango || evaluaciones.sort((a, b) => a.distanciaMetros - b.distanciaMetros)[0];
+  const { posicion, distanciaMetros } = mejor;
 
   if (distanciaMetros > maxDistanceMeters) {
     throw crearError({
@@ -71,6 +80,29 @@ async function obtenerUltimaPosicionMotorista(motoristaId, fallbackPosition = nu
   if (fromHash) return fromHash;
 
   return normalizarPunto(fallbackPosition);
+}
+
+async function obtenerPosicionesMotorista(motoristaId, fallbackPosition = null) {
+  const posiciones = [];
+
+  agregarPosicionUnica(posiciones, await leerPosicionRedisJson(motoristaId));
+  agregarPosicionUnica(posiciones, await leerPosicionRedisHash(motoristaId));
+  agregarPosicionUnica(posiciones, normalizarPunto(fallbackPosition));
+
+  return posiciones;
+}
+
+function agregarPosicionUnica(posiciones, posicion) {
+  if (!posicion) return;
+
+  const duplicada = posiciones.some((actual) =>
+    Math.abs(actual.lat - posicion.lat) < 0.000001 &&
+    Math.abs(actual.lng - posicion.lng) < 0.000001
+  );
+
+  if (!duplicada) {
+    posiciones.push(posicion);
+  }
 }
 
 async function leerPosicionRedisJson(motoristaId) {

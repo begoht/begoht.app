@@ -2,7 +2,7 @@ import {
   dibujarRuta,
   dibujarRutaReserva,
   limpiarRutas
-} from "../map.ruta.js?v=20260620-map-rotation";
+} from "../map.ruta.js?v=20260625-map-instant";
 
 import {
   mismaPosicion,
@@ -13,12 +13,12 @@ import {
   getRouteState,
   setRouteState,
   resetRouteState
-} from "../state/map.route.state.js?v=20260620-map-rotation";
+} from "../state/map.route.state.js?v=20260625-map-instant";
 
 import {
   getMap,
   isMapReady
-} from "../map.singleton.js?v=20260624-map-light";
+} from "../map.singleton.js?v=20260625-map-instant";
 
 /*************************************************
  * 🎯 ESTADOS VÁLIDOS
@@ -160,7 +160,6 @@ export function processRouteFlow({
       `🧠 Fase: ${estadoNorm}`
     );
 
-    limpiarRutas(false);
   }
 
   /*************************************************
