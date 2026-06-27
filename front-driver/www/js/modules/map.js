@@ -33,7 +33,7 @@ export function initMap() {
 
   map = L.map("map", {
     zoomControl: false,
-    preferCanvas: true,
+    preferCanvas: false,
     updateWhenIdle: false,
     rotate: true,
     bearing: 0,
@@ -73,7 +73,7 @@ export function initMap() {
   bindNavigationFollow();
   bindRecenterButton();
   bindCompassButton();
-  bindRotationRefresh();
+  bindViewportRefresh();
 }
 
 export function getRutaActualCoords() {
@@ -233,29 +233,38 @@ function bindCompassButton() {
   render();
 }
 
-function bindRotationRefresh() {
-  if (!map || map._begoRotationRefreshBound) return;
+function bindViewportRefresh() {
+  if (!map || map._begoViewportRefreshBound) return;
 
-  map._begoRotationRefreshBound = true;
-  let frame = 0;
+  map._begoViewportRefreshBound = true;
+  const refresh = () => scheduleViewportRefresh();
 
-  const refresh = () => {
-    if (frame) return;
+  window.addEventListener("resize", refresh, { passive: true });
+  window.visualViewport?.addEventListener("resize", refresh, { passive: true });
+  window.addEventListener("orientationchange", refresh, { passive: true });
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) refresh();
+  });
+}
 
-    frame = window.requestAnimationFrame(() => {
-      frame = 0;
+function scheduleViewportRefresh() {
+  if (!map) return;
 
-      try {
-        map.eachLayer((layer) => {
-          if (typeof layer.redraw === "function") {
-            layer.redraw();
-          }
-        });
-      } catch {}
-    });
-  };
+  if (map._begoViewportFrame) window.cancelAnimationFrame(map._begoViewportFrame);
+  map._begoViewportFrame = window.requestAnimationFrame(() => {
+    map._begoViewportFrame = 0;
+    try {
+      map.invalidateSize({ animate: false, pan: false });
+    } catch {}
+  });
 
-  map.on?.("rotate", refresh);
+  if (map._begoViewportTimer) window.clearTimeout(map._begoViewportTimer);
+  map._begoViewportTimer = window.setTimeout(() => {
+    map._begoViewportTimer = 0;
+    try {
+      map.invalidateSize({ animate: false, pan: false });
+    } catch {}
+  }, 180);
 }
 
 function bindNavigationFollow() {

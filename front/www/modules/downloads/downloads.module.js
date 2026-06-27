@@ -1,9 +1,10 @@
-import { DOWNLOAD_APPS, getDownloadApp } from "./downloads.config.js";
+import { DOWNLOAD_APPS, getDownloadApp } from "./downloads.config.js?v=20260627-map-icons";
+import { renderLandingIcon } from "../landing/icons.js?v=20260627-map-icons";
 
 function renderDownloadLink(app, { className = "cta", label = app.label } = {}) {
   return `
     <a class="${className}" href="${app.href}" download data-analytics="${app.analytics}">
-      <i class="${app.icon}" aria-hidden="true"></i>
+      ${renderLandingIcon(app.icon, "landing-icon")}
       <span>${label}</span>
     </a>
   `;

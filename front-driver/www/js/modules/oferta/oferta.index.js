@@ -1,6 +1,6 @@
 import { initUI, UI } from "./oferta.ui.js?v=20260608-offer-net-cash";
-import { initSocketEventos } from "./oferta.socket.js?v=20260624-matching-heartbeat";
-import { aceptarViaje, rechazarViaje } from "./oferta.actions.js?v=20260624-matching-heartbeat";
+import { initSocketEventos } from "./oferta.socket.js?v=20260627-map-icons";
+import { aceptarViaje, rechazarViaje } from "./oferta.actions.js?v=20260627-map-icons";
 import { ofertaState, setSocketRef } from "./oferta.state.js";
 
 export function initOferta(socket) {

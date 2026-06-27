@@ -1,4 +1,4 @@
-import { renderHeader } from "../../components/header.js?v=20260625-map-instant";
+import { renderHeader } from "../../components/header.js?v=20260627-map-rotate";
 import { renderFooter } from "../../components/footer.js";
 
 export function renderLayout(route, mainClass, contentHTML) {

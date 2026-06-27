@@ -1,10 +1,10 @@
 import { viajeState } from "../../viaje/viaje.state.js";
-import { mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260625-map-instant";
-import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260625-map-instant";
-import { ocultarOrigenEnMapa } from "../../map/map.geo.js?v=20260625-map-instant";
-import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260625-map-instant";
-import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260625-map-instant";
-import { getMap } from "../../map/map.singleton.js?v=20260625-map-instant";
+import { mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260627-map-rotate";
+import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260627-map-rotate";
+import { ocultarOrigenEnMapa } from "../../map/map.geo.js?v=20260627-map-rotate";
+import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260627-map-rotate";
+import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260627-map-rotate";
+import { getMap } from "../../map/map.singleton.js?v=20260627-map-rotate";
 import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260615-smooth-autofinish";
 
 let lastEstadoPersistido = null;

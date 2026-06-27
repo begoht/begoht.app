@@ -4,8 +4,8 @@ import {
   actualizarEstadoLlegada,
   reproducirSonidoLlegada
 } from "../../pasajero/pasajero.ui.js";
-import { actualizarUIDriver } from "../pasajero.utils.js?v=20260625-map-instant";
-import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260625-map-instant";
+import { actualizarUIDriver } from "../pasajero.utils.js?v=20260627-map-rotate";
+import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260627-map-rotate";
 import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260615-smooth-autofinish";
 
 export const handleLlego = (data = {}) => {

@@ -1,4 +1,4 @@
-import { isDriverOnline, updateDriverPosition } from "./driver.status.js?v=20260624-matching-heartbeat";
+import { isDriverOnline, updateDriverPosition } from "./driver.status.js?v=20260627-map-icons";
 import {
   clearDriverSession,
   refreshDriverAccessToken,

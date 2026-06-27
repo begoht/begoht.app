@@ -1,7 +1,7 @@
 import { viajeState } from "../../viaje/viaje.state.js";
 import { manejarCancelacionOLimpieza } from "../pasajero.utils.js";
 import { mostrarPagoNoDisponible } from "../../pasajero/ui/modales/pagoNoDisponible.ui.js?v=20260606-payment-methods";
-import { clearCotizacionTimer, resetCotizacionPendiente } from "../../viaje/viaje.actions.js?v=20260625-map-instant";
+import { clearCotizacionTimer, resetCotizacionPendiente } from "../../viaje/viaje.actions.js?v=20260627-map-rotate";
 
 const ESTADOS_PROTEGIDOS = [
   "buscando",

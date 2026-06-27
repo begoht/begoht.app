@@ -1,3 +1,5 @@
+import { renderLandingIcon } from "./icons.js?v=20260627-map-icons";
+
 const NAV_ITEMS = Object.freeze([
   { href: "#home", label: "Inicio" },
   { href: "#services", label: "Servicios" },
@@ -15,7 +17,7 @@ export function renderHeader() {
       </a>
 
       <button class="icon-button menu-toggle" id="menuToggle" type="button" aria-controls="publicMenu" aria-expanded="false">
-        <i class="bx bx-grid-alt" aria-hidden="true"></i>
+        ${renderLandingIcon("menu", "landing-icon")}
         <span>Menu</span>
       </button>
 

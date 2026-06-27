@@ -8,7 +8,7 @@ export const DOWNLOAD_APPS = Object.freeze({
     label: "Descargar pasajero",
     shortLabel: "Pasajero",
     analytics: "download_passenger",
-    icon: "bx bxl-android"
+    icon: "android"
   }),
   driver: Object.freeze({
     id: "driver",
@@ -17,7 +17,7 @@ export const DOWNLOAD_APPS = Object.freeze({
     label: "Descargar motorista",
     shortLabel: "Motorista",
     analytics: "download_driver",
-    icon: "bx bxl-android"
+    icon: "android"
   })
 });
 

@@ -1,3 +1,5 @@
+import { renderLandingIcon } from "../landing/icons.js?v=20260627-map-icons";
+
 export const SUPPORT_LINKS = Object.freeze({
   email: "mailto:support@bego.com.ht",
   legal: "/legal.html",
@@ -19,11 +21,11 @@ export function renderSupportFooter() {
         <div class="footer-col">
           <h2>Comunidad</h2>
           <a href="${SUPPORT_LINKS.instagram}" target="_blank" rel="noopener" data-analytics="social_instagram">
-            <i class="bx bxl-instagram" aria-hidden="true"></i>
+            ${renderLandingIcon("instagram", "landing-icon")}
             <span>Instagram @bego.haiti</span>
           </a>
           <a href="${SUPPORT_LINKS.tiktok}" target="_blank" rel="noopener" data-analytics="social_tiktok">
-            <i class="bx bxl-tiktok" aria-hidden="true"></i>
+            ${renderLandingIcon("tiktok", "landing-icon")}
             <span>TikTok @bego.ht</span>
           </a>
         </div>
@@ -31,11 +33,11 @@ export function renderSupportFooter() {
         <div class="footer-col">
           <h2>Soporte</h2>
           <a href="${SUPPORT_LINKS.email}" data-analytics="support_email">
-            <i class="bx bx-envelope" aria-hidden="true"></i>
+            ${renderLandingIcon("mail", "landing-icon")}
             <span>support@bego.com.ht</span>
           </a>
           <a href="${SUPPORT_LINKS.legal}" data-analytics="open_legal">
-            <i class="bx bx-file" aria-hidden="true"></i>
+            ${renderLandingIcon("file", "landing-icon")}
             <span>Terminos y condiciones</span>
           </a>
         </div>

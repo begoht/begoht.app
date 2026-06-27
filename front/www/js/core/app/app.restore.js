@@ -1,9 +1,9 @@
 import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260623-roundtrip-v2";
-import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260625-map-instant";
-import { getMap } from "../../map/map.singleton.js?v=20260625-map-instant";
-import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260625-map-instant";
+import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260627-map-rotate";
+import { getMap } from "../../map/map.singleton.js?v=20260627-map-rotate";
+import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260627-map-rotate";
 import { viajeState } from "../../viaje/viaje.state.js";
-import { actualizarUIDriver, mostrarModalFinalizado } from "../../socket/pasajero.utils.js?v=20260625-map-instant";
+import { actualizarUIDriver, mostrarModalFinalizado } from "../../socket/pasajero.utils.js?v=20260627-map-rotate";
 import {
   obtenerFinalizacionPendiente,
   viajeFueFinalizado
@@ -106,7 +106,7 @@ export async function restoreViajeUI() {
         !document.getElementById("modalPrecio") &&
         !document.getElementById("buscandoMotorista")
       ) {
-        import("../../pasajero/ui/overlays/buscandoMotorista.ui.js?v=20260625-map-instant")
+        import("../../pasajero/ui/overlays/buscandoMotorista.ui.js?v=20260627-map-rotate")
           .then(m => m.mostrarBuscandoMotorista?.(true))
           .catch(err => console.error("❌ Error importando modal:", err));
       }

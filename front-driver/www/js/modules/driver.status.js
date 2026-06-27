@@ -77,7 +77,7 @@ export function setDriverAvailability(nextOnline, { silent = false } = {}) {
 
   if (!online) {
     Promise.all([
-      import("./oferta/oferta.render.js?v=20260624-matching-heartbeat"),
+      import("./oferta/oferta.render.js?v=20260627-map-icons"),
       import("./oferta/oferta.queue.js")
     ])
       .then(([{ limpiarOferta }, { limpiarColaOfertas }]) => {

@@ -4,13 +4,13 @@ import {
     setViajeEnCurso
 } from "./viajeControl/viajeEstado.js";
 
-import { limpiarViajeMain } from "./viajeControl/viajeUI.js?v=20260625-map-instant";
-import { borrarRuta } from "./map.js?v=20260625-map-instant";
+import { limpiarViajeMain } from "./viajeControl/viajeUI.js?v=20260627-map-rotate";
+import { borrarRuta } from "./map.js?v=20260627-map-rotate";
 import { formatGourdes, getPaymentLabel, isCashMethod } from "./oferta/oferta.money.js?v=20260608-offer-net-cash";
 import {
     FINISH_MAX_DISTANCE_METERS,
     validarCercaniaViaje
-} from "./tripGuards.js?v=20260625-map-instant";
+} from "./tripGuards.js?v=20260627-map-rotate";
 
 const viajesFinalizadosProcesados = new Set();
 const finalizacionesPendientes = new Map();

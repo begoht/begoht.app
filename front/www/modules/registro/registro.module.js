@@ -1,3 +1,5 @@
+import { renderLandingIcon } from "../landing/icons.js?v=20260627-map-icons";
+
 export const REGISTRATION_LINKS = Object.freeze({
   passenger: "/registro.html?mode=registro",
   driver: "/driver/registro.html"
@@ -6,7 +8,7 @@ export const REGISTRATION_LINKS = Object.freeze({
 export function renderDriverRegistrationButton() {
   return `
     <a class="cta secondary" href="${REGISTRATION_LINKS.driver}" data-analytics="register_driver">
-      <i class="bx bx-navigation" aria-hidden="true"></i>
+      ${renderLandingIcon("navigation", "landing-icon")}
       <span>Conducir en BeGO</span>
     </a>
   `;

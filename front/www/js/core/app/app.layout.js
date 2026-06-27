@@ -1,6 +1,6 @@
 import { renderHeader } from "../../components/header.js";
 import { renderFooter } from "../../components/footer.js";
-import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260625-map-instant";
+import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260627-map-rotate";
 
 export function renderLayout(route, viewHtml) {
     const header = document.getElementById("appHeader");

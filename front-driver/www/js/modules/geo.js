@@ -1,9 +1,9 @@
 import { viajeState } from "../../..js/viaje/viaje.state.js";
 import { motoIcon } from "./map.icons.js?v=20260620-driver-navigation";
-import { getRutaActualCoords } from "./map.js?v=20260625-map-instant";
+import { getRutaActualCoords } from "./map.js?v=20260627-map-rotate";
 import {
   setMotorcycleMarkerPose
-} from "./map.motion.js?v=20260625-map-instant";
+} from "./map.motion.js?v=20260627-map-rotate";
 
 let mapa;
 

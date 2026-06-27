@@ -1,4 +1,4 @@
-import { stopGeo } from "../../map/map.geo.js?v=20260625-map-instant";
+import { stopGeo } from "../../map/map.geo.js?v=20260627-map-rotate";
 
 // ===============================
 // 🌍 BASE PATH ROBUSTO

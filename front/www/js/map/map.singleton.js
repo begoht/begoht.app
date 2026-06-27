@@ -127,7 +127,7 @@ export function createMap(container) {
   mapInstance = L.map(el, {
 
     zoomControl: false,
-    preferCanvas: true,
+    preferCanvas: false,
     tap: true,
     touchZoom: true,
     minZoom: minZoom || 12,
@@ -161,7 +161,7 @@ export function createMap(container) {
   ).addTo(mapInstance);
 
   bindCompassButton(mapInstance);
-  bindRotationRefresh(mapInstance);
+  bindViewportRefresh(mapInstance);
 
   L.tileLayer(
     "https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png",
@@ -206,20 +206,13 @@ export function createMap(container) {
 
   }, 100);
 
-  const invalidate = () => {
+  const refreshViewport = () => scheduleViewportRefresh(mapInstance);
 
-    try {
-
-      mapInstance?.invalidateSize({ animate: false });
-
-    } catch {}
-
-  };
-
-  addManagedListener(window, "resize", invalidate, { passive: true });
-  addManagedListener(window.visualViewport, "resize", invalidate, { passive: true });
+  addManagedListener(window, "resize", refreshViewport, { passive: true });
+  addManagedListener(window.visualViewport, "resize", refreshViewport, { passive: true });
+  addManagedListener(window, "orientationchange", refreshViewport, { passive: true });
   const onVisible = () => {
-    if (!document.hidden) setTimeout(invalidate, 150);
+    if (!document.hidden) scheduleViewportRefresh(mapInstance);
   };
   addManagedListener(document, "visibilitychange", onVisible);
 
@@ -251,32 +244,35 @@ function bindCompassButton(map) {
   render();
 }
 
-function bindRotationRefresh(map) {
-  if (!map || map._begoRotationRefreshBound) return;
+function bindViewportRefresh(map) {
+  if (!map || map._begoViewportRefreshBound) return;
+  map._begoViewportRefreshBound = true;
 
-  map._begoRotationRefreshBound = true;
-  let frame = 0;
-
-  const refresh = () => {
-    if (frame) return;
-
-    frame = window.requestAnimationFrame(() => {
-      frame = 0;
-
-      try {
-        map.eachLayer((layer) => {
-          if (typeof layer.redraw === "function") {
-            layer.redraw();
-          }
-        });
-      } catch {}
-    });
-  };
-
-  map.on?.("rotate", refresh);
   mapListenerCleanup.push(() => {
-    map.off?.("rotate", refresh);
-    if (frame) window.cancelAnimationFrame(frame);
-    map._begoRotationRefreshBound = false;
+    if (map._begoViewportFrame) window.cancelAnimationFrame(map._begoViewportFrame);
+    if (map._begoViewportTimer) window.clearTimeout(map._begoViewportTimer);
+    map._begoViewportFrame = 0;
+    map._begoViewportTimer = 0;
+    map._begoViewportRefreshBound = false;
   });
+}
+
+function scheduleViewportRefresh(map) {
+  if (!map) return;
+
+  if (map._begoViewportFrame) window.cancelAnimationFrame(map._begoViewportFrame);
+  map._begoViewportFrame = window.requestAnimationFrame(() => {
+    map._begoViewportFrame = 0;
+    try {
+      map.invalidateSize({ animate: false, pan: false });
+    } catch {}
+  });
+
+  if (map._begoViewportTimer) window.clearTimeout(map._begoViewportTimer);
+  map._begoViewportTimer = window.setTimeout(() => {
+    map._begoViewportTimer = 0;
+    try {
+      map.invalidateSize({ animate: false, pan: false });
+    } catch {}
+  }, 180);
 }

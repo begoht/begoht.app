@@ -1,12 +1,12 @@
-import { initGeo } from "../map/map.geo.js?v=20260625-map-instant";
-import { initSeleccionDestino } from "../map/map.destino.js?v=20260625-map-instant";
+import { initGeo } from "../map/map.geo.js?v=20260627-map-rotate";
+import { initSeleccionDestino } from "../map/map.destino.js?v=20260627-map-rotate";
 import { actualizarBotonViaje } from "../pasajero/pasajero.ui.js?v=20260624-cordoba-gps";
 import { initPaymentMethodSettings, initToggleMenuDriver, seleccionarPago } from "./pasajero.ui.js?v=20260624-cordoba-gps";
 import { getSocket } from "../socket/socket.js?v=20260606-session-refresh";
-import { initPasajeroSocket } from "../socket/pasajero.socket.js?v=20260625-return-cancel";
-import { setMapa, limpiarMotoristas } from "../map/map.motorista.js?v=20260625-map-instant";
-import { initSavedDestinations } from "../map/map.saved-destinations.js?v=20260625-map-instant";
-import { initEnvioPaquete } from "./envio.paquete.js?v=20260625-map-instant";
+import { initPasajeroSocket } from "../socket/pasajero.socket.js?v=20260627-map-rotate";
+import { setMapa, limpiarMotoristas } from "../map/map.motorista.js?v=20260627-map-rotate";
+import { initSavedDestinations } from "../map/map.saved-destinations.js?v=20260627-map-rotate";
+import { initEnvioPaquete } from "./envio.paquete.js?v=20260627-map-rotate";
 import { initHomeOffers } from "../promos/passenger-offers.js?v=20260604-admin-offers";
 import { initWalletDiscountUI } from "./wallet-discount.js?v=20260605-price-premium-cancel";
 import { viajeState } from "../viaje/viaje.state.js";

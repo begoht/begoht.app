@@ -1,4 +1,4 @@
-import { borrarRuta } from "../map.js?v=20260625-map-instant";
+import { borrarRuta } from "../map.js?v=20260627-map-rotate";
 import {
     getEstadoViaje,
     getViajeEnCursoId,
@@ -121,7 +121,7 @@ export function limpiarViajeMain(ui = {}) {
     clearTimeout(llegadaRetryTimeout);
     setLlegadaRetryTimeout(null);
 
-    import("../oferta/oferta.render.js?v=20260624-matching-heartbeat").then(mod => {
+    import("../oferta/oferta.render.js?v=20260627-map-icons").then(mod => {
         mod.limpiarOferta();
     }).catch(err => {
         console.warn("No se pudo limpiar oferta:", err);

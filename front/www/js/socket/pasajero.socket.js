@@ -1,27 +1,27 @@
 import { getSocket } from "./socket.js?v=20260606-session-refresh";
 import { viajeState } from "../viaje/viaje.state.js";
 
-import { handlePrecio } from "./handlers/precio.handler.js?v=20260625-map-instant";
-import { handleAsignado } from "./handlers/asignado.handler.js?v=20260625-map-instant";
-import { handleTrack } from "./handlers/track.handler.js?v=20260625-map-instant";
-import { handleLlego } from "./handlers/llego.handler.js?v=20260625-map-instant";
-import { handleIniciado } from "./handlers/iniciado.handler.js?v=20260625-map-instant";
+import { handlePrecio } from "./handlers/precio.handler.js?v=20260627-map-rotate";
+import { handleAsignado } from "./handlers/asignado.handler.js?v=20260627-map-rotate";
+import { handleTrack } from "./handlers/track.handler.js?v=20260627-map-rotate";
+import { handleLlego } from "./handlers/llego.handler.js?v=20260627-map-rotate";
+import { handleIniciado } from "./handlers/iniciado.handler.js?v=20260627-map-rotate";
 import { handleFinalizado } from "./handlers/finalizado.handler.js?v=20260615-smooth-autofinish";
 import { handleConnect } from "./handlers/connect.handler.js";
-import { handleError } from "./handlers/error.handler.js?v=20260625-map-instant";
+import { handleError } from "./handlers/error.handler.js?v=20260627-map-rotate";
 import { handleNoMotorista } from "./handlers/noMotorista.handler.js?v=20260615-smooth-autofinish";
 import { handleCancelado } from "./handlers/cancelado.handler.js?v=20260605-price-premium-cancel";
 import { handleExpirado } from "./handlers/expirado.handler.js";
-import { handleSync } from "./handlers/sync.handler.js?v=20260625-map-instant";
-import { handleEstado } from "./handlers/estado.handler.js?v=20260625-map-instant";
+import { handleSync } from "./handlers/sync.handler.js?v=20260627-map-rotate";
+import { handleEstado } from "./handlers/estado.handler.js?v=20260627-map-rotate";
 import { handleMotoristaCandidato } from "./handlers/candidato.handler.js?v=20260615-smooth-autofinish";
-import { handleBuscando } from "./handlers/buscando.handler.js?v=20260625-map-instant";
+import { handleBuscando } from "./handlers/buscando.handler.js?v=20260627-map-rotate";
 import { handleProximidad } from "./handlers/proximidad.handler.js";
 import {
   handleIdaVueltaPendiente,
   handleRetornoAnulado,
   handleRetornoIniciado
-} from "./handlers/idaVuelta.handler.js?v=20260625-return-cancel";
+} from "./handlers/idaVuelta.handler.js?v=20260627-map-rotate";
 import { initPasajeroChat } from "../chat/viajeChat.pasajero.js";
 
 let listenersRegistrados = false;

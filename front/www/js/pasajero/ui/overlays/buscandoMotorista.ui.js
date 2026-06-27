@@ -3,9 +3,9 @@ import { getMapaInstance } from "../../../map/state/map.motoristas.state.js";
 import {
   eliminarMotoristaDelMapa,
   mostrarMotoristaEnMapa
-} from "../../../map/map.motorista.js?v=20260625-map-instant";
+} from "../../../map/map.motorista.js?v=20260627-map-rotate";
 import { viajeState } from "../../../viaje/viaje.state.js";
-import { actualizarBotonViaje } from "../boton/botonViaje.ui.js?v=20260625-map-instant";
+import { actualizarBotonViaje } from "../boton/botonViaje.ui.js?v=20260627-map-rotate";
 
 const CANDIDATE_FALLBACK_MS = 14_000;
 

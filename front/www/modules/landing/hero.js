@@ -1,5 +1,6 @@
-import { renderDriverDownloadButton, renderPassengerDownloadButton } from "../downloads/downloads.module.js";
+import { renderDriverDownloadButton, renderPassengerDownloadButton } from "../downloads/downloads.module.js?v=20260627-map-icons";
 import { renderRegistrationQuickLinks } from "../registro/registro.module.js";
+import { renderLandingIcon } from "./icons.js?v=20260627-map-icons";
 
 export function renderHero() {
   return `
@@ -27,12 +28,12 @@ export function renderHero() {
         <div class="mockup-container">
           <div class="app-screen-sim">
             <div class="sim-header">
-              <span><i class="bx bx-signal-5" aria-hidden="true"></i> BeGO Live</span>
+              <span>${renderLandingIcon("signal", "landing-icon")} BeGO Live</span>
               <span id="clock">12:00</span>
             </div>
             <div class="sim-map">
               <div class="sim-pulse" aria-hidden="true"></div>
-              <i class="bx bx-cycling sim-icon-moto" aria-hidden="true"></i>
+              <img class="sim-icon-moto" src="/assets/icons/moto-transparent.svg?v=20260627-map-icons" alt="" aria-hidden="true">
             </div>
             <div class="sim-card">
               <div class="sim-card-row">

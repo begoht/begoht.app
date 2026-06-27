@@ -148,10 +148,11 @@ svg {
   cursor: pointer;
 }
 
-.icon-button i,
-.cta i,
-.icon-wrapper i,
-.footer-col i {
+.landing-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: 0 0 auto;
+  display: inline-block;
   line-height: 1;
 }
 
@@ -349,6 +350,17 @@ svg {
   font-size: 0.75rem;
 }
 
+.sim-header > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sim-header .landing-icon {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
 .sim-map {
   flex-grow: 1;
   margin: 15px 0;
@@ -375,10 +387,10 @@ svg {
   position: absolute;
   top: 45%;
   left: 48%;
-  color: var(--cyan);
-  font-size: 1.5rem;
-  line-height: 1;
-  text-shadow: 0 0 25px rgba(18, 223, 240, 0.35);
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 12px rgba(18, 223, 240, 0.58));
 }
 
 .sim-card {

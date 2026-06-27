@@ -1,4 +1,4 @@
-import { resetRutaCache } from "../map.ruta.js?v=20260625-map-instant";
+import { resetRutaCache } from "../map.ruta.js?v=20260627-map-rotate";
 
 let lastEstado = null;
 

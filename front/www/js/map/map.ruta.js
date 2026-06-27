@@ -1,4 +1,4 @@
-import { getMap } from "./map.singleton.js?v=20260625-map-instant";
+import { getMap } from "./map.singleton.js?v=20260627-map-rotate";
 
 import {
   mismaPosicion,
@@ -15,7 +15,7 @@ import {
   renderRutaReserva,
   renderLineaRecta,
   limpiarRuta
-} from "./ui/map.route.renderer.js?v=20260625-map-instant";
+} from "./ui/map.route.renderer.js?v=20260627-map-rotate";
 
 let ultimaRutaCalculada = 0;
 

@@ -19,7 +19,7 @@ test("flujo ida/vuelta: al terminar la ida queda pendiente y el pasajero puede a
   assert.match(service, /ESTADO_RETORNO_PENDIENTE/);
   assert.match(service, /ida-vuelta:pendiente/);
 
-  assert.match(passengerSocket, /idaVuelta\.handler\.js\?v=20260625-return-cancel/);
+  assert.match(passengerSocket, /idaVuelta\.handler\.js\?v=20260627-map-rotate/);
   assert.match(passengerHandler, /const\s+RETORNO_AUTO_START_MS\s*=/);
   assert.match(passengerHandler, /id="btnAnularVueltaPasajero"/);
   assert.match(passengerHandler, />\s*Anular vuelta\s*</);
@@ -37,12 +37,12 @@ test("cadena de cache: la app pasajero carga el handler nuevo de vuelta", () => 
   const passengerMain = readWorkspaceFile("front/www/js/pasajero/pasajero.main.js");
   const passengerSocket = readWorkspaceFile("front/www/js/socket/pasajero.socket.js");
 
-  assert.match(index, /app\.js\?v=20260625-return-cancel/);
-  assert.match(app, /router\.js\?v=20260625-return-cancel/);
-  assert.match(router, /app\.lifecycle\.js\?v=20260625-return-cancel/);
-  assert.match(lifecycle, /pasajero\.main\.js\?v=20260625-return-cancel/);
-  assert.match(passengerMain, /pasajero\.socket\.js\?v=20260625-return-cancel/);
-  assert.match(passengerSocket, /idaVuelta\.handler\.js\?v=20260625-return-cancel/);
+  assert.match(index, /app\.js\?v=20260627-map-rotate/);
+  assert.match(app, /router\.js\?v=20260627-map-rotate/);
+  assert.match(router, /app\.lifecycle\.js\?v=20260627-map-rotate/);
+  assert.match(lifecycle, /pasajero\.main\.js\?v=20260627-map-rotate/);
+  assert.match(passengerMain, /pasajero\.socket\.js\?v=20260627-map-rotate/);
+  assert.match(passengerSocket, /idaVuelta\.handler\.js\?v=20260627-map-rotate/);
 });
 
 test("mapa en viaje: oculta origen, consume ruta y evita parpadeo al mover o rotar", () => {
@@ -53,6 +53,8 @@ test("mapa en viaje: oculta origen, consume ruta y evita parpadeo al mover o rot
   const routeRenderer = readWorkspaceFile("front/www/js/map/ui/map.route.renderer.js");
   const routeController = readWorkspaceFile("front/www/js/map/controllers/map.route.controller.js");
   const mapSingleton = readWorkspaceFile("front/www/js/map/map.singleton.js");
+  const passengerIndex = readWorkspaceFile("front/www/index.html");
+  const driverRuntime = readWorkspaceFile("front-driver/www/js/core/native-runtime-loader.js");
   const passengerCss = readWorkspaceFile("front/www/css/main.css");
 
   assert.match(geo, /export function ocultarOrigenEnMapa/);
@@ -73,8 +75,32 @@ test("mapa en viaje: oculta origen, consume ruta y evita parpadeo al mover o rot
   assert.match(mapSingleton, /updateWhenZooming:\s*true/);
   assert.match(mapSingleton, /updateInterval:\s*64/);
   assert.match(mapSingleton, /keepBuffer:\s*6/);
-  assert.match(mapSingleton, /bindRotationRefresh/);
+  assert.match(mapSingleton, /preferCanvas:\s*false/);
+  assert.match(mapSingleton, /bindViewportRefresh/);
+  assert.match(mapSingleton, /orientationchange/);
+  assert.match(mapSingleton, /invalidateSize\(\{ animate:\s*false, pan:\s*false \}\)/);
+  assert.doesNotMatch(mapSingleton, /eachLayer\([\s\S]{0,180}layer\.redraw/);
+  assert.match(passengerIndex, /\.\/vendor\/leaflet\/leaflet\.js\?v=1\.9\.4/);
+  assert.match(passengerIndex, /\.\/vendor\/leaflet\/leaflet-rotate\.js\?v=0\.2\.8/);
+  assert.match(driverRuntime, /\.\/vendor\/leaflet\/leaflet\.js\?v=1\.9\.4/);
+  assert.match(driverRuntime, /\.\/vendor\/leaflet\/leaflet-rotate\.js\?v=0\.2\.8/);
   assert.match(passengerCss, /\.bego-map-icon-moto[\s\S]*transition:\s*none/);
+});
+
+test("landing: los iconos criticos estan integrados y no dependen de Boxicons", () => {
+  const landing = readWorkspaceFile("front/www/landing.html");
+  const icons = readWorkspaceFile("front/www/modules/landing/icons.js");
+  const header = readWorkspaceFile("front/www/modules/landing/header.js");
+  const downloads = readWorkspaceFile("front/www/modules/downloads/downloads.module.js");
+  const support = readWorkspaceFile("front/www/modules/soporte/soporte.module.js");
+
+  assert.doesNotMatch(landing, /boxicons/i);
+  assert.match(icons, /android:/);
+  assert.match(icons, /instagram:/);
+  assert.match(icons, /tiktok:/);
+  assert.match(header, /renderLandingIcon\("menu"/);
+  assert.match(downloads, /renderLandingIcon\(app\.icon/);
+  assert.doesNotMatch(support, /class="bx /);
 });
 
 test("motorista: no decide la vuelta y queda esperando durante retorno pendiente", () => {

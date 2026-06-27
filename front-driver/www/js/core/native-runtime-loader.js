@@ -66,9 +66,10 @@
 
   async function ensureLeaflet() {
     if (!window.L?.map) {
-      loadStyleOnce("bego-leaflet-css", "https://unpkg.com/leaflet/dist/leaflet.css");
+      loadStyleOnce("bego-leaflet-css", "./vendor/leaflet/leaflet.css?v=1.9.4");
 
       const sources = [
+        "./vendor/leaflet/leaflet.js?v=1.9.4",
         "https://unpkg.com/leaflet/dist/leaflet.js",
         "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"
       ];
@@ -87,6 +88,7 @@
     if (typeof window.L?.Map?.prototype?.setBearing === "function") return true;
 
     const rotateSources = [
+      "./vendor/leaflet/leaflet-rotate.js?v=0.2.8",
       "https://unpkg.com/leaflet-rotate@0.2.8/dist/leaflet-rotate.js",
       "https://cdn.jsdelivr.net/npm/leaflet-rotate@0.2.8/dist/leaflet-rotate.js"
     ];

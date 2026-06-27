@@ -1,6 +1,6 @@
-import { renderDownloadPanel } from "../downloads/downloads.module.js";
-import { LANDING_SERVICES } from "./services.registry.js?v=20260619-mobility-steps";
-import { renderLandingIcon } from "./icons.js?v=20260619-mobility-steps";
+import { renderDownloadPanel } from "../downloads/downloads.module.js?v=20260627-map-icons";
+import { LANDING_SERVICES } from "./services.registry.js?v=20260627-map-icons";
+import { renderLandingIcon } from "./icons.js?v=20260627-map-icons";
 
 function renderServiceCard(service) {
   const anchor = service.anchor ? ` id="${service.anchor}"` : "";
