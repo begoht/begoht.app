@@ -1,4 +1,4 @@
-import { pasajeroIcon } from "./map.icons.js?v=20260627-map-rotate";
+import { pasajeroIcon } from "./map.icons.js?v=20260627-map-fluid-arrival";
 import { ACTIVE_CITY, cityConfig, coordsInCity, inferCityConfigFromCoords, persistDetectedCity } from "./config/index.js?v=20260624-cordoba-gps";
 import { viajeState } from "../viaje/viaje.state.js";
 import { reverseGeocode } from "./services/map.reverse.js?v=20260624-cordoba-gps";
@@ -287,7 +287,7 @@ function aplicarUbicacionGps(map, lat, lng, direccion, { center = false, animate
   renderPasajeroMarker(map, lat, lng, direccion, { animate });
 
   if (!center && tieneDestino && distanciaDesdeOrigen >= GPS_ORIGEN_RUTA_LOCK_METERS) {
-    import("./map.ruta.js?v=20260627-map-rotate")
+    import("./map.ruta.js?v=20260627-map-fluid-arrival")
       .then(({ dibujarRuta }) => dibujarRuta(origenGps, viajeState.destino, true))
       .catch((err) => console.warn("No se pudo reajustar la ruta al GPS:", err));
   }

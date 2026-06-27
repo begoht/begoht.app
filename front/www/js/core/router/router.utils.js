@@ -1,4 +1,4 @@
-import { stopGeo } from "../../map/map.geo.js?v=20260627-map-rotate";
+import { stopGeo } from "../../map/map.geo.js?v=20260627-map-fluid-arrival";
 
 // ===============================
 // 🌍 BASE PATH ROBUSTO

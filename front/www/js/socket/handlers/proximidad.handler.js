@@ -3,7 +3,7 @@ import {
   mostrarNotificacionProximidad,
   actualizarEstadoProximidad,
   reproducirSonidoLlegada
-} from "../../pasajero/pasajero.ui.js";
+} from "../../pasajero/pasajero.ui.js?v=20260627-map-fluid-arrival";
 
 const avisosMostrados = new Set();
 

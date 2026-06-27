@@ -19,7 +19,7 @@ test("flujo ida/vuelta: al terminar la ida queda pendiente y el pasajero puede a
   assert.match(service, /ESTADO_RETORNO_PENDIENTE/);
   assert.match(service, /ida-vuelta:pendiente/);
 
-  assert.match(passengerSocket, /idaVuelta\.handler\.js\?v=20260627-map-rotate/);
+  assert.match(passengerSocket, /idaVuelta\.handler\.js\?v=20260627-map-fluid-arrival/);
   assert.match(passengerHandler, /const\s+RETORNO_AUTO_START_MS\s*=/);
   assert.match(passengerHandler, /id="btnAnularVueltaPasajero"/);
   assert.match(passengerHandler, />\s*Anular vuelta\s*</);
@@ -37,12 +37,12 @@ test("cadena de cache: la app pasajero carga el handler nuevo de vuelta", () => 
   const passengerMain = readWorkspaceFile("front/www/js/pasajero/pasajero.main.js");
   const passengerSocket = readWorkspaceFile("front/www/js/socket/pasajero.socket.js");
 
-  assert.match(index, /app\.js\?v=20260627-map-rotate/);
-  assert.match(app, /router\.js\?v=20260627-map-rotate/);
-  assert.match(router, /app\.lifecycle\.js\?v=20260627-map-rotate/);
-  assert.match(lifecycle, /pasajero\.main\.js\?v=20260627-map-rotate/);
-  assert.match(passengerMain, /pasajero\.socket\.js\?v=20260627-map-rotate/);
-  assert.match(passengerSocket, /idaVuelta\.handler\.js\?v=20260627-map-rotate/);
+  assert.match(index, /app\.js\?v=20260627-map-fluid-arrival/);
+  assert.match(app, /router\.js\?v=20260627-map-fluid-arrival/);
+  assert.match(router, /app\.lifecycle\.js\?v=20260627-map-fluid-arrival/);
+  assert.match(lifecycle, /pasajero\.main\.js\?v=20260627-map-fluid-arrival/);
+  assert.match(passengerMain, /pasajero\.socket\.js\?v=20260627-map-fluid-arrival/);
+  assert.match(passengerSocket, /idaVuelta\.handler\.js\?v=20260627-map-fluid-arrival/);
 });
 
 test("mapa en viaje: oculta origen, consume ruta y evita parpadeo al mover o rotar", () => {
@@ -53,6 +53,12 @@ test("mapa en viaje: oculta origen, consume ruta y evita parpadeo al mover o rot
   const routeRenderer = readWorkspaceFile("front/www/js/map/ui/map.route.renderer.js");
   const routeController = readWorkspaceFile("front/www/js/map/controllers/map.route.controller.js");
   const mapSingleton = readWorkspaceFile("front/www/js/map/map.singleton.js");
+  const motorcycleMotion = readWorkspaceFile("front/www/js/map/utils/map.motorcycle.motion.js");
+  const motorcycleRenderer = readWorkspaceFile("front/www/js/map/ui/map.motorista.renderer.js");
+  const driverMap = readWorkspaceFile("front-driver/www/js/modules/map.js");
+  const driverMotion = readWorkspaceFile("front-driver/www/js/modules/map.motion.js");
+  const driverGps = readWorkspaceFile("front-driver/www/js/modules/gps.js");
+  const mapMotionCss = readWorkspaceFile("front/www/css/components/map-motion.css");
   const passengerIndex = readWorkspaceFile("front/www/index.html");
   const driverRuntime = readWorkspaceFile("front-driver/www/js/core/native-runtime-loader.js");
   const passengerCss = readWorkspaceFile("front/www/css/main.css");
@@ -73,9 +79,13 @@ test("mapa en viaje: oculta origen, consume ruta y evita parpadeo al mover o rot
 
   assert.match(mapSingleton, /updateWhenIdle:\s*false/);
   assert.match(mapSingleton, /updateWhenZooming:\s*true/);
-  assert.match(mapSingleton, /updateInterval:\s*64/);
-  assert.match(mapSingleton, /keepBuffer:\s*6/);
+  assert.match(mapSingleton, /updateInterval:\s*16/);
+  assert.match(mapSingleton, /keepBuffer:\s*8/);
   assert.match(mapSingleton, /preferCanvas:\s*false/);
+  assert.match(mapSingleton, /L\.svg\(\{ padding:\s*0\.5 \}\)/);
+  assert.match(mapSingleton, /zoomAnimation:\s*false/);
+  assert.match(mapSingleton, /fadeAnimation:\s*false/);
+  assert.match(mapSingleton, /inertia:\s*false/);
   assert.match(mapSingleton, /bindViewportRefresh/);
   assert.match(mapSingleton, /orientationchange/);
   assert.match(mapSingleton, /invalidateSize\(\{ animate:\s*false, pan:\s*false \}\)/);
@@ -84,7 +94,31 @@ test("mapa en viaje: oculta origen, consume ruta y evita parpadeo al mover o rot
   assert.match(passengerIndex, /\.\/vendor\/leaflet\/leaflet-rotate\.js\?v=0\.2\.8/);
   assert.match(driverRuntime, /\.\/vendor\/leaflet\/leaflet\.js\?v=1\.9\.4/);
   assert.match(driverRuntime, /\.\/vendor\/leaflet\/leaflet-rotate\.js\?v=0\.2\.8/);
+  assert.match(motorcycleMotion, /onMove\s*=\s*null/);
+  assert.match(motorcycleMotion, /setMarkerPosition\(marker, next, onMove\)/);
+  assert.match(motorcycleRenderer, /onMove:\s*\(position\)\s*=>\s*consumirRutaDesde\(map, position\)/);
+  assert.match(driverMotion, /onMove\s*=\s*null/);
+  assert.match(driverGps, /onMove:\s*\(position\)\s*=>\s*consumirRutaDesde\(position\)/);
+  assert.match(driverMap, /map\.panTo\(\[center\.lat, center\.lng\]/);
+  assert.doesNotMatch(driverMap, /const nextZoom\s*=\s*Math\.max/);
+  assert.match(driverMap, /inertia:\s*false/);
+  assert.match(driverMap, /updateInterval:\s*16/);
+  assert.match(mapMotionCss, /\.leaflet-zoom-animated[\s\S]*transition:\s*none\s*!important/);
   assert.match(passengerCss, /\.bego-map-icon-moto[\s\S]*transition:\s*none/);
+});
+
+test("aviso de llegada: usa componente premium accesible y sin estilos inline", () => {
+  const arrivalUi = readWorkspaceFile("front/www/js/pasajero/ui/notificaciones/llegada.ui.js");
+  const arrivalCss = readWorkspaceFile("front/www/css/components/arrival.css");
+
+  assert.match(arrivalUi, /className\s*=\s*"arrival-notice"/);
+  assert.match(arrivalUi, /aria-live",\s*"assertive"/);
+  assert.match(arrivalUi, /arrival-notice__close/);
+  assert.match(arrivalUi, /arrival-state/);
+  assert.doesNotMatch(arrivalUi, /style="/);
+  assert.match(arrivalCss, /\.arrival-notice__card/);
+  assert.match(arrivalCss, /env\(safe-area-inset-bottom/);
+  assert.match(arrivalCss, /@media \(prefers-reduced-motion:\s*reduce\)/);
 });
 
 test("landing: los iconos criticos estan integrados y no dependen de Boxicons", () => {

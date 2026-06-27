@@ -1,158 +1,122 @@
-/*************************************************
- * 🚖 LLEGADA MOTORISTA (UI PREMIUM)
- *************************************************/
-export function mostrarNotificacionLlegada(data) {
-    const existente = document.getElementById("toastLlegada");
-    if (existente) existente.remove();
+const ARRIVAL_NOTICE_MS = 8000;
 
-    const toast = document.createElement("div");
-    toast.id = "toastLlegada";
+export function mostrarNotificacionLlegada(data = {}) {
+  document.getElementById("toastLlegada")?.remove();
 
-    toast.innerHTML = `
-        <div style="
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%) translateY(20px);
-            background: linear-gradient(135deg, #16a34a, #22c55e);
-            color: white;
-            padding: 14px 18px;
-            border-radius: 14px;
-            font-size: 14px;
-            font-weight: 500;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-            z-index: 9999;
-            opacity: 0;
-            transition: all 0.35s ease;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        ">
-            <span style="font-size:18px;">🚖</span>
-            <span>${data?.mensaje || "Tu motorista ha llegado"}</span>
-        </div>
-    `;
+  const toast = document.createElement("aside");
+  toast.id = "toastLlegada";
+  toast.className = "arrival-notice";
+  toast.setAttribute("role", "alert");
+  toast.setAttribute("aria-live", "assertive");
+  toast.setAttribute("aria-atomic", "true");
+  toast.innerHTML = `
+    <div class="arrival-notice__card">
+      <div class="arrival-notice__icon" aria-hidden="true">
+        <i class="fa-solid fa-location-dot"></i>
+        <span></span>
+      </div>
+      <div class="arrival-notice__content">
+        <span class="arrival-notice__eyebrow">Recogida confirmada</span>
+        <strong>Tu motorista llego</strong>
+        <p>${limpiarMensaje(data.mensaje, "Tu motorista te espera en el punto de recogida.")}</p>
+      </div>
+      <button class="arrival-notice__close" type="button" aria-label="Cerrar aviso" title="Cerrar">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+      <span class="arrival-notice__progress" aria-hidden="true"></span>
+    </div>
+  `;
 
-    document.body.appendChild(toast);
+  document.body.appendChild(toast);
+  requestAnimationFrame(() => toast.classList.add("is-visible"));
 
-    requestAnimationFrame(() => {
-        toast.firstElementChild.style.opacity = "1";
-        toast.firstElementChild.style.transform = "translateX(-50%) translateY(0)";
-    });
-
-    setTimeout(() => {
-        toast.firstElementChild.style.opacity = "0";
-        toast.firstElementChild.style.transform = "translateX(-50%) translateY(20px)";
-        setTimeout(() => toast.remove(), 300);
-    }, 5000);
+  let removeTimer = window.setTimeout(() => cerrarAviso(toast), ARRIVAL_NOTICE_MS);
+  toast.querySelector(".arrival-notice__close")?.addEventListener("click", () => {
+    window.clearTimeout(removeTimer);
+    removeTimer = null;
+    cerrarAviso(toast);
+  });
 }
 
 export function mostrarNotificacionProximidad(data = {}) {
-    const existente = document.getElementById("toastProximidadMotorista");
-    if (existente) existente.remove();
+  document.getElementById("toastProximidadMotorista")?.remove();
 
-    const metros = Number(data.metros);
-    const distancia = Number.isFinite(metros) && metros > 0
-        ? metros < 1000
-            ? `${Math.round(metros)} m`
-            : `${(metros / 1000).toFixed(1)} km`
-        : "muy cerca";
-    const eta = data.eta ? ` | ${data.eta} min` : "";
+  const metros = Number(data.metros);
+  const distancia = Number.isFinite(metros) && metros > 0
+    ? metros < 1000
+      ? `${Math.round(metros)} m`
+      : `${(metros / 1000).toFixed(1)} km`
+    : "muy cerca";
+  const eta = data.eta ? `, ${Math.max(1, Math.round(Number(data.eta)))} min` : "";
+  const toast = document.createElement("aside");
 
-    const toast = document.createElement("div");
-    toast.id = "toastProximidadMotorista";
+  toast.id = "toastProximidadMotorista";
+  toast.className = "arrival-notice arrival-notice--near";
+  toast.setAttribute("role", "status");
+  toast.setAttribute("aria-live", "polite");
+  toast.innerHTML = `
+    <div class="arrival-notice__card">
+      <div class="arrival-notice__icon" aria-hidden="true"><i class="fa-solid fa-route"></i></div>
+      <div class="arrival-notice__content">
+        <span class="arrival-notice__eyebrow">Llegada proxima</span>
+        <strong>Motorista a punto de llegar</strong>
+        <p>Esta a ${distancia}${eta}. Preparate para salir.</p>
+      </div>
+    </div>
+  `;
 
-    toast.innerHTML = `
-        <div style="
-            position: fixed;
-            bottom: calc(22px + env(safe-area-inset-bottom, 0px));
-            left: 50%;
-            width: min(calc(100vw - 28px), 380px);
-            transform: translateX(-50%) translateY(18px);
-            color: #f8fafc;
-            padding: 14px;
-            border-radius: 20px;
-            background:
-                radial-gradient(circle at 20% 0%, rgba(96,165,250,.36), transparent 34%),
-                linear-gradient(135deg, #0f172a, #2563eb);
-            box-shadow: 0 22px 48px rgba(15,23,42,.28);
-            z-index: 9999;
-            opacity: 0;
-            transition: all 0.32s ease;
-            display: grid;
-            grid-template-columns: 42px minmax(0, 1fr);
-            gap: 12px;
-            align-items: center;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        ">
-            <span style="
-                display:grid;
-                place-items:center;
-                width:42px;
-                height:42px;
-                border-radius:16px;
-                color:#172554;
-                background:#dbeafe;
-                font-size:18px;
-                font-weight:900;
-            ">✓</span>
-            <span style="min-width:0;">
-                <strong style="display:block;font-size:15px;line-height:1.2;">Motorista a punto de llegar</strong>
-                <span style="display:block;margin-top:3px;color:rgba(248,250,252,.78);font-size:12px;line-height:1.35;">
-                    Esta a ${distancia}${eta}. Preparate para salir.
-                </span>
-            </span>
-        </div>
-    `;
-
-    document.body.appendChild(toast);
-
-    requestAnimationFrame(() => {
-        toast.firstElementChild.style.opacity = "1";
-        toast.firstElementChild.style.transform = "translateX(-50%) translateY(0)";
-    });
-
-    setTimeout(() => {
-        if (!toast.firstElementChild) return;
-        toast.firstElementChild.style.opacity = "0";
-        toast.firstElementChild.style.transform = "translateX(-50%) translateY(18px)";
-        setTimeout(() => toast.remove(), 320);
-    }, 7000);
+  document.body.appendChild(toast);
+  requestAnimationFrame(() => toast.classList.add("is-visible"));
+  window.setTimeout(() => cerrarAviso(toast), 7000);
 }
 
 export function actualizarEstadoProximidad(data = {}) {
-    const box = document.getElementById("estadoViaje");
-    if (!box) return;
+  const box = document.getElementById("estadoViaje");
+  if (!box) return;
 
-    const metros = Number(data.metros);
-    const distancia = Number.isFinite(metros) && metros > 0
-        ? `${Math.round(metros)} m`
-        : "muy cerca";
+  const metros = Number(data.metros);
+  const distancia = Number.isFinite(metros) && metros > 0
+    ? `${Math.round(metros)} m`
+    : "muy cerca";
 
-    box.innerHTML = `
-        <div style="display:flex;align-items:center;gap:8px;color:#2563eb;font-weight:700;">
-            <span style="font-size:18px;">✓</span>
-            <span style="min-width:0;line-height:1.25;overflow-wrap:anywhere;">El motorista esta a punto de llegar (${distancia})</span>
-        </div>
-    `;
+  box.innerHTML = `
+    <div class="arrival-state arrival-state--near">
+      <span class="arrival-state__icon" aria-hidden="true"><i class="fa-solid fa-route"></i></span>
+      <span><strong>Motorista muy cerca</strong>Distancia aproximada: ${distancia}</span>
+    </div>
+  `;
 }
 
 export function actualizarEstadoLlegada() {
-    const box = document.getElementById("estadoViaje");
-    if (!box) return;
+  const box = document.getElementById("estadoViaje");
+  if (!box) return;
 
-    box.innerHTML = `
-        <div style="display:flex;align-items:center;gap:8px;color:#4ade80;font-weight:600;">
-            <span style="font-size:18px;">🟢</span>
-            <span>El motorista está afuera</span>
-        </div>
-    `;
+  box.innerHTML = `
+    <div class="arrival-state">
+      <span class="arrival-state__icon" aria-hidden="true"><i class="fa-solid fa-location-dot"></i></span>
+      <span><strong>Motorista en el punto</strong>Te esta esperando afuera</span>
+    </div>
+  `;
 }
 
 export function reproducirSonidoLlegada() {
-    const sonido = document.getElementById("sonidoLlegada");
-    if (!sonido) return;
+  const sonido = document.getElementById("sonidoLlegada");
+  if (!sonido) return;
 
-    sonido.currentTime = 0;
-    sonido.play().catch(() => {});
+  sonido.currentTime = 0;
+  sonido.play().catch(() => {});
+}
+
+function cerrarAviso(toast) {
+  if (!toast?.isConnected || toast.classList.contains("is-leaving")) return;
+  toast.classList.add("is-leaving");
+  window.setTimeout(() => toast.remove(), 220);
+}
+
+function limpiarMensaje(value, fallback) {
+  const texto = String(value || fallback)
+    .replace(/[<>]/g, "")
+    .trim()
+    .slice(0, 160);
+  return texto || fallback;
 }

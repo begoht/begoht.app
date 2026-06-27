@@ -2,7 +2,7 @@ import {
   dibujarRuta,
   dibujarRutaReserva,
   limpiarRutas
-} from "../map.ruta.js?v=20260627-map-rotate";
+} from "../map.ruta.js?v=20260627-map-fluid-arrival";
 
 import {
   mismaPosicion,
@@ -13,12 +13,12 @@ import {
   getRouteState,
   setRouteState,
   resetRouteState
-} from "../state/map.route.state.js?v=20260627-map-rotate";
+} from "../state/map.route.state.js?v=20260627-map-fluid-arrival";
 
 import {
   getMap,
   isMapReady
-} from "../map.singleton.js?v=20260627-map-rotate";
+} from "../map.singleton.js?v=20260627-map-fluid-arrival";
 
 /*************************************************
  * 🎯 ESTADOS VÁLIDOS

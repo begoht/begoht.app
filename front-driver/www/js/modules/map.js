@@ -5,7 +5,6 @@ export let destinoMarkerRef = { current: null };
 
 const DEFAULT_MAP_CENTER = [18.2343, -72.5354];
 const DEFAULT_MAP_ZOOM = 14;
-const NAVIGATION_ZOOM = 17;
 const NAVIGATION_LEAD_METERS = 72;
 const FOLLOW_PAUSE_MS = 12000;
 const ROUTE_CONSUME_MAX_DISTANCE_METERS = 120;
@@ -31,9 +30,16 @@ export function initMap() {
     return map;
   }
 
+  const vectorRenderer = L.svg({ padding: 0.5 });
+
   map = L.map("map", {
     zoomControl: false,
     preferCanvas: false,
+    renderer: vectorRenderer,
+    zoomAnimation: false,
+    fadeAnimation: false,
+    markerZoomAnimation: false,
+    inertia: false,
     updateWhenIdle: false,
     rotate: true,
     bearing: 0,
@@ -48,10 +54,10 @@ export function initMap() {
     {
       maxZoom: 19,
       detectRetina: false,
-      keepBuffer: 6,
+      keepBuffer: 8,
       updateWhenIdle: false,
       updateWhenZooming: true,
-      updateInterval: 64,
+      updateInterval: 16,
       zIndex: 1
     }
   ).addTo(map);
@@ -61,10 +67,10 @@ export function initMap() {
     {
       maxZoom: 19,
       detectRetina: false,
-      keepBuffer: 6,
+      keepBuffer: 8,
       updateWhenIdle: false,
       updateWhenZooming: true,
-      updateInterval: 64,
+      updateInterval: 16,
       zIndex: 3
     }
   ).addTo(map);
@@ -284,20 +290,18 @@ function bindNavigationFollow() {
 
 export function seguirMotoristaEnMapa(posicion, {
   heading = null,
-  force = false,
-  zoom = NAVIGATION_ZOOM
+  force = false
 } = {}) {
   const point = normalizarCoord(posicion);
   if (!map || !point || document.hidden) return false;
   if (!force && Date.now() < followPausedUntil) return false;
 
   const center = puntoAdelantado(point, heading, NAVIGATION_LEAD_METERS);
-  const nextZoom = Math.max(Number(map.getZoom?.()) || zoom, zoom);
 
   map._begoProgrammaticMove = true;
-  map.setView([center.lat, center.lng], nextZoom, {
+  map.panTo([center.lat, center.lng], {
     animate: true,
-    duration: 0.55,
+    duration: 0.42,
     noMoveStart: true
   });
   map.once?.("moveend", () => {

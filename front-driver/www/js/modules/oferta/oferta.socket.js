@@ -4,10 +4,10 @@ import { seenOfertas, ofertaState, CONFIG, getViajeId } from "./oferta.state.js"
 import { notificar, reproducirSonido } from "./oferta.ui.js?v=20260608-offer-net-cash";
 import { registrarViaje } from "../viajeControl/viajeControl.js?v=20260608-offer-net-cash";
 import { setViajeEnCurso } from "../viajeControl/viajeEstado.js";
-import { dibujarRutaPremium } from "../map.js?v=20260627-map-rotate";
+import { dibujarRutaPremium } from "../map.js?v=20260627-map-fluid-arrival";
 import { getUltimaPosicion, refreshDriverLocation } from "../gps.js?v=20260627-map-icons";
 import { isDriverOnline } from "../driver.status.js?v=20260627-map-icons";
-import { normalizarPunto, notificarGuardia } from "../tripGuards.js?v=20260627-map-rotate";
+import { normalizarPunto, notificarGuardia } from "../tripGuards.js?v=20260627-map-fluid-arrival";
 
 const viajesTomadosProcesados = new Set();
 

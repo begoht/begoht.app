@@ -1,10 +1,10 @@
 import { viajeState } from "../../viaje/viaje.state.js";
 import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260623-roundtrip-v2";
-import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260627-map-rotate";
-import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260627-map-rotate";
-import { ocultarOrigenEnMapa } from "../../map/map.geo.js?v=20260627-map-rotate";
-import { limpiarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260627-map-rotate";
-import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260627-map-rotate";
+import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260627-map-fluid-arrival";
+import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260627-map-fluid-arrival";
+import { ocultarOrigenEnMapa } from "../../map/map.geo.js?v=20260627-map-fluid-arrival";
+import { limpiarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260627-map-fluid-arrival";
+import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260627-map-fluid-arrival";
 import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260615-smooth-autofinish";
 
 export const handleSync = (data, socket) => {

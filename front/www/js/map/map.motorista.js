@@ -1,6 +1,6 @@
 import {
   reverseGeocode
-} from "./services/map.reverse.js?v=20260627-map-rotate";
+} from "./services/map.reverse.js?v=20260627-map-fluid-arrival";
 
 import {
   setMapaInstance,
@@ -10,7 +10,7 @@ import {
 import {
   renderMotorista,
   removeMotorista
-} from "./ui/map.motorista.renderer.js?v=20260627-map-rotate";
+} from "./ui/map.motorista.renderer.js?v=20260627-map-fluid-arrival";
 
 import {
   renderMotoristas,

@@ -4,8 +4,8 @@ import {
   setViajeEnCurso,
   viajesActivos
 } from "../viajeControl/viajeEstado.js";
-import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260627-map-rotate";
-import { dibujarRutaPremium } from "../map.js?v=20260627-map-rotate";
+import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260627-map-fluid-arrival";
+import { dibujarRutaPremium } from "../map.js?v=20260627-map-fluid-arrival";
 
 let socketRef = null;
 let clicksBound = false;

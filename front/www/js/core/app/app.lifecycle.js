@@ -3,8 +3,8 @@ import { initModo } from "../../modo.js";
 import { initWalletUI } from "../../wallet.js";
 import { initLogout } from "../../logout.js";
 import { initHeader } from "../../components/header.init.js?v=20260601-huella-user";
-import { getMap } from "../../map/map.singleton.js?v=20260627-map-rotate";
-import { restoreViajeUI } from "./app.restore.js?v=20260627-map-rotate";
+import { getMap } from "../../map/map.singleton.js?v=20260627-map-fluid-arrival";
+import { restoreViajeUI } from "./app.restore.js?v=20260627-map-fluid-arrival";
 import { viajeState } from "../../viaje/viaje.state.js";
 
 let currentInitId = 0;
@@ -55,7 +55,7 @@ async function initHome(initId) {
     const map = getMap();
     if (!map) return;
 
-    const { initPasajero } = await import("../../pasajero/pasajero.main.js?v=20260627-map-rotate");
+    const { initPasajero } = await import("../../pasajero/pasajero.main.js?v=20260627-map-fluid-arrival");
 
     if (initId !== currentInitId) return;
 

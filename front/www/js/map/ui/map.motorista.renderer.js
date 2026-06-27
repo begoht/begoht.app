@@ -3,7 +3,7 @@ import { motoIcon } from "../map.icons.js?v=20260621-top-moto";
 import {
   consumirRutaDesde,
   getRutaActualCoords
-} from "./map.route.renderer.js?v=20260627-map-rotate";
+} from "./map.route.renderer.js?v=20260627-map-fluid-arrival";
 import {
   setMotorcycleMarkerPose
 } from "../utils/map.motorcycle.motion.js?v=20260621-route-moto";
@@ -23,17 +23,17 @@ export function renderMotorista(map, motorista) {
     viajeState.motoristaMarker &&
     map.hasLayer?.(viajeState.motoristaMarker)
   ) {
-    const pose = setMotorcycleMarkerPose(
+    setMotorcycleMarkerPose(
       viajeState.motoristaMarker,
       map,
       { lat, lng },
       {
         routeCoords: getRutaActualCoords(),
         heading,
-        maxSnapDistanceMeters: 85
+        maxSnapDistanceMeters: 85,
+        onMove: (position) => consumirRutaDesde(map, position)
       }
     );
-    consumirRutaDesde(map, pose?.latLng || { lat, lng });
   } else {
     if (viajeState.motoristaMarker) {
       try {
@@ -47,17 +47,17 @@ export function renderMotorista(map, motorista) {
       .addTo(map)
       .bindPopup(`Motorista: ${nombre || "Motorista"}`);
 
-    const pose = setMotorcycleMarkerPose(
+    setMotorcycleMarkerPose(
       viajeState.motoristaMarker,
       map,
       { lat, lng },
       {
         routeCoords: getRutaActualCoords(),
         heading,
-        maxSnapDistanceMeters: 85
+        maxSnapDistanceMeters: 85,
+        onMove: (position) => consumirRutaDesde(map, position)
       }
     );
-    consumirRutaDesde(map, pose?.latLng || { lat, lng });
   }
 
   const markerPos = viajeState.motoristaMarker?.getLatLng?.() || { lat, lng };

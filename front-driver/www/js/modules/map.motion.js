@@ -114,7 +114,8 @@ export function setMotorcycleMarkerPose(marker, map, rawLatLng, options = {}) {
 
 function moveMarker(marker, fromLatLng, toLatLng, {
   animate = true,
-  durationMs = DEFAULT_MOVE_DURATION_MS
+  durationMs = DEFAULT_MOVE_DURATION_MS,
+  onMove = null
 } = {}) {
   const from = normalizeLatLng(fromLatLng);
   const to = normalizeLatLng(toLatLng);
@@ -135,7 +136,7 @@ function moveMarker(marker, fromLatLng, toLatLng, {
     typeof requestAnimationFrame === "function";
 
   if (!shouldAnimate) {
-    marker.setLatLng([to.lat, to.lng]);
+    setMarkerPosition(marker, to, onMove);
     marker._begoMoveTarget = to;
     return;
   }
@@ -149,18 +150,23 @@ function moveMarker(marker, fromLatLng, toLatLng, {
     const lat = from.lat + (to.lat - from.lat) * progress;
     const lng = from.lng + (to.lng - from.lng) * progress;
 
-    marker.setLatLng([lat, lng]);
+    setMarkerPosition(marker, { lat, lng }, onMove);
 
     if (progress < 1) {
       marker._begoMoveFrame = requestAnimationFrame(tick);
       return;
     }
 
-    marker.setLatLng([to.lat, to.lng]);
+    setMarkerPosition(marker, to, onMove);
     marker._begoMoveFrame = null;
   };
 
   marker._begoMoveFrame = requestAnimationFrame(tick);
+}
+
+function setMarkerPosition(marker, point, onMove) {
+  marker.setLatLng([point.lat, point.lng]);
+  if (typeof onMove === "function") onMove({ lat: point.lat, lng: point.lng });
 }
 
 function easeInOutCubic(t) {

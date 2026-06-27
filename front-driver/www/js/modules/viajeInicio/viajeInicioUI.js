@@ -1,6 +1,6 @@
-import { borrarRuta, dibujarRutaPremium } from "../map.js?v=20260627-map-rotate";
+import { borrarRuta, dibujarRutaPremium } from "../map.js?v=20260627-map-fluid-arrival";
 import { setViajeEnCurso, setEstadoViaje,viajesActivos,setViajeReservadoId} from "../viajeControl/viajeEstado.js";
-import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260627-map-rotate";
+import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260627-map-fluid-arrival";
 import { llegadaTimeout } from "./viajeInicioEstado.js";
 
 export const limpiarInterfazViaje = (detenerSimulacionETA) => {

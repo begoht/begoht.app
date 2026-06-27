@@ -130,7 +130,8 @@ function moveMarker(marker, fromLatLng, toLatLng, {
   durationMs = DEFAULT_MOVE_DURATION_MS,
   routeCoords = [],
   routeFromProgress = null,
-  routeToProgress = null
+  routeToProgress = null,
+  onMove = null
 } = {}) {
   const from = normalizeLatLng(fromLatLng);
   const to = normalizeLatLng(toLatLng);
@@ -151,7 +152,7 @@ function moveMarker(marker, fromLatLng, toLatLng, {
     typeof requestAnimationFrame === "function";
 
   if (!shouldAnimate) {
-    marker.setLatLng([to.lat, to.lng]);
+    setMarkerPosition(marker, to, onMove);
     marker._begoMoveTarget = to;
     return;
   }
@@ -169,18 +170,23 @@ function moveMarker(marker, fromLatLng, toLatLng, {
     const progress = easeInOutCubic(Math.min(1, elapsed / durationMs));
     const next = interpolateMovePoint(from, to, routePath, progress);
 
-    marker.setLatLng([next.lat, next.lng]);
+    setMarkerPosition(marker, next, onMove);
 
     if (progress < 1) {
       marker._begoMoveFrame = requestAnimationFrame(tick);
       return;
     }
 
-    marker.setLatLng([to.lat, to.lng]);
+    setMarkerPosition(marker, to, onMove);
     marker._begoMoveFrame = null;
   };
 
   marker._begoMoveFrame = requestAnimationFrame(tick);
+}
+
+function setMarkerPosition(marker, point, onMove) {
+  marker.setLatLng([point.lat, point.lng]);
+  if (typeof onMove === "function") onMove({ lat: point.lat, lng: point.lng });
 }
 
 function easeInOutCubic(t) {

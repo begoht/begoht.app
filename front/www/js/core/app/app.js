@@ -1,7 +1,7 @@
 import { AppState } from "./app.state.js";
 import { getSocket } from "../../socket/socket.js?v=20260606-session-refresh";
-import { createMap } from "../../map/map.singleton.js?v=20260627-map-rotate";
-import { initRouter } from "../router/router.js?v=20260627-map-rotate";
+import { createMap } from "../../map/map.singleton.js?v=20260627-map-fluid-arrival";
+import { initRouter } from "../router/router.js?v=20260627-map-fluid-arrival";
 import { initLaunchCountdown } from "../../launch-countdown.js?v=20260624-cordoba-gps";
 
 function mostrarAppLista() {

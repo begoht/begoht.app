@@ -124,10 +124,17 @@ export function createMap(container) {
   /*************************************************
    * 🗺️ CREAR MAPA
    *************************************************/
+  const vectorRenderer = L.svg({ padding: 0.5 });
+
   mapInstance = L.map(el, {
 
     zoomControl: false,
     preferCanvas: false,
+    renderer: vectorRenderer,
+    zoomAnimation: false,
+    fadeAnimation: false,
+    markerZoomAnimation: false,
+    inertia: false,
     tap: true,
     touchZoom: true,
     minZoom: minZoom || 12,
@@ -153,8 +160,8 @@ export function createMap(container) {
       detectRetina: false,
       updateWhenIdle: false,
       updateWhenZooming: true,
-      updateInterval: 64,
-      keepBuffer: 6,
+      updateInterval: 16,
+      keepBuffer: 8,
       zIndex: 1,
       className: "bego-map-tiles bego-map-base-tiles"
     }
@@ -170,8 +177,8 @@ export function createMap(container) {
       detectRetina: false,
       updateWhenIdle: false,
       updateWhenZooming: true,
-      updateInterval: 64,
-      keepBuffer: 6,
+      updateInterval: 16,
+      keepBuffer: 8,
       zIndex: 2,
       className: "bego-map-tiles bego-map-label-tiles"
     }

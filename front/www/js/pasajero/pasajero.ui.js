@@ -23,7 +23,7 @@ export {
   mostrarNotificacionProximidad,
   actualizarEstadoProximidad,
   reproducirSonidoLlegada
-} from "./ui/notificaciones/llegada.ui.js";
+} from "./ui/notificaciones/llegada.ui.js?v=20260627-map-fluid-arrival";
 
 export { initToggleMenuDriver } from "./ui/menu/menu.ui.js";
 

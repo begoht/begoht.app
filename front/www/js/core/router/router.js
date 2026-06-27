@@ -1,10 +1,10 @@
-import { routes } from "./router.routes.js?v=20260627-map-rotate";
-import { renderLayout } from "./router.render.js?v=20260627-map-rotate";
+import { routes } from "./router.routes.js?v=20260627-map-fluid-arrival";
+import { renderLayout } from "./router.render.js?v=20260627-map-fluid-arrival";
 import { runCleanup, setCleanup } from "./router.cleanup.js";
 import { afterRender, pushURL, actualizarLinksActivos } from "./router.utils.js";
-import { runPageInit } from "../app/app.lifecycle.js?v=20260627-map-rotate";
+import { runPageInit } from "../app/app.lifecycle.js?v=20260627-map-fluid-arrival";
 import { AppState } from "../state.js";
-import { stopGeo } from "../../map/map.geo.js?v=20260627-map-rotate";
+import { stopGeo } from "../../map/map.geo.js?v=20260627-map-fluid-arrival";
 
 let navigationId = 0;
 let routerReady = false;

@@ -1,0 +1,26 @@
+#map.leaflet-container {
+  background: #101318 !important;
+}
+
+#map.leaflet-container .leaflet-map-pane,
+#map.leaflet-container .leaflet-rotate-pane,
+#map.leaflet-container .leaflet-tile-pane,
+#map.leaflet-container .leaflet-overlay-pane,
+#map.leaflet-container .leaflet-marker-pane,
+#map.leaflet-container .leaflet-shadow-pane {
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+#map.leaflet-container .leaflet-zoom-animated,
+#map.leaflet-container .leaflet-tile,
+#map.leaflet-container .leaflet-marker-icon,
+#map.leaflet-container .leaflet-marker-shadow {
+  transition: none !important;
+}
+
+#map.leaflet-container .leaflet-overlay-pane svg {
+  overflow: visible;
+  shape-rendering: geometricPrecision;
+}
