@@ -150,13 +150,13 @@ export function createMap(container) {
 
   }).setView(center, zoom);
 
-  ensureRotatingOverlayPane(mapInstance);
+  ensureRotatingPanes(mapInstance);
 
   /*************************************************
    * 🌍 TILE LAYER
    *************************************************/
   L.tileLayer(
-    "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+    "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
     {
       attribution: "&copy; OpenStreetMap &copy; CARTO",
       detectRetina: false,
@@ -214,13 +214,26 @@ export function createMap(container) {
   return mapInstance;
 }
 
-function ensureRotatingOverlayPane(map) {
+function ensureRotatingPanes(map) {
   const rotatePane = map?.getPane?.("rotatePane");
+  const tilePane = map?.getPane?.("tilePane");
   const overlayPane = map?.getPane?.("overlayPane");
 
-  if (!rotatePane || !overlayPane || overlayPane.parentElement === rotatePane) return;
+  if (!rotatePane) return;
 
-  rotatePane.appendChild(overlayPane);
+  let surface = rotatePane.querySelector(".bego-map-surface");
+  if (!surface) {
+    surface = document.createElement("div");
+    surface.className = "bego-map-surface";
+    surface.setAttribute("aria-hidden", "true");
+    rotatePane.insertBefore(surface, rotatePane.firstChild);
+  }
+
+  [tilePane, overlayPane].forEach((pane) => {
+    if (pane && pane.parentElement !== rotatePane) {
+      rotatePane.appendChild(pane);
+    }
+  });
 }
 
 function bindCompassButton(map) {

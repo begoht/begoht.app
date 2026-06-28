@@ -44,8 +44,8 @@
 
 /* 7. 🔥 OVERRIDES GLOBALES (ESTO TE FALTA) */
 @import "./base/theme.css";
-@import "./components/map-motion.css?v=20260628-map-locked-motion";
-@import "./components/arrival.css?v=20260628-map-locked-motion";
+@import "./components/map-motion.css?v=20260628-light-map-locked";
+@import "./components/arrival.css?v=20260628-light-map-locked";
 
 .leaflet-marker-icon.bego-map-icon,
 .bego-map-icon {

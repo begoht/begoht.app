@@ -1,5 +1,5 @@
 #map.leaflet-container {
-  background: #101318 !important;
+  background: #f2f3f4 !important;
 }
 
 #map.leaflet-container .leaflet-map-pane,
@@ -11,6 +11,17 @@
 #map.leaflet-container .leaflet-tile-pane,
 #map.leaflet-container .leaflet-overlay-pane {
   backface-visibility: hidden;
+}
+
+#map.leaflet-container .bego-map-surface {
+  position: absolute;
+  left: -200vw;
+  top: -200vh;
+  width: 400vw;
+  height: 400vh;
+  z-index: 0;
+  pointer-events: none;
+  background: #f2f3f4;
 }
 
 #map.leaflet-container.leaflet-zoom-anim .leaflet-zoom-animated {

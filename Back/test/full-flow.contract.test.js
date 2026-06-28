@@ -19,7 +19,7 @@ test("flujo ida/vuelta: al terminar la ida queda pendiente y el pasajero puede a
   assert.match(service, /ESTADO_RETORNO_PENDIENTE/);
   assert.match(service, /ida-vuelta:pendiente/);
 
-  assert.match(passengerSocket, /idaVuelta\.handler\.js\?v=20260628-map-locked-motion/);
+  assert.match(passengerSocket, /idaVuelta\.handler\.js\?v=20260628-light-map-locked/);
   assert.match(passengerHandler, /const\s+RETORNO_AUTO_START_MS\s*=/);
   assert.match(passengerHandler, /id="btnAnularVueltaPasajero"/);
   assert.match(passengerHandler, />\s*Anular vuelta\s*</);
@@ -37,12 +37,12 @@ test("cadena de cache: la app pasajero carga el handler nuevo de vuelta", () => 
   const passengerMain = readWorkspaceFile("front/www/js/pasajero/pasajero.main.js");
   const passengerSocket = readWorkspaceFile("front/www/js/socket/pasajero.socket.js");
 
-  assert.match(index, /app\.js\?v=20260628-map-locked-motion/);
-  assert.match(app, /router\.js\?v=20260628-map-locked-motion/);
-  assert.match(router, /app\.lifecycle\.js\?v=20260628-map-locked-motion/);
-  assert.match(lifecycle, /pasajero\.main\.js\?v=20260628-map-locked-motion/);
-  assert.match(passengerMain, /pasajero\.socket\.js\?v=20260628-map-locked-motion/);
-  assert.match(passengerSocket, /idaVuelta\.handler\.js\?v=20260628-map-locked-motion/);
+  assert.match(index, /app\.js\?v=20260628-light-map-locked/);
+  assert.match(app, /router\.js\?v=20260628-light-map-locked/);
+  assert.match(router, /app\.lifecycle\.js\?v=20260628-light-map-locked/);
+  assert.match(lifecycle, /pasajero\.main\.js\?v=20260628-light-map-locked/);
+  assert.match(passengerMain, /pasajero\.socket\.js\?v=20260628-light-map-locked/);
+  assert.match(passengerSocket, /idaVuelta\.handler\.js\?v=20260628-light-map-locked/);
 });
 
 test("mapa en viaje: usa una capa, conserva el origen hasta la llegada y rota la ruta unida", () => {
@@ -60,6 +60,7 @@ test("mapa en viaje: usa una capa, conserva el origen hasta la llegada y rota la
   const driverMotion = readWorkspaceFile("front-driver/www/js/modules/map.motion.js");
   const driverGps = readWorkspaceFile("front-driver/www/js/modules/gps.js");
   const mapMotionCss = readWorkspaceFile("front/www/css/components/map-motion.css");
+  const mapLayoutCss = readWorkspaceFile("front/www/css/busqueda/busqueda.css");
   const passengerIndex = readWorkspaceFile("front/www/index.html");
   const driverRuntime = readWorkspaceFile("front-driver/www/js/core/native-runtime-loader.js");
   const passengerCss = readWorkspaceFile("front/www/css/main.css");
@@ -83,10 +84,13 @@ test("mapa en viaje: usa una capa, conserva el origen hasta la llegada y rota la
   assert.match(mapSingleton, /updateWhenZooming:\s*true/);
   assert.match(mapSingleton, /updateInterval:\s*16/);
   assert.match(mapSingleton, /keepBuffer:\s*8/);
-  assert.match(mapSingleton, /basemaps\.cartocdn\.com\/dark_all/);
+  assert.match(mapSingleton, /basemaps\.cartocdn\.com\/light_all/);
+  assert.doesNotMatch(mapSingleton, /basemaps\.cartocdn\.com\/dark_/);
   assert.equal((mapSingleton.match(/L\.tileLayer\(/g) || []).length, 1);
-  assert.match(mapSingleton, /ensureRotatingOverlayPane\(mapInstance\)/);
-  assert.match(mapSingleton, /rotatePane\.appendChild\(overlayPane\)/);
+  assert.match(mapSingleton, /ensureRotatingPanes\(mapInstance\)/);
+  assert.match(mapSingleton, /\[tilePane, overlayPane\]\.forEach/);
+  assert.match(mapSingleton, /rotatePane\.appendChild\(pane\)/);
+  assert.match(mapSingleton, /rotatePane\.insertBefore\(surface, rotatePane\.firstChild\)/);
   assert.match(mapSingleton, /preferCanvas:\s*false/);
   assert.match(mapSingleton, /L\.svg\(\{ padding:\s*0\.5 \}\)/);
   assert.match(mapSingleton, /zoomAnimation:\s*true/);
@@ -112,6 +116,11 @@ test("mapa en viaje: usa una capa, conserva el origen hasta la llegada y rota la
   assert.match(driverMap, /updateInterval:\s*16/);
   assert.match(mapMotionCss, /\.leaflet-zoom-anim \.leaflet-zoom-animated[\s\S]*transition:\s*transform 250ms/);
   assert.doesNotMatch(mapMotionCss, /\.leaflet-zoom-animated[\s\S]{0,180}transition:\s*none\s*!important/);
+  assert.match(mapMotionCss, /background:\s*#f2f3f4\s*!important/);
+  assert.match(mapMotionCss, /\.bego-map-surface[\s\S]*background:\s*#f2f3f4/);
+  assert.match(mapLayoutCss, /\.route-home #map \.bego-map-primary-tiles\s*{\s*filter:\s*none/);
+  assert.doesNotMatch(mapLayoutCss, /\.route-home #map[\s\S]{0,500}#3b414b/);
+  assert.match(routeRenderer, /color:\s*"#2563eb"/);
   assert.match(passengerCss, /\.bego-map-icon-moto[\s\S]*transition:\s*none/);
 });
 

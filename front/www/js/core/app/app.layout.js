@@ -1,6 +1,6 @@
 import { renderHeader } from "../../components/header.js";
 import { renderFooter } from "../../components/footer.js";
-import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260628-map-locked-motion";
+import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260628-light-map-locked";
 
 export function renderLayout(route, viewHtml) {
     const header = document.getElementById("appHeader");

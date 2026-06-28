@@ -1,10 +1,10 @@
-import { routes } from "./router.routes.js?v=20260628-map-locked-motion";
-import { renderLayout } from "./router.render.js?v=20260628-map-locked-motion";
+import { routes } from "./router.routes.js?v=20260628-light-map-locked";
+import { renderLayout } from "./router.render.js?v=20260628-light-map-locked";
 import { runCleanup, setCleanup } from "./router.cleanup.js";
 import { afterRender, pushURL, actualizarLinksActivos } from "./router.utils.js";
-import { runPageInit } from "../app/app.lifecycle.js?v=20260628-map-locked-motion";
+import { runPageInit } from "../app/app.lifecycle.js?v=20260628-light-map-locked";
 import { AppState } from "../state.js";
-import { stopGeo } from "../../map/map.geo.js?v=20260628-map-locked-motion";
+import { stopGeo } from "../../map/map.geo.js?v=20260628-light-map-locked";
 
 let navigationId = 0;
 let routerReady = false;

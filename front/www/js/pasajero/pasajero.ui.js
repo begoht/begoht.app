@@ -23,7 +23,7 @@ export {
   mostrarNotificacionProximidad,
   actualizarEstadoProximidad,
   reproducirSonidoLlegada
-} from "./ui/notificaciones/llegada.ui.js?v=20260628-map-locked-motion";
+} from "./ui/notificaciones/llegada.ui.js?v=20260628-light-map-locked";
 
 export { initToggleMenuDriver } from "./ui/menu/menu.ui.js";
 

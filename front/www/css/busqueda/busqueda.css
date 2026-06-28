@@ -770,7 +770,7 @@ body[class*="route-"]:not(.route-home) .home-map-shell {
   min-height: 430px;
   margin: 0;
   z-index: 1;
-  background: #3b414b;
+  background: #f2f3f4;
   overflow: hidden;
 }
 
@@ -780,12 +780,12 @@ body[class*="route-"]:not(.route-home) .home-map-shell {
   min-height: 100%;
   border: 0;
   border-radius: 0;
-  background-color: #3b414b;
+  background-color: #f2f3f4;
   box-shadow: none;
 }
 
 .route-home #map.leaflet-container {
-  background: #3b414b !important;
+  background: #f2f3f4 !important;
 }
 
 .route-home #map .leaflet-map-pane,
@@ -796,7 +796,7 @@ body[class*="route-"]:not(.route-home) .home-map-shell {
 }
 
 .route-home #map .bego-map-primary-tiles {
-  filter: grayscale(1) brightness(1.24) contrast(0.72) saturate(0.48);
+  filter: none;
   opacity: 1;
 }
 
