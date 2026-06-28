@@ -1,27 +1,27 @@
 import { getSocket } from "./socket.js?v=20260606-session-refresh";
 import { viajeState } from "../viaje/viaje.state.js";
 
-import { handlePrecio } from "./handlers/precio.handler.js?v=20260628-map-single-layer";
-import { handleAsignado } from "./handlers/asignado.handler.js?v=20260628-map-single-layer";
-import { handleTrack } from "./handlers/track.handler.js?v=20260628-map-single-layer";
-import { handleLlego } from "./handlers/llego.handler.js?v=20260628-map-single-layer";
-import { handleIniciado } from "./handlers/iniciado.handler.js?v=20260628-map-single-layer";
+import { handlePrecio } from "./handlers/precio.handler.js?v=20260628-map-locked-motion";
+import { handleAsignado } from "./handlers/asignado.handler.js?v=20260628-map-locked-motion";
+import { handleTrack } from "./handlers/track.handler.js?v=20260628-map-locked-motion";
+import { handleLlego } from "./handlers/llego.handler.js?v=20260628-map-locked-motion";
+import { handleIniciado } from "./handlers/iniciado.handler.js?v=20260628-map-locked-motion";
 import { handleFinalizado } from "./handlers/finalizado.handler.js?v=20260615-smooth-autofinish";
 import { handleConnect } from "./handlers/connect.handler.js";
-import { handleError } from "./handlers/error.handler.js?v=20260628-map-single-layer";
+import { handleError } from "./handlers/error.handler.js?v=20260628-map-locked-motion";
 import { handleNoMotorista } from "./handlers/noMotorista.handler.js?v=20260615-smooth-autofinish";
 import { handleCancelado } from "./handlers/cancelado.handler.js?v=20260605-price-premium-cancel";
 import { handleExpirado } from "./handlers/expirado.handler.js";
-import { handleSync } from "./handlers/sync.handler.js?v=20260628-map-single-layer";
-import { handleEstado } from "./handlers/estado.handler.js?v=20260628-map-single-layer";
+import { handleSync } from "./handlers/sync.handler.js?v=20260628-map-locked-motion";
+import { handleEstado } from "./handlers/estado.handler.js?v=20260628-map-locked-motion";
 import { handleMotoristaCandidato } from "./handlers/candidato.handler.js?v=20260615-smooth-autofinish";
-import { handleBuscando } from "./handlers/buscando.handler.js?v=20260628-map-single-layer";
+import { handleBuscando } from "./handlers/buscando.handler.js?v=20260628-map-locked-motion";
 import { handleProximidad } from "./handlers/proximidad.handler.js";
 import {
   handleIdaVueltaPendiente,
   handleRetornoAnulado,
   handleRetornoIniciado
-} from "./handlers/idaVuelta.handler.js?v=20260628-map-single-layer";
+} from "./handlers/idaVuelta.handler.js?v=20260628-map-locked-motion";
 import { initPasajeroChat } from "../chat/viajeChat.pasajero.js";
 
 let listenersRegistrados = false;

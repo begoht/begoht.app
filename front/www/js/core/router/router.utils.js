@@ -1,4 +1,4 @@
-import { stopGeo } from "../../map/map.geo.js?v=20260628-map-single-layer";
+import { stopGeo } from "../../map/map.geo.js?v=20260628-map-locked-motion";
 
 // ===============================
 // 🌍 BASE PATH ROBUSTO

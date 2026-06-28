@@ -1,5 +1,5 @@
 import { viajeState } from "../../../viaje/viaje.state.js";
-import { pedirViaje, cancelarViaje } from "../../../viaje/viaje.actions.js?v=20260628-map-single-layer";
+import { pedirViaje, cancelarViaje } from "../../../viaje/viaje.actions.js?v=20260628-map-locked-motion";
 import { mostrarModalConfirmarCancelacion } from "../modales/modalCancelacion.ui.js";
 
 export function actualizarBotonViaje() {

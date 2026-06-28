@@ -1,7 +1,7 @@
 import { viajeState } from "../../viaje/viaje.state.js";
-import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260628-map-single-layer";
-import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260628-map-single-layer";
-import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260628-map-single-layer";
+import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260628-map-locked-motion";
+import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260628-map-locked-motion";
+import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260628-map-locked-motion";
 
 const RETORNO_AUTO_START_MS = 10000;
 const MODAL_RETORNO_ID = "modalIdaVueltaDecision";

@@ -19,7 +19,7 @@ test("flujo ida/vuelta: al terminar la ida queda pendiente y el pasajero puede a
   assert.match(service, /ESTADO_RETORNO_PENDIENTE/);
   assert.match(service, /ida-vuelta:pendiente/);
 
-  assert.match(passengerSocket, /idaVuelta\.handler\.js\?v=20260628-map-single-layer/);
+  assert.match(passengerSocket, /idaVuelta\.handler\.js\?v=20260628-map-locked-motion/);
   assert.match(passengerHandler, /const\s+RETORNO_AUTO_START_MS\s*=/);
   assert.match(passengerHandler, /id="btnAnularVueltaPasajero"/);
   assert.match(passengerHandler, />\s*Anular vuelta\s*</);
@@ -37,12 +37,12 @@ test("cadena de cache: la app pasajero carga el handler nuevo de vuelta", () => 
   const passengerMain = readWorkspaceFile("front/www/js/pasajero/pasajero.main.js");
   const passengerSocket = readWorkspaceFile("front/www/js/socket/pasajero.socket.js");
 
-  assert.match(index, /app\.js\?v=20260628-map-single-layer/);
-  assert.match(app, /router\.js\?v=20260628-map-single-layer/);
-  assert.match(router, /app\.lifecycle\.js\?v=20260628-map-single-layer/);
-  assert.match(lifecycle, /pasajero\.main\.js\?v=20260628-map-single-layer/);
-  assert.match(passengerMain, /pasajero\.socket\.js\?v=20260628-map-single-layer/);
-  assert.match(passengerSocket, /idaVuelta\.handler\.js\?v=20260628-map-single-layer/);
+  assert.match(index, /app\.js\?v=20260628-map-locked-motion/);
+  assert.match(app, /router\.js\?v=20260628-map-locked-motion/);
+  assert.match(router, /app\.lifecycle\.js\?v=20260628-map-locked-motion/);
+  assert.match(lifecycle, /pasajero\.main\.js\?v=20260628-map-locked-motion/);
+  assert.match(passengerMain, /pasajero\.socket\.js\?v=20260628-map-locked-motion/);
+  assert.match(passengerSocket, /idaVuelta\.handler\.js\?v=20260628-map-locked-motion/);
 });
 
 test("mapa en viaje: usa una capa, conserva el origen hasta la llegada y rota la ruta unida", () => {
@@ -89,8 +89,9 @@ test("mapa en viaje: usa una capa, conserva el origen hasta la llegada y rota la
   assert.match(mapSingleton, /rotatePane\.appendChild\(overlayPane\)/);
   assert.match(mapSingleton, /preferCanvas:\s*false/);
   assert.match(mapSingleton, /L\.svg\(\{ padding:\s*0\.5 \}\)/);
-  assert.match(mapSingleton, /zoomAnimation:\s*false/);
+  assert.match(mapSingleton, /zoomAnimation:\s*true/);
   assert.match(mapSingleton, /fadeAnimation:\s*false/);
+  assert.match(mapSingleton, /markerZoomAnimation:\s*true/);
   assert.match(mapSingleton, /inertia:\s*false/);
   assert.match(mapSingleton, /bindViewportRefresh/);
   assert.match(mapSingleton, /orientationchange/);
@@ -109,7 +110,8 @@ test("mapa en viaje: usa una capa, conserva el origen hasta la llegada y rota la
   assert.doesNotMatch(driverMap, /const nextZoom\s*=\s*Math\.max/);
   assert.match(driverMap, /inertia:\s*false/);
   assert.match(driverMap, /updateInterval:\s*16/);
-  assert.match(mapMotionCss, /\.leaflet-zoom-animated[\s\S]*transition:\s*none\s*!important/);
+  assert.match(mapMotionCss, /\.leaflet-zoom-anim \.leaflet-zoom-animated[\s\S]*transition:\s*transform 250ms/);
+  assert.doesNotMatch(mapMotionCss, /\.leaflet-zoom-animated[\s\S]{0,180}transition:\s*none\s*!important/);
   assert.match(passengerCss, /\.bego-map-icon-moto[\s\S]*transition:\s*none/);
 });
 

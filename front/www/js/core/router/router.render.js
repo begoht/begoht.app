@@ -1,4 +1,4 @@
-import { renderHeader } from "../../components/header.js?v=20260628-map-single-layer";
+import { renderHeader } from "../../components/header.js?v=20260628-map-locked-motion";
 import { renderFooter } from "../../components/footer.js";
 
 export function renderLayout(route, mainClass, contentHTML) {

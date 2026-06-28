@@ -1,4 +1,4 @@
-import { createPOIIcon } from "../map.icons.js?v=20260628-map-single-layer";
+import { createPOIIcon } from "../map.icons.js?v=20260628-map-locked-motion";
 
 
 import { cityConfig } from "../config/index.js?v=20260624-cordoba-gps";

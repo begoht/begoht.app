@@ -3,10 +3,10 @@ import {
   mostrarNotificacionLlegada,
   actualizarEstadoLlegada,
   reproducirSonidoLlegada
-} from "../../pasajero/pasajero.ui.js?v=20260628-map-single-layer";
-import { actualizarUIDriver } from "../pasajero.utils.js?v=20260628-map-single-layer";
-import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260628-map-single-layer";
-import { ocultarOrigenEnMapa } from "../../map/map.geo.js?v=20260628-map-single-layer";
+} from "../../pasajero/pasajero.ui.js?v=20260628-map-locked-motion";
+import { actualizarUIDriver } from "../pasajero.utils.js?v=20260628-map-locked-motion";
+import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260628-map-locked-motion";
+import { ocultarOrigenEnMapa } from "../../map/map.geo.js?v=20260628-map-locked-motion";
 import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260615-smooth-autofinish";
 
 export const handleLlego = (data = {}) => {

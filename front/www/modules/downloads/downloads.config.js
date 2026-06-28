@@ -1,4 +1,4 @@
-export const DOWNLOAD_VERSION = "20260628-map-single-layer";
+export const DOWNLOAD_VERSION = "20260628-map-locked-motion";
 
 export const DOWNLOAD_APPS = Object.freeze({
   passenger: Object.freeze({

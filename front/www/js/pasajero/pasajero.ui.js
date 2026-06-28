@@ -23,7 +23,7 @@ export {
   mostrarNotificacionProximidad,
   actualizarEstadoProximidad,
   reproducirSonidoLlegada
-} from "./ui/notificaciones/llegada.ui.js?v=20260628-map-single-layer";
+} from "./ui/notificaciones/llegada.ui.js?v=20260628-map-locked-motion";
 
 export { initToggleMenuDriver } from "./ui/menu/menu.ui.js";
 

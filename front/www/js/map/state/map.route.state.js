@@ -1,4 +1,4 @@
-import { resetRutaCache } from "../map.ruta.js?v=20260628-map-single-layer";
+import { resetRutaCache } from "../map.ruta.js?v=20260628-map-locked-motion";
 
 let lastEstado = null;
 
