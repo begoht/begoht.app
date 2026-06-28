@@ -124,7 +124,7 @@ export function createMap(container) {
   /*************************************************
    * 🗺️ CREAR MAPA
    *************************************************/
-  const vectorRenderer = L.svg({ padding: 0.5 });
+  const vectorRenderer = createLockedRouteRenderer();
 
   mapInstance = L.map(el, {
 
@@ -156,7 +156,7 @@ export function createMap(container) {
    * 🌍 TILE LAYER
    *************************************************/
   L.tileLayer(
-    "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+    "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
     {
       attribution: "&copy; OpenStreetMap &copy; CARTO",
       detectRetina: false,
@@ -212,6 +212,19 @@ export function createMap(container) {
   addManagedListener(document, "visibilitychange", onVisible);
 
   return mapInstance;
+}
+
+function createLockedRouteRenderer() {
+  const renderer = L.svg({ padding: 1 });
+  const getEvents = renderer.getEvents.bind(renderer);
+
+  renderer.getEvents = () => {
+    const events = getEvents();
+    delete events.rotate;
+    return events;
+  };
+
+  return renderer;
 }
 
 function ensureRotatingPanes(map) {

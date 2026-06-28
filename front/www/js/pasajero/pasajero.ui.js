@@ -23,7 +23,7 @@ export {
   mostrarNotificacionProximidad,
   actualizarEstadoProximidad,
   reproducirSonidoLlegada
-} from "./ui/notificaciones/llegada.ui.js?v=20260628-light-map-locked";
+} from "./ui/notificaciones/llegada.ui.js?v=20260628-dark-route-locked";
 
 export { initToggleMenuDriver } from "./ui/menu/menu.ui.js";
 

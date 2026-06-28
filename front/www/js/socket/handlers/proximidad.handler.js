@@ -3,7 +3,7 @@ import {
   mostrarNotificacionProximidad,
   actualizarEstadoProximidad,
   reproducirSonidoLlegada
-} from "../../pasajero/pasajero.ui.js?v=20260628-light-map-locked";
+} from "../../pasajero/pasajero.ui.js?v=20260628-dark-route-locked";
 
 const avisosMostrados = new Set();
 

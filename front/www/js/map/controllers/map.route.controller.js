@@ -2,7 +2,7 @@ import {
   dibujarRuta,
   dibujarRutaReserva,
   limpiarRutas
-} from "../map.ruta.js?v=20260628-light-map-locked";
+} from "../map.ruta.js?v=20260628-dark-route-locked";
 
 import {
   mismaPosicion,
@@ -13,12 +13,12 @@ import {
   getRouteState,
   setRouteState,
   resetRouteState
-} from "../state/map.route.state.js?v=20260628-light-map-locked";
+} from "../state/map.route.state.js?v=20260628-dark-route-locked";
 
 import {
   getMap,
   isMapReady
-} from "../map.singleton.js?v=20260628-light-map-locked";
+} from "../map.singleton.js?v=20260628-dark-route-locked";
 
 /*************************************************
  * 🎯 ESTADOS VÁLIDOS

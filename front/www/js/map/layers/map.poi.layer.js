@@ -1,4 +1,4 @@
-import { createPOIIcon } from "../map.icons.js?v=20260628-light-map-locked";
+import { createPOIIcon } from "../map.icons.js?v=20260628-dark-route-locked";
 
 
 import { cityConfig } from "../config/index.js?v=20260624-cordoba-gps";

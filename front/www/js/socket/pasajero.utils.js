@@ -3,9 +3,9 @@ import { viajeState } from "../viaje/viaje.state.js";
 import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260623-roundtrip-v2";
 import { cerrarBuscandoMotorista } from "../pasajero/pasajero.ui.js";
 import { limpiarViajePasajero } from "../socket/viaje.limpieza.js";
-import { limpiarRutas } from "../map/map.ruta.js?v=20260628-light-map-locked";
+import { limpiarRutas } from "../map/map.ruta.js?v=20260628-dark-route-locked";
 import { initDriverMinimize } from "../ui/driver.minimize.js";
-import { resetRutaController } from "../map/map.route.flow.js?v=20260628-light-map-locked";
+import { resetRutaController } from "../map/map.route.flow.js?v=20260628-dark-route-locked";
 import { actualizarETA, resetETA } from "../pasajero/pasajero.eta.js";
 import { queuePendingRating, submitViajeRating } from "../rating/rating.api.js?v=20260605-rating-premium";
 import {

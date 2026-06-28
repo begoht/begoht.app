@@ -1,5 +1,5 @@
 import { viajeState } from "../viaje/viaje.state.js";
-import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260628-light-map-locked";
+import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260628-dark-route-locked";
 import { mostrarPagoNoDisponible } from "../pasajero/ui/modales/pagoNoDisponible.ui.js?v=20260606-payment-methods";
 
 const DEFAULT_PAYMENT_METHODS = {

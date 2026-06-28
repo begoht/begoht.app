@@ -2,17 +2,17 @@
 
 import { viajeState } from "../viaje/viaje.state.js";
 
-import { dibujarRuta } from "./map.ruta.js?v=20260628-light-map-locked";
+import { dibujarRuta } from "./map.ruta.js?v=20260628-dark-route-locked";
 
 import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260624-cordoba-gps";
 
-import { destinoIcon } from "./map.icons.js?v=20260628-light-map-locked";
+import { destinoIcon } from "./map.icons.js?v=20260628-dark-route-locked";
 
 import { reverseGeocode } from "./services/map.reverse.js?v=20260624-cordoba-gps";
 
-import { getMap } from "./map.singleton.js?v=20260628-light-map-locked";
+import { getMap } from "./map.singleton.js?v=20260628-dark-route-locked";
 import { cityConfig, coordsInCity } from "./config/index.js?v=20260624-cordoba-gps";
-import { asegurarOrigenGpsReal } from "./map.geo.js?v=20260628-light-map-locked";
+import { asegurarOrigenGpsReal } from "./map.geo.js?v=20260628-dark-route-locked";
 
 import {
   initAutocomplete,

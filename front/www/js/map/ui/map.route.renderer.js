@@ -73,19 +73,19 @@ export function renderRuta(map, coords) {
   rutaActualCoords = coordsNormalizados;
 
   const outline = L.polyline(latLngs, {
-    color: "#ffffff",
-    weight: 9,
-    opacity: 0.96
+    color: "#111113",
+    weight: 8,
+    opacity: 0.5
   }).addTo(map);
 
   const glow = L.polyline(latLngs, {
-    color: "#2563eb",
-    weight: 12,
-    opacity: 0.2
+    color: "#ffffff",
+    weight: 9,
+    opacity: 0.16
   }).addTo(map);
 
   const main = L.polyline(latLngs, {
-    color: "#2563eb",
+    color: "#e5e7eb",
     weight: 5,
     opacity: 0.96
   }).addTo(map);
@@ -122,19 +122,19 @@ export function renderRutaReserva(
   rutaActualCoords = coordsNormalizados;
 
   const outline = L.polyline(coordsContinuos, {
-    color: "#ffffff",
-    weight: 9,
-    opacity: 0.96
+    color: "#111113",
+    weight: 8,
+    opacity: 0.5
   });
 
   const glow = L.polyline(coordsContinuos, {
-    color: "#2563eb",
-    weight: 12,
-    opacity: 0.2
+    color: "#ffffff",
+    weight: 9,
+    opacity: 0.16
   });
 
   const main = L.polyline(coordsContinuos, {
-    color: "#2563eb",
+    color: "#e5e7eb",
     weight: 5,
     opacity: 0.96
   });
@@ -189,7 +189,7 @@ export function renderLineaRecta(
     [origen.lat, origen.lng],
     [destino.lat, destino.lng]
   ], {
-    color: "#2563eb",
+    color: "#e5e7eb",
     weight: 5,
     opacity: 0.92
   }).addTo(map);

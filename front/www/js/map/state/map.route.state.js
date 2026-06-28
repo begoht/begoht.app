@@ -1,4 +1,4 @@
-import { resetRutaCache } from "../map.ruta.js?v=20260628-light-map-locked";
+import { resetRutaCache } from "../map.ruta.js?v=20260628-dark-route-locked";
 
 let lastEstado = null;
 

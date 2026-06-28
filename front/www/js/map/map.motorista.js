@@ -1,6 +1,6 @@
 import {
   reverseGeocode
-} from "./services/map.reverse.js?v=20260628-light-map-locked";
+} from "./services/map.reverse.js?v=20260628-dark-route-locked";
 
 import {
   setMapaInstance,
@@ -10,7 +10,7 @@ import {
 import {
   renderMotorista,
   removeMotorista
-} from "./ui/map.motorista.renderer.js?v=20260628-light-map-locked";
+} from "./ui/map.motorista.renderer.js?v=20260628-dark-route-locked";
 
 import {
   renderMotoristas,

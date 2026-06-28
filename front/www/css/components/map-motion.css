@@ -1,5 +1,5 @@
 #map.leaflet-container {
-  background: #f2f3f4 !important;
+  background: #101318 !important;
 }
 
 #map.leaflet-container .leaflet-map-pane,
@@ -21,7 +21,7 @@
   height: 400vh;
   z-index: 0;
   pointer-events: none;
-  background: #f2f3f4;
+  background: #101318;
 }
 
 #map.leaflet-container.leaflet-zoom-anim .leaflet-zoom-animated {

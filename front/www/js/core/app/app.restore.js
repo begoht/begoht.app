@@ -1,9 +1,9 @@
 import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260623-roundtrip-v2";
-import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260628-light-map-locked";
-import { getMap } from "../../map/map.singleton.js?v=20260628-light-map-locked";
-import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260628-light-map-locked";
+import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260628-dark-route-locked";
+import { getMap } from "../../map/map.singleton.js?v=20260628-dark-route-locked";
+import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260628-dark-route-locked";
 import { viajeState } from "../../viaje/viaje.state.js";
-import { actualizarUIDriver, mostrarModalFinalizado } from "../../socket/pasajero.utils.js?v=20260628-light-map-locked";
+import { actualizarUIDriver, mostrarModalFinalizado } from "../../socket/pasajero.utils.js?v=20260628-dark-route-locked";
 import {
   obtenerFinalizacionPendiente,
   viajeFueFinalizado
@@ -106,7 +106,7 @@ export async function restoreViajeUI() {
         !document.getElementById("modalPrecio") &&
         !document.getElementById("buscandoMotorista")
       ) {
-        import("../../pasajero/ui/overlays/buscandoMotorista.ui.js?v=20260628-light-map-locked")
+        import("../../pasajero/ui/overlays/buscandoMotorista.ui.js?v=20260628-dark-route-locked")
           .then(m => m.mostrarBuscandoMotorista?.(true))
           .catch(err => console.error("❌ Error importando modal:", err));
       }

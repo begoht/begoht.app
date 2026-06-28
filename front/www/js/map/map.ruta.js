@@ -1,4 +1,4 @@
-import { getMap } from "./map.singleton.js?v=20260628-light-map-locked";
+import { getMap } from "./map.singleton.js?v=20260628-dark-route-locked";
 
 import {
   mismaPosicion,
@@ -15,7 +15,7 @@ import {
   renderRutaReserva,
   renderLineaRecta,
   limpiarRuta
-} from "./ui/map.route.renderer.js?v=20260628-light-map-locked";
+} from "./ui/map.route.renderer.js?v=20260628-dark-route-locked";
 
 let ultimaRutaCalculada = 0;
 

@@ -3,7 +3,7 @@ import { motoIcon } from "../map.icons.js?v=20260621-top-moto";
 import {
   consumirRutaDesde,
   getRutaActualCoords
-} from "./map.route.renderer.js?v=20260628-light-map-locked";
+} from "./map.route.renderer.js?v=20260628-dark-route-locked";
 import {
   setMotorcycleMarkerPose
 } from "../utils/map.motorcycle.motion.js?v=20260621-route-moto";

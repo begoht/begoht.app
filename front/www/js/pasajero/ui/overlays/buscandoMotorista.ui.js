@@ -3,9 +3,9 @@ import { getMapaInstance } from "../../../map/state/map.motoristas.state.js";
 import {
   eliminarMotoristaDelMapa,
   mostrarMotoristaEnMapa
-} from "../../../map/map.motorista.js?v=20260628-light-map-locked";
+} from "../../../map/map.motorista.js?v=20260628-dark-route-locked";
 import { viajeState } from "../../../viaje/viaje.state.js";
-import { actualizarBotonViaje } from "../boton/botonViaje.ui.js?v=20260628-light-map-locked";
+import { actualizarBotonViaje } from "../boton/botonViaje.ui.js?v=20260628-dark-route-locked";
 
 const CANDIDATE_FALLBACK_MS = 14_000;
 
