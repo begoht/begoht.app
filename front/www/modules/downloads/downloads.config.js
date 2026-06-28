@@ -1,4 +1,4 @@
-export const DOWNLOAD_VERSION = "20260624-matching-heartbeat";
+export const DOWNLOAD_VERSION = "20260628-map-single-layer";
 
 export const DOWNLOAD_APPS = Object.freeze({
   passenger: Object.freeze({
