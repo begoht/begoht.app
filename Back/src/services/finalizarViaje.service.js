@@ -306,12 +306,19 @@ function crearPayloadFinalizado({ viaje, viajeId, neto }) {
       origen: viaje.origen,
       destino: viaje.destino,
       precio: viaje.precio,
+      precioBase: viaje.precioBase || viaje.precio,
+      descuentoWallet: viaje.descuentoWallet || 0,
+      descuentoWalletRate: viaje.descuentoWalletRate || 0,
       distanciaKm: viaje.distanciaKm,
       distanciaRealMetros: viaje.distanciaRealMetros,
+      duracionMin: viaje.duracionMin,
       pagoMotorista: neto,
       paBeGOrista: neto,
       metodoPago: viaje.metodoPago,
       tipo: viaje.tipo || "viaje",
+      ciudad: viaje.ciudad || "",
+      motorista: viaje.motorista || null,
+      pasajero: viaje.pasajero || null,
       idaVuelta: prepararIdaVueltaPayload(viaje),
       paquete: esEnvio && viaje.paquete ? {
         pesoKg: viaje.paquete.pesoKg,
@@ -319,8 +326,11 @@ function crearPayloadFinalizado({ viaje, viajeId, neto }) {
         instrucciones: viaje.paquete.instrucciones || "",
         codigoEntregaConfirmadoAt: viaje.paquete.codigoEntregaConfirmadoAt || null
       } : null,
+      inicioViajeAt: viaje.inicioViajeAt || null,
       finViajeAt: viaje.finViajeAt,
-      createdAt: viaje.createdAt
+      createdAt: viaje.createdAt,
+      referenciaPago: viaje.referenciaPago || null,
+      codigoPago: viaje.codigoPago || null
     }
   };
 }
@@ -419,7 +429,7 @@ module.exports = async function finalizarViaje({
       motorista: motoristaId
     })
       .populate("pasajero", "nombre apellido email telefono")
-      .populate("motorista", "nombre apellido telefono")
+      .populate("motorista", "nombre apellido telefono foto vehiculo rating ratingCount")
       .session(session);
 
     if (!viaje || viaje.finalizacionProcesada || viaje.estado !== "en_curso") {

@@ -37,12 +37,28 @@ test("cadena de cache: la app pasajero carga el handler nuevo de vuelta", () => 
   const passengerMain = readWorkspaceFile("front/www/js/pasajero/pasajero.main.js");
   const passengerSocket = readWorkspaceFile("front/www/js/socket/pasajero.socket.js");
 
-  assert.match(index, /app\.js\?v=20260628-dark-route-locked/);
-  assert.match(app, /router\.js\?v=20260628-dark-route-locked/);
-  assert.match(router, /app\.lifecycle\.js\?v=20260628-dark-route-locked/);
-  assert.match(lifecycle, /pasajero\.main\.js\?v=20260628-dark-route-locked/);
-  assert.match(passengerMain, /pasajero\.socket\.js\?v=20260628-dark-route-locked/);
+  assert.match(index, /app\.js\?v=20260628-receipt-recovery/);
+  assert.match(app, /router\.js\?v=20260628-receipt-recovery/);
+  assert.match(router, /app\.lifecycle\.js\?v=20260628-receipt-recovery/);
+  assert.match(lifecycle, /pasajero\.main\.js\?v=20260628-receipt-recovery/);
+  assert.match(passengerMain, /pasajero\.socket\.js\?v=20260628-receipt-recovery/);
   assert.match(passengerSocket, /idaVuelta\.handler\.js\?v=20260628-dark-route-locked/);
+});
+
+test("cierre pasajero: recupera el recibo si la app estaba cerrada", () => {
+  const handlers = readWorkspaceFile("Back/src/sockets/viajes/pasajeros/pasajero.handlers.js");
+  const replay = readWorkspaceFile("Back/src/sockets/viajes/pasajeros/services/replay.service.js");
+  const repo = readWorkspaceFile("Back/src/sockets/viajes/pasajeros/repositories/viaje.repository.js");
+  const passengerSocket = readWorkspaceFile("front/www/js/socket/pasajero.socket.js");
+  const receipt = readWorkspaceFile("front/www/js/socket/pasajero.utils.js");
+
+  assert.match(handlers, /sync-pasajero", \(payload = \{\}\)/);
+  assert.match(replay, /findFinalizadoParaPasajero/);
+  assert.match(replay, /socket\.emit\("viaje-finalizado", prepararFinalizado/);
+  assert.match(repo, /pasajero:\s*pasajeroId[\s\S]*estado:\s*"finalizado"/);
+  assert.match(passengerSocket, /sync-pasajero", \{ viajeId: getStoredViajeId\(\) \}/);
+  assert.match(receipt, /guardarFinalizacionPendiente\(snapshot\)/);
+  assert.match(receipt, /id="guardarRecibo"/);
 });
 
 test("mapa en viaje: usa una capa, conserva el origen hasta la llegada y rota la ruta unida", () => {

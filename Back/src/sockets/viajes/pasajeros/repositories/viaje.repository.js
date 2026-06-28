@@ -27,6 +27,17 @@ module.exports = {
       .lean();
   },
 
+  findFinalizadoParaPasajero(pasajeroId, viajeId) {
+    return Viaje.findOne({
+      _id: viajeId,
+      pasajero: pasajeroId,
+      estado: "finalizado",
+    })
+      .populate("motorista", "nombre apellido telefono foto vehiculo rating ratingCount")
+      .populate("pasajero", "nombre apellido telefono email")
+      .lean();
+  },
+
   findById(id) {
     return Viaje.findById(id);
   },

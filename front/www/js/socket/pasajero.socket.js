@@ -6,8 +6,8 @@ import { handleAsignado } from "./handlers/asignado.handler.js?v=20260628-dark-r
 import { handleTrack } from "./handlers/track.handler.js?v=20260628-dark-route-locked";
 import { handleLlego } from "./handlers/llego.handler.js?v=20260628-dark-route-locked";
 import { handleIniciado } from "./handlers/iniciado.handler.js?v=20260628-dark-route-locked";
-import { handleFinalizado } from "./handlers/finalizado.handler.js?v=20260615-smooth-autofinish";
-import { handleConnect } from "./handlers/connect.handler.js";
+import { handleFinalizado } from "./handlers/finalizado.handler.js?v=20260628-receipt-recovery";
+import { handleConnect } from "./handlers/connect.handler.js?v=20260628-receipt-recovery";
 import { handleError } from "./handlers/error.handler.js?v=20260628-dark-route-locked";
 import { handleNoMotorista } from "./handlers/noMotorista.handler.js?v=20260615-smooth-autofinish";
 import { handleCancelado } from "./handlers/cancelado.handler.js?v=20260605-price-premium-cancel";
@@ -156,7 +156,18 @@ function requestPassengerSync(socket) {
     socket.emit("join-room", `track:${viajeState.viajeId}`);
   }
 
-  socket.emit("sync-pasajero");
+  socket.emit("sync-pasajero", { viajeId: getStoredViajeId() });
+}
+
+function getStoredViajeId() {
+  if (viajeState.viajeId) return String(viajeState.viajeId);
+
+  try {
+    const stored = JSON.parse(localStorage.getItem("viajeActivo") || "null");
+    return stored?.viajeId ? String(stored.viajeId) : null;
+  } catch {
+    return null;
+  }
 }
 
 function esEventoDuplicado(eventName, data = {}) {

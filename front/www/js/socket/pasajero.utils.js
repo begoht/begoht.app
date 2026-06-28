@@ -374,19 +374,35 @@ function mostrarModalFinalizadoLegacy(total) {
 
 export function mostrarModalFinalizado(total, payload = {}) {
   const viajeId = getViajeIdFromPayload(payload) || String(viajeState.viajeId || "").trim();
+  const viajePayload = payload.viaje || {};
+  const usuarioLocal = leerUsuarioLocal();
   const snapshot = {
     ...payload,
     viajeId,
     estado: "finalizado",
-    total: total ?? payload.total ?? payload.precio ?? viajeState.precio ?? 0,
-    precio: total ?? payload.precio ?? viajeState.precio ?? 0,
-    origen: payload.origen || payload.viaje?.origen || viajeState.origen || null,
-    destino: payload.destino || payload.viaje?.destino || viajeState.destino || null,
-    motorista: payload.motorista || payload.viaje?.motorista || viajeState.motorista || null,
-    tipoServicio: payload.tipoServicio || payload.tipo || payload.viaje?.tipo || viajeState.tipoServicio || "viaje",
-    paquete: payload.paquete || payload.viaje?.paquete || viajeState.paquete || null,
-    metodoPago: payload.metodoPago || viajeState.metodoPago || null,
-    estadoPago: payload.estadoPago || viajeState.estadoPago || "pagado"
+    total: total ?? payload.total ?? viajePayload.precio ?? payload.precio ?? viajeState.precio ?? 0,
+    precio: total ?? payload.total ?? viajePayload.precio ?? payload.precio ?? viajeState.precio ?? 0,
+    precioBase: viajePayload.precioBase ?? payload.precioBase ?? viajeState.precioBase ?? null,
+    descuentoWallet: viajePayload.descuentoWallet ?? payload.descuentoWallet ?? viajeState.descuentoWallet ?? 0,
+    descuentoWalletRate: viajePayload.descuentoWalletRate ?? payload.descuentoWalletRate ?? viajeState.descuentoWalletRate ?? 0,
+    origen: payload.origen || viajePayload.origen || viajeState.origen || null,
+    destino: payload.destino || viajePayload.destino || viajeState.destino || null,
+    motorista: payload.motorista || viajePayload.motorista || viajeState.motorista || null,
+    pasajero: payload.pasajero || viajePayload.pasajero || usuarioLocal,
+    tipoServicio: payload.tipoServicio || payload.tipo || viajePayload.tipo || viajeState.tipoServicio || "viaje",
+    paquete: payload.paquete || viajePayload.paquete || viajeState.paquete || null,
+    idaVuelta: payload.idaVuelta || viajePayload.idaVuelta || viajeState.idaVuelta || null,
+    metodoPago: payload.metodoPago || viajePayload.metodoPago || viajeState.metodoPago || null,
+    estadoPago: payload.estadoPago || viajePayload.estadoPago || viajeState.estadoPago || "pagado",
+    distanciaKm: viajePayload.distanciaKm ?? payload.distanciaKm ?? viajeState.distanciaKm ?? 0,
+    distanciaRealMetros: viajePayload.distanciaRealMetros ?? payload.distanciaRealMetros ?? 0,
+    duracionMin: viajePayload.duracionMin ?? payload.duracionMin ?? viajeState.duracionMin ?? 0,
+    inicioViajeAt: viajePayload.inicioViajeAt || payload.inicioViajeAt || null,
+    finViajeAt: viajePayload.finViajeAt || payload.finViajeAt || new Date().toISOString(),
+    createdAt: viajePayload.createdAt || payload.createdAt || null,
+    ciudad: viajePayload.ciudad || payload.ciudad || "",
+    referenciaPago: viajePayload.referenciaPago || payload.referenciaPago || null,
+    codigoPago: viajePayload.codigoPago || payload.codigoPago || null
   };
 
   if (viajeId) {
@@ -401,14 +417,12 @@ export function mostrarModalFinalizado(total, payload = {}) {
   modal.id = "modalFinalizado";
 
   const esEnvio = snapshot.tipoServicio === "envio" || snapshot.tipo === "envio";
-  const titulo = esEnvio ? "Entrega completada" : "Viaje completado";
+  const titulo = esEnvio ? "Gracias por usar BeGO Envíos" : "Gracias por viajar con BeGO";
   const subtitulo = esEnvio
-    ? "Tu paquete fue entregado correctamente."
-    : "Gracias por viajar con BeGO.";
+    ? "Tu entrega finalizó correctamente. Aquí tienes el recibo completo."
+    : "Esperamos que hayas disfrutado el viaje. Aquí tienes el recibo completo.";
   const totalFinal = snapshot.total ?? total ?? 0;
-  const totalTexto = Number.isFinite(Number(totalFinal))
-    ? `${Math.round(Number(totalFinal)).toLocaleString("es-PY")} G`
-    : `${totalFinal || 0} G`;
+  const totalTexto = formatearDinero(totalFinal);
 
   const formatearUbicacion = (ubicacion) => {
     if (ubicacion?.direccion) return ubicacion.direccion;
@@ -428,310 +442,126 @@ export function mostrarModalFinalizado(total, payload = {}) {
   const conductor = escapeHtml(
     `${motorista.nombre || ""} ${motorista.apellido || ""}`.trim() || "Motorista BeGO"
   );
+  const pasajeroNombre = escapeHtml(
+    `${snapshot.pasajero?.nombre || ""} ${snapshot.pasajero?.apellido || ""}`.trim() || "Pasajero BeGO"
+  );
+  const vehiculo = motorista.vehiculo && typeof motorista.vehiculo === "object" ? motorista.vehiculo : {};
+  const vehiculoTexto = escapeHtml(
+    [vehiculo.marca, vehiculo.modelo, vehiculo.color].filter(Boolean).join(" · ") || "Moto verificada BeGO"
+  );
+  const placa = escapeHtml(vehiculo.placa || motorista.placa || "S/P");
+  const fecha = formatearFechaRecibo(snapshot.finViajeAt || snapshot.createdAt);
+  const duracion = calcularDuracionRecibo(snapshot);
+  const distancia = calcularDistanciaRecibo(snapshot);
+  const metodoPago = etiquetaMetodoPago(snapshot.metodoPago);
+  const referencia = escapeHtml(snapshot.referenciaPago || snapshot.codigoPago || `BEGO-${String(viajeId || "VIAJE").slice(-8).toUpperCase()}`);
+  const viajeCorto = escapeHtml(String(viajeId || "--").slice(-10).toUpperCase());
+  const precioBase = Number(snapshot.precioBase || 0);
+  const descuentoWallet = Number(snapshot.descuentoWallet || 0);
+  const tarifaTexto = formatearDinero(precioBase > 0 ? precioBase : Number(totalFinal) + descuentoWallet);
+  const descuentoHtml = descuentoWallet > 0
+    ? `<div><span>Descuento Wallet${snapshot.descuentoWalletRate ? ` (${Math.round(Number(snapshot.descuentoWalletRate) * 100)}%)` : ""}</span><strong class="receipt-discount">-${formatearDinero(descuentoWallet)}</strong></div>`
+    : "";
+  const ratingMotorista = Number(motorista.rating || motorista.calificacion || 5);
 
   modal.innerHTML = `
   <div class="finalizado-overlay">
     <div class="finalizado-card" role="dialog" aria-modal="true" aria-labelledby="finalizadoTitulo">
-      <div class="finalizado-hero">
-        <div class="finalizado-check"><i class="fa-solid fa-check"></i></div>
-        <small>${esEnvio ? "Envio BeGO" : "BeGO Ride"}</small>
+      <div class="receipt-topbar">
+        <div class="receipt-brand"><span>Be</span>GO</div>
+        <span class="receipt-status"><i class="fa-solid fa-circle-check"></i> Pagado</span>
+      </div>
+
+      <div class="finalizado-hero receipt-hero">
+        <small>${esEnvio ? "Entrega finalizada" : "Viaje finalizado"}</small>
         <h2 id="finalizadoTitulo">${titulo}</h2>
         <p>${subtitulo}</p>
+        <span class="receipt-passenger">Recibo para ${pasajeroNombre}</span>
       </div>
 
-      <div class="finalizado-total">
-        <span>Total pagado</span>
-        <strong>${totalTexto}</strong>
-      </div>
+      <section class="receipt-section receipt-payment-summary">
+        <div class="finalizado-total">
+          <span>Total</span>
+          <strong>${totalTexto}</strong>
+        </div>
+        <div class="receipt-breakdown">
+          <div><span>Tarifa del ${esEnvio ? "envío" : "viaje"}</span><strong>${tarifaTexto}</strong></div>
+          ${descuentoHtml}
+          <div class="receipt-breakdown-total"><span>Total cobrado</span><strong>${totalTexto}</strong></div>
+        </div>
+      </section>
 
-      <div class="finalizado-resumen">
-        <div>
-          <span>Origen</span>
-          <strong>${origen}</strong>
+      <section class="receipt-section">
+        <h3>Pago</h3>
+        <div class="receipt-payment-row">
+          <div class="receipt-payment-icon"><i class="fa-solid ${snapshot.metodoPago === "efectivo" ? "fa-money-bill-wave" : "fa-wallet"}"></i></div>
+          <div><strong>${escapeHtml(metodoPago)}</strong><span>${referencia}</span></div>
+          <strong>${totalTexto}</strong>
         </div>
-        <div>
-          <span>Destino</span>
-          <strong>${destino}</strong>
+      </section>
+
+      <section class="receipt-section">
+        <h3>Detalles del ${esEnvio ? "envío" : "viaje"}</h3>
+        <div class="receipt-meta">
+          <span><i class="fa-regular fa-calendar"></i> ${escapeHtml(fecha)}</span>
+          <span><i class="fa-regular fa-clock"></i> ${escapeHtml(duracion)}</span>
+          <span><i class="fa-solid fa-route"></i> ${escapeHtml(distancia)}</span>
         </div>
-        <div>
-          <span>${esEnvio ? "Entregado por" : "Conductor"}</span>
-          <strong>${conductor}</strong>
+        <div class="receipt-route">
+          <div class="receipt-route-rail"><i></i><span></span><i></i></div>
+          <div class="receipt-route-copy">
+            <div><small>Recogida</small><strong>${origen}</strong></div>
+            <div><small>Destino</small><strong>${destino}</strong></div>
+          </div>
         </div>
-      </div>
+      </section>
+
+      <section class="receipt-section receipt-driver">
+        <h3>${esEnvio ? "Entregado por" : "Viajaste con"}</h3>
+        <div class="receipt-driver-row">
+          <div class="receipt-driver-avatar">${escapeHtml((motorista.nombre || "B").slice(0, 1).toUpperCase())}</div>
+          <div><strong>${conductor}</strong><span>${vehiculoTexto}</span><small>Placa ${placa}</small></div>
+          <span class="receipt-driver-rating">${Number.isFinite(ratingMotorista) ? ratingMotorista.toFixed(1) : "5.0"} <i class="fa-solid fa-star"></i></span>
+        </div>
+      </section>
+
+      <section class="receipt-section receipt-reference">
+        <span>Identificador del viaje</span><strong>${viajeCorto}</strong>
+      </section>
 
       <div class="finalizado-rating">
-        <p>Notez l'experience</p>
-        <div id="ratingStars" class="finalizado-stars" role="group" aria-label="Note">
-          <button type="button" data-value="1" aria-label="1 sur 5"><i class="fa-solid fa-star"></i></button>
-          <button type="button" data-value="2" aria-label="2 sur 5"><i class="fa-solid fa-star"></i></button>
-          <button type="button" data-value="3" aria-label="3 sur 5"><i class="fa-solid fa-star"></i></button>
-          <button type="button" data-value="4" aria-label="4 sur 5"><i class="fa-solid fa-star"></i></button>
-          <button type="button" data-value="5" aria-label="5 sur 5"><i class="fa-solid fa-star"></i></button>
+        <p>¿Cómo estuvo tu experiencia?</p>
+        <div id="ratingStars" class="finalizado-stars" role="group" aria-label="Calificación">
+          <button type="button" data-value="1" aria-label="1 de 5"><i class="fa-solid fa-star"></i></button>
+          <button type="button" data-value="2" aria-label="2 de 5"><i class="fa-solid fa-star"></i></button>
+          <button type="button" data-value="3" aria-label="3 de 5"><i class="fa-solid fa-star"></i></button>
+          <button type="button" data-value="4" aria-label="4 de 5"><i class="fa-solid fa-star"></i></button>
+          <button type="button" data-value="5" aria-label="5 de 5"><i class="fa-solid fa-star"></i></button>
         </div>
-        <div class="finalizado-tags" aria-label="Details rapides">
-          <button type="button" data-rating-tag="safe">Securite</button>
-          <button type="button" data-rating-tag="clean">Moto propre</button>
-          <button type="button" data-rating-tag="polite">Courtoisie</button>
-          <button type="button" data-rating-tag="fast">Ponctualite</button>
-          <button type="button" data-rating-tag="route">Bon trajet</button>
-          <button type="button" data-rating-tag="communication">Communication</button>
+        <div class="finalizado-tags" aria-label="Detalles rápidos">
+          <button type="button" data-rating-tag="safe">Viaje seguro</button>
+          <button type="button" data-rating-tag="clean">Moto limpia</button>
+          <button type="button" data-rating-tag="polite">Amable</button>
+          <button type="button" data-rating-tag="fast">Puntual</button>
+          <button type="button" data-rating-tag="route">Buena ruta</button>
+          <button type="button" data-rating-tag="communication">Comunicación</button>
         </div>
       </div>
 
-      <textarea id="feedbackViaje" class="finalizado-feedback" maxlength="280" placeholder="Commentaire optionnel"></textarea>
+      <textarea id="feedbackViaje" class="finalizado-feedback" maxlength="280" placeholder="Comentario opcional"></textarea>
       <p id="finalizadoRatingStatus" class="finalizado-rating-status" aria-live="polite"></p>
 
-      <div class="finalizado-social">
-        <span>Siguenos para promociones y novedades</span>
-        <div>
-          <a href="https://www.facebook.com/search/top?q=bego%20haiti" target="_blank" rel="noopener" aria-label="Facebook BeGO Haiti">
-            <i class="fa-brands fa-facebook-f"></i>
-          </a>
-          <a href="https://www.instagram.com/bego.haiti" target="_blank" rel="noopener" aria-label="Instagram BeGO Haiti">
-            <i class="fa-brands fa-instagram"></i>
-          </a>
-          <a href="https://www.tiktok.com/@bego.ht" target="_blank" rel="noopener" aria-label="TikTok BeGO">
-            <i class="fa-brands fa-tiktok"></i>
-          </a>
-        </div>
+      <div class="receipt-actions-secondary">
+        <button id="compartirRecibo" type="button"><i class="fa-solid fa-share-nodes"></i> Compartir</button>
+        <button id="guardarRecibo" type="button"><i class="fa-solid fa-file-pdf"></i> Guardar PDF</button>
       </div>
 
-      <button id="cerrarModalViaje" class="finalizado-btn">Listo</button>
+      <div class="receipt-protection"><i class="fa-solid fa-shield-halved"></i><span>Tu viaje está protegido por BeGO. Conserva este recibo para cualquier consulta.</span></div>
+
+      <button id="cerrarModalViaje" class="finalizado-btn">Guardar calificación y finalizar</button>
+      <p class="receipt-footer">BeGO · Movilidad segura y simple</p>
     </div>
   </div>
-  <style>
-    .finalizado-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      display: grid;
-      place-items: center;
-      padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
-      background: rgba(2, 6, 23, 0.72);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      animation: finalizadoFade 0.24s ease;
-    }
-    .finalizado-card {
-      width: min(100%, 390px);
-      max-height: calc(100vh - 32px);
-      overflow: auto;
-      color: #f8fafc;
-      border-radius: 26px;
-      padding: 18px;
-      background:
-        radial-gradient(circle at 50% -12%, rgba(34, 197, 94, 0.22), transparent 34%),
-        linear-gradient(180deg, rgba(24, 31, 43, 0.98), rgba(7, 10, 16, 0.99));
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow:
-        0 28px 70px rgba(0, 0, 0, 0.58),
-        inset 0 1px 1px rgba(255, 255, 255, 0.08);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      animation: finalizadoScale 0.24s ease;
-    }
-    .finalizado-hero {
-      text-align: center;
-      padding: 8px 8px 14px;
-    }
-    .finalizado-check {
-      width: 62px;
-      height: 62px;
-      margin: 0 auto 10px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      color: #04130b;
-      background: linear-gradient(180deg, #86efac, #22c55e);
-      box-shadow: 0 16px 32px rgba(34, 197, 94, 0.26);
-      font-size: 1.6rem;
-    }
-    .finalizado-hero small,
-    .finalizado-resumen span,
-    .finalizado-total span,
-    .finalizado-social span {
-      color: #94a3b8;
-      font-size: 0.74rem;
-      font-weight: 850;
-      text-transform: uppercase;
-    }
-    .finalizado-hero h2 {
-      margin: 4px 0;
-      font-size: 1.45rem;
-      line-height: 1.15;
-      letter-spacing: 0;
-    }
-    .finalizado-hero p {
-      margin: 0;
-      color: #cbd5e1;
-      font-size: 0.92rem;
-      line-height: 1.35;
-    }
-    .finalizado-total {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 14px;
-      border-radius: 18px;
-      background: rgba(34, 197, 94, 0.1);
-      border: 1px solid rgba(34, 197, 94, 0.2);
-    }
-    .finalizado-total strong {
-      color: #86efac;
-      font-size: 1.25rem;
-      font-weight: 950;
-      white-space: nowrap;
-    }
-    .finalizado-resumen {
-      display: grid;
-      gap: 10px;
-      margin-top: 12px;
-      padding: 14px;
-      border-radius: 18px;
-      background: rgba(2, 6, 23, 0.58);
-      border: 1px solid rgba(148, 163, 184, 0.1);
-    }
-    .finalizado-resumen div {
-      display: grid;
-      gap: 4px;
-    }
-    .finalizado-resumen strong {
-      min-width: 0;
-      color: #f8fafc;
-      font-size: 0.9rem;
-      line-height: 1.3;
-      word-break: break-word;
-    }
-    .finalizado-rating {
-      margin-top: 14px;
-      text-align: center;
-    }
-    .finalizado-rating p {
-      margin: 0 0 8px;
-      color: #e2e8f0;
-      font-size: 0.88rem;
-      font-weight: 800;
-    }
-    .finalizado-stars {
-      display: inline-flex;
-      gap: 5px;
-      min-height: 40px;
-      align-items: center;
-      justify-content: center;
-    }
-    .finalizado-stars button {
-      width: 38px;
-      height: 38px;
-      border: 0;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      color: rgba(148, 163, 184, 0.5);
-      background: rgba(15, 23, 42, 0.76);
-      font-size: 1.18rem;
-      cursor: pointer;
-    }
-    .finalizado-stars button.activa {
-      color: #facc15;
-      background: rgba(250, 204, 21, 0.12);
-      box-shadow: inset 0 0 0 1px rgba(250, 204, 21, 0.22);
-    }
-    .finalizado-tags {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 7px;
-      margin-top: 10px;
-    }
-    .finalizado-tags button {
-      min-height: 32px;
-      border: 1px solid rgba(148, 163, 184, 0.15);
-      border-radius: 999px;
-      padding: 0 10px;
-      color: #cbd5e1;
-      background: rgba(15, 23, 42, 0.72);
-      font: inherit;
-      font-size: 0.74rem;
-      font-weight: 850;
-    }
-    .finalizado-tags button.selected {
-      color: #dbeafe;
-      border-color: rgba(96, 165, 250, 0.36);
-      background: rgba(37, 99, 235, 0.2);
-    }
-    .finalizado-feedback {
-      width: 100%;
-      min-height: 68px;
-      margin-top: 12px;
-      padding: 13px 14px;
-      box-sizing: border-box;
-      border: 1px solid rgba(148, 163, 184, 0.16);
-      border-radius: 16px;
-      outline: 0;
-      resize: none;
-      color: #fff;
-      background: rgba(15, 23, 42, 0.78);
-      font: inherit;
-      font-size: 0.9rem;
-    }
-    .finalizado-rating-status {
-      min-height: 18px;
-      margin: 8px 2px 0;
-      color: #93c5fd;
-      font-size: 0.78rem;
-      text-align: center;
-    }
-    .finalizado-social {
-      margin-top: 12px;
-      padding: 13px;
-      border-radius: 18px;
-      background: rgba(15, 23, 42, 0.72);
-      border: 1px solid rgba(148, 163, 184, 0.1);
-      text-align: center;
-    }
-    .finalizado-social div {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 10px;
-    }
-    .finalizado-social a {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      color: #fff;
-      text-decoration: none;
-      background:
-        radial-gradient(circle at 34% 26%, rgba(255, 255, 255, 0.22), transparent 18%),
-        linear-gradient(180deg, #1f2937, #0f172a);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.28);
-    }
-    .finalizado-btn {
-      width: 100%;
-      min-height: 52px;
-      margin-top: 14px;
-      border: 0;
-      border-radius: 17px;
-      color: #03130a;
-      background: linear-gradient(180deg, #86efac, #22c55e);
-      font: inherit;
-      font-weight: 950;
-      cursor: pointer;
-      box-shadow: 0 14px 26px rgba(34, 197, 94, 0.2);
-    }
-    .finalizado-btn:active {
-      transform: scale(0.98);
-    }
-    .finalizado-btn:disabled {
-      opacity: 0.72;
-      cursor: wait;
-    }
-    @keyframes finalizadoFade { from { opacity: 0 } to { opacity: 1 } }
-    @keyframes finalizadoScale { from { transform: scale(0.94); opacity: 0 } to { transform: scale(1); opacity: 1 } }
-  </style>
   `;
 
   document.body.appendChild(modal);
@@ -743,6 +573,8 @@ export function mostrarModalFinalizado(total, payload = {}) {
   const tagButtons = [...modal.querySelectorAll("[data-rating-tag]")];
   const statusEl = modal.querySelector("#finalizadoRatingStatus");
   const listoBtn = modal.querySelector("#cerrarModalViaje");
+  const compartirBtn = modal.querySelector("#compartirRecibo");
+  const guardarBtn = modal.querySelector("#guardarRecibo");
 
   const renderStars = () => {
     starButtons.forEach((button) => {
@@ -771,6 +603,35 @@ export function mostrarModalFinalizado(total, payload = {}) {
     });
   });
 
+  compartirBtn?.addEventListener("click", async () => {
+    const texto = crearTextoRecibo({
+      viajeId,
+      fecha,
+      totalTexto,
+      metodoPago,
+      origen: formatearUbicacion(snapshot.origen),
+      destino: formatearUbicacion(snapshot.destino),
+      conductor: `${motorista.nombre || ""} ${motorista.apellido || ""}`.trim() || "Motorista BeGO"
+    });
+
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: "Recibo BeGO", text: texto });
+      } else if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(texto);
+        if (statusEl) statusEl.textContent = "Recibo copiado.";
+      }
+    } catch (err) {
+      if (err?.name !== "AbortError" && statusEl) {
+        statusEl.textContent = "No se pudo compartir el recibo.";
+      }
+    }
+  });
+
+  guardarBtn?.addEventListener("click", () => {
+    window.print();
+  });
+
   listoBtn?.addEventListener("click", async () => {
     const feedback = modal.querySelector("#feedbackViaje")?.value?.trim() || "";
     const ratingPayload = { rating, comentario: feedback, tags: [...selectedTags] };
@@ -787,25 +648,36 @@ export function mostrarModalFinalizado(total, payload = {}) {
           await submitViajeRating(viajeId, ratingPayload);
         } catch {
           queuePendingRating(viajeId, ratingPayload);
-          if (statusEl) statusEl.textContent = "Connexion instable. La note sera renvoyee.";
+          if (statusEl) statusEl.textContent = "Conexión inestable. La calificación se enviará después.";
         }
       }
 
       const viajes = JSON.parse(localStorage.getItem("viajes") || "[]");
 
       viajes.unshift({
+        _id: viajeId,
+        viajeId,
         estado: "completado",
         origen: snapshot.origen,
         destino: snapshot.destino,
-        fecha: new Date().toLocaleString(),
-        motorista: {
-          id: motorista.id,
-          nombre: motorista.nombre,
-          apellido: motorista.apellido,
-          foto: motorista.foto
-        },
+        fecha: snapshot.finViajeAt || new Date().toISOString(),
+        createdAt: snapshot.createdAt,
+        inicioViajeAt: snapshot.inicioViajeAt,
+        finViajeAt: snapshot.finViajeAt,
+        motorista,
         precio: totalFinal,
+        precioBase: snapshot.precioBase,
+        descuentoWallet: snapshot.descuentoWallet,
+        descuentoWalletRate: snapshot.descuentoWalletRate,
+        distanciaKm: snapshot.distanciaKm,
+        distanciaRealMetros: snapshot.distanciaRealMetros,
+        duracionMin: snapshot.duracionMin,
+        metodoPago: snapshot.metodoPago,
+        estadoPago: snapshot.estadoPago,
         tipoServicio: snapshot.tipoServicio || "viaje",
+        tipo: snapshot.tipoServicio || "viaje",
+        paquete: snapshot.paquete,
+        idaVuelta: snapshot.idaVuelta,
         rating: {
           score: rating,
           comentario: feedback,
@@ -825,6 +697,76 @@ export function mostrarModalFinalizado(total, payload = {}) {
       modal.remove();
     }
   });
+}
+
+function leerUsuarioLocal() {
+  for (const key of ["BeGO_user", "user", "usuario"]) {
+    try {
+      const value = JSON.parse(localStorage.getItem(key) || "null");
+      if (value && typeof value === "object") return value;
+    } catch {}
+  }
+  return {};
+}
+
+function formatearDinero(value) {
+  const amount = Number(value || 0);
+  const safeAmount = Number.isFinite(amount) ? amount : 0;
+  return `HTG ${safeAmount.toLocaleString("es-DO", { maximumFractionDigits: 2 })}`;
+}
+
+function formatearFechaRecibo(value) {
+  const date = new Date(value || Date.now());
+  if (Number.isNaN(date.getTime())) return "Fecha no disponible";
+  return date.toLocaleString("es-DO", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+}
+
+function calcularDuracionRecibo(snapshot = {}) {
+  const supplied = Number(snapshot.duracionMin || 0);
+  if (supplied > 0) return `${Math.round(supplied)} min`;
+
+  const start = new Date(snapshot.inicioViajeAt || snapshot.createdAt).getTime();
+  const end = new Date(snapshot.finViajeAt).getTime();
+  if (Number.isFinite(start) && Number.isFinite(end) && end > start) {
+    return `${Math.max(1, Math.round((end - start) / 60000))} min`;
+  }
+  return "Duración no disponible";
+}
+
+function calcularDistanciaRecibo(snapshot = {}) {
+  const realMeters = Number(snapshot.distanciaRealMetros || 0);
+  const km = realMeters > 0 ? realMeters / 1000 : Number(snapshot.distanciaKm || 0);
+  if (!Number.isFinite(km) || km <= 0) return "Distancia no disponible";
+  return `${km.toLocaleString("es-DO", { minimumFractionDigits: 1, maximumFractionDigits: 2 })} km`;
+}
+
+function etiquetaMetodoPago(value) {
+  const key = String(value || "").toLowerCase();
+  return {
+    efectivo: "Efectivo",
+    wallet: "Wallet BeGO",
+    moncash: "MonCash",
+    natcash: "NatCash"
+  }[key] || "Método de pago";
+}
+
+function crearTextoRecibo(data = {}) {
+  return [
+    "Recibo BeGO",
+    data.fecha,
+    `Total: ${data.totalTexto}`,
+    `Pago: ${data.metodoPago}`,
+    `Origen: ${data.origen}`,
+    `Destino: ${data.destino}`,
+    `Motorista: ${data.conductor}`,
+    `Viaje: ${data.viajeId || "--"}`
+  ].join("\n");
 }
 
 function renderCodigoEntrega(viaje) {

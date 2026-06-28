@@ -29,8 +29,8 @@ module.exports = function(io, socket) {
   socket.on("ida-vuelta:iniciar-retorno", iniciarRetornoPasajeroHandler(io, socket));
   socket.on("ida-vuelta:anular-retorno", anularRetornoPasajeroHandler(io, socket));
 
-  socket.on("sync-pasajero", () => {
-    replayService(socket);
+  socket.on("sync-pasajero", (payload = {}) => {
+    replayService(socket, payload);
   });
 
   process.nextTick(() => {

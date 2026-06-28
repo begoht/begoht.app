@@ -8,7 +8,17 @@ export const handleConnect = (data, socket) => {
   }
 
   if (socket && socket.connected) {
-    socket.emit("sync-pasajero");
+    socket.emit("sync-pasajero", { viajeId: getStoredViajeId() });
     console.log("Peticion de sync enviada al servidor");
   }
 };
+
+function getStoredViajeId() {
+  if (viajeState.viajeId) return String(viajeState.viajeId);
+  try {
+    const stored = JSON.parse(localStorage.getItem("viajeActivo") || "null");
+    return stored?.viajeId ? String(stored.viajeId) : null;
+  } catch {
+    return null;
+  }
+}

@@ -6,10 +6,16 @@ const { prepararIdaVueltaPayload } = require("../../../../services/idaVuelta.ser
 const ESTADOS_BUSQUEDA = ["buscando", "ofertando"];
 const ESTADOS_ACTIVOS = ["reservado", "asignado", "llego", "en_curso"];
 
-module.exports = async function replayViaje(socket) {
+module.exports = async function replayViaje(socket, options = {}) {
   const now = Date.now();
+  const recoveryViajeId = normalizarObjectId(options?.viajeId);
 
-  if (socket.data?.replayInFlight || now - (socket.data?.lastReplayAt || 0) < 1000) {
+  if (socket.data?.replayInFlight) {
+    if (recoveryViajeId) socket.data.pendingRecoveryViajeId = recoveryViajeId;
+    return;
+  }
+
+  if (!recoveryViajeId && now - (socket.data?.lastReplayAt || 0) < 1000) {
     return;
   }
 
@@ -22,6 +28,15 @@ module.exports = async function replayViaje(socket) {
     const viaje = await viajeRepo.findReplay(pasajeroId);
 
     if (!viaje) {
+      const finalizado = recoveryViajeId
+        ? await viajeRepo.findFinalizadoParaPasajero(pasajeroId, recoveryViajeId)
+        : null;
+
+      if (finalizado) {
+        socket.emit("viaje-finalizado", prepararFinalizado(finalizado, true));
+        return;
+      }
+
       return socket.emit("viaje-sync", { activo: false });
     }
 
@@ -159,8 +174,57 @@ module.exports = async function replayViaje(socket) {
     socket.emit("viaje-sync", { activo: false });
   } finally {
     socket.data.replayInFlight = false;
+    const pendingRecoveryViajeId = socket.data.pendingRecoveryViajeId;
+    socket.data.pendingRecoveryViajeId = null;
+    if (pendingRecoveryViajeId) {
+      setImmediate(() => module.exports(socket, { viajeId: pendingRecoveryViajeId }));
+    }
   }
 };
+
+function normalizarObjectId(value) {
+  const id = String(value || "").trim();
+  return /^[a-f\d]{24}$/i.test(id) ? id : null;
+}
+
+function prepararFinalizado(viaje, isReplay = false) {
+  const viajeId = viaje._id.toString();
+  const motorista = prepararMotorista(viaje.motorista, null);
+
+  return {
+    viajeId,
+    total: Number(viaje.precio || 0),
+    neto: Number(viaje.pagoMotorista || viaje.paBeGOrista || 0),
+    distanciaRealMetros: Number(viaje.distanciaRealMetros || 0),
+    isReplay,
+    viaje: {
+      _id: viajeId,
+      estado: "finalizado",
+      estadoPago: viaje.estadoPago || "pagado",
+      origen: viaje.origen,
+      destino: viaje.destino,
+      precio: Number(viaje.precio || 0),
+      precioBase: Number(viaje.precioBase || viaje.precio || 0),
+      descuentoWallet: Number(viaje.descuentoWallet || 0),
+      descuentoWalletRate: Number(viaje.descuentoWalletRate || 0),
+      distanciaKm: Number(viaje.distanciaKm || 0),
+      distanciaRealMetros: Number(viaje.distanciaRealMetros || 0),
+      duracionMin: Number(viaje.duracionMin || 0),
+      metodoPago: viaje.metodoPago,
+      tipo: viaje.tipo || "viaje",
+      ciudad: viaje.ciudad || "",
+      idaVuelta: prepararIdaVueltaPayload(viaje),
+      paquete: prepararPaquetePasajero(viaje),
+      motorista,
+      pasajero: viaje.pasajero || null,
+      inicioViajeAt: viaje.inicioViajeAt || null,
+      finViajeAt: viaje.finViajeAt || viaje.updatedAt || null,
+      createdAt: viaje.createdAt,
+      referenciaPago: viaje.referenciaPago || null,
+      codigoPago: viaje.codigoPago || null,
+    },
+  };
+}
 
 function prepararWalletDiscount(viaje) {
   const discountAmount = Number(viaje.descuentoWallet || 0);

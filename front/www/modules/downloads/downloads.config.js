@@ -1,4 +1,4 @@
-export const DOWNLOAD_VERSION = "20260628-dark-route-locked";
+export const DOWNLOAD_VERSION = "20260628-receipt-recovery";
 
 export const DOWNLOAD_APPS = Object.freeze({
   passenger: Object.freeze({
