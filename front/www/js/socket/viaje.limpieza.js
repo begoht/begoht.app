@@ -1,8 +1,8 @@
 // js/viaje/viaje.limpieza.js
 import { viajeState } from "../viaje/viaje.state.js";
-import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260627-map-fluid-arrival";
-import { eliminarMotoristaDelMapa } from "../map/map.motorista.js?v=20260627-map-fluid-arrival";
-import { getMap } from "../map/map.singleton.js?v=20260627-map-fluid-arrival";
+import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260628-map-single-layer";
+import { eliminarMotoristaDelMapa } from "../map/map.motorista.js?v=20260628-map-single-layer";
+import { getMap } from "../map/map.singleton.js?v=20260628-map-single-layer";
 import { getSocket } from "../socket/socket.js?v=20260606-session-refresh";
 import { destroyPasajeroSocket } from "./pasajero.socket.js";
 

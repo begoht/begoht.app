@@ -1,6 +1,6 @@
 import {
   reverseGeocode
-} from "./services/map.reverse.js?v=20260627-map-fluid-arrival";
+} from "./services/map.reverse.js?v=20260628-map-single-layer";
 
 import {
   setMapaInstance,
@@ -10,7 +10,7 @@ import {
 import {
   renderMotorista,
   removeMotorista
-} from "./ui/map.motorista.renderer.js?v=20260627-map-fluid-arrival";
+} from "./ui/map.motorista.renderer.js?v=20260628-map-single-layer";
 
 import {
   renderMotoristas,

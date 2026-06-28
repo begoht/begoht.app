@@ -44,8 +44,8 @@
 
 /* 7. 🔥 OVERRIDES GLOBALES (ESTO TE FALTA) */
 @import "./base/theme.css";
-@import "./components/map-motion.css?v=20260627-map-fluid-arrival";
-@import "./components/arrival.css?v=20260627-map-fluid-arrival";
+@import "./components/map-motion.css?v=20260628-map-single-layer";
+@import "./components/arrival.css?v=20260628-map-single-layer";
 
 .leaflet-marker-icon.bego-map-icon,
 .bego-map-icon {

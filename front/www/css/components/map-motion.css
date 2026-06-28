@@ -3,14 +3,14 @@
 }
 
 #map.leaflet-container .leaflet-map-pane,
-#map.leaflet-container .leaflet-rotate-pane,
-#map.leaflet-container .leaflet-tile-pane,
-#map.leaflet-container .leaflet-overlay-pane,
-#map.leaflet-container .leaflet-marker-pane,
-#map.leaflet-container .leaflet-shadow-pane {
+#map.leaflet-container .leaflet-rotate-pane {
   backface-visibility: hidden;
-  transform-style: preserve-3d;
   will-change: transform;
+}
+
+#map.leaflet-container .leaflet-tile-pane,
+#map.leaflet-container .leaflet-overlay-pane {
+  backface-visibility: hidden;
 }
 
 #map.leaflet-container .leaflet-zoom-animated,

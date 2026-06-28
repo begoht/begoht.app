@@ -1,5 +1,5 @@
 import { viajeState } from "../viaje/viaje.state.js";
-import { asignarDestino } from "./map.destino.js?v=20260627-map-fluid-arrival";
+import { asignarDestino } from "./map.destino.js?v=20260628-map-single-layer";
 import { coordsInCity } from "./config/index.js?v=20260624-cordoba-gps";
 
 const MAX_DESTINOS = 3;

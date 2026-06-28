@@ -1,4 +1,4 @@
-import { stopGeo } from "../../map/map.geo.js?v=20260627-map-fluid-arrival";
+import { stopGeo } from "../../map/map.geo.js?v=20260628-map-single-layer";
 
 // ===============================
 // 🌍 BASE PATH ROBUSTO

@@ -1,10 +1,10 @@
-import { routes } from "./router.routes.js?v=20260627-map-fluid-arrival";
-import { renderLayout } from "./router.render.js?v=20260627-map-fluid-arrival";
+import { routes } from "./router.routes.js?v=20260628-map-single-layer";
+import { renderLayout } from "./router.render.js?v=20260628-map-single-layer";
 import { runCleanup, setCleanup } from "./router.cleanup.js";
 import { afterRender, pushURL, actualizarLinksActivos } from "./router.utils.js";
-import { runPageInit } from "../app/app.lifecycle.js?v=20260627-map-fluid-arrival";
+import { runPageInit } from "../app/app.lifecycle.js?v=20260628-map-single-layer";
 import { AppState } from "../state.js";
-import { stopGeo } from "../../map/map.geo.js?v=20260627-map-fluid-arrival";
+import { stopGeo } from "../../map/map.geo.js?v=20260628-map-single-layer";
 
 let navigationId = 0;
 let routerReady = false;

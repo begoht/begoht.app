@@ -19,7 +19,7 @@ test("flujo ida/vuelta: al terminar la ida queda pendiente y el pasajero puede a
   assert.match(service, /ESTADO_RETORNO_PENDIENTE/);
   assert.match(service, /ida-vuelta:pendiente/);
 
-  assert.match(passengerSocket, /idaVuelta\.handler\.js\?v=20260627-map-fluid-arrival/);
+  assert.match(passengerSocket, /idaVuelta\.handler\.js\?v=20260628-map-single-layer/);
   assert.match(passengerHandler, /const\s+RETORNO_AUTO_START_MS\s*=/);
   assert.match(passengerHandler, /id="btnAnularVueltaPasajero"/);
   assert.match(passengerHandler, />\s*Anular vuelta\s*</);
@@ -37,17 +37,18 @@ test("cadena de cache: la app pasajero carga el handler nuevo de vuelta", () => 
   const passengerMain = readWorkspaceFile("front/www/js/pasajero/pasajero.main.js");
   const passengerSocket = readWorkspaceFile("front/www/js/socket/pasajero.socket.js");
 
-  assert.match(index, /app\.js\?v=20260627-map-fluid-arrival/);
-  assert.match(app, /router\.js\?v=20260627-map-fluid-arrival/);
-  assert.match(router, /app\.lifecycle\.js\?v=20260627-map-fluid-arrival/);
-  assert.match(lifecycle, /pasajero\.main\.js\?v=20260627-map-fluid-arrival/);
-  assert.match(passengerMain, /pasajero\.socket\.js\?v=20260627-map-fluid-arrival/);
-  assert.match(passengerSocket, /idaVuelta\.handler\.js\?v=20260627-map-fluid-arrival/);
+  assert.match(index, /app\.js\?v=20260628-map-single-layer/);
+  assert.match(app, /router\.js\?v=20260628-map-single-layer/);
+  assert.match(router, /app\.lifecycle\.js\?v=20260628-map-single-layer/);
+  assert.match(lifecycle, /pasajero\.main\.js\?v=20260628-map-single-layer/);
+  assert.match(passengerMain, /pasajero\.socket\.js\?v=20260628-map-single-layer/);
+  assert.match(passengerSocket, /idaVuelta\.handler\.js\?v=20260628-map-single-layer/);
 });
 
-test("mapa en viaje: oculta origen, consume ruta y evita parpadeo al mover o rotar", () => {
+test("mapa en viaje: usa una capa, conserva el origen hasta la llegada y rota la ruta unida", () => {
   const geo = readWorkspaceFile("front/www/js/map/map.geo.js");
   const iniciado = readWorkspaceFile("front/www/js/socket/handlers/iniciado.handler.js");
+  const llego = readWorkspaceFile("front/www/js/socket/handlers/llego.handler.js");
   const track = readWorkspaceFile("front/www/js/socket/handlers/track.handler.js");
   const sync = readWorkspaceFile("front/www/js/socket/handlers/sync.handler.js");
   const routeRenderer = readWorkspaceFile("front/www/js/map/ui/map.route.renderer.js");
@@ -64,11 +65,12 @@ test("mapa en viaje: oculta origen, consume ruta y evita parpadeo al mover o rot
   const passengerCss = readWorkspaceFile("front/www/css/main.css");
 
   assert.match(geo, /export function ocultarOrigenEnMapa/);
-  assert.match(geo, /function origenDebeOcultarse\(\)\s*{\s*return viajeState\.estado === "en_curso";\s*}/);
+  assert.match(geo, /function origenDebeOcultarse\(\)\s*{\s*return \["llego", "en_curso"\]\.includes\(viajeState\.estado\);\s*}/);
   assert.match(geo, /renderPasajeroMarker[\s\S]*ocultarOrigenEnMapa\(\)/);
   assert.match(iniciado, /ocultarOrigenEnMapa\(\)/);
-  assert.match(track, /estadoFinal === "en_curso"[\s\S]*ocultarOrigenEnMapa\(\)/);
-  assert.match(sync, /data\.estado === "en_curso"[\s\S]*ocultarOrigenEnMapa\(\)/);
+  assert.match(llego, /ocultarOrigenEnMapa\(\)/);
+  assert.match(track, /\["llego", "en_curso"\]\.includes\(estadoFinal\)[\s\S]*ocultarOrigenEnMapa\(\)/);
+  assert.match(sync, /\["llego", "en_curso"\]\.includes\(data\.estado\)[\s\S]*ocultarOrigenEnMapa\(\)/);
 
   assert.match(routeRenderer, /export function consumirRutaDesde/);
   assert.match(routeRenderer, /proyectarEnRuta/);
@@ -81,6 +83,10 @@ test("mapa en viaje: oculta origen, consume ruta y evita parpadeo al mover o rot
   assert.match(mapSingleton, /updateWhenZooming:\s*true/);
   assert.match(mapSingleton, /updateInterval:\s*16/);
   assert.match(mapSingleton, /keepBuffer:\s*8/);
+  assert.match(mapSingleton, /basemaps\.cartocdn\.com\/dark_all/);
+  assert.equal((mapSingleton.match(/L\.tileLayer\(/g) || []).length, 1);
+  assert.match(mapSingleton, /ensureRotatingOverlayPane\(mapInstance\)/);
+  assert.match(mapSingleton, /rotatePane\.appendChild\(overlayPane\)/);
   assert.match(mapSingleton, /preferCanvas:\s*false/);
   assert.match(mapSingleton, /L\.svg\(\{ padding:\s*0\.5 \}\)/);
   assert.match(mapSingleton, /zoomAnimation:\s*false/);

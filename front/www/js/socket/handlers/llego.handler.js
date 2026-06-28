@@ -3,9 +3,10 @@ import {
   mostrarNotificacionLlegada,
   actualizarEstadoLlegada,
   reproducirSonidoLlegada
-} from "../../pasajero/pasajero.ui.js?v=20260627-map-fluid-arrival";
-import { actualizarUIDriver } from "../pasajero.utils.js?v=20260627-map-fluid-arrival";
-import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260627-map-fluid-arrival";
+} from "../../pasajero/pasajero.ui.js?v=20260628-map-single-layer";
+import { actualizarUIDriver } from "../pasajero.utils.js?v=20260628-map-single-layer";
+import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260628-map-single-layer";
+import { ocultarOrigenEnMapa } from "../../map/map.geo.js?v=20260628-map-single-layer";
 import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260615-smooth-autofinish";
 
 export const handleLlego = (data = {}) => {
@@ -46,6 +47,7 @@ export const handleLlego = (data = {}) => {
   actualizarEstadoLlegada();
   reproducirSonidoLlegada();
   actualizarUIDriver(viajeState.motorista, "llego");
+  ocultarOrigenEnMapa();
 
   actualizarRutaSegunEstado({
     estado: "llego",

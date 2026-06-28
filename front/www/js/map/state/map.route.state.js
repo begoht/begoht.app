@@ -1,4 +1,4 @@
-import { resetRutaCache } from "../map.ruta.js?v=20260627-map-fluid-arrival";
+import { resetRutaCache } from "../map.ruta.js?v=20260628-map-single-layer";
 
 let lastEstado = null;
 

@@ -1,10 +1,10 @@
 import { viajeState } from "../../viaje/viaje.state.js";
-import { mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260627-map-fluid-arrival";
-import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260627-map-fluid-arrival";
-import { ocultarOrigenEnMapa } from "../../map/map.geo.js?v=20260627-map-fluid-arrival";
-import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260627-map-fluid-arrival";
-import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260627-map-fluid-arrival";
-import { getMap } from "../../map/map.singleton.js?v=20260627-map-fluid-arrival";
+import { mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260628-map-single-layer";
+import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260628-map-single-layer";
+import { ocultarOrigenEnMapa } from "../../map/map.geo.js?v=20260628-map-single-layer";
+import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260628-map-single-layer";
+import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260628-map-single-layer";
+import { getMap } from "../../map/map.singleton.js?v=20260628-map-single-layer";
 import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260615-smooth-autofinish";
 
 let lastEstadoPersistido = null;
@@ -121,7 +121,7 @@ export const handleTrack = (data) => {
    * 4. CONDICIÓN DE RUTA (FIX CLAVE 🔥)
    *************************************************/
   const estadoFinal = viajeState.estado;
-  if (estadoFinal === "en_curso") {
+  if (["llego", "en_curso"].includes(estadoFinal)) {
     ocultarOrigenEnMapa();
   }
 

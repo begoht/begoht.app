@@ -784,22 +784,20 @@ body[class*="route-"]:not(.route-home) .home-map-shell {
   box-shadow: none;
 }
 
-.route-home #map.leaflet-container,
-.route-home #map .leaflet-pane,
+.route-home #map.leaflet-container {
+  background: #3b414b !important;
+}
+
 .route-home #map .leaflet-map-pane,
-.route-home #map .leaflet-tile-pane {
-  background: #3b414b !important;
+.route-home #map .leaflet-rotate-pane,
+.route-home #map .leaflet-tile-pane,
+.route-home #map .leaflet-overlay-pane {
+  background: transparent !important;
 }
 
-.route-home #map .bego-map-base-tiles {
-  background: #3b414b !important;
+.route-home #map .bego-map-primary-tiles {
   filter: grayscale(1) brightness(1.24) contrast(0.72) saturate(0.48);
-  opacity: 0.98;
-}
-
-.route-home #map .bego-map-label-tiles {
-  filter: grayscale(1) brightness(1.72) contrast(1.72) saturate(0.2);
-  opacity: 0.96;
+  opacity: 1;
 }
 
 .route-home .home-map-shell::after {

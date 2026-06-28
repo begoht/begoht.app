@@ -150,11 +150,13 @@ export function createMap(container) {
 
   }).setView(center, zoom);
 
+  ensureRotatingOverlayPane(mapInstance);
+
   /*************************************************
    * 🌍 TILE LAYER
    *************************************************/
   L.tileLayer(
-    "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",
+    "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
     {
       attribution: "&copy; OpenStreetMap &copy; CARTO",
       detectRetina: false,
@@ -163,26 +165,12 @@ export function createMap(container) {
       updateInterval: 16,
       keepBuffer: 8,
       zIndex: 1,
-      className: "bego-map-tiles bego-map-base-tiles"
+      className: "bego-map-tiles bego-map-primary-tiles"
     }
   ).addTo(mapInstance);
 
   bindCompassButton(mapInstance);
   bindViewportRefresh(mapInstance);
-
-  L.tileLayer(
-    "https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png",
-    {
-      attribution: "",
-      detectRetina: false,
-      updateWhenIdle: false,
-      updateWhenZooming: true,
-      updateInterval: 16,
-      keepBuffer: 8,
-      zIndex: 2,
-      className: "bego-map-tiles bego-map-label-tiles"
-    }
-  ).addTo(mapInstance);
 
   /*************************************************
    * ✅ MAP READY
@@ -224,6 +212,15 @@ export function createMap(container) {
   addManagedListener(document, "visibilitychange", onVisible);
 
   return mapInstance;
+}
+
+function ensureRotatingOverlayPane(map) {
+  const rotatePane = map?.getPane?.("rotatePane");
+  const overlayPane = map?.getPane?.("overlayPane");
+
+  if (!rotatePane || !overlayPane || overlayPane.parentElement === rotatePane) return;
+
+  rotatePane.appendChild(overlayPane);
 }
 
 function bindCompassButton(map) {
