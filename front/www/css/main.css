@@ -29,7 +29,7 @@
 @import "./pages/servicios.css";
 @import "./pages/actividad.css?v=20260605-rating-premium";
 @import "./pages/detalle-viaje.css?v=20260605-rating-premium";
-@import "./components/receipt.css?v=20260628-receipt-recovery";
+@import "./components/trip-finished.css?v=20260629-email-receipt";
 @import "./pages/billetera.css";
 @import "./pages/pagos.css?v=20260607-payments-mobile";
 @import "./pages/configuracion.css?v=20260607-config-functional";

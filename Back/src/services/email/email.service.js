@@ -307,6 +307,17 @@ async function enviarResumenViaje(datos) {
     destino,
     nombreConductor,
     metodoPago,
+    estadoPago,
+    precioBase,
+    descuentoWallet,
+    descuentoWalletRate,
+    inicioViajeAt,
+    finViajeAt,
+    tipoServicio,
+    ciudad,
+    referenciaPago,
+    vehiculo,
+    placa,
   } = datos;
 
   if (!email) {
@@ -325,8 +336,9 @@ async function enviarResumenViaje(datos) {
     return false;
   }
 
-  const fechaActual = new Date().toLocaleDateString("fr-HT");
-  const horaActual = new Date().toLocaleTimeString("fr-HT", { hour: "2-digit", minute: "2-digit" });
+  const fechaRecibo = new Date(finViajeAt || Date.now());
+  const fechaActual = fechaRecibo.toLocaleDateString("fr-HT", { day: "2-digit", month: "short", year: "numeric" });
+  const horaActual = fechaRecibo.toLocaleTimeString("fr-HT", { hour: "2-digit", minute: "2-digit" });
   const pdfBuffer = await generarPdfRecibo(datos);
 
   const safeName = escapeHtml(nombrePasajero || "passager");
@@ -337,76 +349,103 @@ async function enviarResumenViaje(datos) {
   const safeDistance = escapeHtml(distanciaKm || "0");
   const safeDuration = escapeHtml(tiempo || "0");
   const safeTripId = escapeHtml(viajeId);
+  const safeCity = escapeHtml(ciudad || "Haiti");
+  const safeReference = escapeHtml(referenciaPago || `BEGO-${String(viajeId || "").slice(-8).toUpperCase()}`);
+  const vehicle = vehiculo && typeof vehiculo === "object" ? vehiculo : {};
+  const safeVehicle = escapeHtml(
+    [vehicle.marca, vehicle.modelo, vehicle.color].filter(Boolean).join(" · ") || "Moto verifiee BeGO"
+  );
+  const safePlate = escapeHtml(placa || vehicle.placa || "S/P");
+  const isDelivery = tipoServicio === "envio";
+  const serviceLabel = isDelivery ? "Livraison BeGO" : "Course BeGO";
+  const baseAmount = Math.max(Number(precioBase || 0), Number(total || 0) + Number(descuentoWallet || 0));
+  const discountAmount = Math.max(0, Number(descuentoWallet || 0));
+  const discountPercent = Math.max(0, Math.round(Number(descuentoWalletRate || 0) * 100));
+  const discountRow = discountAmount > 0
+    ? `<tr><td style="padding:7px 0;color:#6b7280;font-size:12px;">Remise Wallet${discountPercent ? ` (${discountPercent}%)` : ""}</td><td style="padding:7px 0;color:#15803d;font-size:12px;font-weight:800;text-align:right;">-${formatMoney(discountAmount)}</td></tr>`
+    : "";
   const totalText = formatMoney(total);
 
   try {
     const info = await sendEmail({
       to: email,
-      subject: `Votre recu BeGO est pret - ${fechaActual}`,
+      subject: `Merci d'avoir choisi BeGO - recu du ${fechaActual}`,
       html: `
-        <div style="display:none;max-height:0;overflow:hidden;color:transparent;">Votre course BeGO est terminee. Le recu officiel est joint en PDF.</div>
-        <div style="background:#f5f7fb;margin:0;padding:10px 8px;font-family:Arial,Helvetica,sans-serif;color:#0f172a;">
-          <div style="max-width:560px;margin:0 auto;background:#ffffff;border-radius:20px;overflow:hidden;border:1px solid #dbeafe;box-shadow:0 12px 28px rgba(15,23,42,.10);">
-            <div style="background:#07111f;padding:24px 20px 22px;border-bottom:5px solid #2563eb;">
-              <div style="font-size:33px;line-height:1;font-weight:900;color:#ffffff;letter-spacing:0;">BeGO</div>
-              <div style="margin-top:10px;color:#93c5fd;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;">Recu officiel de course</div>
-              <div style="margin-top:14px;color:#cbd5e1;font-size:14px;line-height:1.55;">Merci d'avoir choisi BeGO. Votre recu PDF est joint a cet email.</div>
-              <div style="margin-top:18px;">
-                <span style="display:inline-block;background:#eff6ff;color:#2563eb;border-radius:999px;padding:9px 13px;font-size:11px;font-weight:900;text-transform:uppercase;">Course terminee</span>
-              </div>
-              <div style="margin-top:16px;background:rgba(255,255,255,.08);border:1px solid rgba(147,197,253,.24);border-radius:16px;padding:12px;">
-                <div style="color:#94a3b8;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;">ID voyage</div>
-                <div style="margin-top:5px;color:#ffffff;font-size:12px;font-weight:800;word-break:break-all;">${safeTripId}</div>
-              </div>
+        <div style="display:none;max-height:0;overflow:hidden;color:transparent;">Merci d'avoir utilise BeGO. Total ${totalText}. Votre recu PDF est joint.</div>
+        <div style="margin:0;padding:0;background:#eef0f3;font-family:Arial,Helvetica,sans-serif;color:#111827;">
+          <div style="max-width:600px;margin:0 auto;background:#ffffff;">
+            <div style="padding:18px 28px;border-bottom:1px solid #e5e7eb;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+                <td style="font-size:25px;font-weight:900;letter-spacing:-1px;color:#111827;"><span style="color:#2563eb;">Be</span>GO</td>
+                <td style="text-align:right;color:#6b7280;font-size:11px;">${fechaActual} · ${horaActual}</td>
+              </tr></table>
             </div>
 
-            <div style="padding:20px;">
-              <p style="margin:0 0 8px;color:#64748b;font-size:13px;">${fechaActual}, ${horaActual}</p>
-              <h1 style="margin:0 0 18px;font-size:25px;line-height:1.14;color:#0f172a;">Merci, ${safeName}</h1>
+            <div style="padding:30px 28px 25px;background:#f4f4f5;">
+              <div style="color:#2563eb;font-size:11px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;">${escapeHtml(serviceLabel)} terminee</div>
+              <h1 style="margin:9px 0 8px;color:#09090b;font-size:30px;line-height:1.08;letter-spacing:-1px;">Merci d'avoir choisi BeGO, ${safeName}</h1>
+              <p style="margin:0;color:#52525b;font-size:13px;line-height:1.5;">Nous esperons que vous avez apprecie votre ${isDelivery ? "livraison" : "trajet"}. Voici votre recu complet.</p>
+            </div>
 
-              <div style="background:#eef5ff;border:1px solid #bfdbfe;border-radius:18px;padding:18px;margin:0 0 18px;">
-                <div style="color:#2563eb;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;">Montant paye</div>
-                <div style="margin-top:8px;color:#0f172a;font-size:31px;line-height:1.05;font-weight:900;word-break:break-word;">${totalText}</div>
-                <div style="margin-top:10px;color:#475569;font-size:13px;">Paiement confirme par BeGO.</div>
+            <div style="padding:0 28px;">
+              <div style="padding:24px 0;border-bottom:1px solid #e5e7eb;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+                  <td style="font-size:17px;font-weight:900;">Total</td>
+                  <td style="font-size:23px;font-weight:900;text-align:right;white-space:nowrap;">${totalText}</td>
+                </tr></table>
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:15px;padding-top:12px;border-top:1px dashed #d1d5db;">
+                  <tr><td style="padding:7px 0;color:#6b7280;font-size:12px;">Tarif ${isDelivery ? "de livraison" : "de la course"}</td><td style="padding:7px 0;font-size:12px;font-weight:800;text-align:right;">${formatMoney(baseAmount)}</td></tr>
+                  ${discountRow}
+                  <tr><td style="padding:12px 0 0;color:#111827;font-size:12px;font-weight:900;border-top:1px solid #e5e7eb;">Total facture</td><td style="padding:12px 0 0;font-size:12px;font-weight:900;text-align:right;border-top:1px solid #e5e7eb;">${totalText}</td></tr>
+                </table>
               </div>
 
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin:0 0 18px;">
-                <tr>
-                  <td style="padding:13px 8px;border-bottom:1px solid #e2e8f0;color:#64748b;font-size:13px;">Paiement</td>
-                  <td width="55%" style="padding:13px 8px;border-bottom:1px solid #e2e8f0;color:#0f172a;font-size:14px;font-weight:800;text-align:right;word-break:break-word;">${safePayment}</td>
-                </tr>
-                <tr>
-                  <td style="padding:13px 8px;border-bottom:1px solid #e2e8f0;color:#64748b;font-size:13px;">Distance</td>
-                  <td width="55%" style="padding:13px 8px;border-bottom:1px solid #e2e8f0;color:#0f172a;font-size:14px;font-weight:800;text-align:right;word-break:break-word;">${safeDistance} km</td>
-                </tr>
-                <tr>
-                  <td style="padding:13px 8px;border-bottom:1px solid #e2e8f0;color:#64748b;font-size:13px;">Duree</td>
-                  <td width="55%" style="padding:13px 8px;border-bottom:1px solid #e2e8f0;color:#0f172a;font-size:14px;font-weight:800;text-align:right;word-break:break-word;">${safeDuration} min</td>
-                </tr>
-                <tr>
-                  <td style="padding:13px 8px;color:#64748b;font-size:13px;">Conducteur</td>
-                  <td width="55%" style="padding:13px 8px;color:#0f172a;font-size:14px;font-weight:800;text-align:right;word-break:break-word;">${safeDriver}</td>
-                </tr>
-              </table>
-
-              <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:18px;padding:18px;margin-bottom:18px;">
-                <div style="color:#2563eb;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;">Depart</div>
-                <div style="margin-top:7px;color:#0f172a;font-size:15px;line-height:1.45;font-weight:800;word-break:break-word;">${safeOrigen}</div>
-                <div style="height:1px;background:#e2e8f0;margin:16px 0;"></div>
-                <div style="color:#2563eb;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;">Destination</div>
-                <div style="margin-top:7px;color:#0f172a;font-size:15px;line-height:1.45;font-weight:800;word-break:break-word;">${safeDestino}</div>
+              <div style="padding:24px 0;border-bottom:1px solid #e5e7eb;">
+                <h2 style="margin:0 0 15px;font-size:17px;">Paiement</h2>
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+                  <td width="44" valign="middle"><div style="width:38px;height:32px;line-height:32px;text-align:center;color:#fff;background:#111827;border-radius:7px;font-size:15px;">$</div></td>
+                  <td><div style="font-size:13px;font-weight:900;">${safePayment}</div><div style="margin-top:3px;color:#6b7280;font-size:10px;">${safeReference}</div></td>
+                  <td style="font-size:13px;font-weight:900;text-align:right;white-space:nowrap;">${totalText}</td>
+                </tr></table>
               </div>
 
-              <div style="background:#07111f;border-radius:18px;padding:20px;color:#ffffff;">
-                <div style="font-size:18px;font-weight:900;margin-bottom:8px;">Suivez BeGO Haiti</div>
-                <div style="color:#cbd5e1;font-size:13px;line-height:1.5;margin-bottom:16px;">Promotions, securite, assistance et nouveautes sont partages sur nos reseaux officiels.</div>
+              <div style="padding:24px 0;border-bottom:1px solid #e5e7eb;">
+                <h2 style="margin:0 0 15px;font-size:17px;">Details du ${isDelivery ? "service" : "trajet"}</h2>
+                <div style="margin-bottom:18px;">
+                  <span style="display:inline-block;margin:0 5px 5px 0;padding:7px 9px;border-radius:7px;background:#f3f4f6;color:#4b5563;font-size:10px;">${safeDistance} km</span>
+                  <span style="display:inline-block;margin:0 5px 5px 0;padding:7px 9px;border-radius:7px;background:#f3f4f6;color:#4b5563;font-size:10px;">${safeDuration} min</span>
+                  <span style="display:inline-block;margin:0 5px 5px 0;padding:7px 9px;border-radius:7px;background:#f3f4f6;color:#4b5563;font-size:10px;">${safeCity}</span>
+                </div>
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                  <tr><td width="20" valign="top"><div style="width:8px;height:8px;margin-top:4px;border:2px solid #111827;border-radius:50%;"></div></td><td style="padding:0 0 18px;"><div style="color:#9ca3af;font-size:9px;font-weight:800;text-transform:uppercase;">Depart</div><div style="margin-top:4px;font-size:12px;font-weight:800;line-height:1.4;">${safeOrigen}</div></td></tr>
+                  <tr><td width="20" valign="top"><div style="width:9px;height:9px;margin-top:4px;background:#111827;border-radius:2px;"></div></td><td><div style="color:#9ca3af;font-size:9px;font-weight:800;text-transform:uppercase;">Destination</div><div style="margin-top:4px;font-size:12px;font-weight:800;line-height:1.4;">${safeDestino}</div></td></tr>
+                </table>
+              </div>
+
+              <div style="padding:24px 0;border-bottom:1px solid #e5e7eb;">
+                <h2 style="margin:0 0 15px;font-size:17px;">${isDelivery ? "Livre par" : "Votre conducteur"}</h2>
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+                  <td width="48"><div style="width:42px;height:42px;line-height:42px;text-align:center;border-radius:50%;background:#2563eb;color:#fff;font-size:16px;font-weight:900;">${escapeHtml(String(nombreConductor || "B").slice(0, 1).toUpperCase())}</div></td>
+                  <td><div style="font-size:13px;font-weight:900;">${safeDriver}</div><div style="margin-top:3px;color:#6b7280;font-size:10px;">${safeVehicle}</div><div style="margin-top:3px;color:#9ca3af;font-size:9px;">Plaque ${safePlate}</div></td>
+                </tr></table>
+              </div>
+
+              <div style="padding:18px 0;color:#6b7280;font-size:10px;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td>ID voyage</td><td style="font-weight:800;text-align:right;word-break:break-all;">${safeTripId}</td></tr></table>
+              </div>
+
+              <div style="margin-bottom:24px;padding:17px;border-radius:14px;background:#f0fdf4;color:#3f4f45;font-size:11px;line-height:1.5;">
+                Votre trajet est protege par BeGO. Le recu officiel est aussi joint en PDF pour vos archives.
+              </div>
+
+              <div style="padding:20px;border-radius:14px 14px 0 0;background:#111827;color:#ffffff;text-align:center;">
+                <div style="font-size:14px;font-weight:900;margin-bottom:10px;">Suivez BeGO Haiti</div>
                 <div>${renderSocialLinks()}</div>
               </div>
             </div>
 
-            <div style="background:#f8fafc;border-top:1px solid #e2e8f0;padding:18px 20px;text-align:center;color:#64748b;font-size:12px;line-height:1.5;">
-              BeGO Haiti<br>
-              Recu genere automatiquement par la plateforme. Conservez le PDF joint pour votre suivi.
+            <div style="padding:18px 28px;background:#050505;color:#9ca3af;font-size:10px;line-height:1.5;text-align:center;">
+              BeGO Haiti · Recu genere automatiquement · Paiement ${escapeHtml(estadoPago || "confirme")}
             </div>
           </div>
         </div>

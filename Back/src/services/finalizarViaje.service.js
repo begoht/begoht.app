@@ -389,7 +389,18 @@ function enviarReciboFinalizacion(viaje, viajeId, total) {
     origen: direccionTexto(viaje.origen),
     destino: direccionTexto(viaje.destino),
     nombreConductor: nombreCompleto(viaje.motorista) || "Socio BeGO",
-    metodoPago: viaje.metodoPago
+    metodoPago: viaje.metodoPago,
+    estadoPago: viaje.estadoPago,
+    precioBase: viaje.precioBase || viaje.precio || total,
+    descuentoWallet: viaje.descuentoWallet || 0,
+    descuentoWalletRate: viaje.descuentoWalletRate || 0,
+    inicioViajeAt: viaje.inicioViajeAt || viaje.createdAt,
+    finViajeAt: viaje.finViajeAt,
+    tipoServicio: viaje.tipo || "viaje",
+    ciudad: viaje.ciudad || "",
+    referenciaPago: viaje.referenciaPago || viaje.codigoPago || "",
+    vehiculo: viaje.motorista?.vehiculo || null,
+    placa: viaje.motorista?.vehiculo?.placa || viaje.motorista?.placa || ""
   }).catch((error) => {
     console.error("No se pudo enviar recibo por email:", error.message);
   });

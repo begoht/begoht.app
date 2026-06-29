@@ -417,10 +417,10 @@ export function mostrarModalFinalizado(total, payload = {}) {
   modal.id = "modalFinalizado";
 
   const esEnvio = snapshot.tipoServicio === "envio" || snapshot.tipo === "envio";
-  const titulo = esEnvio ? "Gracias por usar BeGO Envíos" : "Gracias por viajar con BeGO";
+  const titulo = esEnvio ? "Entrega completada" : "Viaje completado";
   const subtitulo = esEnvio
-    ? "Tu entrega finalizó correctamente. Aquí tienes el recibo completo."
-    : "Esperamos que hayas disfrutado el viaje. Aquí tienes el recibo completo.";
+    ? "Tu paquete fue entregado correctamente."
+    : "Gracias por viajar con BeGO.";
   const totalFinal = snapshot.total ?? total ?? 0;
   const totalTexto = formatearDinero(totalFinal);
 
@@ -442,92 +442,27 @@ export function mostrarModalFinalizado(total, payload = {}) {
   const conductor = escapeHtml(
     `${motorista.nombre || ""} ${motorista.apellido || ""}`.trim() || "Motorista BeGO"
   );
-  const pasajeroNombre = escapeHtml(
-    `${snapshot.pasajero?.nombre || ""} ${snapshot.pasajero?.apellido || ""}`.trim() || "Pasajero BeGO"
-  );
-  const vehiculo = motorista.vehiculo && typeof motorista.vehiculo === "object" ? motorista.vehiculo : {};
-  const vehiculoTexto = escapeHtml(
-    [vehiculo.marca, vehiculo.modelo, vehiculo.color].filter(Boolean).join(" · ") || "Moto verificada BeGO"
-  );
-  const placa = escapeHtml(vehiculo.placa || motorista.placa || "S/P");
-  const fecha = formatearFechaRecibo(snapshot.finViajeAt || snapshot.createdAt);
-  const duracion = calcularDuracionRecibo(snapshot);
-  const distancia = calcularDistanciaRecibo(snapshot);
-  const metodoPago = etiquetaMetodoPago(snapshot.metodoPago);
-  const referencia = escapeHtml(snapshot.referenciaPago || snapshot.codigoPago || `BEGO-${String(viajeId || "VIAJE").slice(-8).toUpperCase()}`);
-  const viajeCorto = escapeHtml(String(viajeId || "--").slice(-10).toUpperCase());
-  const precioBase = Number(snapshot.precioBase || 0);
-  const descuentoWallet = Number(snapshot.descuentoWallet || 0);
-  const tarifaTexto = formatearDinero(precioBase > 0 ? precioBase : Number(totalFinal) + descuentoWallet);
-  const descuentoHtml = descuentoWallet > 0
-    ? `<div><span>Descuento Wallet${snapshot.descuentoWalletRate ? ` (${Math.round(Number(snapshot.descuentoWalletRate) * 100)}%)` : ""}</span><strong class="receipt-discount">-${formatearDinero(descuentoWallet)}</strong></div>`
-    : "";
-  const ratingMotorista = Number(motorista.rating || motorista.calificacion || 5);
 
   modal.innerHTML = `
   <div class="finalizado-overlay">
     <div class="finalizado-card" role="dialog" aria-modal="true" aria-labelledby="finalizadoTitulo">
-      <div class="receipt-topbar">
-        <div class="receipt-brand"><span>Be</span>GO</div>
-        <span class="receipt-status"><i class="fa-solid fa-circle-check"></i> Pagado</span>
-      </div>
-
-      <div class="finalizado-hero receipt-hero">
-        <small>${esEnvio ? "Entrega finalizada" : "Viaje finalizado"}</small>
+      <div class="finalizado-hero">
+        <div class="finalizado-check"><i class="fa-solid fa-check"></i></div>
+        <small>${esEnvio ? "Envío BeGO" : "BeGO Ride"}</small>
         <h2 id="finalizadoTitulo">${titulo}</h2>
         <p>${subtitulo}</p>
-        <span class="receipt-passenger">Recibo para ${pasajeroNombre}</span>
       </div>
 
-      <section class="receipt-section receipt-payment-summary">
-        <div class="finalizado-total">
-          <span>Total</span>
-          <strong>${totalTexto}</strong>
-        </div>
-        <div class="receipt-breakdown">
-          <div><span>Tarifa del ${esEnvio ? "envío" : "viaje"}</span><strong>${tarifaTexto}</strong></div>
-          ${descuentoHtml}
-          <div class="receipt-breakdown-total"><span>Total cobrado</span><strong>${totalTexto}</strong></div>
-        </div>
-      </section>
+      <div class="finalizado-total">
+        <span>Total pagado</span>
+        <strong>${totalTexto}</strong>
+      </div>
 
-      <section class="receipt-section">
-        <h3>Pago</h3>
-        <div class="receipt-payment-row">
-          <div class="receipt-payment-icon"><i class="fa-solid ${snapshot.metodoPago === "efectivo" ? "fa-money-bill-wave" : "fa-wallet"}"></i></div>
-          <div><strong>${escapeHtml(metodoPago)}</strong><span>${referencia}</span></div>
-          <strong>${totalTexto}</strong>
-        </div>
-      </section>
-
-      <section class="receipt-section">
-        <h3>Detalles del ${esEnvio ? "envío" : "viaje"}</h3>
-        <div class="receipt-meta">
-          <span><i class="fa-regular fa-calendar"></i> ${escapeHtml(fecha)}</span>
-          <span><i class="fa-regular fa-clock"></i> ${escapeHtml(duracion)}</span>
-          <span><i class="fa-solid fa-route"></i> ${escapeHtml(distancia)}</span>
-        </div>
-        <div class="receipt-route">
-          <div class="receipt-route-rail"><i></i><span></span><i></i></div>
-          <div class="receipt-route-copy">
-            <div><small>Recogida</small><strong>${origen}</strong></div>
-            <div><small>Destino</small><strong>${destino}</strong></div>
-          </div>
-        </div>
-      </section>
-
-      <section class="receipt-section receipt-driver">
-        <h3>${esEnvio ? "Entregado por" : "Viajaste con"}</h3>
-        <div class="receipt-driver-row">
-          <div class="receipt-driver-avatar">${escapeHtml((motorista.nombre || "B").slice(0, 1).toUpperCase())}</div>
-          <div><strong>${conductor}</strong><span>${vehiculoTexto}</span><small>Placa ${placa}</small></div>
-          <span class="receipt-driver-rating">${Number.isFinite(ratingMotorista) ? ratingMotorista.toFixed(1) : "5.0"} <i class="fa-solid fa-star"></i></span>
-        </div>
-      </section>
-
-      <section class="receipt-section receipt-reference">
-        <span>Identificador del viaje</span><strong>${viajeCorto}</strong>
-      </section>
+      <div class="finalizado-resumen">
+        <div><span>Origen</span><strong>${origen}</strong></div>
+        <div><span>Destino</span><strong>${destino}</strong></div>
+        <div><span>${esEnvio ? "Entregado por" : "Conductor"}</span><strong>${conductor}</strong></div>
+      </div>
 
       <div class="finalizado-rating">
         <p>¿Cómo estuvo tu experiencia?</p>
@@ -551,15 +486,7 @@ export function mostrarModalFinalizado(total, payload = {}) {
       <textarea id="feedbackViaje" class="finalizado-feedback" maxlength="280" placeholder="Comentario opcional"></textarea>
       <p id="finalizadoRatingStatus" class="finalizado-rating-status" aria-live="polite"></p>
 
-      <div class="receipt-actions-secondary">
-        <button id="compartirRecibo" type="button"><i class="fa-solid fa-share-nodes"></i> Compartir</button>
-        <button id="guardarRecibo" type="button"><i class="fa-solid fa-file-pdf"></i> Guardar PDF</button>
-      </div>
-
-      <div class="receipt-protection"><i class="fa-solid fa-shield-halved"></i><span>Tu viaje está protegido por BeGO. Conserva este recibo para cualquier consulta.</span></div>
-
-      <button id="cerrarModalViaje" class="finalizado-btn">Guardar calificación y finalizar</button>
-      <p class="receipt-footer">BeGO · Movilidad segura y simple</p>
+      <button id="cerrarModalViaje" class="finalizado-btn">Listo</button>
     </div>
   </div>
   `;
@@ -573,8 +500,6 @@ export function mostrarModalFinalizado(total, payload = {}) {
   const tagButtons = [...modal.querySelectorAll("[data-rating-tag]")];
   const statusEl = modal.querySelector("#finalizadoRatingStatus");
   const listoBtn = modal.querySelector("#cerrarModalViaje");
-  const compartirBtn = modal.querySelector("#compartirRecibo");
-  const guardarBtn = modal.querySelector("#guardarRecibo");
 
   const renderStars = () => {
     starButtons.forEach((button) => {
@@ -601,35 +526,6 @@ export function mostrarModalFinalizado(total, payload = {}) {
       else selectedTags.add(tag);
       button.classList.toggle("selected", selectedTags.has(tag));
     });
-  });
-
-  compartirBtn?.addEventListener("click", async () => {
-    const texto = crearTextoRecibo({
-      viajeId,
-      fecha,
-      totalTexto,
-      metodoPago,
-      origen: formatearUbicacion(snapshot.origen),
-      destino: formatearUbicacion(snapshot.destino),
-      conductor: `${motorista.nombre || ""} ${motorista.apellido || ""}`.trim() || "Motorista BeGO"
-    });
-
-    try {
-      if (navigator.share) {
-        await navigator.share({ title: "Recibo BeGO", text: texto });
-      } else if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(texto);
-        if (statusEl) statusEl.textContent = "Recibo copiado.";
-      }
-    } catch (err) {
-      if (err?.name !== "AbortError" && statusEl) {
-        statusEl.textContent = "No se pudo compartir el recibo.";
-      }
-    }
-  });
-
-  guardarBtn?.addEventListener("click", () => {
-    window.print();
   });
 
   listoBtn?.addEventListener("click", async () => {
@@ -713,60 +609,6 @@ function formatearDinero(value) {
   const amount = Number(value || 0);
   const safeAmount = Number.isFinite(amount) ? amount : 0;
   return `HTG ${safeAmount.toLocaleString("es-DO", { maximumFractionDigits: 2 })}`;
-}
-
-function formatearFechaRecibo(value) {
-  const date = new Date(value || Date.now());
-  if (Number.isNaN(date.getTime())) return "Fecha no disponible";
-  return date.toLocaleString("es-DO", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit"
-  });
-}
-
-function calcularDuracionRecibo(snapshot = {}) {
-  const supplied = Number(snapshot.duracionMin || 0);
-  if (supplied > 0) return `${Math.round(supplied)} min`;
-
-  const start = new Date(snapshot.inicioViajeAt || snapshot.createdAt).getTime();
-  const end = new Date(snapshot.finViajeAt).getTime();
-  if (Number.isFinite(start) && Number.isFinite(end) && end > start) {
-    return `${Math.max(1, Math.round((end - start) / 60000))} min`;
-  }
-  return "Duración no disponible";
-}
-
-function calcularDistanciaRecibo(snapshot = {}) {
-  const realMeters = Number(snapshot.distanciaRealMetros || 0);
-  const km = realMeters > 0 ? realMeters / 1000 : Number(snapshot.distanciaKm || 0);
-  if (!Number.isFinite(km) || km <= 0) return "Distancia no disponible";
-  return `${km.toLocaleString("es-DO", { minimumFractionDigits: 1, maximumFractionDigits: 2 })} km`;
-}
-
-function etiquetaMetodoPago(value) {
-  const key = String(value || "").toLowerCase();
-  return {
-    efectivo: "Efectivo",
-    wallet: "Wallet BeGO",
-    moncash: "MonCash",
-    natcash: "NatCash"
-  }[key] || "Método de pago";
-}
-
-function crearTextoRecibo(data = {}) {
-  return [
-    "Recibo BeGO",
-    data.fecha,
-    `Total: ${data.totalTexto}`,
-    `Pago: ${data.metodoPago}`,
-    `Origen: ${data.origen}`,
-    `Destino: ${data.destino}`,
-    `Motorista: ${data.conductor}`,
-    `Viaje: ${data.viajeId || "--"}`
-  ].join("\n");
 }
 
 function renderCodigoEntrega(viaje) {

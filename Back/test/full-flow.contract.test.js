@@ -37,15 +37,15 @@ test("cadena de cache: la app pasajero carga el handler nuevo de vuelta", () => 
   const passengerMain = readWorkspaceFile("front/www/js/pasajero/pasajero.main.js");
   const passengerSocket = readWorkspaceFile("front/www/js/socket/pasajero.socket.js");
 
-  assert.match(index, /app\.js\?v=20260628-receipt-recovery/);
-  assert.match(app, /router\.js\?v=20260628-receipt-recovery/);
-  assert.match(router, /app\.lifecycle\.js\?v=20260628-receipt-recovery/);
-  assert.match(lifecycle, /pasajero\.main\.js\?v=20260628-receipt-recovery/);
-  assert.match(passengerMain, /pasajero\.socket\.js\?v=20260628-receipt-recovery/);
+  assert.match(index, /app\.js\?v=20260629-email-receipt/);
+  assert.match(app, /router\.js\?v=20260629-email-receipt/);
+  assert.match(router, /app\.lifecycle\.js\?v=20260629-email-receipt/);
+  assert.match(lifecycle, /pasajero\.main\.js\?v=20260629-email-receipt/);
+  assert.match(passengerMain, /pasajero\.socket\.js\?v=20260629-email-receipt/);
   assert.match(passengerSocket, /idaVuelta\.handler\.js\?v=20260628-dark-route-locked/);
 });
 
-test("cierre pasajero: recupera el recibo si la app estaba cerrada", () => {
+test("cierre pasajero: recupera la finalizacion si la app estaba cerrada", () => {
   const handlers = readWorkspaceFile("Back/src/sockets/viajes/pasajeros/pasajero.handlers.js");
   const replay = readWorkspaceFile("Back/src/sockets/viajes/pasajeros/services/replay.service.js");
   const repo = readWorkspaceFile("Back/src/sockets/viajes/pasajeros/repositories/viaje.repository.js");
@@ -58,7 +58,22 @@ test("cierre pasajero: recupera el recibo si la app estaba cerrada", () => {
   assert.match(repo, /pasajero:\s*pasajeroId[\s\S]*estado:\s*"finalizado"/);
   assert.match(passengerSocket, /sync-pasajero", \{ viajeId: getStoredViajeId\(\) \}/);
   assert.match(receipt, /guardarFinalizacionPendiente\(snapshot\)/);
-  assert.match(receipt, /id="guardarRecibo"/);
+  assert.match(receipt, /id="cerrarModalViaje" class="finalizado-btn">Listo</);
+  assert.doesNotMatch(receipt, /id="guardarRecibo"|receipt-payment-summary/);
+});
+
+test("recibo de viaje: el detalle completo se envia por email y PDF", () => {
+  const emailService = readWorkspaceFile("Back/src/services/email/email.service.js");
+  const finalizar = readWorkspaceFile("Back/src/services/finalizarViaje.service.js");
+
+  assert.match(finalizar, /precioBase: viaje\.precioBase/);
+  assert.match(finalizar, /descuentoWallet: viaje\.descuentoWallet/);
+  assert.match(finalizar, /vehiculo: viaje\.motorista\?\.vehiculo/);
+  assert.match(emailService, /Merci d'avoir choisi BeGO, \$\{safeName\}/);
+  assert.match(emailService, /Tarif \$\{isDelivery \? "de livraison" : "de la course"\}/);
+  assert.match(emailService, /Remise Wallet/);
+  assert.match(emailService, /Votre conducteur/);
+  assert.match(emailService, /attachments:/);
 });
 
 test("mapa en viaje: usa una capa, conserva el origen hasta la llegada y rota la ruta unida", () => {
