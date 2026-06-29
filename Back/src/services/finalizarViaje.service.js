@@ -400,7 +400,13 @@ function enviarReciboFinalizacion(viaje, viajeId, total) {
     ciudad: viaje.ciudad || "",
     referenciaPago: viaje.referenciaPago || viaje.codigoPago || "",
     vehiculo: viaje.motorista?.vehiculo || null,
-    placa: viaje.motorista?.vehiculo?.placa || viaje.motorista?.placa || ""
+    placa: viaje.motorista?.vehiculo?.placa || viaje.motorista?.placa || "",
+    ratingConductor: viaje.motorista?.rating || 5,
+    viajesConductor: viaje.motorista?.ratingCount || 0,
+    telefonoConductor: viaje.motorista?.telefono || "",
+    ruta: Array.isArray(viaje.trayectoriaReal) ? viaje.trayectoriaReal : [],
+    origenCoords: viaje.origen,
+    destinoCoords: viaje.destino
   }).catch((error) => {
     console.error("No se pudo enviar recibo por email:", error.message);
   });

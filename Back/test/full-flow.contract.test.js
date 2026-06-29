@@ -65,6 +65,7 @@ test("cierre pasajero: recupera la finalizacion si la app estaba cerrada", () =>
 test("recibo de viaje: el detalle completo se envia por email y PDF", () => {
   const emailService = readWorkspaceFile("Back/src/services/email/email.service.js");
   const finalizar = readWorkspaceFile("Back/src/services/finalizarViaje.service.js");
+  const { generarMapaRecibo } = require("../src/services/email/receiptMap.service");
 
   assert.match(finalizar, /precioBase: viaje\.precioBase/);
   assert.match(finalizar, /descuentoWallet: viaje\.descuentoWallet/);
@@ -73,7 +74,20 @@ test("recibo de viaje: el detalle completo se envia por email y PDF", () => {
   assert.match(emailService, /Tarif \$\{isDelivery \? "de livraison" : "de la course"\}/);
   assert.match(emailService, /Remise Wallet/);
   assert.match(emailService, /Votre conducteur/);
+  assert.match(emailService, /cid:bego-route-map/);
+  assert.match(emailService, /Telecharger le PDF/);
+  assert.match(emailService, /Besoin d'aide/);
+  assert.match(emailService, /Objet oublie/);
+  assert.match(emailService, /Voir l'historique de vos trajets/);
   assert.match(emailService, /attachments:/);
+
+  const map = generarMapaRecibo({
+    origen: { lat: 18.235, lng: -72.535 },
+    destino: { lat: 18.242, lng: -72.526 },
+    ruta: [{ lat: 18.237, lng: -72.532 }, { lat: 18.24, lng: -72.53 }],
+  });
+  assert.equal(map.subarray(1, 4).toString(), "PNG");
+  assert.ok(map.length > 1000);
 });
 
 test("mapa en viaje: usa una capa, conserva el origen hasta la llegada y rota la ruta unida", () => {

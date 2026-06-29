@@ -1,6 +1,7 @@
 const nodemailer = require("nodemailer");
 const EmailLog = require("../../models/EmailLog");
 const { generarPdfRecibo } = require("./pdf.service");
+const { generarMapaRecibo } = require("./receiptMap.service");
 
 const emailConfig = {
   provider: String(process.env.EMAIL_PROVIDER || (process.env.RESEND_API_KEY ? "resend" : "smtp")).toLowerCase(),
@@ -130,6 +131,7 @@ async function sendWithResend({ to, subject, html, attachments = [], idempotency
         content: Buffer.isBuffer(attachment.content)
           ? attachment.content.toString("base64")
           : attachment.content,
+        ...(attachment.cid ? { content_id: attachment.cid } : {}),
       })),
     }),
   });
@@ -318,6 +320,12 @@ async function enviarResumenViaje(datos) {
     referenciaPago,
     vehiculo,
     placa,
+    ratingConductor,
+    viajesConductor,
+    telefonoConductor,
+    ruta,
+    origenCoords,
+    destinoCoords,
   } = datos;
 
   if (!email) {
@@ -340,6 +348,7 @@ async function enviarResumenViaje(datos) {
   const fechaActual = fechaRecibo.toLocaleDateString("fr-HT", { day: "2-digit", month: "short", year: "numeric" });
   const horaActual = fechaRecibo.toLocaleTimeString("fr-HT", { hour: "2-digit", minute: "2-digit" });
   const pdfBuffer = await generarPdfRecibo(datos);
+  const mapBuffer = generarMapaRecibo({ origen: origenCoords, destino: destinoCoords, ruta });
 
   const safeName = escapeHtml(nombrePasajero || "passager");
   const safeDriver = escapeHtml(nombreConductor || "Socio BeGO");
@@ -356,6 +365,11 @@ async function enviarResumenViaje(datos) {
     [vehicle.marca, vehicle.modelo, vehicle.color].filter(Boolean).join(" · ") || "Moto verifiee BeGO"
   );
   const safePlate = escapeHtml(placa || vehicle.placa || "S/P");
+  const safeDriverPhone = escapeHtml(telefonoConductor || "");
+  const safeDriverRating = Number.isFinite(Number(ratingConductor))
+    ? Number(ratingConductor).toFixed(1)
+    : "5.0";
+  const safeDriverTrips = Math.max(0, Math.round(Number(viajesConductor || 0)));
   const isDelivery = tipoServicio === "envio";
   const serviceLabel = isDelivery ? "Livraison BeGO" : "Course BeGO";
   const baseAmount = Math.max(Number(precioBase || 0), Number(total || 0) + Number(descuentoWallet || 0));
@@ -365,6 +379,7 @@ async function enviarResumenViaje(datos) {
     ? `<tr><td style="padding:7px 0;color:#6b7280;font-size:12px;">Remise Wallet${discountPercent ? ` (${discountPercent}%)` : ""}</td><td style="padding:7px 0;color:#15803d;font-size:12px;font-weight:800;text-align:right;">-${formatMoney(discountAmount)}</td></tr>`
     : "";
   const totalText = formatMoney(total);
+  const pickupTime = new Date(inicioViajeAt || fechaRecibo).toLocaleTimeString("fr-HT", { hour: "2-digit", minute: "2-digit" });
 
   try {
     const info = await sendEmail({
@@ -382,9 +397,16 @@ async function enviarResumenViaje(datos) {
             </div>
 
             <div style="padding:30px 28px 25px;background:#f4f4f5;">
-              <div style="color:#2563eb;font-size:11px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;">${escapeHtml(serviceLabel)} terminee</div>
-              <h1 style="margin:9px 0 8px;color:#09090b;font-size:30px;line-height:1.08;letter-spacing:-1px;">Merci d'avoir choisi BeGO, ${safeName}</h1>
-              <p style="margin:0;color:#52525b;font-size:13px;line-height:1.5;">Nous esperons que vous avez apprecie votre ${isDelivery ? "livraison" : "trajet"}. Voici votre recu complet.</p>
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+                <td valign="middle">
+                  <div style="color:#2563eb;font-size:11px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;">${escapeHtml(serviceLabel)} terminee</div>
+                  <h1 style="margin:9px 0 8px;color:#09090b;font-size:30px;line-height:1.08;letter-spacing:-1px;">Merci d'avoir choisi BeGO, ${safeName}</h1>
+                  <p style="margin:0;color:#52525b;font-size:13px;line-height:1.5;">Nous esperons que vous avez apprecie votre ${isDelivery ? "livraison" : "trajet"}. Voici votre recu complet.</p>
+                </td>
+                <td width="90" valign="middle" style="text-align:right;">
+                  <div style="display:inline-block;width:72px;height:72px;line-height:72px;text-align:center;border-radius:50%;background:#ffffff;box-shadow:0 8px 24px rgba(17,24,39,.12);font-size:36px;">${isDelivery ? "📦" : "🛵"}</div>
+                </td>
+              </tr></table>
             </div>
 
             <div style="padding:0 28px;">
@@ -407,6 +429,12 @@ async function enviarResumenViaje(datos) {
                   <td><div style="font-size:13px;font-weight:900;">${safePayment}</div><div style="margin-top:3px;color:#6b7280;font-size:10px;">${safeReference}</div></td>
                   <td style="font-size:13px;font-weight:900;text-align:right;white-space:nowrap;">${totalText}</td>
                 </tr></table>
+                <div style="margin-top:17px;padding-top:14px;border-top:1px solid #e5e7eb;">
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+                    <td style="color:#6b7280;font-size:10px;line-height:1.4;">Le recu officiel est joint a cet email.</td>
+                    <td style="text-align:right;"><span style="display:inline-block;padding:9px 14px;border-radius:999px;background:#f3f4f6;color:#111827;font-size:10px;font-weight:900;">⬇ Telecharger le PDF</span></td>
+                  </tr></table>
+                </div>
               </div>
 
               <div style="padding:24px 0;border-bottom:1px solid #e5e7eb;">
@@ -416,9 +444,10 @@ async function enviarResumenViaje(datos) {
                   <span style="display:inline-block;margin:0 5px 5px 0;padding:7px 9px;border-radius:7px;background:#f3f4f6;color:#4b5563;font-size:10px;">${safeDuration} min</span>
                   <span style="display:inline-block;margin:0 5px 5px 0;padding:7px 9px;border-radius:7px;background:#f3f4f6;color:#4b5563;font-size:10px;">${safeCity}</span>
                 </div>
+                <img src="cid:bego-route-map" width="544" alt="Carte du trajet BeGO" style="display:block;width:100%;height:auto;margin:0 0 18px;border:0;border-radius:12px;background:#eef2f3;">
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-                  <tr><td width="20" valign="top"><div style="width:8px;height:8px;margin-top:4px;border:2px solid #111827;border-radius:50%;"></div></td><td style="padding:0 0 18px;"><div style="color:#9ca3af;font-size:9px;font-weight:800;text-transform:uppercase;">Depart</div><div style="margin-top:4px;font-size:12px;font-weight:800;line-height:1.4;">${safeOrigen}</div></td></tr>
-                  <tr><td width="20" valign="top"><div style="width:9px;height:9px;margin-top:4px;background:#111827;border-radius:2px;"></div></td><td><div style="color:#9ca3af;font-size:9px;font-weight:800;text-transform:uppercase;">Destination</div><div style="margin-top:4px;font-size:12px;font-weight:800;line-height:1.4;">${safeDestino}</div></td></tr>
+                  <tr><td width="20" valign="top"><div style="width:8px;height:8px;margin-top:4px;border:2px solid #111827;border-radius:50%;"></div></td><td style="padding:0 0 18px;"><div style="color:#9ca3af;font-size:9px;font-weight:800;text-transform:uppercase;">${escapeHtml(pickupTime)} · Depart</div><div style="margin-top:4px;font-size:12px;font-weight:800;line-height:1.4;">${safeOrigen}</div></td></tr>
+                  <tr><td width="20" valign="top"><div style="width:9px;height:9px;margin-top:4px;background:#111827;border-radius:2px;"></div></td><td><div style="color:#9ca3af;font-size:9px;font-weight:800;text-transform:uppercase;">${escapeHtml(horaActual)} · Destination</div><div style="margin-top:4px;font-size:12px;font-weight:800;line-height:1.4;">${safeDestino}</div></td></tr>
                 </table>
               </div>
 
@@ -426,7 +455,8 @@ async function enviarResumenViaje(datos) {
                 <h2 style="margin:0 0 15px;font-size:17px;">${isDelivery ? "Livre par" : "Votre conducteur"}</h2>
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
                   <td width="48"><div style="width:42px;height:42px;line-height:42px;text-align:center;border-radius:50%;background:#2563eb;color:#fff;font-size:16px;font-weight:900;">${escapeHtml(String(nombreConductor || "B").slice(0, 1).toUpperCase())}</div></td>
-                  <td><div style="font-size:13px;font-weight:900;">${safeDriver}</div><div style="margin-top:3px;color:#6b7280;font-size:10px;">${safeVehicle}</div><div style="margin-top:3px;color:#9ca3af;font-size:9px;">Plaque ${safePlate}</div></td>
+                  <td><div style="font-size:13px;font-weight:900;">${safeDriver}</div><div style="margin-top:3px;color:#6b7280;font-size:10px;">${safeVehicle}</div><div style="margin-top:3px;color:#9ca3af;font-size:9px;">Plaque ${safePlate}${safeDriverPhone ? ` · ${safeDriverPhone}` : ""}</div></td>
+                  <td style="text-align:right;"><span style="display:inline-block;padding:7px 9px;border-radius:999px;background:#f3f4f6;color:#111827;font-size:11px;font-weight:900;">${safeDriverRating} ★</span>${safeDriverTrips ? `<div style="margin-top:4px;color:#9ca3af;font-size:8px;">${safeDriverTrips} evaluations</div>` : ""}</td>
                 </tr></table>
               </div>
 
@@ -438,14 +468,32 @@ async function enviarResumenViaje(datos) {
                 Votre trajet est protege par BeGO. Le recu officiel est aussi joint en PDF pour vos archives.
               </div>
 
+              <div style="padding:0 0 24px;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+                  <td width="49%" valign="top" style="padding:15px;border:1px solid #e5e7eb;border-radius:12px;">
+                    <div style="font-size:12px;font-weight:900;">Besoin d'aide ?</div>
+                    <div style="margin-top:6px;color:#6b7280;font-size:9px;line-height:1.5;">Notre equipe peut vous aider concernant ce trajet.</div>
+                    <a href="https://bego.com.ht/#/ayuda" style="display:inline-block;margin-top:10px;color:#111827;font-size:9px;font-weight:900;">Contacter le support →</a>
+                  </td>
+                  <td width="2%"></td>
+                  <td width="49%" valign="top" style="padding:15px;border:1px solid #e5e7eb;border-radius:12px;">
+                    <div style="font-size:12px;font-weight:900;">Objet oublie ?</div>
+                    <div style="margin-top:6px;color:#6b7280;font-size:9px;line-height:1.5;">Signalez un objet perdu apres votre course.</div>
+                    <a href="https://bego.com.ht/#/soporte" style="display:inline-block;margin-top:10px;color:#111827;font-size:9px;font-weight:900;">Signaler un objet →</a>
+                  </td>
+                </tr></table>
+                <div style="margin-top:14px;text-align:right;"><a href="https://bego.com.ht/#/actividad" style="color:#111827;font-size:9px;font-weight:900;">Voir l'historique de vos trajets →</a></div>
+              </div>
+
               <div style="padding:20px;border-radius:14px 14px 0 0;background:#111827;color:#ffffff;text-align:center;">
                 <div style="font-size:14px;font-weight:900;margin-bottom:10px;">Suivez BeGO Haiti</div>
                 <div>${renderSocialLinks()}</div>
               </div>
             </div>
 
-            <div style="padding:18px 28px;background:#050505;color:#9ca3af;font-size:10px;line-height:1.5;text-align:center;">
-              BeGO Haiti · Recu genere automatiquement · Paiement ${escapeHtml(estadoPago || "confirme")}
+            <div style="padding:20px 28px;background:#050505;color:#9ca3af;font-size:10px;line-height:1.7;text-align:center;">
+              BeGO Haiti · Recu genere automatiquement · Paiement ${escapeHtml(estadoPago || "confirme")}<br>
+              <a href="https://bego.com.ht/#/legal-confianza" style="color:#d1d5db;text-decoration:underline;">Confidentialite</a>&nbsp;&nbsp;·&nbsp;&nbsp;<a href="https://bego.com.ht/#/legal" style="color:#d1d5db;text-decoration:underline;">Conditions</a>&nbsp;&nbsp;·&nbsp;&nbsp;<a href="https://bego.com.ht/#/ayuda" style="color:#d1d5db;text-decoration:underline;">Aide</a>
             </div>
           </div>
         </div>
@@ -455,6 +503,12 @@ async function enviarResumenViaje(datos) {
           filename: `Recu_BeGO_${viajeId}.pdf`,
           content: pdfBuffer,
           contentType: "application/pdf",
+        },
+        {
+          filename: `Trajet_BeGO_${viajeId}.png`,
+          content: mapBuffer,
+          contentType: "image/png",
+          cid: "bego-route-map",
         },
       ],
       idempotencyKey: `receipt-${viajeId}`,
