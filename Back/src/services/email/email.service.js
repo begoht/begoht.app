@@ -88,12 +88,18 @@ function escapeHtml(value = "") {
 }
 
 function renderSocialLinks() {
-  return SOCIAL_LINKS.map((item) => `
-    <a href="${item.url}" target="_blank" rel="noopener" style="display:block;text-decoration:none;background:#ffffff;border:1px solid #dbeafe;border-radius:16px;padding:14px 16px;margin:10px 0;color:#0f172a;width:100%;box-sizing:border-box;">
-      <span style="display:block;color:#2563eb;font-size:11px;font-weight:800;letter-spacing:.02em;text-transform:uppercase;">${escapeHtml(item.label)}</span>
-      <span style="display:block;margin-top:4px;color:#334155;font-size:15px;font-weight:800;">${escapeHtml(item.handle)}</span>
-    </a>
+  const icons = { Facebook: "f", Instagram: "◎", TikTok: "♪" };
+  const colors = { Facebook: "#1877f2", Instagram: "#e1306c", TikTok: "#111111" };
+  const cells = SOCIAL_LINKS.map((item) => `
+    <td width="33.33%" align="center" valign="top" style="padding:0 4px;">
+      <a href="${item.url}" target="_blank" rel="noopener" aria-label="${escapeHtml(item.label)} ${escapeHtml(item.handle)}" style="display:block;padding:11px 5px 10px;border:1px solid #e5e7eb;border-radius:13px;background:#ffffff;color:#111827;text-decoration:none;">
+        <span style="display:inline-block;width:28px;height:28px;line-height:28px;border-radius:50%;background:${colors[item.label]};color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:17px;font-weight:900;text-align:center;">${icons[item.label]}</span>
+        <span style="display:block;margin-top:7px;color:#111827;font-size:10px;font-weight:900;line-height:1.2;">${escapeHtml(item.label)}</span>
+        <span style="display:block;margin-top:2px;color:#6b7280;font-size:8px;line-height:1.2;">${escapeHtml(item.handle)}</span>
+      </a>
+    </td>
   `).join("");
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>${cells}</tr></table>`;
 }
 
 function activeEmailProvider() {
@@ -131,6 +137,7 @@ async function sendWithResend({ to, subject, html, attachments = [], idempotency
         content: Buffer.isBuffer(attachment.content)
           ? attachment.content.toString("base64")
           : attachment.content,
+        ...(attachment.contentType ? { content_type: attachment.contentType } : {}),
         ...(attachment.cid ? { content_id: attachment.cid } : {}),
       })),
     }),
@@ -348,7 +355,7 @@ async function enviarResumenViaje(datos) {
   const fechaActual = fechaRecibo.toLocaleDateString("fr-HT", { day: "2-digit", month: "short", year: "numeric" });
   const horaActual = fechaRecibo.toLocaleTimeString("fr-HT", { hour: "2-digit", minute: "2-digit" });
   const pdfBuffer = await generarPdfRecibo(datos);
-  const mapBuffer = generarMapaRecibo({ origen: origenCoords, destino: destinoCoords, ruta });
+  const mapBuffer = await generarMapaRecibo({ origen: origenCoords, destino: destinoCoords, ruta });
 
   const safeName = escapeHtml(nombrePasajero || "passager");
   const safeDriver = escapeHtml(nombreConductor || "Socio BeGO");
@@ -444,7 +451,8 @@ async function enviarResumenViaje(datos) {
                   <span style="display:inline-block;margin:0 5px 5px 0;padding:7px 9px;border-radius:7px;background:#f3f4f6;color:#4b5563;font-size:10px;">${safeDuration} min</span>
                   <span style="display:inline-block;margin:0 5px 5px 0;padding:7px 9px;border-radius:7px;background:#f3f4f6;color:#4b5563;font-size:10px;">${safeCity}</span>
                 </div>
-                <img src="cid:bego-route-map" width="544" alt="Carte du trajet BeGO" style="display:block;width:100%;height:auto;margin:0 0 18px;border:0;border-radius:12px;background:#eef2f3;">
+                <img src="cid:bego-route-map" width="544" height="272" alt="Carte du trajet reel BeGO" style="display:block;width:100%;max-width:544px;height:auto;margin:0;border:0;border-radius:12px;background:#eef2f3;">
+                <div style="margin:5px 0 18px;color:#9ca3af;font-size:8px;text-align:right;">Carte &copy; <a href="https://www.openstreetmap.org/copyright" style="color:#6b7280;text-decoration:none;">OpenStreetMap</a></div>
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                   <tr><td width="20" valign="top"><div style="width:8px;height:8px;margin-top:4px;border:2px solid #111827;border-radius:50%;"></div></td><td style="padding:0 0 18px;"><div style="color:#9ca3af;font-size:9px;font-weight:800;text-transform:uppercase;">${escapeHtml(pickupTime)} · Depart</div><div style="margin-top:4px;font-size:12px;font-weight:800;line-height:1.4;">${safeOrigen}</div></td></tr>
                   <tr><td width="20" valign="top"><div style="width:9px;height:9px;margin-top:4px;background:#111827;border-radius:2px;"></div></td><td><div style="color:#9ca3af;font-size:9px;font-weight:800;text-transform:uppercase;">${escapeHtml(horaActual)} · Destination</div><div style="margin-top:4px;font-size:12px;font-weight:800;line-height:1.4;">${safeDestino}</div></td></tr>
@@ -485,8 +493,8 @@ async function enviarResumenViaje(datos) {
                 <div style="margin-top:14px;text-align:right;"><a href="https://bego.com.ht/#/actividad" style="color:#111827;font-size:9px;font-weight:900;">Voir l'historique de vos trajets →</a></div>
               </div>
 
-              <div style="padding:20px;border-radius:14px 14px 0 0;background:#111827;color:#ffffff;text-align:center;">
-                <div style="font-size:14px;font-weight:900;margin-bottom:10px;">Suivez BeGO Haiti</div>
+              <div style="padding:20px 16px;border:1px solid #e5e7eb;border-radius:14px 14px 0 0;background:#f8fafc;color:#111827;text-align:center;">
+                <div style="font-size:14px;font-weight:900;margin-bottom:12px;">Suivez BeGO Haiti</div>
                 <div>${renderSocialLinks()}</div>
               </div>
             </div>

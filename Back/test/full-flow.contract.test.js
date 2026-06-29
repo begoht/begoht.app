@@ -62,7 +62,7 @@ test("cierre pasajero: recupera la finalizacion si la app estaba cerrada", () =>
   assert.doesNotMatch(receipt, /id="guardarRecibo"|receipt-payment-summary/);
 });
 
-test("recibo de viaje: el detalle completo se envia por email y PDF", () => {
+test("recibo de viaje: el detalle completo se envia por email y PDF", async () => {
   const emailService = readWorkspaceFile("Back/src/services/email/email.service.js");
   const finalizar = readWorkspaceFile("Back/src/services/finalizarViaje.service.js");
   const { generarMapaRecibo } = require("../src/services/email/receiptMap.service");
@@ -80,14 +80,50 @@ test("recibo de viaje: el detalle completo se envia por email y PDF", () => {
   assert.match(emailService, /Objet oublie/);
   assert.match(emailService, /Voir l'historique de vos trajets/);
   assert.match(emailService, /attachments:/);
+  assert.match(emailService, /content_type:/);
 
-  const map = generarMapaRecibo({
+  const map = await generarMapaRecibo({
     origen: { lat: 18.235, lng: -72.535 },
     destino: { lat: 18.242, lng: -72.526 },
     ruta: [{ lat: 18.237, lng: -72.532 }, { lat: 18.24, lng: -72.53 }],
+    cargarMapaBase: false,
   });
   assert.equal(map.subarray(1, 4).toString(), "PNG");
   assert.ok(map.length > 1000);
+});
+
+test("mapa del recibo: compone cartografia real y conserva la trayectoria", async () => {
+  const { PNG } = require("pngjs");
+  const { generarMapaRecibo } = require("../src/services/email/receiptMap.service");
+  const previousFetch = global.fetch;
+  const previousTemplate = process.env.RECEIPT_MAP_TILE_URL;
+  const tile = new PNG({ width: 256, height: 256 });
+  for (let index = 0; index < tile.data.length; index += 4) {
+    tile.data[index] = 203;
+    tile.data[index + 1] = 213;
+    tile.data[index + 2] = 223;
+    tile.data[index + 3] = 255;
+  }
+  const tileBuffer = PNG.sync.write(tile);
+
+  process.env.RECEIPT_MAP_TILE_URL = "https://tiles.test/{z}/{x}/{y}.png";
+  global.fetch = async () => ({ ok: true, arrayBuffer: async () => tileBuffer });
+  try {
+    const output = await generarMapaRecibo({
+      origen: { lat: 18.5392, lng: -72.3364 },
+      ruta: [{ lat: 18.5414, lng: -72.3335 }, { lat: 18.5438, lng: -72.3304 }],
+      destino: { lat: 18.5462, lng: -72.3278 },
+    });
+    const parsed = PNG.sync.read(output);
+    assert.equal(parsed.width, 640);
+    assert.equal(parsed.height, 320);
+    assert.deepEqual([...parsed.data.subarray(0, 3)], [203, 213, 223]);
+    assert.ok(parsed.data.some((value, index) => index % 4 === 0 && value === 17));
+  } finally {
+    global.fetch = previousFetch;
+    if (previousTemplate == null) delete process.env.RECEIPT_MAP_TILE_URL;
+    else process.env.RECEIPT_MAP_TILE_URL = previousTemplate;
+  }
 });
 
 test("mapa en viaje: usa una capa, conserva el origen hasta la llegada y rota la ruta unida", () => {
