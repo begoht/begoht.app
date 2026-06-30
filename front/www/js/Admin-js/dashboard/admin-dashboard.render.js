@@ -18,6 +18,7 @@
       renderCredits();
       renderOps();
       renderReservations();
+      renderNotifications();
       renderMonitoring();
       renderLaunch();
     }

@@ -37,9 +37,9 @@ test("cadena de cache: la app pasajero carga el handler nuevo de vuelta", () => 
   const passengerMain = readWorkspaceFile("front/www/js/pasajero/pasajero.main.js");
   const passengerSocket = readWorkspaceFile("front/www/js/socket/pasajero.socket.js");
 
-  assert.match(index, /app\.js\?v=20260629-email-receipt/);
-  assert.match(app, /router\.js\?v=20260629-email-receipt/);
-  assert.match(router, /app\.lifecycle\.js\?v=20260629-email-receipt/);
+  assert.match(index, /app\.js\?v=20260629-news-push/);
+  assert.match(app, /router\.js\?v=20260629-news-push/);
+  assert.match(router, /app\.lifecycle\.js\?v=20260629-news-push/);
   assert.match(lifecycle, /pasajero\.main\.js\?v=20260629-email-receipt/);
   assert.match(passengerMain, /pasajero\.socket\.js\?v=20260629-email-receipt/);
   assert.match(passengerSocket, /idaVuelta\.handler\.js\?v=20260628-dark-route-locked/);

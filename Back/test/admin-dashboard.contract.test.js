@@ -35,7 +35,7 @@ test("admin dashboard usa el fondo oscuro de BeGO desde CSS dedicado", () => {
   const css = readWorkspaceFile("front/www/css/admin-dashboard.css");
   const utils = readWorkspaceFile("front/www/js/Admin-js/dashboard/admin-dashboard.utils.js");
 
-  assert.match(html, /css\/admin-dashboard\.css\?v=20260625-admin-roles/);
+  assert.match(html, /css\/admin-dashboard\.css\?v=20260629-news-push/);
   assert.match(css, /--bg:\s*#020616/);
   assert.match(css, /linear-gradient\(180deg,\s*#020616/);
   assert.match(css, /\.topbar,\s*\n\.kpi-card,\s*\n\.panel/);

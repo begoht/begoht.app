@@ -29,6 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("refreshMonitorBtn")?.addEventListener("click", () => loadMonitoring());
       document.getElementById("refreshDelayedTripsBtn")?.addEventListener("click", () => loadDelayReassignment());
       document.getElementById("executeDelayedReassignBtn")?.addEventListener("click", executeDelayReassignment);
+      document.getElementById("adminNotificationForm")?.addEventListener("submit", sendGeneralNotification);
       document.getElementById("logoutBtn").addEventListener("click", logout);
       document.getElementById("saveLaunchBtn")?.addEventListener("click", () => saveLaunch());
       document.getElementById("toggleLaunchBtn")?.addEventListener("click", toggleLaunch);
@@ -68,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
     async function loadAll() {
       setBusy(true);
       try {
-        const [resumen, usuarios, retiros, launch, commission, walletDiscount, paymentMethods, fares, monitoring, delayReassignment] = await Promise.all([
+        const [resumen, usuarios, retiros, launch, commission, walletDiscount, paymentMethods, fares, monitoring, delayReassignment, notifications] = await Promise.all([
           api("/api/dashboard/resumen"),
           api("/api/admin/usuarios"),
           api("/api/admin/retiros").catch(() => []),
@@ -78,7 +79,8 @@ document.addEventListener("DOMContentLoaded", () => {
           api("/api/admin/payment-methods").catch(() => null),
           api("/api/admin/fares").catch(() => null),
           api("/api/monitor/status").catch(() => null),
-          api("/api/admin/viajes/reasignacion-demora").catch(() => null)
+          api("/api/admin/viajes/reasignacion-demora").catch(() => null),
+          api("/api/admin/notifications").catch(() => [])
         ]);
         state.resumen = resumen || {};
         state.usuarios = Array.isArray(usuarios) ? usuarios : [];
@@ -90,6 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
         state.fares = fares || state.resumen?.config?.fares || null;
         state.monitoring = monitoring || null;
         state.delayReassignment = delayReassignment || null;
+        state.notifications = Array.isArray(notifications) ? notifications : [];
         state.viajes = state.resumen.ultimosViajes || [];
         renderAll();
         setText("lastSync", `Actualizado ${new Date().toLocaleTimeString()}`);

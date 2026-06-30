@@ -1,8 +1,9 @@
 import { AppState } from "./app.state.js";
 import { getSocket } from "../../socket/socket.js?v=20260606-session-refresh";
 import { createMap } from "../../map/map.singleton.js?v=20260628-dark-route-locked";
-import { initRouter } from "../router/router.js?v=20260629-email-receipt";
+import { initRouter } from "../router/router.js?v=20260629-news-push";
 import { initLaunchCountdown } from "../../launch-countdown.js?v=20260624-cordoba-gps";
+import { initNotifications } from "../../notifications/notifications.js?v=20260629-news-push";
 
 function mostrarAppLista() {
     document.body.classList.add("app-ready");
@@ -18,6 +19,7 @@ export async function initApp() {
 
     AppState.socket = getSocket();
     if (!AppState.socket) return;
+    initNotifications(AppState.socket);
 
     const mapEl = document.getElementById("map");
 

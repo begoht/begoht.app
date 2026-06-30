@@ -778,6 +778,38 @@ body {
   line-height: 1.35;
 }
 
+.driver-news-hero,
+.driver-news-card {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  background: rgba(17, 24, 39, 0.94);
+}
+
+.driver-news-hero {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px;
+  margin-bottom: 14px;
+  background: linear-gradient(135deg, #172554, #1d4ed8);
+}
+
+.driver-news-hero > i { font-size: 1.6rem; color: #fbbf24; }
+.driver-news-hero h2, .driver-news-hero p { margin: 0; }
+.driver-news-hero p { margin-top: 5px; color: #dbeafe; line-height: 1.4; }
+.driver-news-list { display: grid; gap: 10px; }
+.driver-news-card { display: grid; grid-template-columns: 42px minmax(0, 1fr); gap: 12px; padding: 15px; }
+.driver-news-card > i { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 10px; color: #fbbf24; background: #1f2937; }
+.driver-news-card strong { font-size: 1rem; }
+.driver-news-card p { margin: 6px 0 9px; color: #cbd5e1; line-height: 1.45; white-space: pre-wrap; }
+.driver-news-card time { color: #64748b; font-size: .76rem; }
+.driver-news-banner { position: fixed; z-index: 12000; top: calc(18px + env(safe-area-inset-top)); left: 50%; width: min(390px, calc(100vw - 24px)); display: grid; grid-template-columns: 38px minmax(0, 1fr); align-items: center; gap: 10px; padding: 12px; border: 1px solid rgba(255,255,255,.14); border-radius: 12px; color: #fff; background: rgba(15,23,42,.98); box-shadow: 0 22px 55px rgba(0,0,0,.48); text-align: left; opacity: 0; pointer-events: none; transform: translate(-50%,-12px); transition: .22s ease; }
+.driver-news-banner.visible { opacity: 1; pointer-events: auto; transform: translate(-50%,0); }
+.driver-news-banner > i { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 10px; background: #2563eb; }
+.driver-news-banner span, .driver-news-banner strong { display: block; }
+.driver-news-banner span { color: #cbd5e1; font-size: .82rem; line-height: 1.35; }
+.driver-news-banner strong { margin-bottom: 2px; color: #fff; font-size: .9rem; }
+
 .driver-wallet-hero {
   padding: 18px;
   margin-bottom: 14px;

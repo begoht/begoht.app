@@ -1,0 +1,21 @@
+.news-page { padding: 18px 16px 110px; color: #f8fafc; }
+.news-hero { padding: 22px; margin-bottom: 14px; border-radius: 14px; background: linear-gradient(135deg, #172554, #1d4ed8); box-shadow: 0 18px 46px rgba(0,0,0,.28); }
+.news-hero span { color: #bfdbfe; font-size: .78rem; font-weight: 900; text-transform: uppercase; }
+.news-hero h1 { margin: 8px 0 6px; font-size: 1.8rem; }
+.news-hero p { margin: 0; color: #dbeafe; line-height: 1.5; }
+.news-list { display: grid; gap: 10px; }
+.news-card { display: grid; grid-template-columns: 44px minmax(0,1fr); gap: 12px; padding: 16px; border: 1px solid rgba(255,255,255,.1); border-radius: 12px; background: rgba(17,24,39,.94); }
+.news-card.is-new { border-color: rgba(59,130,246,.75); box-shadow: 0 0 0 1px rgba(59,130,246,.2); }
+.news-card-icon { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 12px; color: #fbbf24; background: #1f2937; }
+.news-card-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.news-card h2 { margin: 0; font-size: 1.03rem; }
+.news-card-head span { padding: 4px 8px; border-radius: 999px; color: #dbeafe; background: #1d4ed8; font-size: .68rem; font-weight: 900; }
+.news-card p { margin: 7px 0 9px; color: #cbd5e1; line-height: 1.5; white-space: pre-wrap; }
+.news-card time { color: #64748b; font-size: .76rem; }
+.news-empty { padding: 28px 18px; display: flex; justify-content: center; gap: 9px; color: #94a3b8; text-align: center; }
+.bego-news-banner { position: fixed; z-index: 1500; top: calc(82px + env(safe-area-inset-top)); left: 50%; width: min(390px, calc(100vw - 24px)); display: grid; grid-template-columns: 38px minmax(0,1fr); align-items: center; gap: 10px; padding: 12px; border: 1px solid rgba(255,255,255,.14); border-radius: 12px; color: #fff; background: rgba(15,23,42,.98); box-shadow: 0 22px 55px rgba(0,0,0,.48); text-align: left; opacity: 0; pointer-events: none; transform: translate(-50%,-12px); transition: .22s ease; }
+.bego-news-banner.visible { opacity: 1; pointer-events: auto; transform: translate(-50%,0); }
+.bego-news-banner > i { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 10px; color: #fff; background: #2563eb; }
+.bego-news-banner strong, .bego-news-banner span { display: block; }
+.bego-news-banner span { color: #cbd5e1; font-size: .82rem; line-height: 1.35; }
+.bego-news-banner strong { margin-bottom: 2px; color: #fff; font-size: .9rem; }

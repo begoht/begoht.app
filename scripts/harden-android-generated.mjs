@@ -6,9 +6,11 @@ const root = path.resolve(import.meta.dirname, "..");
 const files = {
   driverManifest: path.join(root, "front-driver/android/app/src/main/AndroidManifest.xml"),
   driverBuild: path.join(root, "front-driver/android/app/build.gradle"),
+  driverRootBuild: path.join(root, "front-driver/android/build.gradle"),
   driverVariables: path.join(root, "front-driver/android/variables.gradle"),
   passengerManifest: path.join(root, "front/android/app/src/main/AndroidManifest.xml"),
   passengerBuild: path.join(root, "front/android/app/build.gradle"),
+  passengerRootBuild: path.join(root, "front/android/build.gradle"),
   passengerVariables: path.join(root, "front/android/variables.gradle"),
 };
 
@@ -151,6 +153,35 @@ def begoReleaseRequested = gradle.startParameter.taskNames.any {
   return next;
 }
 
+function ensureJava17ForCapacitorPlugins(source) {
+  if (
+    source.includes("// BeGO Java 17 compatibility for generated Capacitor plugins") ||
+    (source.includes("subprojects {") && source.includes("sourceCompatibility JavaVersion.VERSION_17"))
+  ) {
+    return source;
+  }
+
+  return `${source.trimEnd()}
+
+// BeGO Java 17 compatibility for generated Capacitor plugins.
+subprojects {
+    afterEvaluate { project ->
+        if (project.hasProperty('android')) {
+            project.android {
+                compileOptions {
+                    sourceCompatibility JavaVersion.VERSION_17
+                    targetCompatibility JavaVersion.VERSION_17
+                }
+                if (project.plugins.hasPlugin('kotlin-android')) {
+                    kotlinOptions { jvmTarget = '17' }
+                }
+            }
+        }
+    }
+}
+`;
+}
+
 function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
@@ -202,5 +233,11 @@ passengerBuild = setGradleNumber(passengerBuild, "versionCode", 21);
 passengerBuild = setGradleString(passengerBuild, "versionName", "1.0.20");
 passengerBuild = hardenSigningConfig(passengerBuild);
 changed = writeIfChanged(files.passengerBuild, passengerBuild) || changed;
+
+let driverRootBuild = ensureJava17ForCapacitorPlugins(read(files.driverRootBuild));
+changed = writeIfChanged(files.driverRootBuild, driverRootBuild) || changed;
+
+let passengerRootBuild = ensureJava17ForCapacitorPlugins(read(files.passengerRootBuild));
+changed = writeIfChanged(files.passengerRootBuild, passengerRootBuild) || changed;
 
 console.log(changed ? "Android generated project hardened." : "Android generated project already hardened.");

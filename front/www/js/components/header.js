@@ -16,7 +16,8 @@ const ROUTE_META = {
   "/pago": { title: "Pagos", subtitle: "Metodos disponibles", icon: "fa-credit-card" },
   "/seguimiento": { title: "Seguimiento", subtitle: "Viaje en vivo", icon: "fa-location-dot" },
   "/promos": { title: "Promos", subtitle: "Beneficios activos", icon: "fa-gift" },
-  "/legal-confianza": { title: "Legal", subtitle: "Confiance BeGO", icon: "fa-scale-balanced" }
+  "/legal-confianza": { title: "Legal", subtitle: "Confiance BeGO", icon: "fa-scale-balanced" },
+  "/noticias": { title: "Noticias", subtitle: "Mensajes BeGO", icon: "fa-bell" }
 };
 
 function getRouteMeta(route) {
@@ -42,7 +43,7 @@ function renderNotificationButton() {
   return `
     <button type="button" class="header-icon-btn ripple" id="btnNotificaciones" aria-label="Notificaciones" title="Notificaciones">
       <i class="fa-solid fa-bell"></i>
-      <span class="header-dot" aria-hidden="true"></span>
+      <span class="header-dot hidden" aria-hidden="true"></span>
     </button>
   `;
 }

@@ -8,9 +8,10 @@ import { initViajeControl } from "./viajeControl/viajeControl.js?v=20260627-map-
 import { initIdaVueltaDriver } from "./idaVuelta/idaVuelta.driver.js?v=20260627-map-fluid-arrival";
 import { initDriverChat } from "./chat/viajeChat.js?v=20260608-trip-panel-compact";
 import { initDriverStatus } from "./driver.status.js?v=20260627-map-icons";
-import { initDriverSpa } from "./driver.spa.js?v=20260619-account-security";
+import { initDriverSpa } from "./driver.spa.js?v=20260629-news-push";
 import { iniciarSonidoOfertaLoop } from "./oferta/oferta.ui.js?v=20260608-offer-net-cash";
 import { initLaunchCountdown } from "./launch-countdown.js?v=20260603-launch-gate";
+import { initDriverNotifications } from "./notifications.js?v=20260629-news-push";
 import {
   getDriverAccessToken,
   refreshDriverAccessToken
@@ -97,6 +98,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   safeInit("driver-status", () => initDriverStatus(socket));
+  safeInit("driver-notifications", () => initDriverNotifications(socket));
 
   if (socket.connected) {
     mostrarAppConectada();

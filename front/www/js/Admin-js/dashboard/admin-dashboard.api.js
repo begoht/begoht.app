@@ -10,8 +10,9 @@
         },
         body: options.body ? JSON.stringify(options.body) : undefined
       });
-      if (!res.ok) throw new Error(`HTTP ${res.status} ${path}`);
-      return res.json();
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.error || data?.msg || `HTTP ${res.status} ${path}`);
+      return data;
     }
 
     function getToken() {

@@ -42,6 +42,7 @@
 @import "./pages/recarga.css?v=20260602-recarga-premium";
 @import "./pages/recibo.css";
 @import "./pages/legal.css?v=20260607-legal-mobile-grid";
+@import "./pages/noticias.css?v=20260629-news-push";
 
 /* 7. 🔥 OVERRIDES GLOBALES (ESTO TE FALTA) */
 @import "./base/theme.css";

@@ -15,6 +15,7 @@ const API_BASE = (location.hostname === "localhost" || location.hostname === "12
       fares: null,
       monitoring: null,
       delayReassignment: null,
+      notifications: [],
       filtroViajes: "todos",
       search: "",
       charts: {}

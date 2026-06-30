@@ -20,6 +20,7 @@ const routes = {
   "/cuenta": renderCuenta,
   "/ajustes": renderAjustes,
   "/soporte": renderSoporte,
+  "/noticias": renderNoticias,
   "/legal": renderLegal
 };
 
@@ -101,10 +102,45 @@ function initDriverPage(route) {
     bindDriverAccountSecurity();
   }
   if (route === "/soporte") initDriverSupportChat();
+  if (route === "/noticias") loadDriverNews();
 }
 
 function renderHome() {
   return "";
+}
+
+function renderNoticias() {
+  return pageShell("Noticias", "Mensajes de BeGO", `
+    <section class="driver-news-hero">
+      <i class="fa-solid fa-bullhorn"></i>
+      <div><h2>Centro de noticias</h2><p>Informacion importante y novedades para motoristas.</p></div>
+    </section>
+    <section class="driver-news-list" id="driverNewsList">
+      ${loadingRow("Cargando noticias")}
+    </section>
+  `);
+}
+
+async function loadDriverNews() {
+  const list = document.getElementById("driverNewsList");
+  if (!list) return;
+  try {
+    const news = await fetchJson("/api/notifications/news");
+    list.innerHTML = Array.isArray(news) && news.length
+      ? news.map((item) => `
+          <article class="driver-news-card">
+            <i class="fa-solid fa-bell"></i>
+            <div>
+              <strong>${escapeHtml(item.title || "BeGO")}</strong>
+              <p>${escapeHtml(item.message || "")}</p>
+              <time>${formatDate(item.createdAt)}</time>
+            </div>
+          </article>
+        `).join("")
+      : emptyState("No hay noticias por ahora.");
+  } catch (error) {
+    list.innerHTML = emptyState(error.message || "No pudimos cargar las noticias.");
+  }
 }
 
 function renderGanancias() {
@@ -1040,6 +1076,12 @@ function safeJson(value) {
   } catch {
     return null;
   }
+}
+
+function escapeHtml(value) {
+  return String(value || "").replace(/[&<>'"]/g, (char) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;",
+  })[char]);
 }
 
 function shortAddress(value, fallback) {

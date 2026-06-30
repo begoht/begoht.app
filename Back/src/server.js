@@ -237,6 +237,7 @@ app.use("/api/emergency", require("./routes/emergency"));
 app.use("/api/cities", require("./routes/cities"));
 app.use("/api/ruta", require("./routes/ruta"));
 app.use("/api", require("./routes/launch"));
+app.use("/api", require("./routes/notifications"));
 
 // ============================
 // 🔹 TRACK

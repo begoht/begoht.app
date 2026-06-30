@@ -131,6 +131,7 @@ module.exports = async (socket, next) => {
 
     // Room universal (siempre)
     socket.join(`user:${userId}`);
+    socket.join(`rol:${user.rol}`);
 
     // Room por rol
     switch (user.rol) {

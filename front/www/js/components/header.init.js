@@ -36,16 +36,7 @@ function getInitials(name = "Invitado") {
 }
 
 function openNotifications() {
-  if ("Notification" in window && Notification.permission === "default") {
-    Notification.requestPermission?.();
-  }
-
-  showHeaderToast("No tienes notificaciones nuevas.");
-
-  const event = new CustomEvent("bego:toast", {
-    detail: { message: "No tienes notificaciones nuevas." }
-  });
-  window.dispatchEvent(event);
+  location.hash = "#/noticias";
 }
 
 function showHeaderToast(message) {

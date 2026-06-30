@@ -1159,7 +1159,7 @@
       }
     }
   </style>
-  <link rel="stylesheet" href="../css/admin-dashboard.css?v=20260625-admin-roles" />
+  <link rel="stylesheet" href="../css/admin-dashboard.css?v=20260629-news-push" />
 </head>
 <body>
   <div class="admin-shell">
@@ -1185,6 +1185,7 @@
         <button type="button" data-section-target="finance"><i class="fa-solid fa-building-columns"></i><span>Finanzas</span><small id="navFinance">0</small></button>
         <button type="button" data-section-target="credits"><i class="fa-solid fa-hand-holding-dollar"></i><span>Creditos</span><small id="navCredits">0</small></button>
         <button type="button" data-section-target="ops"><i class="fa-solid fa-satellite-dish"></i><span>Operaciones</span><small id="navOps">0</small></button>
+        <button type="button" data-section-target="news"><i class="fa-solid fa-bullhorn"></i><span>Noticias</span><small id="navNews">0</small></button>
         <button type="button" data-section-target="monitor"><i class="fa-solid fa-heart-pulse"></i><span>Monitoreo</span><small id="navMonitor">OK</small></button>
         <button type="button" data-section-target="launch"><i class="fa-solid fa-rocket"></i><span>Lanzamiento</span><small id="navLaunch">OFF</small></button>
         <button type="button" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i><span>Salir</span></button>
@@ -1278,6 +1279,11 @@
             <i class="fa-solid fa-heart-pulse"></i>
             <strong>Monitoreo</strong>
             <span>PM2, Mongo, Redis, Socket.IO y errores desde celulares reales.</span>
+          </button>
+          <button class="command-card" type="button" data-section-jump="news">
+            <i class="fa-solid fa-bullhorn"></i>
+            <strong>Noticias generales</strong>
+            <span>Enviar mensajes a pasajeros, motoristas o todos.</span>
           </button>
           <button class="command-card" type="button" onclick="location.href='../Admin-html/admin-ofertas.html'">
             <i class="fa-solid fa-gift"></i>
@@ -1772,6 +1778,53 @@
         </section>
       </section>
 
+      <section class="section" id="section-news">
+        <div class="admin-news-grid">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Enviar noticia general</h2>
+                <p class="muted">El mensaje queda guardado en Noticias y tambien llega como notificacion al celular.</p>
+              </div>
+              <span class="status activo"><i class="fa-solid fa-paper-plane"></i> Envio inmediato</span>
+            </div>
+            <form class="panel-body admin-news-form" id="adminNotificationForm">
+              <label class="admin-field" for="notificationAudienceInput">
+                Destinatarios
+                <select class="select" id="notificationAudienceInput" required>
+                  <option value="todos">Pasajeros y motoristas</option>
+                  <option value="pasajeros">Solo pasajeros</option>
+                  <option value="motoristas">Solo motoristas</option>
+                </select>
+              </label>
+              <label class="admin-field" for="notificationTitleInput">
+                Titulo de la noticia
+                <input id="notificationTitleInput" type="text" maxlength="80" required placeholder="Ej: Servicio disponible en una nueva zona">
+              </label>
+              <label class="admin-field" for="notificationMessageInput">
+                Mensaje
+                <textarea id="notificationMessageInput" maxlength="500" required placeholder="Escribe el mensaje que veran en la app y en la pantalla del telefono."></textarea>
+              </label>
+              <div class="admin-news-note">
+                <i class="fa-solid fa-circle-info"></i>
+                <span>La bandeja conserva el mensaje. Android lo muestra aunque la app este en segundo plano o cerrada.</span>
+              </div>
+              <button class="btn primary" id="sendNotificationBtn" type="submit"><i class="fa-solid fa-paper-plane"></i>Enviar noticia</button>
+            </form>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Historial de envios</h2>
+                <p class="muted">Ultimas noticias publicadas desde el centro de control.</p>
+              </div>
+            </div>
+            <div class="panel-body admin-news-history" id="adminNotificationHistory"></div>
+          </section>
+        </div>
+      </section>
+
       <section class="section" id="section-monitor">
         <div class="kpi-grid">
           <article class="kpi-card monitor-health-card">
@@ -1897,16 +1950,17 @@
   <div class="toast" id="toast"></div>
 
   <script src="../js/i18n/admin-fr.visual.js?v=20260606-admin-fr"></script>
-  <script src="../js/Admin-js/dashboard/admin-dashboard.state.js?v=20260615-smooth-autofinish"></script>
-  <script src="../js/Admin-js/dashboard/admin-dashboard.api.js?v=20260615-smooth-autofinish"></script>
+  <script src="../js/Admin-js/dashboard/admin-dashboard.state.js?v=20260629-news-push"></script>
+  <script src="../js/Admin-js/dashboard/admin-dashboard.api.js?v=20260629-news-push"></script>
   <script src="../js/Admin-js/dashboard/admin-dashboard.utils.js?v=20260615-smooth-autofinish"></script>
   <script src="../js/Admin-js/dashboard/admin-dashboard.rows.js?v=20260615-smooth-autofinish"></script>
   <script src="../js/Admin-js/dashboard/admin-dashboard.users.js?v=20260625-admin-roles"></script>
-  <script src="../js/Admin-js/dashboard/admin-dashboard.render.js?v=20260625-admin-roles"></script>
+  <script src="../js/Admin-js/dashboard/admin-dashboard.render.js?v=20260629-news-push"></script>
   <script src="../js/Admin-js/dashboard/admin-dashboard.finance.js?v=20260615-smooth-autofinish"></script>
   <script src="../js/Admin-js/dashboard/admin-dashboard.launch.js?v=20260615-smooth-autofinish"></script>
   <script src="../js/Admin-js/dashboard/admin-dashboard.actions.js?v=20260615-smooth-autofinish"></script>
-  <script src="../js/Admin-js/dashboard/admin-dashboard.core.js?v=20260615-smooth-autofinish"></script>
+  <script src="../js/Admin-js/dashboard/admin-dashboard.notifications.js?v=20260629-news-push"></script>
+  <script src="../js/Admin-js/dashboard/admin-dashboard.core.js?v=20260629-news-push"></script>
 
 </body>
 </html>

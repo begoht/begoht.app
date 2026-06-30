@@ -14,6 +14,7 @@ const { prepararIdaVueltaPayload } = require("../../idaVuelta.service");
 const {
     DRIVER_GPS_TIMEOUT_MS,
 } = require("../../driverAvailabilityState.service");
+const { sendTripOfferPush } = require("../../pushNotification.service");
 
 async function enviarWave({
     lista,
@@ -186,6 +187,13 @@ async function enviarWave({
             .emit("viaje:oferta", {
                 ...payload,
                 ttl: OFFER_TTL_MS
+            });
+
+            sendTripOfferPush(motoristaId, {
+                ...payload,
+                ttl: OFFER_TTL_MS
+            }).catch((error) => {
+                console.warn(`Push de oferta no enviado a ${motoristaId}:`, error.message);
             });
 
             if (viajeActual.pasajero) {

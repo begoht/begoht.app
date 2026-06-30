@@ -2,7 +2,7 @@ import { safe } from "../features/shared/safe.js";
 import { initModo } from "../../modo.js";
 import { initWalletUI } from "../../wallet.js";
 import { initLogout } from "../../logout.js";
-import { initHeader } from "../../components/header.init.js?v=20260601-huella-user";
+import { initHeader } from "../../components/header.init.js?v=20260629-news-push";
 import { getMap } from "../../map/map.singleton.js?v=20260628-dark-route-locked";
 import { restoreViajeUI } from "./app.restore.js?v=20260629-email-receipt";
 import { viajeState } from "../../viaje/viaje.state.js";
