@@ -1,4 +1,4 @@
-import { renderDriverDownloadButton, renderPassengerDownloadButton } from "../downloads/downloads.module.js?v=20260701-follow-zoom";
+import { renderDriverDownloadButton, renderPassengerDownloadButton } from "../downloads/downloads.module.js?v=20260701-map-colors-restored";
 import { renderRegistrationQuickLinks } from "../registro/registro.module.js";
 import { renderLandingIcon } from "./icons.js?v=20260627-map-icons";
 

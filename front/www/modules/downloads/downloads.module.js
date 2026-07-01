@@ -1,4 +1,4 @@
-import { DOWNLOAD_APPS, getDownloadApp } from "./downloads.config.js?v=20260701-follow-zoom";
+import { DOWNLOAD_APPS, getDownloadApp } from "./downloads.config.js?v=20260701-map-colors-restored";
 import { renderLandingIcon } from "../landing/icons.js?v=20260627-map-icons";
 
 function renderDownloadLink(app, { className = "cta", label = app.label } = {}) {
