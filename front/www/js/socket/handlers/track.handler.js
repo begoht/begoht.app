@@ -1,5 +1,5 @@
 import { viajeState } from "../../viaje/viaje.state.js";
-import { mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260628-dark-route-locked";
+import { mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260701-follow-zoom";
 import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260628-dark-route-locked";
 import { ocultarOrigenEnMapa } from "../../map/map.geo.js?v=20260628-dark-route-locked";
 import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260628-dark-route-locked";

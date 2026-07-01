@@ -9,6 +9,8 @@ import {
 } from "../utils/map.motorcycle.motion.js?v=20260621-route-moto";
 
 const FOLLOW_PAUSE_MS = 12000;
+const FOLLOW_ZOOM = 17;
+const FOLLOW_ZOOM_DURATION_SECONDS = 0.65;
 let followPausedUntil = 0;
 
 export function renderMotorista(map, motorista) {
@@ -31,7 +33,10 @@ export function renderMotorista(map, motorista) {
         routeCoords: getRutaActualCoords(),
         heading,
         maxSnapDistanceMeters: 85,
-        onMove: (position) => consumirRutaDesde(map, position)
+        onMove: (position) => {
+          consumirRutaDesde(map, position);
+          followMotorista(map, position);
+        }
       }
     );
   } else {
@@ -55,19 +60,12 @@ export function renderMotorista(map, motorista) {
         routeCoords: getRutaActualCoords(),
         heading,
         maxSnapDistanceMeters: 85,
-        onMove: (position) => consumirRutaDesde(map, position)
+        onMove: (position) => {
+          consumirRutaDesde(map, position);
+          followMotorista(map, position);
+        }
       }
     );
-  }
-
-  const markerPos = viajeState.motoristaMarker?.getLatLng?.() || { lat, lng };
-
-  if (shouldFollowMarker(map, markerPos)) {
-    map.panInside(markerPos, {
-      padding: [72, 72],
-      animate: true,
-      duration: 0.8
-    });
   }
 }
 
@@ -89,14 +87,70 @@ function bindFollowPause(map) {
   };
 
   map.on?.("dragstart", pause);
-  map.on?.("zoomstart", pause);
+  map.on?.("zoomstart", () => {
+    if (!map._begoProgrammaticFollow) pause();
+  });
 }
 
-function shouldFollowMarker(map, markerPos) {
+function followMotorista(map, markerPos) {
   if (!map || !markerPos || Date.now() < followPausedUntil) return false;
 
-  const bounds = map.getBounds?.();
-  if (!bounds?.pad) return false;
+  const lat = Number(markerPos.lat);
+  const lng = Number(markerPos.lng);
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return false;
 
-  return !bounds.pad(-0.25).contains(markerPos);
+  const point = { lat, lng };
+  map._begoLatestFollowPoint = point;
+
+  const currentZoom = Number(map.getZoom?.()) || 0;
+  if (currentZoom < FOLLOW_ZOOM) {
+    zoomToMotorista(map, point);
+    return true;
+  }
+
+  if (map._begoFollowZooming) return true;
+
+  centerFollowCamera(map, point);
+  return true;
+}
+
+function zoomToMotorista(map, point) {
+  if (map._begoFollowZooming) return;
+
+  map._begoFollowZooming = true;
+  map._begoProgrammaticFollow = true;
+
+  let released = false;
+  const release = () => {
+    if (released) return;
+    released = true;
+    map._begoFollowZooming = false;
+    map._begoProgrammaticFollow = false;
+
+    if (Date.now() >= followPausedUntil && map._begoLatestFollowPoint) {
+      centerFollowCamera(map, map._begoLatestFollowPoint);
+    }
+  };
+
+  if (typeof map.flyTo === "function") {
+    map.once?.("moveend", release);
+    map.flyTo([point.lat, point.lng], FOLLOW_ZOOM, {
+      animate: true,
+      duration: FOLLOW_ZOOM_DURATION_SECONDS
+    });
+    window.setTimeout(release, 1000);
+    return;
+  }
+
+  map.setView?.([point.lat, point.lng], FOLLOW_ZOOM, { animate: true });
+  release();
+}
+
+function centerFollowCamera(map, point) {
+  if (!map || !point || Date.now() < followPausedUntil) return;
+
+  map.panTo?.([point.lat, point.lng], {
+    animate: false,
+    noMoveStart: true
+  });
 }

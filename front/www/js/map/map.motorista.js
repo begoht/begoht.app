@@ -10,7 +10,7 @@ import {
 import {
   renderMotorista,
   removeMotorista
-} from "./ui/map.motorista.renderer.js?v=20260628-dark-route-locked";
+} from "./ui/map.motorista.renderer.js?v=20260701-follow-zoom";
 
 import {
   renderMotoristas,

@@ -1,6 +1,6 @@
 import { viajeState } from "../../viaje/viaje.state.js";
 import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260623-roundtrip-v2";
-import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260628-dark-route-locked";
+import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260701-follow-zoom";
 import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260628-dark-route-locked";
 import { ocultarOrigenEnMapa } from "../../map/map.geo.js?v=20260628-dark-route-locked";
 import { limpiarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260628-dark-route-locked";
