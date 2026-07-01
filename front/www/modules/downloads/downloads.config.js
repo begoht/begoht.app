@@ -1,10 +1,11 @@
 export const DOWNLOAD_VERSION = "20260629-email-receipt";
+export const PASSENGER_DOWNLOAD_VERSION = "20260701-follow-zoom";
 
 export const DOWNLOAD_APPS = Object.freeze({
   passenger: Object.freeze({
     id: "passenger",
     file: "bego-pasajero.apk",
-    href: `/download/bego-pasajero.apk?v=${DOWNLOAD_VERSION}`,
+    href: `/download/bego-pasajero.apk?v=${PASSENGER_DOWNLOAD_VERSION}`,
     label: "Descargar pasajero",
     shortLabel: "Pasajero",
     analytics: "download_passenger",

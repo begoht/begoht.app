@@ -1,4 +1,4 @@
-import { renderDownloadPanel } from "../downloads/downloads.module.js?v=20260627-map-icons";
+import { renderDownloadPanel } from "../downloads/downloads.module.js?v=20260701-follow-zoom";
 import { LANDING_SERVICES } from "./services.registry.js?v=20260627-map-icons";
 import { renderLandingIcon } from "./icons.js?v=20260627-map-icons";
 
