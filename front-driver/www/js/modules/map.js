@@ -62,19 +62,6 @@ export function initMap() {
     }
   ).addTo(map);
 
-  L.tileLayer(
-    "https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png",
-    {
-      maxZoom: 19,
-      detectRetina: false,
-      keepBuffer: 8,
-      updateWhenIdle: false,
-      updateWhenZooming: true,
-      updateInterval: 16,
-      zIndex: 3
-    }
-  ).addTo(map);
-
   L.control.zoom({ position: "bottomright" }).addTo(map);
   bindNavigationFollow();
   bindRecenterButton();

@@ -10,7 +10,7 @@ import { destinoIcon } from "./map.icons.js?v=20260628-dark-route-locked";
 
 import { reverseGeocode } from "./services/map.reverse.js?v=20260624-cordoba-gps";
 
-import { getMap } from "./map.singleton.js?v=20260702-single-map-layer";
+import { getMap } from "./map.singleton.js?v=20260702-no-labels";
 import { cityConfig, coordsInCity } from "./config/index.js?v=20260624-cordoba-gps";
 import { asegurarOrigenGpsReal } from "./map.geo.js?v=20260628-dark-route-locked";
 

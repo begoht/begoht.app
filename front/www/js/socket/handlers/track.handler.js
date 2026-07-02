@@ -4,7 +4,7 @@ import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260628-dark-r
 import { ocultarOrigenEnMapa } from "../../map/map.geo.js?v=20260628-dark-route-locked";
 import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260628-dark-route-locked";
 import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260628-dark-route-locked";
-import { getMap } from "../../map/map.singleton.js?v=20260702-single-map-layer";
+import { getMap } from "../../map/map.singleton.js?v=20260702-no-labels";
 import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260615-smooth-autofinish";
 
 let lastEstadoPersistido = null;

@@ -156,7 +156,7 @@ export function createMap(container) {
    * 🌍 TILE LAYER
    *************************************************/
   L.tileLayer(
-    "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+    "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",
     {
       attribution: "&copy; OpenStreetMap &copy; CARTO",
       detectRetina: false,
@@ -233,14 +233,6 @@ function ensureRotatingPanes(map) {
   const overlayPane = map?.getPane?.("overlayPane");
 
   if (!rotatePane) return;
-
-  let surface = rotatePane.querySelector(".bego-map-surface");
-  if (!surface) {
-    surface = document.createElement("div");
-    surface.className = "bego-map-surface";
-    surface.setAttribute("aria-hidden", "true");
-    rotatePane.insertBefore(surface, rotatePane.firstChild);
-  }
 
   [tilePane, overlayPane].forEach((pane) => {
     if (pane && pane.parentElement !== rotatePane) {

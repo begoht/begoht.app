@@ -1,5 +1,5 @@
-export const DOWNLOAD_VERSION = "20260702-offer-recovery";
-export const PASSENGER_DOWNLOAD_VERSION = "20260702-offer-recovery";
+export const DOWNLOAD_VERSION = "20260702-playprotect-map";
+export const PASSENGER_DOWNLOAD_VERSION = "20260702-playprotect-map";
 
 export const DOWNLOAD_APPS = Object.freeze({
   passenger: Object.freeze({

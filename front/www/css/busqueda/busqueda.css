@@ -795,20 +795,6 @@ body[class*="route-"]:not(.route-home) .home-map-shell {
   background: transparent !important;
 }
 
-.route-home #map .bego-map-primary-tiles {
-  filter: grayscale(1) brightness(1.24) contrast(0.72) saturate(0.48);
-  opacity: 1;
-}
-
-.route-home #map .bego-map-label-tiles {
-  filter:
-    grayscale(1)
-    brightness(1.7)
-    contrast(1.38)
-    drop-shadow(0 1px 1px rgba(0, 0, 0, 0.95));
-  opacity: 1;
-}
-
 .route-home .home-map-shell::after {
   content: "";
   position: absolute;

@@ -13,17 +13,6 @@
   backface-visibility: hidden;
 }
 
-#map.leaflet-container .bego-map-surface {
-  position: absolute;
-  left: -200vw;
-  top: -200vh;
-  width: 400vw;
-  height: 400vh;
-  z-index: 0;
-  pointer-events: none;
-  background: #101318;
-}
-
 #map.leaflet-container.leaflet-zoom-anim .leaflet-zoom-animated {
   transition: transform 250ms cubic-bezier(0, 0, 0.25, 1);
 }
