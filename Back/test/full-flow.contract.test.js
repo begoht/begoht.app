@@ -37,9 +37,9 @@ test("cadena de cache: la app pasajero carga el handler nuevo de vuelta", () => 
   const passengerMain = readWorkspaceFile("front/www/js/pasajero/pasajero.main.js");
   const passengerSocket = readWorkspaceFile("front/www/js/socket/pasajero.socket.js");
 
-  assert.match(index, /app\.js\?v=20260702-no-labels/);
-  assert.match(app, /router\.js\?v=20260702-no-labels/);
-  assert.match(router, /app\.lifecycle\.js\?v=20260702-no-labels/);
+  assert.match(index, /app\.js\?v=20260702-visible-labels/);
+  assert.match(app, /router\.js\?v=20260702-visible-labels/);
+  assert.match(router, /app\.lifecycle\.js\?v=20260702-visible-labels/);
   assert.match(lifecycle, /pasajero\.main\.js\?v=20260701-follow-zoom/);
   assert.match(passengerMain, /pasajero\.socket\.js\?v=20260701-follow-zoom/);
   assert.match(passengerSocket, /idaVuelta\.handler\.js\?v=20260628-dark-route-locked/);
@@ -126,7 +126,7 @@ test("mapa del recibo: compone cartografia real y conserva la trayectoria", asyn
   }
 });
 
-test("mapa en viaje: usa una capa sin etiquetas ni filtros y rota la ruta unida", () => {
+test("mapa en viaje: conserva colores, refuerza etiquetas y elimina fondo y borde", () => {
   const geo = readWorkspaceFile("front/www/js/map/map.geo.js");
   const iniciado = readWorkspaceFile("front/www/js/socket/handlers/iniciado.handler.js");
   const llego = readWorkspaceFile("front/www/js/socket/handlers/llego.handler.js");
@@ -166,8 +166,9 @@ test("mapa en viaje: usa una capa sin etiquetas ni filtros y rota la ruta unida"
   assert.match(mapSingleton, /updateInterval:\s*16/);
   assert.match(mapSingleton, /keepBuffer:\s*8/);
   assert.match(mapSingleton, /basemaps\.cartocdn\.com\/dark_nolabels/);
-  assert.doesNotMatch(mapSingleton, /dark_only_labels|dark_all/);
-  assert.equal((mapSingleton.match(/L\.tileLayer\(/g) || []).length, 1);
+  assert.match(mapSingleton, /basemaps\.cartocdn\.com\/dark_only_labels/);
+  assert.doesNotMatch(mapSingleton, /dark_all/);
+  assert.equal((mapSingleton.match(/L\.tileLayer\(/g) || []).length, 2);
   assert.match(mapSingleton, /ensureRotatingPanes\(mapInstance\)/);
   assert.match(mapSingleton, /\[tilePane, overlayPane\]\.forEach/);
   assert.match(mapSingleton, /rotatePane\.appendChild\(pane\)/);
@@ -199,12 +200,15 @@ test("mapa en viaje: usa una capa sin etiquetas ni filtros y rota la ruta unida"
   assert.match(driverMap, /updateInterval:\s*16/);
   assert.match(mapMotionCss, /\.leaflet-zoom-anim \.leaflet-zoom-animated[\s\S]*transition:\s*transform 250ms/);
   assert.doesNotMatch(mapMotionCss, /\.leaflet-zoom-animated[\s\S]{0,180}transition:\s*none\s*!important/);
-  assert.match(mapMotionCss, /background:\s*#101318\s*!important/);
+  assert.match(mapMotionCss, /background:\s*transparent\s*!important/);
   assert.doesNotMatch(mapMotionCss, /\.bego-map-surface/);
-  assert.doesNotMatch(mapLayoutCss, /\.bego-map-primary-tiles|\.bego-map-label-tiles/);
+  assert.doesNotMatch(mapLayoutCss, /\.bego-map-primary-tiles/);
+  assert.match(mapLayoutCss, /\.bego-map-label-tiles[\s\S]*brightness\(1\.65\)/);
+  assert.match(mapLayoutCss, /\.route-home #map[\s\S]*border:\s*0[\s\S]*background:\s*transparent/);
   assert.match(driverMap, /basemaps\.cartocdn\.com\/dark_nolabels/);
-  assert.doesNotMatch(driverMap, /dark_only_labels|dark_all/);
-  assert.equal((driverMap.match(/L\.tileLayer\(/g) || []).length, 1);
+  assert.match(driverMap, /basemaps\.cartocdn\.com\/dark_only_labels/);
+  assert.doesNotMatch(driverMap, /dark_all/);
+  assert.equal((driverMap.match(/L\.tileLayer\(/g) || []).length, 2);
   assert.match(routeRenderer, /color:\s*"#e5e7eb"/);
   assert.match(passengerCss, /\.bego-map-icon-moto[\s\S]*transition:\s*none/);
 });

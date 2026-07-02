@@ -169,6 +169,19 @@ export function createMap(container) {
     }
   ).addTo(mapInstance);
 
+  L.tileLayer(
+    "https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png",
+    {
+      detectRetina: false,
+      updateWhenIdle: false,
+      updateWhenZooming: true,
+      updateInterval: 16,
+      keepBuffer: 8,
+      zIndex: 2,
+      className: "bego-map-tiles bego-map-label-tiles"
+    }
+  ).addTo(mapInstance);
+
   bindCompassButton(mapInstance);
   bindViewportRefresh(mapInstance);
 

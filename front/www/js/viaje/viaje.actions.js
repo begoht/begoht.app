@@ -5,7 +5,7 @@ import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20
 import { cerrarBuscandoMotorista } from "../pasajero/ui/overlays/buscandoMotorista.ui.js?v=20260608-search-modal";
 import { cityConfig } from "../map/config/index.js?v=20260624-cordoba-gps";
 import { reverseGeocode } from "../map/services/map.reverse.js?v=20260624-cordoba-gps";
-import { getMap } from "../map/map.singleton.js?v=20260702-no-labels";
+import { getMap } from "../map/map.singleton.js?v=20260702-visible-labels";
 import { asegurarOrigenGpsReal } from "../map/map.geo.js?v=20260628-dark-route-locked";
 
 let socket = null;

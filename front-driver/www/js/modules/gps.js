@@ -3,7 +3,7 @@ import {
   getRutaActualCoords,
   consumirRutaDesde,
   seguirMotoristaEnMapa
-} from "./map.js?v=20260702-no-labels";
+} from "./map.js?v=20260702-visible-labels";
 import { isDriverOnline, updateDriverPosition } from "./driver.status.js?v=20260627-map-icons";
 import { crearMotoIcon, motoIcon } from "./map.icons.js?v=20260620-driver-navigation";
 import {

@@ -1,4 +1,4 @@
-import { borrarRuta } from "../map.js?v=20260702-no-labels";
+import { borrarRuta } from "../map.js?v=20260702-visible-labels";
 import {
     getEstadoViaje,
     getViajeEnCursoId,

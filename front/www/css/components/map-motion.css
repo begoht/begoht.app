@@ -1,5 +1,5 @@
 #map.leaflet-container {
-  background: #101318 !important;
+  background: transparent !important;
 }
 
 #map.leaflet-container .leaflet-map-pane,

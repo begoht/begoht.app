@@ -58,7 +58,22 @@ export function initMap() {
       updateWhenIdle: false,
       updateWhenZooming: true,
       updateInterval: 16,
-      zIndex: 1
+      zIndex: 1,
+      className: "bego-map-tiles bego-map-primary-tiles"
+    }
+  ).addTo(map);
+
+  L.tileLayer(
+    "https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png",
+    {
+      maxZoom: 19,
+      detectRetina: false,
+      keepBuffer: 8,
+      updateWhenIdle: false,
+      updateWhenZooming: true,
+      updateInterval: 16,
+      zIndex: 3,
+      className: "bego-map-tiles bego-map-label-tiles"
     }
   ).addTo(map);
 

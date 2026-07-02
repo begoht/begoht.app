@@ -18,7 +18,7 @@ import {
 import {
   getMap,
   isMapReady
-} from "../map.singleton.js?v=20260702-no-labels";
+} from "../map.singleton.js?v=20260702-visible-labels";
 
 /*************************************************
  * 🎯 ESTADOS VÁLIDOS

@@ -1458,29 +1458,30 @@ a {
   width: 100%;
   height: 100dvh;
   overflow: hidden;
-  background: #07111f;
+  background: transparent;
 }
 
 #map {
   width: 100%;
   height: 100%;
   z-index: 1;
-  background: #07111f;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
   touch-action: none;
 }
 
 .driver-map-vignette {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  background: linear-gradient(
-    180deg,
-    rgba(2, 6, 23, 0.42) 0%,
-    transparent 25%,
-    transparent 68%,
-    rgba(2, 6, 23, 0.48) 100%
-  );
+  display: none;
+}
+
+#map .bego-map-label-tiles {
+  filter:
+    brightness(1.65)
+    contrast(1.3)
+    drop-shadow(0 1px 1px rgba(0, 0, 0, 0.95));
+  opacity: 1;
 }
 
 .leaflet-marker-icon.bego-map-icon-navigation {

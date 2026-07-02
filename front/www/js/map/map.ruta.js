@@ -1,4 +1,4 @@
-import { getMap } from "./map.singleton.js?v=20260702-no-labels";
+import { getMap } from "./map.singleton.js?v=20260702-visible-labels";
 
 import {
   mismaPosicion,

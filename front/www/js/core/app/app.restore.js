@@ -1,6 +1,6 @@
 import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260623-roundtrip-v2";
 import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260701-follow-zoom";
-import { getMap } from "../../map/map.singleton.js?v=20260702-no-labels";
+import { getMap } from "../../map/map.singleton.js?v=20260702-visible-labels";
 import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260628-dark-route-locked";
 import { viajeState } from "../../viaje/viaje.state.js";
 import { actualizarUIDriver, mostrarModalFinalizado } from "../../socket/pasajero.utils.js?v=20260629-email-receipt";
