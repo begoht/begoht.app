@@ -163,6 +163,10 @@ function fromDomain() {
   return match?.[1]?.toLowerCase() || "";
 }
 
+function isResendSendOnlyRestriction(message) {
+  return /api key is restricted to only send emails/i.test(String(message || ""));
+}
+
 async function getResendDomainStatus({ force = false } = {}) {
   if (!resendConfigured) {
     return { ok: false, configured: false, provider: "resend" };
@@ -199,13 +203,18 @@ async function getResendDomainStatus({ force = false } = {}) {
         : `Dominio Resend no verificado: ${record?.status || "not_found"}`,
     };
   } catch (error) {
+    const sendOnlyKey = isResendSendOnlyRestriction(error.message);
     resendDomainCache = {
-      ok: false,
+      // Una clave restringida a envios es valida (y preferible) en produccion;
+      // simplemente no tiene permiso para consultar el endpoint de dominios.
+      ok: sendOnlyKey,
       configured: true,
       provider: "resend",
       domain: fromDomain(),
-      status: "check_failed",
-      message: error.message,
+      status: sendOnlyKey ? "send_only_key" : "check_failed",
+      message: sendOnlyKey
+        ? "Resend configurado con una clave limitada a envios"
+        : error.message,
     };
   }
 
@@ -637,6 +646,7 @@ async function enviarAlertaMonitoreo({ to, subject, html, idempotencyKey }) {
 module.exports = {
   enviarCodigoVerificacionEmail,
   getResendDomainStatus,
+  isResendSendOnlyRestriction,
   enviarResumenViaje,
   enviarEmailPrueba,
   enviarAlertaMonitoreo,

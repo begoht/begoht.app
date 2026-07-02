@@ -7,6 +7,9 @@ const { pathToFileURL } = require("node:url");
 const {
   getPendingOfferForDriver,
 } = require("../src/services/matching_services/pendingOfferRecovery.service");
+const {
+  isResendSendOnlyRestriction,
+} = require("../src/services/email/email.service");
 
 function fakeRedis(values, ttls = {}) {
   return {
@@ -119,4 +122,12 @@ test("solicitudes simultaneas comparten recovery y publican una sola oferta", as
     global.window = previousWindow;
     global.CustomEvent = previousCustomEvent;
   }
+});
+
+test("readiness acepta una clave Resend restringida de forma segura a envios", () => {
+  assert.equal(
+    isResendSendOnlyRestriction("This API key is restricted to only send emails"),
+    true
+  );
+  assert.equal(isResendSendOnlyRestriction("Resend domains API 503"), false);
 });
