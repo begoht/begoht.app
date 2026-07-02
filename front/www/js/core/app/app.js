@@ -1,6 +1,6 @@
 import { AppState } from "./app.state.js";
 import { getSocket } from "../../socket/socket.js?v=20260606-session-refresh";
-import { createMap } from "../../map/map.singleton.js?v=20260628-dark-route-locked";
+import { createMap } from "../../map/map.singleton.js?v=20260702-single-map-layer";
 import { initRouter } from "../router/router.js?v=20260701-follow-zoom";
 import { initLaunchCountdown } from "../../launch-countdown.js?v=20260624-cordoba-gps";
 import { initNotifications } from "../../notifications/notifications.js?v=20260629-news-push";

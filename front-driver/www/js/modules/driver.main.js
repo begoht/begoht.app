@@ -1,7 +1,7 @@
 import { initSocket } from "./socket.js?v=20260627-map-icons";
 import { initMap } from "./map.js?v=20260627-map-fluid-arrival";
 import { initGPS } from "./gps.js?v=20260627-map-icons";
-import { initOferta } from "./oferta/oferta.index.js?v=20260627-map-icons";
+import { initOferta } from "./oferta/oferta.index.js?v=20260702-offer-recovery";
 import { initViajeInicio } from "./viajeInicio/viajeInicio.js?v=20260623-roundtrip-v2";
 import { initViajeFinalizar } from "./viajeFinalizar.js?v=20260627-map-fluid-arrival";
 import { initViajeControl } from "./viajeControl/viajeControl.js?v=20260627-map-fluid-arrival";
@@ -11,7 +11,7 @@ import { initDriverStatus } from "./driver.status.js?v=20260627-map-icons";
 import { initDriverSpa } from "./driver.spa.js?v=20260629-news-push";
 import { iniciarSonidoOfertaLoop } from "./oferta/oferta.ui.js?v=20260608-offer-net-cash";
 import { initLaunchCountdown } from "./launch-countdown.js?v=20260603-launch-gate";
-import { initDriverNotifications } from "./notifications.js?v=20260629-news-push";
+import { initDriverNotifications } from "./notifications.js?v=20260702-offer-recovery";
 import {
   getDriverAccessToken,
   refreshDriverAccessToken
@@ -98,6 +98,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   safeInit("driver-status", () => initDriverStatus(socket));
+  safeInit("offers", () => initOferta(socket));
   safeInit("driver-notifications", () => initDriverNotifications(socket));
 
   if (socket.connected) {
@@ -133,7 +134,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   safeInit("gps", () => initGPS(socket));
   safeInit("trip-control", () => initViajeControl(socket, uiElements));
   safeInit("chat", () => initDriverChat(socket));
-  safeInit("offers", () => initOferta(socket));
   safeInit("trip-start", () => initViajeInicio(socket));
   safeInit("trip-finish", () => initViajeFinalizar(socket));
   safeInit("round-trip", () => initIdaVueltaDriver(socket));

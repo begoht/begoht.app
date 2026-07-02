@@ -1,4 +1,4 @@
-import { getMap } from "./map.singleton.js?v=20260628-dark-route-locked";
+import { getMap } from "./map.singleton.js?v=20260702-single-map-layer";
 
 import {
   mismaPosicion,

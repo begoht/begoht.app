@@ -11,7 +11,7 @@ import {
   actualizarCirculoProgreso
 } from "./oferta.ui.js?v=20260608-offer-net-cash";
 
-import { setViajeActual, ofertaState, getViajeId } from "./oferta.state.js";
+import { setViajeActual, ofertaState, getViajeId, getOfertaExpiraEn } from "./oferta.state.js";
 import { initMiniMapa, renderMiniRuta } from "./oferta.miniMap.js?v=20260614-mobile-runtime";
 import { siguienteDeCola } from "./oferta.queue.js";
 import { isDriverOnline } from "../driver.status.js?v=20260627-map-icons";
@@ -79,6 +79,10 @@ export async function renderOferta(viaje, opts = {}) {
 
     const vId = getViajeId(viaje);
     if (!vId) return;
+
+    const expiraEn = getOfertaExpiraEn(viaje);
+    const tiempoTotalMs = Math.max(1, Number(viaje.ttl) || expiraEn - Date.now());
+    if (expiraEn <= Date.now()) return;
 
     const actualId = ofertaState.viajeMostradoId;
 
@@ -183,21 +187,18 @@ export async function renderOferta(viaje, opts = {}) {
      * ⏱️ TIMER
      *************************************************/
 
-    const TIEMPO_TOTAL = 15;
-    const inicioLocal = Date.now();
-    
     ofertaState.intervalo = setInterval(() => {
       try {
-        const elapsed = Math.floor((Date.now() - inicioLocal) / 1000);
-        const restante = Math.max(0, TIEMPO_TOTAL - elapsed);
+        const restanteMs = Math.max(0, expiraEn - Date.now());
+        const restante = Math.ceil(restanteMs / 1000);
         
         if (UI.contador) {
           UI.contador.textContent = restante;
         }
         
-        actualizarCirculoProgreso(restante, TIEMPO_TOTAL);
+        actualizarCirculoProgreso(restanteMs, tiempoTotalMs);
         
-        if (restante <= 0) {
+        if (restanteMs <= 0) {
           console.log("⏳ Oferta expirada (local):", vId);
           limpiarOferta();
         }
@@ -205,7 +206,7 @@ export async function renderOferta(viaje, opts = {}) {
       } catch (err) {
         console.error("❌ Error en timer oferta:", err);
       }
-    }, 1000);
+    }, 250);
       
     } catch (error) {
       console.error("❌ Error en renderOferta:", error);

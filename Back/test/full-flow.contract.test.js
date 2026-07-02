@@ -37,11 +37,11 @@ test("cadena de cache: la app pasajero carga el handler nuevo de vuelta", () => 
   const passengerMain = readWorkspaceFile("front/www/js/pasajero/pasajero.main.js");
   const passengerSocket = readWorkspaceFile("front/www/js/socket/pasajero.socket.js");
 
-  assert.match(index, /app\.js\?v=20260629-news-push/);
-  assert.match(app, /router\.js\?v=20260629-news-push/);
-  assert.match(router, /app\.lifecycle\.js\?v=20260629-news-push/);
-  assert.match(lifecycle, /pasajero\.main\.js\?v=20260629-email-receipt/);
-  assert.match(passengerMain, /pasajero\.socket\.js\?v=20260629-email-receipt/);
+  assert.match(index, /app\.js\?v=20260701-visible-labels/);
+  assert.match(app, /router\.js\?v=20260701-follow-zoom/);
+  assert.match(router, /app\.lifecycle\.js\?v=20260701-follow-zoom/);
+  assert.match(lifecycle, /pasajero\.main\.js\?v=20260701-follow-zoom/);
+  assert.match(passengerMain, /pasajero\.socket\.js\?v=20260701-follow-zoom/);
   assert.match(passengerSocket, /idaVuelta\.handler\.js\?v=20260628-dark-route-locked/);
 });
 
@@ -126,7 +126,7 @@ test("mapa del recibo: compone cartografia real y conserva la trayectoria", asyn
   }
 });
 
-test("mapa en viaje: usa una capa, conserva el origen hasta la llegada y rota la ruta unida", () => {
+test("mapa en viaje: usa una capa con etiquetas, conserva el origen y rota la ruta unida", () => {
   const geo = readWorkspaceFile("front/www/js/map/map.geo.js");
   const iniciado = readWorkspaceFile("front/www/js/socket/handlers/iniciado.handler.js");
   const llego = readWorkspaceFile("front/www/js/socket/handlers/llego.handler.js");
@@ -189,7 +189,7 @@ test("mapa en viaje: usa una capa, conserva el origen hasta la llegada y rota la
   assert.match(driverRuntime, /\.\/vendor\/leaflet\/leaflet-rotate\.js\?v=0\.2\.8/);
   assert.match(motorcycleMotion, /onMove\s*=\s*null/);
   assert.match(motorcycleMotion, /setMarkerPosition\(marker, next, onMove\)/);
-  assert.match(motorcycleRenderer, /onMove:\s*\(position\)\s*=>\s*consumirRutaDesde\(map, position\)/);
+  assert.match(motorcycleRenderer, /onMove:\s*\(position\)\s*=>\s*\{\s*consumirRutaDesde\(map, position\);\s*followMotorista\(map, position\);\s*\}/);
   assert.match(driverMotion, /onMove\s*=\s*null/);
   assert.match(driverGps, /onMove:\s*\(position\)\s*=>\s*consumirRutaDesde\(position\)/);
   assert.match(driverMap, /map\.panTo\(\[center\.lat, center\.lng\]/);

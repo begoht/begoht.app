@@ -1,7 +1,7 @@
 import { ofertaState, setLastDecision, getViajeId, CONFIG } from "./oferta.state.js";
 import { UI, notificar, resetBotonAceptar } from "./oferta.ui.js?v=20260608-offer-net-cash";
 import { getUltimaPosicion, setUltimaPosicion } from "../gps.js?v=20260627-map-icons";
-import { limpiarOferta } from "./oferta.render.js?v=20260627-map-icons";
+import { limpiarOferta } from "./oferta.render.js?v=20260702-offer-recovery";
 import { getDriverAvailability, isDriverOnline } from "../driver.status.js?v=20260627-map-icons";
 
 export async function aceptarViaje(socket) {

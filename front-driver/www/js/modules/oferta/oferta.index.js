@@ -1,7 +1,8 @@
 import { initUI, UI } from "./oferta.ui.js?v=20260608-offer-net-cash";
-import { initSocketEventos } from "./oferta.socket.js?v=20260627-map-icons";
+import { initSocketEventos } from "./oferta.socket.js?v=20260702-offer-recovery";
 import { aceptarViaje, rechazarViaje } from "./oferta.actions.js?v=20260627-map-icons";
 import { ofertaState, setSocketRef } from "./oferta.state.js";
+import { initOfferRecovery } from "./oferta.recovery.js?v=20260702-offer-recovery";
 
 export function initOferta(socket) {
     console.log("🛠️ Inicializando módulo de Ofertas...")
@@ -27,4 +28,5 @@ export function initOferta(socket) {
   }
 
   ofertaState.initialized = true;
+  initOfferRecovery(socket);
 }

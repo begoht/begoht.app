@@ -24,4 +24,16 @@ export const CONFIG = {
 export const setViajeActual = (v) => { ofertaState.viajeActual = v; };
 export const setSocketRef = (s) => { ofertaState.socketRef = s; };
 export const setLastDecision = (ts) => { ofertaState.lastDecisionTs = ts; };
-export const getViajeId = (v) => v?.viajeId ?? v?._id ?? v?.id ?? null;
+export const getViajeId = (v) => {
+  if (typeof v === "string" || typeof v === "number") return String(v);
+  const id = v?.viajeId ?? v?._id ?? v?.id ?? null;
+  return id == null ? null : String(id);
+};
+
+export function getOfertaExpiraEn(viaje, now = Date.now()) {
+  const expira = Number(viaje?.expira);
+  if (Number.isFinite(expira)) return expira;
+
+  const ttl = Number(viaje?.ttl);
+  return Number.isFinite(ttl) && ttl > 0 ? now + ttl : now + 15000;
+}

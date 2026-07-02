@@ -1,6 +1,6 @@
-import { renderOferta, limpiarOferta } from "./oferta.render.js?v=20260627-map-icons";
+import { renderOferta, limpiarOferta } from "./oferta.render.js?v=20260702-offer-recovery";
 import { agregarACola } from "./oferta.queue.js";
-import { seenOfertas, ofertaState, CONFIG, getViajeId } from "./oferta.state.js";
+import { seenOfertas, ofertaState, CONFIG, getViajeId, getOfertaExpiraEn } from "./oferta.state.js";
 import { notificar, reproducirSonido } from "./oferta.ui.js?v=20260608-offer-net-cash";
 import { registrarViaje } from "../viajeControl/viajeControl.js?v=20260608-offer-net-cash";
 import { setViajeEnCurso } from "../viajeControl/viajeEstado.js";
@@ -22,14 +22,16 @@ export function initSocketEventos(socket) {
   // ============================
   // 🚀 NUEVA OFERTA
   // ============================
-  socket.on("viaje:oferta", (viaje) => {
+  const handleIncomingOffer = (viaje) => {
   if (!isDriverOnline()) {
     limpiarOferta({ resetViaje: true });
     return;
   }
 
   const id = getViajeId(viaje);
-  if (!id || seenOfertas.has(id)) return;
+  if (!id || getOfertaExpiraEn(viaje) <= Date.now() || seenOfertas.has(id)) return;
+
+  viaje.expira = getOfertaExpiraEn(viaje);
 
   seenOfertas.add(id);
   setTimeout(() => seenOfertas.delete(id), CONFIG.DEDUPLICACION_TTL);
@@ -48,7 +50,12 @@ export function initSocketEventos(socket) {
 
   // 🔥 NO setear viajeMostradoId aquí
   renderOferta(viaje, { esReserva });
-});
+  };
+
+  socket.on("viaje:oferta", handleIncomingOffer);
+  window.addEventListener("driver:offer-recovered", ({ detail }) => {
+    handleIncomingOffer(detail);
+  });
   // ============================
   // ✅ VIAJE CONFIRMADO
   // ============================
@@ -131,7 +138,7 @@ export function initSocketEventos(socket) {
   socket.off("viaje:oferta-cerrada");
   socket.on("viaje:oferta-cerrada", ({ viajeId } = {}) => {
     const mostrado = getViajeId(ofertaState.viajeMostradoId);
-    if (viajeId && mostrado && mostrado !== viajeId) return;
+    if (viajeId && mostrado && mostrado !== getViajeId(viajeId)) return;
 
     ofertaState.aceptando = false;
     ofertaState.viajeMostradoId = null;
@@ -159,6 +166,7 @@ export function initSocketEventos(socket) {
   // ============================
   socket.off("viaje:tomado");
   socket.on("viaje:tomado", ({ viajeId }) => {
+    viajeId = getViajeId(viajeId);
     
     if (!viajeId) return;
     

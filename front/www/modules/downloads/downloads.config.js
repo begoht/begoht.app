@@ -1,5 +1,5 @@
-export const DOWNLOAD_VERSION = "20260629-email-receipt";
-export const PASSENGER_DOWNLOAD_VERSION = "20260701-map-colors-restored";
+export const DOWNLOAD_VERSION = "20260702-offer-recovery";
+export const PASSENGER_DOWNLOAD_VERSION = "20260702-offer-recovery";
 
 export const DOWNLOAD_APPS = Object.freeze({
   passenger: Object.freeze({

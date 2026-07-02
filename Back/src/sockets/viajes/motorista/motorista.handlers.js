@@ -3,11 +3,6 @@ const { redis } = require("../../../config/redis");
 const ubicacionHandler = require("./ubicacion/index");
 const viajesHandler = require("./motorista.viajes");
 const Viaje = require("../../../models/Viaje");
-const {
-    getOfferKey,
-    getOfferLockKey,
-    scanKeys
-} = require("../../../services/matching_services/offerLock.service");
 const { getDriverEarningsForViaje } = require("../../../services/driverEarnings.service");
 const { prepararIdaVueltaPayload } = require("../../../services/idaVuelta.service");
 
@@ -87,19 +82,6 @@ module.exports = (io, socket) => {
                 }
             }
 
-            // 2️⃣ Recovery de Oferta (Si hay algo en el aire)
-            const ofertaKeyPattern = `viaje:oferta:pendiente:*:${motoristaId}`;
-            const lockedViajeId = await redis.get(getOfferLockKey(motoristaId));
-            const keys = lockedViajeId
-                ? [getOfferKey(lockedViajeId, motoristaId)]
-                : await scanKeys(ofertaKeyPattern, 50);
-            if (keys.length > 0) {
-                const ofertaData = await redis.get(keys[0]);
-                if (ofertaData) {
-                    const oferta = JSON.parse(ofertaData);
-                    socket.emit("viaje:oferta", { ...oferta, isRecovery: true });
-                }
-            }
         } catch (err) {
             console.error("❌ Recovery Error:", err);
         }

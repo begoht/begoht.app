@@ -2,11 +2,6 @@ require("dotenv").config();
 require("./services/email/email.service");
 
 const { redis, socketPubClient, socketSubClient } = require("./config/redis");
-const {
-  getOfferKey,
-  getOfferLockKey,
-  scanKeys,
-} = require("./services/matching_services/offerLock.service");
 const express = require("express");
 const http = require("http");
 const cors = require("cors");
@@ -282,6 +277,7 @@ io.use((socket, next) => {
 const viajesSocket = require("./sockets/viajes/viajes.socket");
 const soporteSocket = require("./sockets/soporte.socket");
 const initMotoristaCola = require("./sockets/viajes/motorista/motorista.cola");
+const recoverOfferHandler = require("./sockets/viajes/motorista/handlers/recoverOffer.handler");
 
 // ============================
 // 🔹 CONNECTION HANDLER
@@ -300,6 +296,12 @@ io.on("connection", async (socket) => {
   const userId = user._id.toString();
 
   socket.setMaxListeners(20);
+
+  // Se registra antes de cualquier snapshot async para no perder la solicitud
+  // que la app envia apenas termina de abrir o reconectar.
+  if (user.rol === "motorista") {
+    socket.on("driver:recover-offer", recoverOfferHandler(socket, userId));
+  }
 
   // 🔹 Update user online (no bloquea si falla)
   User.findByIdAndUpdate(userId, {
@@ -562,31 +564,6 @@ if (user.rol === "motorista") {
         await redis.hset(redisKey, "estadoInterno", "disponible");
         // Opcional: avisar al front que limpie
         socket.emit("viaje:finalizado-automatico"); 
-      }
-    }
-
-    // ==========================================
-    // 🔔 RECOVERY DE OFERTA PENDIENTE
-    // ==========================================
-    // Buscamos si hay alguna oferta "volando" para este motorista en Redis
-    const lockedOfertaViajeId = await redis.get(getOfferLockKey(userId));
-    const keysOfertas = lockedOfertaViajeId
-      ? [getOfferKey(lockedOfertaViajeId, userId)]
-      : await scanKeys(`viaje:oferta:pendiente:*:${userId}`, 50);
-    
-    if (keysOfertas.length > 0) {
-      const dataOfertaRaw = await redis.get(keysOfertas[0]);
-      if (dataOfertaRaw) {
-        const dataOferta = JSON.parse(dataOfertaRaw);
-        const tiempoRestante = dataOferta.expira - Date.now();
-        
-        if (tiempoRestante > 500) { // Si aún le quedan más de 0.5 seg
-          console.log(`✨ Re-sincronizando oferta pendiente para ${userId}`);
-          socket.emit("viaje:oferta", {
-            ...dataOferta,
-            ttl: tiempoRestante // El front recibe el tiempo real que queda
-          });
-        }
       }
     }
 

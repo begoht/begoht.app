@@ -156,7 +156,7 @@ export function createMap(container) {
    * 🌍 TILE LAYER
    *************************************************/
   L.tileLayer(
-    "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",
+    "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
     {
       attribution: "&copy; OpenStreetMap &copy; CARTO",
       detectRetina: false,
@@ -166,19 +166,6 @@ export function createMap(container) {
       keepBuffer: 8,
       zIndex: 1,
       className: "bego-map-tiles bego-map-primary-tiles"
-    }
-  ).addTo(mapInstance);
-
-  L.tileLayer(
-    "https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png",
-    {
-      detectRetina: false,
-      updateWhenIdle: false,
-      updateWhenZooming: true,
-      updateInterval: 16,
-      keepBuffer: 8,
-      zIndex: 2,
-      className: "bego-map-tiles bego-map-label-tiles"
     }
   ).addTo(mapInstance);
 

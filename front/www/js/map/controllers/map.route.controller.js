@@ -18,7 +18,7 @@ import {
 import {
   getMap,
   isMapReady
-} from "../map.singleton.js?v=20260628-dark-route-locked";
+} from "../map.singleton.js?v=20260702-single-map-layer";
 
 /*************************************************
  * 🎯 ESTADOS VÁLIDOS

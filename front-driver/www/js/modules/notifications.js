@@ -1,4 +1,5 @@
 import { getDriverAccessToken } from "../auth/session.js";
+import { recoverPendingOffer } from "./oferta/oferta.recovery.js?v=20260702-offer-recovery";
 
 let initialized = false;
 
@@ -6,7 +7,7 @@ export async function initDriverNotifications(socket) {
   if (initialized) return;
   initialized = true;
   bindRealtime(socket);
-  await registerNativePush();
+  await registerNativePush(socket);
 }
 
 function bindRealtime(socket) {
@@ -18,13 +19,13 @@ function bindRealtime(socket) {
   });
 }
 
-async function registerNativePush() {
+async function registerNativePush(socket) {
   const push = window.Capacitor?.Plugins?.PushNotifications;
   if (!push?.register) return;
 
   try {
     await createChannels(push);
-    bindLocalNotificationActions();
+    bindLocalNotificationActions(socket);
     const permission = await push.requestPermissions();
     if (permission?.receive !== "granted") return;
 
@@ -40,6 +41,8 @@ async function registerNativePush() {
       const data = notification.data || {};
       if (data.type === "news") {
         showDriverNewsBanner({ title: notification.title, message: notification.body });
+      } else if (data.type === "trip_offer") {
+        recoverPendingOffer(socket, { reason: "push-received" });
       }
       await showForegroundLocalNotification(notification);
     });
@@ -47,6 +50,9 @@ async function registerNativePush() {
       const data = notification?.data || {};
       window.location.hash = data.type === "news" ? "#/noticias" : "#/";
       window.dispatchEvent(new CustomEvent("driver:push-opened", { detail: data }));
+      if (data.type === "trip_offer") {
+        recoverPendingOffer(socket, { reason: "push-opened", force: true });
+      }
     });
     await push.register();
   } catch (error) {
@@ -54,7 +60,7 @@ async function registerNativePush() {
   }
 }
 
-function bindLocalNotificationActions() {
+function bindLocalNotificationActions(socket) {
   const local = window.Capacitor?.Plugins?.LocalNotifications;
   if (!local?.addListener || local.__begoActionBound) return;
   local.__begoActionBound = true;
@@ -62,6 +68,9 @@ function bindLocalNotificationActions() {
     const data = notification?.extra || {};
     window.location.hash = data.type === "news" ? "#/noticias" : "#/";
     window.dispatchEvent(new CustomEvent("driver:push-opened", { detail: data }));
+    if (data.type === "trip_offer") {
+      recoverPendingOffer(socket, { reason: "local-push-opened", force: true });
+    }
   }).catch?.(() => {});
 }
 
