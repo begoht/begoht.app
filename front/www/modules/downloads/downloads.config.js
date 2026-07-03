@@ -1,4 +1,4 @@
-export const DOWNLOAD_VERSION = "20260702-visible-labels";
+export const DOWNLOAD_VERSION = "20260703-driver-install";
 export const PASSENGER_DOWNLOAD_VERSION = "20260703-passenger-color";
 
 export const DOWNLOAD_APPS = Object.freeze({

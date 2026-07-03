@@ -8,10 +8,12 @@ const files = {
   driverBuild: path.join(root, "front-driver/android/app/build.gradle"),
   driverRootBuild: path.join(root, "front-driver/android/build.gradle"),
   driverVariables: path.join(root, "front-driver/android/variables.gradle"),
+  driverProperties: path.join(root, "front-driver/android/gradle.properties"),
   passengerManifest: path.join(root, "front/android/app/src/main/AndroidManifest.xml"),
   passengerBuild: path.join(root, "front/android/app/build.gradle"),
   passengerRootBuild: path.join(root, "front/android/build.gradle"),
   passengerVariables: path.join(root, "front/android/variables.gradle"),
+  passengerProperties: path.join(root, "front/android/gradle.properties"),
 };
 
 function read(file) {
@@ -191,10 +193,9 @@ let changed = false;
 let driverManifest = ensureToolsNamespace(read(files.driverManifest));
 driverManifest = removePermission(driverManifest, "android.permission.ACCESS_BACKGROUND_LOCATION");
 driverManifest = removePermission(driverManifest, "android.permission.USE_FINGERPRINT");
-driverManifest = ensurePermission(
+driverManifest = ensurePermissionRemoval(
   driverManifest,
-  "android.permission.ACCESS_BACKGROUND_LOCATION",
-  '<uses-permission android:name="android.permission.FOREGROUND_SERVICE"'
+  "android.permission.ACCESS_BACKGROUND_LOCATION"
 );
 driverManifest = ensurePermissionRemoval(driverManifest, "android.permission.USE_FINGERPRINT");
 driverManifest = ensureDriverServicePrivate(driverManifest);
@@ -207,11 +208,6 @@ passengerManifest = ensurePermissionRemoval(passengerManifest, "android.permissi
 passengerManifest = normalizeManifestSpacing(passengerManifest);
 changed = writeIfChanged(files.passengerManifest, passengerManifest) || changed;
 
-let driverVariables = read(files.driverVariables);
-driverVariables = setGradleNumber(driverVariables, "compileSdkVersion", 36);
-driverVariables = setGradleNumber(driverVariables, "targetSdkVersion", 36);
-changed = writeIfChanged(files.driverVariables, driverVariables) || changed;
-
 let passengerVariables = read(files.passengerVariables);
 passengerVariables = setGradleNumber(passengerVariables, "minSdkVersion", 23);
 passengerVariables = setGradleNumber(passengerVariables, "compileSdkVersion", 36);
@@ -222,9 +218,12 @@ passengerVariables = passengerVariables.replace(
 );
 changed = writeIfChanged(files.passengerVariables, passengerVariables) || changed;
 
+// Keep Gradle's local Java configuration valid in both Android projects.
+changed = writeIfChanged(files.driverProperties, read(files.passengerProperties)) || changed;
+
 let driverBuild = read(files.driverBuild);
-driverBuild = setGradleNumber(driverBuild, "versionCode", 23);
-driverBuild = setGradleString(driverBuild, "versionName", "1.0.22");
+driverBuild = setGradleNumber(driverBuild, "versionCode", 24);
+driverBuild = setGradleString(driverBuild, "versionName", "1.0.23");
 driverBuild = hardenSigningConfig(driverBuild);
 changed = writeIfChanged(files.driverBuild, driverBuild) || changed;
 
@@ -234,10 +233,10 @@ passengerBuild = setGradleString(passengerBuild, "versionName", "1.0.27");
 passengerBuild = hardenSigningConfig(passengerBuild);
 changed = writeIfChanged(files.passengerBuild, passengerBuild) || changed;
 
-let driverRootBuild = ensureJava17ForCapacitorPlugins(read(files.driverRootBuild));
-changed = writeIfChanged(files.driverRootBuild, driverRootBuild) || changed;
-
 let passengerRootBuild = ensureJava17ForCapacitorPlugins(read(files.passengerRootBuild));
 changed = writeIfChanged(files.passengerRootBuild, passengerRootBuild) || changed;
+
+let driverRootBuild = ensureJava17ForCapacitorPlugins(read(files.driverRootBuild));
+changed = writeIfChanged(files.driverRootBuild, driverRootBuild) || changed;
 
 console.log(changed ? "Android generated project hardened." : "Android generated project already hardened.");

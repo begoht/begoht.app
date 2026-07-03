@@ -85,6 +85,8 @@ test("el mapa pasajero mantiene origen, destino y guardado compatibles con Andro
 test("la app motorista muestra la divulgacion antes del permiso GPS", () => {
   const html = readWorkspaceFile("front-driver/www/index.html");
   const gps = readWorkspaceFile("front-driver/www/js/modules/gps.js");
+  const capacitor = readWorkspaceFile("front-driver/capacitor.config.json");
+  const hardening = readWorkspaceFile("scripts/harden-android-generated.mjs");
 
   assert.match(html, /id="driverLocationDisclosure"/);
   assert.match(html, /en arrière-plan/i);
@@ -93,6 +95,8 @@ test("la app motorista muestra la divulgacion antes del permiso GPS", () => {
     gps.indexOf("await ensureLocationDisclosure()") <
       gps.indexOf("startBackgroundGeolocation()")
   );
+  assert.doesNotMatch(capacitor, /useLegacyBridge/);
+  assert.match(hardening, /ensurePermissionRemoval\([\s\S]*driverManifest,[\s\S]*android\.permission\.ACCESS_BACKGROUND_LOCATION/);
 });
 
 test("cada formulario registra una sola accion principal de alta", () => {
