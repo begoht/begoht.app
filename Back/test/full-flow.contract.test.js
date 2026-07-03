@@ -202,7 +202,7 @@ test("mapa en viaje: conserva colores, refuerza etiquetas y elimina fondo y bord
   assert.doesNotMatch(mapMotionCss, /\.leaflet-zoom-animated[\s\S]{0,180}transition:\s*none\s*!important/);
   assert.match(mapMotionCss, /background:\s*transparent\s*!important/);
   assert.doesNotMatch(mapMotionCss, /\.bego-map-surface/);
-  assert.doesNotMatch(mapLayoutCss, /\.bego-map-primary-tiles/);
+  assert.match(mapLayoutCss, /\.bego-map-primary-tiles[\s\S]*grayscale\(1\)[\s\S]*brightness\(1\.24\)[\s\S]*contrast\(0\.72\)[\s\S]*saturate\(0\.48\)/);
   assert.match(mapLayoutCss, /\.bego-map-label-tiles[\s\S]*brightness\(1\.65\)/);
   assert.match(mapLayoutCss, /\.route-home #map[\s\S]*border:\s*0[\s\S]*background:\s*transparent/);
   assert.match(driverMap, /basemaps\.cartocdn\.com\/dark_nolabels/);
