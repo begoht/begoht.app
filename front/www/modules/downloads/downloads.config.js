@@ -1,5 +1,5 @@
 export const DOWNLOAD_VERSION = "20260703-driver-install";
-export const PASSENGER_DOWNLOAD_VERSION = "20260703-passenger-color";
+export const PASSENGER_DOWNLOAD_VERSION = "20260705-passenger-header-up";
 
 export const DOWNLOAD_APPS = Object.freeze({
   passenger: Object.freeze({

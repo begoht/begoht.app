@@ -228,8 +228,8 @@ driverBuild = hardenSigningConfig(driverBuild);
 changed = writeIfChanged(files.driverBuild, driverBuild) || changed;
 
 let passengerBuild = read(files.passengerBuild);
-passengerBuild = setGradleNumber(passengerBuild, "versionCode", 28);
-passengerBuild = setGradleString(passengerBuild, "versionName", "1.0.27");
+passengerBuild = setGradleNumber(passengerBuild, "versionCode", 29);
+passengerBuild = setGradleString(passengerBuild, "versionName", "1.0.28");
 passengerBuild = hardenSigningConfig(passengerBuild);
 changed = writeIfChanged(files.passengerBuild, passengerBuild) || changed;
 
