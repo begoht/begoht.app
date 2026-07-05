@@ -14,6 +14,8 @@ import {
 import { formatGourdes, getTripMoney, isCashMethod } from "../oferta/oferta.money.js?v=20260608-offer-net-cash";
 
 let botonCobroInicializado = false;
+let botonesAccionInicializados = false;
+let waitingTimerInterval = null;
 
 export function reconstruirUIDesdeEstado() {
     const estado = getEstadoViaje();
@@ -21,27 +23,33 @@ export function reconstruirUIDesdeEstado() {
     const btnFinalizar = document.getElementById("btnFinalizar");
     const btnIniciarVuelta = document.getElementById("btnIniciarVuelta");
     const btnAnularVuelta = document.getElementById("btnAnularVuelta");
+    const btnBuscarSiguiente = document.getElementById("btnBuscarSiguienteViaje");
     const estadoBox = document.getElementById("estadoViaje");
     const panel = document.getElementById("panelViajeControl");
     const viajeActual = obtenerViajeActualUI();
     const estadoIdaVuelta = viajeActual?.idaVuelta?.estado || "";
+    inicializarAccionesViaje();
 
     if (!estado) {
         if (btnIniciar) btnIniciar.style.display = "none";
         if (btnFinalizar) btnFinalizar.style.display = "none";
         if (btnIniciarVuelta) btnIniciarVuelta.style.display = "none";
         if (btnAnularVuelta) btnAnularVuelta.style.display = "none";
+        if (btnBuscarSiguiente) btnBuscarSiguiente.style.display = "none";
         if (panel) panel.style.display = "none";
         if (estadoBox) estadoBox.innerText = "En attente de courses";
         actualizarBotonCobro(null, null);
+        actualizarDetalleViaje(null, null);
         return;
     }
 
     panel?.classList.remove("hidden");
     panel && (panel.style.display = "block");
     actualizarBotonCobro(viajeActual, estado);
+    actualizarDetalleViaje(viajeActual, estado);
     if (btnIniciarVuelta) btnIniciarVuelta.style.display = "none";
     if (btnAnularVuelta) btnAnularVuelta.style.display = "none";
+    if (btnBuscarSiguiente) btnBuscarSiguiente.style.display = "none";
 
     switch (estado) {
         case "reservado":
@@ -62,7 +70,7 @@ export function reconstruirUIDesdeEstado() {
             if (btnIniciar) {
                 btnIniciar.style.display = "block";
                 btnIniciar.disabled = false;
-                btnIniciar.innerText = "Aviser l'arrivee";
+                btnIniciar.innerHTML = `<i class="fa-solid fa-location-dot" aria-hidden="true"></i> Je suis arrive`;
                 btnIniciar.classList.remove("btn-success");
                 btnIniciar.classList.add("btn-warning");
             }
@@ -74,7 +82,7 @@ export function reconstruirUIDesdeEstado() {
             if (btnIniciar) {
                 btnIniciar.style.display = "block";
                 btnIniciar.disabled = false;
-                btnIniciar.innerText = "Demarrer le trajet";
+                btnIniciar.innerHTML = `<i class="fa-solid fa-play" aria-hidden="true"></i> Demarrer la course`;
                 btnIniciar.classList.remove("btn-warning");
                 btnIniciar.classList.add("btn-success");
             }
@@ -99,10 +107,26 @@ export function reconstruirUIDesdeEstado() {
             if (btnIniciar) btnIniciar.style.display = "none";
             if (btnFinalizar) {
                 btnFinalizar.style.display = "block";
-                btnFinalizar.innerText = vaDeVuelta ? "Finaliser la vuelta" : esEnvio ? "Confirmer livraison" : "Finaliser la course";
+                btnFinalizar.innerHTML = `<i class="fa-solid fa-flag-checkered" aria-hidden="true"></i> ${vaDeVuelta ? "Finaliser la vuelta" : esEnvio ? "Confirmer livraison" : "Finaliser la course"}`;
             }
             break;
         }
+
+        case "completado":
+        case "finalizado":
+            estadoBox && (estadoBox.innerText = "Voyage complete");
+            if (btnIniciar) btnIniciar.style.display = "none";
+            if (btnFinalizar) btnFinalizar.style.display = "none";
+            if (btnBuscarSiguiente) {
+                btnBuscarSiguiente.style.display = "block";
+                btnBuscarSiguiente.onclick = () => limpiarViajeMain({
+                    btnIniciar,
+                    btnFinalizar,
+                    panelControl: panel,
+                    estadoBox
+                });
+            }
+            break;
     }
 }
 
@@ -131,7 +155,9 @@ export function limpiarViajeMain(ui = {}) {
     if (ui.btnFinalizar) ui.btnFinalizar.style.display = "none";
     document.getElementById("btnIniciarVuelta")?.style && (document.getElementById("btnIniciarVuelta").style.display = "none");
     document.getElementById("btnAnularVuelta")?.style && (document.getElementById("btnAnularVuelta").style.display = "none");
+    document.getElementById("btnBuscarSiguienteViaje")?.style && (document.getElementById("btnBuscarSiguienteViaje").style.display = "none");
     actualizarBotonCobro(null, null);
+    actualizarDetalleViaje(null, null);
 
     if (ui.panelControl) {
         ui.panelControl.style.display = "none";
@@ -140,6 +166,205 @@ export function limpiarViajeMain(ui = {}) {
     if (ui.estadoBox) {
         ui.estadoBox.innerText = "En attente de courses";
     }
+}
+
+function actualizarDetalleViaje(viaje, estado) {
+    const panel = document.getElementById("panelViajeControl");
+    const eta = document.getElementById("viajeSheetEta");
+    const etaLabel = document.getElementById("viajeSheetEtaLabel");
+    const nombre = document.getElementById("viajePasajeroNombre");
+    const avatar = document.getElementById("viajePasajeroAvatar");
+    const rating = document.getElementById("viajePasajeroRating");
+    const direccionPrincipal = document.getElementById("viajeDireccionPrincipal");
+    const direccionDetalle = document.getElementById("viajeDireccionDetalle");
+    const tiempo = document.getElementById("viajeTiempoEstimado");
+    const distancia = document.getElementById("viajeDistancia");
+    const etapa = document.getElementById("viajeEtapaLabel");
+    const waitingCard = document.getElementById("viajeWaitingCard");
+    const completedCard = document.getElementById("viajeCompletedCard");
+    const waitingTimer = document.getElementById("viajeWaitingTimer");
+    const gananciaFinal = document.getElementById("viajeGananciaFinal");
+
+    detenerWaitingTimer();
+    if (!viaje || !estado) {
+        panel?.removeAttribute("data-trip-state");
+        if (eta) eta.textContent = "--";
+        if (nombre) nombre.textContent = "Passager";
+        if (avatar) avatar.textContent = "P";
+        if (direccionPrincipal) direccionPrincipal.textContent = "Point de prise en charge";
+        if (direccionDetalle) direccionDetalle.textContent = "Distance et temps en calcul...";
+        if (tiempo) tiempo.textContent = "--";
+        if (distancia) distancia.textContent = "--";
+        if (etapa) etapa.textContent = "Pickup";
+        waitingCard?.classList.add("hidden");
+        completedCard?.classList.add("hidden");
+        return;
+    }
+
+    panel?.setAttribute("data-trip-state", estado);
+    const pasajero = viaje.pasajero || viaje.usuario || viaje.cliente || {};
+    const passengerName = pasajero.nombre || pasajero.name || viaje.pasajeroNombre || "Passager";
+    const passengerRating = pasajero.rating || pasajero.calificacion || viaje.pasajeroRating || "4.9";
+    const vaDeVuelta = viaje?.idaVuelta?.estado === "retorno_en_curso";
+    const esEnCurso = estado === "en_curso";
+    const target = esEnCurso
+        ? (vaDeVuelta ? (viaje.proximoDestino || viaje.origen) : (viaje.proximoDestino || viaje.destino))
+        : viaje.origen;
+    const fallbackAddress = esEnCurso ? "Destination finale" : "Point de prise en charge";
+    const targetAddress = target?.direccion || target?.address || fallbackAddress;
+    const distanceLabel = obtenerDistanciaLabel(viaje, estado, target);
+    const etaText = obtenerEtaLabel(viaje, estado, distanceLabel);
+    const detail = esEnCurso
+        ? `${viaje.destino?.direccion ? "Route vers destination" : "Route active"}`
+        : estado === "llego"
+            ? "Le passager peut monter maintenant"
+            : "Route vers le passager";
+
+    if (eta) eta.textContent = etaText.valor;
+    if (etaLabel) etaLabel.textContent = etaText.label;
+    if (nombre) nombre.textContent = passengerName;
+    if (avatar) avatar.textContent = String(passengerName).trim().charAt(0).toUpperCase() || "P";
+    if (rating) rating.innerHTML = `<i class="fa-solid fa-star" aria-hidden="true"></i> ${passengerRating}`;
+    if (direccionPrincipal) direccionPrincipal.textContent = targetAddress;
+    if (direccionDetalle) direccionDetalle.textContent = `${detail} - ${distanceLabel}`;
+    if (tiempo) tiempo.textContent = etaText.valor === "--" ? "Calcul..." : etaText.valor;
+    if (distancia) distancia.textContent = distanceLabel;
+    if (etapa) etapa.textContent = obtenerEtapaLabel(viaje, estado);
+
+    waitingCard?.classList.toggle("hidden", estado !== "llego");
+    completedCard?.classList.toggle("hidden", !["completado", "finalizado"].includes(estado));
+
+    if (estado === "llego" && waitingTimer) {
+        iniciarWaitingTimer(waitingTimer, viaje);
+    }
+
+    if (gananciaFinal) {
+        gananciaFinal.textContent = formatGourdes(getTripMoney(viaje).gananciaMotorista || getTripMoney(viaje).totalMotorista || viaje.gananciaMotorista || viaje.precio || 0);
+    }
+}
+
+function obtenerEtapaLabel(viaje, estado) {
+    if (estado === "llego") return "Attente";
+    if (estado === "en_curso") return viaje?.idaVuelta?.estado === "retorno_en_curso" ? "Retour" : "Destination";
+    if (["completado", "finalizado"].includes(estado)) return "Resume";
+    return "Pickup";
+}
+
+function obtenerEtaLabel(viaje, estado, distanceLabel) {
+    const raw = viaje?.etaMinutos ?? viaje?.eta ?? viaje?.duracionMin ?? viaje?.tiempoEstimadoMin ?? null;
+    const minutes = Number(raw);
+    if (Number.isFinite(minutes) && minutes > 0) {
+        return { valor: `${Math.round(minutes)} min`, label: estado === "llego" ? "attente" : "ETA" };
+    }
+
+    const km = Number(String(distanceLabel).replace(",", ".").match(/[\d.]+/)?.[0]);
+    if (Number.isFinite(km) && km > 0 && /km/i.test(distanceLabel)) {
+        return { valor: `${Math.max(2, Math.round(km * 3))} min`, label: "ETA" };
+    }
+
+    return { valor: estado === "llego" ? "00:00" : "--", label: estado === "llego" ? "attente" : "ETA" };
+}
+
+function obtenerDistanciaLabel(viaje, estado, target) {
+    const directa = estado === "en_curso"
+        ? (viaje?.distanciaDestino || viaje?.distanciaKm || viaje?.distancia)
+        : (viaje?.distanciaPasajero || viaje?.distanciaOrigen || viaje?.distanciaKm || viaje?.distancia);
+    const directaLabel = formatearDistanciaValor(directa);
+    if (directaLabel) return directaLabel;
+
+    const driver = window.ultimaPosicionMotorista || window.driverLastPosition || null;
+    const from = normalizarCoord(driver);
+    const to = normalizarCoord(target);
+    if (from && to) {
+        const metros = calcularDistanciaMetros(from, to);
+        return metros < 1000 ? `${Math.round(metros)} m` : `${(metros / 1000).toFixed(1)} km`;
+    }
+
+    return "En calcul";
+}
+
+function formatearDistanciaValor(valor) {
+    if (valor === null || valor === undefined || valor === "") return "";
+    if (typeof valor === "string") return valor;
+    const num = Number(valor);
+    if (!Number.isFinite(num) || num <= 0) return "";
+    return num > 100 ? `${Math.round(num)} m` : `${num.toFixed(num >= 10 ? 0 : 1)} km`;
+}
+
+function normalizarCoord(coord) {
+    const lat = Number(coord?.lat ?? coord?.latitude);
+    const lng = Number(coord?.lng ?? coord?.lon ?? coord?.longitude);
+    return Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : null;
+}
+
+function calcularDistanciaMetros(a, b) {
+    const earth = 6371000;
+    const toRad = value => value * Math.PI / 180;
+    const dLat = toRad(b.lat - a.lat);
+    const dLng = toRad(b.lng - a.lng);
+    const lat1 = toRad(a.lat);
+    const lat2 = toRad(b.lat);
+    const h = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+    return 2 * earth * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
+}
+
+function iniciarWaitingTimer(node, viaje) {
+    const start = Number(viaje?.llegoAt || viaje?.arrivedAt || Date.now());
+    const render = () => {
+        const elapsed = Math.max(0, Date.now() - start);
+        const totalSeconds = Math.floor(elapsed / 1000);
+        const mins = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
+        const secs = String(totalSeconds % 60).padStart(2, "0");
+        node.textContent = `${mins}:${secs}`;
+    };
+    render();
+    waitingTimerInterval = setInterval(render, 1000);
+}
+
+function detenerWaitingTimer() {
+    if (waitingTimerInterval) {
+        clearInterval(waitingTimerInterval);
+        waitingTimerInterval = null;
+    }
+}
+
+function inicializarAccionesViaje() {
+    if (botonesAccionInicializados) return;
+    botonesAccionInicializados = true;
+
+    document.getElementById("btnViajeLlamar")?.addEventListener("click", () => {
+        const viaje = obtenerViajeActualUI();
+        const tel = viaje?.pasajero?.telefono || viaje?.pasajero?.phone || viaje?.telefonoPasajero;
+        if (tel) window.location.href = `tel:${tel}`;
+    });
+
+    document.getElementById("btnViajeMensaje")?.addEventListener("click", () => {
+        const viaje = obtenerViajeActualUI();
+        const tel = viaje?.pasajero?.telefono || viaje?.pasajero?.phone || viaje?.telefonoPasajero;
+        if (tel) window.location.href = `sms:${tel}`;
+    });
+
+    document.getElementById("btnViajeNavegar")?.addEventListener("click", () => {
+        const estado = getEstadoViaje();
+        const viaje = obtenerViajeActualUI();
+        const target = estado === "en_curso" ? (viaje?.proximoDestino || viaje?.destino) : viaje?.origen;
+        const coord = normalizarCoord(target);
+        if (coord) {
+            window.open(`https://www.google.com/maps/dir/?api=1&destination=${coord.lat},${coord.lng}`, "_blank");
+        }
+    });
+
+    document.getElementById("btnViajeEmergencia")?.addEventListener("click", () => {
+        if (typeof Toastify !== "undefined") {
+            Toastify({
+                text: "SOS conducteur active. Contacte support si la situation continue.",
+                duration: 4500,
+                gravity: "top",
+                position: "center",
+                style: { background: "linear-gradient(135deg, #991b1b, #ef4444)", fontWeight: "900" }
+            }).showToast();
+        }
+    });
 }
 
 function obtenerViajeActualUI() {

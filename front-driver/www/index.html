@@ -232,13 +232,83 @@
         </div>
       </div>
 
-      <div id="panelViajeControl" class="viaje-control hidden">
+      <div id="panelViajeControl" class="viaje-control hidden" aria-live="polite">
+        <div class="viaje-sheet-handle" aria-hidden="true"></div>
         <div class="info-pasajero-mini">
           <div id="estadoViaje" class="estado-tag">
             <i class="fa-solid fa-circle-dot" aria-hidden="true"></i>
             En route
           </div>
+          <div class="viaje-sheet-eta">
+            <strong id="viajeSheetEta">--</strong>
+            <span id="viajeSheetEtaLabel">ETA</span>
+          </div>
         </div>
+
+        <section class="viaje-rider-card" aria-label="Information passager">
+          <div class="viaje-rider-avatar" id="viajePasajeroAvatar" aria-hidden="true">P</div>
+          <div class="viaje-rider-main">
+            <div class="viaje-rider-row">
+              <strong id="viajePasajeroNombre">Passager</strong>
+              <span id="viajePasajeroRating"><i class="fa-solid fa-star" aria-hidden="true"></i> 4.9</span>
+            </div>
+            <p id="viajeDireccionPrincipal">Point de prise en charge</p>
+            <small id="viajeDireccionDetalle">Distance et temps en calcul...</small>
+          </div>
+        </section>
+
+        <div class="viaje-quick-actions" aria-label="Actions rapides">
+          <button id="btnViajeLlamar" type="button">
+            <i class="fa-solid fa-phone" aria-hidden="true"></i>
+            <span>Appeler</span>
+          </button>
+          <button id="btnViajeMensaje" type="button">
+            <i class="fa-solid fa-message" aria-hidden="true"></i>
+            <span>Message</span>
+          </button>
+          <button id="btnViajeNavegar" type="button">
+            <i class="fa-solid fa-location-arrow" aria-hidden="true"></i>
+            <span>Naviguer</span>
+          </button>
+          <button id="btnViajeEmergencia" class="danger" type="button">
+            <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+            <span>SOS</span>
+          </button>
+        </div>
+
+        <section class="viaje-progress-card" aria-label="Progression du voyage">
+          <div>
+            <span>Temps estime</span>
+            <strong id="viajeTiempoEstimado">--</strong>
+          </div>
+          <div>
+            <span>Distance</span>
+            <strong id="viajeDistancia">--</strong>
+          </div>
+          <div>
+            <span>Etape</span>
+            <strong id="viajeEtapaLabel">Pickup</strong>
+          </div>
+        </section>
+
+        <section id="viajeWaitingCard" class="viaje-waiting-card hidden" aria-label="Attente passager">
+          <span>En attente du passager</span>
+          <strong id="viajeWaitingTimer">00:00</strong>
+        </section>
+
+        <section id="viajeCompletedCard" class="viaje-completed-card hidden" aria-label="Resume du voyage">
+          <div>
+            <span>Voyage complete</span>
+            <strong id="viajeGananciaFinal">--</strong>
+          </div>
+          <div class="viaje-rating-row" aria-hidden="true">
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+          </div>
+        </section>
 
         <button id="btnCobrarEfectivo" class="btn-cobrar-efectivo hidden" type="button">
           <span>
@@ -262,6 +332,11 @@
           <button id="btnFinalizar" class="btn-finalizar" type="button" style="display:none;">
             <i class="fa-solid fa-flag-checkered" aria-hidden="true"></i>
             Finaliser
+          </button>
+
+          <button id="btnBuscarSiguienteViaje" class="btn-iniciar" type="button" style="display:none;">
+            <i class="fa-solid fa-magnifying-glass-location" aria-hidden="true"></i>
+            Chercher course suivante
           </button>
 
           <button id="btnIniciarVuelta" class="btn-iniciar" type="button" style="display:none;">
