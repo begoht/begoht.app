@@ -15,6 +15,7 @@ import { formatGourdes, getTripMoney, isCashMethod } from "../oferta/oferta.mone
 
 let botonCobroInicializado = false;
 let botonesAccionInicializados = false;
+let sheetDragInicializado = false;
 let waitingTimerInterval = null;
 
 export function reconstruirUIDesdeEstado() {
@@ -37,6 +38,7 @@ export function reconstruirUIDesdeEstado() {
         if (btnAnularVuelta) btnAnularVuelta.style.display = "none";
         if (btnBuscarSiguiente) btnBuscarSiguiente.style.display = "none";
         if (panel) panel.style.display = "none";
+        document.body.classList.remove("driver-trip-active");
         if (estadoBox) estadoBox.innerText = "En attente de courses";
         actualizarBotonCobro(null, null);
         actualizarDetalleViaje(null, null);
@@ -45,6 +47,7 @@ export function reconstruirUIDesdeEstado() {
 
     panel?.classList.remove("hidden");
     panel && (panel.style.display = "block");
+    document.body.classList.add("driver-trip-active");
     actualizarBotonCobro(viajeActual, estado);
     actualizarDetalleViaje(viajeActual, estado);
     if (btnIniciarVuelta) btnIniciarVuelta.style.display = "none";
@@ -162,6 +165,7 @@ export function limpiarViajeMain(ui = {}) {
     if (ui.panelControl) {
         ui.panelControl.style.display = "none";
     }
+    document.body.classList.remove("driver-trip-active");
 
     if (ui.estadoBox) {
         ui.estadoBox.innerText = "En attente de courses";
@@ -331,39 +335,58 @@ function detenerWaitingTimer() {
 function inicializarAccionesViaje() {
     if (botonesAccionInicializados) return;
     botonesAccionInicializados = true;
+    inicializarSheetExpandible();
 
     document.getElementById("btnViajeLlamar")?.addEventListener("click", () => {
         const viaje = obtenerViajeActualUI();
         const tel = viaje?.pasajero?.telefono || viaje?.pasajero?.phone || viaje?.telefonoPasajero;
         if (tel) window.location.href = `tel:${tel}`;
     });
+}
 
-    document.getElementById("btnViajeMensaje")?.addEventListener("click", () => {
-        const viaje = obtenerViajeActualUI();
-        const tel = viaje?.pasajero?.telefono || viaje?.pasajero?.phone || viaje?.telefonoPasajero;
-        if (tel) window.location.href = `sms:${tel}`;
+function inicializarSheetExpandible() {
+    if (sheetDragInicializado) return;
+    const panel = document.getElementById("panelViajeControl");
+    const handle = document.getElementById("viajeSheetHandle");
+    if (!panel || !handle) return;
+
+    sheetDragInicializado = true;
+    let startY = 0;
+    let dragging = false;
+    let movedByDrag = false;
+
+    const setSize = size => {
+        panel.dataset.sheetSize = size;
+        handle.setAttribute("aria-expanded", size === "full" ? "true" : "false");
+    };
+
+    handle.addEventListener("click", () => {
+        if (movedByDrag) {
+            movedByDrag = false;
+            return;
+        }
+        setSize(panel.dataset.sheetSize === "full" ? "compact" : "full");
     });
 
-    document.getElementById("btnViajeNavegar")?.addEventListener("click", () => {
-        const estado = getEstadoViaje();
-        const viaje = obtenerViajeActualUI();
-        const target = estado === "en_curso" ? (viaje?.proximoDestino || viaje?.destino) : viaje?.origen;
-        const coord = normalizarCoord(target);
-        if (coord) {
-            window.open(`https://www.google.com/maps/dir/?api=1&destination=${coord.lat},${coord.lng}`, "_blank");
-        }
+    handle.addEventListener("pointerdown", event => {
+        dragging = true;
+        startY = event.clientY;
+        handle.setPointerCapture?.(event.pointerId);
     });
 
-    document.getElementById("btnViajeEmergencia")?.addEventListener("click", () => {
-        if (typeof Toastify !== "undefined") {
-            Toastify({
-                text: "SOS conducteur active. Contacte support si la situation continue.",
-                duration: 4500,
-                gravity: "top",
-                position: "center",
-                style: { background: "linear-gradient(135deg, #991b1b, #ef4444)", fontWeight: "900" }
-            }).showToast();
+    handle.addEventListener("pointerup", event => {
+        if (!dragging) return;
+        dragging = false;
+        const delta = event.clientY - startY;
+        if (Math.abs(delta) > 24) {
+            movedByDrag = true;
+            setSize(delta < 0 ? "full" : "compact");
         }
+        handle.releasePointerCapture?.(event.pointerId);
+    });
+
+    handle.addEventListener("pointercancel", () => {
+        dragging = false;
     });
 }
 

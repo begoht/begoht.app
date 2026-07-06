@@ -2414,6 +2414,270 @@ body[data-driver-availability="offline"] .oferta-panel {
   }
 }
 
+/* Refined active trip sheet */
+body.driver-trip-active .driver-bottom-nav {
+  transform: translateY(calc(100% + env(safe-area-inset-bottom)));
+  pointer-events: none;
+}
+
+.viaje-control {
+  bottom: 0;
+  width: min(440px, 100%);
+  min-height: auto;
+  height: min(66vh, 620px);
+  max-height: 100dvh;
+  gap: 16px;
+  padding: 8px 18px calc(18px + env(safe-area-inset-bottom));
+  border: 0;
+  border-radius: 22px 22px 0 0;
+  color: #f8fafc;
+  background:
+    linear-gradient(180deg, rgba(15, 23, 42, 0.98), rgba(2, 6, 23, 0.98)),
+    #07111f;
+  box-shadow: 0 -18px 48px rgba(15, 23, 42, 0.28);
+  z-index: 2600;
+  transition: height 180ms ease, border-radius 180ms ease, box-shadow 180ms ease;
+}
+
+.viaje-control[data-sheet-size="full"] {
+  height: 100dvh;
+  border-radius: 0;
+}
+
+.viaje-sheet-handle {
+  width: 100%;
+  height: 28px;
+  margin: -2px 0 0;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  cursor: grab;
+  touch-action: none;
+}
+
+.viaje-sheet-handle:active {
+  cursor: grabbing;
+}
+
+.viaje-sheet-handle span {
+  width: 46px;
+  height: 5px;
+  border-radius: 999px;
+  background: #d1d5db;
+}
+
+.info-pasajero-mini {
+  min-height: 52px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+.estado-tag {
+  min-height: 34px;
+  padding: 7px 11px;
+  border: 1px solid rgba(45, 212, 191, 0.28);
+  color: #ccfbf1;
+  background: rgba(13, 148, 136, 0.16);
+}
+
+.viaje-sheet-eta {
+  min-width: 62px;
+  padding: 8px 10px;
+  justify-items: center;
+  color: #ffffff;
+  background: #050505;
+  border-radius: 2px;
+}
+
+.viaje-sheet-eta strong {
+  color: #ffffff;
+  font-size: 1.05rem;
+}
+
+.viaje-sheet-eta span {
+  color: #e5e7eb;
+  font-size: 0.62rem;
+}
+
+.viaje-rider-card,
+.viaje-progress-card,
+.viaje-waiting-card,
+.viaje-completed-card {
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: rgba(15, 23, 42, 0.72);
+  box-shadow: none;
+}
+
+.viaje-rider-card {
+  grid-template-columns: 52px minmax(0, 1fr);
+  gap: 14px;
+  padding: 16px 0 2px;
+  border: 0;
+  border-radius: 0;
+}
+
+.viaje-rider-avatar {
+  width: 52px;
+  height: 52px;
+  color: #022c22;
+  background: linear-gradient(135deg, #f8fafc, #5eead4);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+}
+
+.viaje-rider-row {
+  justify-content: start;
+  gap: 8px;
+}
+
+.viaje-rider-row strong {
+  flex: 1 1 auto;
+  color: #ffffff;
+  font-size: 1.05rem;
+}
+
+.viaje-rider-row span {
+  color: #fde68a;
+  background: rgba(250, 204, 21, 0.12);
+  border-radius: 999px;
+  padding: 5px 8px;
+  font-size: 0.72rem;
+}
+
+.viaje-call-action {
+  flex: 0 0 38px;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  color: #e2e8f0;
+  background: rgba(30, 41, 59, 0.9);
+}
+
+.viaje-rider-main p {
+  margin: 9px 0 5px;
+  color: #e2e8f0;
+  font-size: 0.96rem;
+}
+
+.viaje-rider-main small {
+  color: #94a3b8;
+}
+
+.viaje-progress-card {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.viaje-progress-card div {
+  gap: 7px;
+  padding: 14px 10px;
+  border-radius: 0;
+  background: rgba(2, 6, 23, 0.38);
+}
+
+.viaje-progress-card div + div {
+  border-left: 1px solid rgba(148, 163, 184, 0.14);
+}
+
+.viaje-progress-card span,
+.viaje-waiting-card span,
+.viaje-completed-card span {
+  color: #94a3b8;
+}
+
+.viaje-progress-card strong,
+.viaje-waiting-card strong {
+  color: #ffffff;
+}
+
+.viaje-control .btn-cobrar-efectivo {
+  border-color: rgba(147, 197, 253, 0.24);
+  color: #ffffff;
+  background:
+    linear-gradient(135deg, rgba(37, 99, 235, 0.28), rgba(15, 118, 110, 0.28)),
+    rgba(15, 23, 42, 0.9);
+}
+
+.viaje-control .btn-cobrar-efectivo span {
+  color: #dbeafe;
+}
+
+.viaje-control .btn-cobrar-efectivo strong {
+  color: #ffffff;
+}
+
+.viaje-control .viaje-actions {
+  margin-top: auto;
+  padding-top: 14px;
+  background: linear-gradient(180deg, rgba(2, 6, 23, 0), #020617 28%);
+}
+
+.viaje-control .viaje-actions > button {
+  min-height: 58px;
+  border-radius: 10px;
+  font-size: 0.94rem;
+  letter-spacing: 0;
+}
+
+.viaje-control .btn-iniciar,
+.viaje-control .btn-llegue {
+  color: #031b13;
+  background: linear-gradient(135deg, #22c55e, #14b8a6);
+}
+
+.viaje-control .btn-finalizar {
+  background: #dc2626;
+}
+
+.viaje-control[data-trip-state="llego"] .estado-tag,
+.viaje-control[data-trip-state="en_curso"] .estado-tag {
+  border-color: rgba(96, 165, 250, 0.35);
+  color: #dbeafe;
+  background: rgba(30, 64, 175, 0.3);
+}
+
+@media (min-width: 760px) {
+  .viaje-control {
+    width: 420px;
+    right: 24px;
+    height: min(66vh, 620px);
+  }
+
+  .viaje-control[data-sheet-size="full"] {
+    height: calc(100dvh - 24px);
+    border-radius: 22px 22px 0 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .viaje-control {
+    left: 0;
+    right: 0;
+    transform: none;
+    width: 100%;
+    height: 68dvh;
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+  }
+
+  .viaje-control[data-sheet-size="full"] {
+    height: 100dvh;
+  }
+
+  .viaje-rider-row {
+    flex-wrap: wrap;
+  }
+
+  .viaje-call-action {
+    margin-left: auto;
+  }
+}
+
 @media (min-width: 760px) {
   .panel-superior.driver-home-topbar {
     left: 84px;
