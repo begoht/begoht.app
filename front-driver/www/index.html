@@ -24,7 +24,7 @@
   </script>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="./css/inicio.css?v=20260706-driver-trip-sheet-polish" />
+  <link rel="stylesheet" href="./css/inicio.css?v=20260709-driver-css-modules-trip-sheet" />
   <link rel="stylesheet" href="./css/map-motion.css?v=20260627-map-fluid-arrival" />
 
   <link id="bego-leaflet-css" rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -102,19 +102,19 @@
       <div class="driver-location-disclosure-icon" aria-hidden="true">
         <i class="fa-solid fa-location-dot"></i>
       </div>
-      <h1 id="driverLocationDisclosureTitle">Position en arrière-plan</h1>
+      <h1 id="driverLocationDisclosureTitle">Position en arriere-plan</h1>
       <p id="driverLocationDisclosureText">
-        BeGO Driver utilise votre position précise quand l'application est ouverte
-        et en arrière-plan pendant que vous êtes en ligne ou en course.
+        BeGO Driver utilise votre position precise quand l'application est ouverte
+        et en arriere-plan pendant que vous etes en ligne ou en course.
       </p>
       <ul>
-        <li>permet au passager de voir votre arrivée et votre trajet en temps réel;</li>
+        <li>permet au passager de voir votre arrivee et votre trajet en temps reel;</li>
         <li>permet de vous proposer des courses proches;</li>
         <li>continue uniquement lorsque votre service BeGO est actif.</li>
       </ul>
       <p class="driver-location-disclosure-note">
-        Une notification permanente peut être affichée par Android. Vous pouvez
-        retirer cette autorisation dans les réglages du téléphone.
+        Une notification permanente peut etre affichee par Android. Vous pouvez
+        retirer cette autorisation dans les reglages du telephone.
       </p>
       <div class="driver-location-disclosure-actions">
         <button id="driverLocationDisclosureAccept" type="button">
@@ -232,110 +232,315 @@
         </div>
       </div>
 
-      <div id="panelViajeControl" class="viaje-control hidden" data-sheet-size="compact" aria-live="polite">
-        <button id="viajeSheetHandle" class="viaje-sheet-handle" type="button" aria-label="Agrandir ou reduire le panneau">
-          <span aria-hidden="true"></span>
-        </button>
-        <div class="info-pasajero-mini">
-          <div id="estadoViaje" class="estado-tag">
-            <i class="fa-solid fa-circle-dot" aria-hidden="true"></i>
-            En route
-          </div>
-          <div class="viaje-sheet-eta">
-            <strong id="viajeSheetEta">--</strong>
-            <span id="viajeSheetEtaLabel">ETA</span>
-          </div>
-        </div>
-
-        <section class="viaje-rider-card" aria-label="Information passager">
-          <div class="viaje-rider-avatar" id="viajePasajeroAvatar" aria-hidden="true">P</div>
-          <div class="viaje-rider-main">
-            <div class="viaje-rider-row">
-              <strong id="viajePasajeroNombre">Passager</strong>
-              <span id="viajePasajeroRating"><i class="fa-solid fa-star" aria-hidden="true"></i> 4.9</span>
-              <button id="btnViajeLlamar" class="viaje-call-action" type="button" aria-label="Appeler le passager">
-                <i class="fa-solid fa-phone" aria-hidden="true"></i>
-              </button>
-            </div>
-            <p id="viajeDireccionPrincipal">Point de prise en charge</p>
-            <small id="viajeDireccionDetalle">Distance et temps en calcul...</small>
-          </div>
-        </section>
-
-        <section class="viaje-progress-card" aria-label="Progression du voyage">
-          <div>
-            <span>Temps estime</span>
-            <strong id="viajeTiempoEstimado">--</strong>
-          </div>
-          <div>
-            <span>Distance</span>
-            <strong id="viajeDistancia">--</strong>
-          </div>
-          <div>
-            <span>Etape</span>
-            <strong id="viajeEtapaLabel">Pickup</strong>
-          </div>
-        </section>
-
-        <section id="viajeWaitingCard" class="viaje-waiting-card hidden" aria-label="Attente passager">
-          <span>En attente du passager</span>
-          <strong id="viajeWaitingTimer">00:00</strong>
-        </section>
-
-        <section id="viajeCompletedCard" class="viaje-completed-card hidden" aria-label="Resume du voyage">
-          <div>
-            <span>Voyage complete</span>
-            <strong id="viajeGananciaFinal">--</strong>
-          </div>
-          <div class="viaje-rating-row" aria-hidden="true">
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-          </div>
-        </section>
-
-        <button id="btnCobrarEfectivo" class="btn-cobrar-efectivo hidden" type="button">
-          <span>
-            <i class="fa-solid fa-money-bill-wave" aria-hidden="true"></i>
-            Encaisser au passager
-          </span>
-          <strong id="montoCobrarEfectivo">0 G</strong>
-        </button>
-
-        <div class="viaje-actions">
-          <button id="btnLlegue" class="btn-llegue" type="button" style="display: none;">
-            <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
-            Arrive au point
-          </button>
-
-          <button id="btnIniciarViaje" class="btn-iniciar" type="button" style="display:none;">
-            <i class="fa-solid fa-play" aria-hidden="true"></i>
-            Demarrer la course
-          </button>
-
-          <button id="btnFinalizar" class="btn-finalizar" type="button" style="display:none;">
-            <i class="fa-solid fa-flag-checkered" aria-hidden="true"></i>
-            Finaliser
-          </button>
-
-          <button id="btnBuscarSiguienteViaje" class="btn-iniciar" type="button" style="display:none;">
-            <i class="fa-solid fa-magnifying-glass-location" aria-hidden="true"></i>
-            Chercher course suivante
-          </button>
-
-          <button id="btnIniciarVuelta" class="btn-iniciar" type="button" style="display:none;">
-            <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
-            Demarrer la vuelta
-          </button>
-
-          <button id="btnAnularVuelta" class="btn-finalizar" type="button" style="display:none;">
-            <i class="fa-solid fa-ban" aria-hidden="true"></i>
-            Annuler la vuelta
-          </button>
-        </div>
+      <div
+        id="panelViajeControl"
+        class="trip-sheet hidden"
+        data-sheet-size="medium"
+        data-trip-state="aceptado"
+        aria-live="polite"
+      >
+      
+      <!-- HANDLE -->
+      <button id="viajeSheetHandle"
+      class="trip-sheet-handle"
+      type="button"
+      aria-expanded="false"
+      aria-label="Expandir o contraer panel de viaje">
+      <span></span>
+    </button>
+    
+    <!-- HEADER -->
+    <header class="trip-header">
+      
+      <div id="estadoViaje" class="trip-status">
+        <span class="trip-status-dot"></span>
+        En camino al pasajero
       </div>
+      
+      <div class="trip-eta-box">
+        <strong id="viajeSheetEta">4</strong>
+        <span id="viajeSheetEtaLabel">ETA</span>
+      </div>
+      
+    </header>
+    
+    <!-- PASAJERO -->
+    <section class="trip-rider-section">
+      
+      <div id="viajePasajeroAvatar"
+      class="trip-avatar">
+      P
+    </div>
+    
+    <div class="trip-rider-info">
+      
+      <div class="trip-rider-top">
+        
+        <h2 id="viajePasajeroNombre">
+          Pasajero
+        </h2>
+        
+        <div id="viajePasajeroRating"
+        class="trip-rating">
+        <i class="fa-solid fa-star" aria-hidden="true"></i> 4.9
+      </div>
+      
+    </div>
+    
+    <div class="trip-rider-actions">
+      
+      <button id="btnViajeLlamar"
+      class="trip-circle-btn"
+      type="button"
+      aria-label="Llamar al pasajero">
+      <i class="fa-solid fa-phone" aria-hidden="true"></i>
+    </button>
+    
+    <button id="btnViajeMensaje"
+    class="trip-circle-btn"
+    type="button"
+    aria-label="Abrir chat con el pasajero">
+    <i class="fa-solid fa-message" aria-hidden="true"></i>
+  </button>
+  
+</div>
+
+</div>
+
+</section>
+
+<!-- DIRECCION -->
+<section class="trip-address-card">
+  
+  <div class="trip-stop-marker pickup"></div>
+  
+        <div class="trip-address-content">
+          
+          <span class="trip-address-label">
+                Recoger en
+            </span>
+
+            <strong id="viajeDireccionPrincipal">
+              Dirección del pasajero
+            </strong>
+
+            <small id="viajeDireccionDetalle">
+                Calculando distancia...
+              </small>
+              
+            </div>
+
+    </section>
+    
+    <!-- RESUMEN -->
+    <section class="trip-stats">
+      
+      <div class="trip-stat">
+        <strong id="viajeTiempoEstimado">
+          8 min
+        </strong>
+        <span>Tiempo</span>
+      </div>
+      
+      <div class="trip-divider"></div>
+      
+      <div class="trip-stat">
+        <strong id="viajeDistancia">
+          2.1 km
+        </strong>
+        <span>Distancia</span>
+      </div>
+      
+      <div class="trip-divider"></div>
+      
+      <div class="trip-stat">
+        <strong id="viajeEtapaLabel">
+          Pickup
+        </strong>
+        <span>Etapa</span>
+      </div>
+      
+    </section>
+    
+    <!-- ESPERA -->
+    <section id="viajeWaitingCard"
+    class="trip-waiting hidden">
+    
+    <div class="trip-waiting-icon">
+      <i class="fa-solid fa-stopwatch" aria-hidden="true"></i>
+    </div>
+    
+    <div class="trip-waiting-info">
+      
+      <span>
+        Esperando al pasajero
+      </span>
+      
+      <strong id="viajeWaitingTimer">
+        00:00
+      </strong>
+      
+    </div>
+    
+  </section>
+  
+  <!-- COBRO -->
+  <section id="btnCobrarEfectivo"
+  class="trip-cash hidden">
+  
+  <div class="trip-cash-left">
+    
+    <span>
+      Cobrar al pasajero
+    </span>
+    
+    <strong id="montoCobrarEfectivo">
+      0 G
+    </strong>
+    
+  </div>
+  
+  <i class="fa-solid fa-money-bill-wave"></i>
+  
+</section>
+
+<!-- VIAJE FINALIZADO -->
+<section id="viajeCompletedCard"
+class="trip-completed hidden">
+
+<div class="trip-completed-header">
+  
+  <div class="trip-completed-icon">
+    <i class="fa-solid fa-check" aria-hidden="true"></i>
+  </div>
+  
+  <div>
+    
+    <span>
+      Viaje completado
+    </span>
+    
+    <strong id="viajeGananciaFinal">
+      0 G
+    </strong>
+    
+  </div>
+  
+</div>
+
+<div class="trip-stars">
+  
+  <i class="fa-solid fa-star"></i>
+  <i class="fa-solid fa-star"></i>
+  <i class="fa-solid fa-star"></i>
+  <i class="fa-solid fa-star"></i>
+  <i class="fa-solid fa-star"></i>
+  
+</div>
+
+</section>
+
+<!-- INFORMACION EXTRA -->
+<section class="trip-details">
+  
+  <div class="trip-detail-row">
+    
+    <span>Tipo de servicio</span>
+    
+    <strong id="tripTipoServicio">
+      Estándar
+    </strong>
+    
+  </div>
+  
+  <div class="trip-detail-row">
+    
+    <span>Método de pago</span>
+    
+    <strong id="tripMetodoPago">
+      Efectivo
+    </strong>
+    
+  </div>
+  
+  <div class="trip-detail-row">
+    
+    <span>Tarifa estimada</span>
+    
+    <strong id="tripTarifa">
+      --
+    </strong>
+    
+  </div>
+  
+</section>
+
+<!-- BOTONES -->
+<footer class="trip-footer-actions viaje-actions">
+  
+  <button id="btnLlegue"
+  class="trip-primary-btn"
+  type="button"
+  style="display:none;">
+  
+            <i class="fa-solid fa-location-dot"></i>
+            Llegué al punto
+            
+          </button>
+          
+          <button id="btnIniciarViaje"
+          class="trip-primary-btn"
+          type="button"
+          style="display:none;">
+          
+          <i class="fa-solid fa-play"></i>
+          Iniciar viaje
+          
+        </button>
+        
+        <button id="btnFinalizar"
+                class="trip-primary-btn danger"
+                type="button"
+                style="display:none;">
+                
+                <i class="fa-solid fa-flag-checkered"></i>
+                Finalizar viaje
+                
+              </button>
+              
+              <button id="btnBuscarSiguienteViaje"
+              class="trip-primary-btn"
+              type="button"
+                style="display:none;">
+                
+            <i class="fa-solid fa-route"></i>
+            Buscar siguiente viaje
+            
+          </button>
+          
+          <button id="btnIniciarVuelta"
+          class="trip-primary-btn"
+          type="button"
+          style="display:none;">
+          
+          <i class="fa-solid fa-rotate-right"></i>
+          Iniciar vuelta
+          
+        </button>
+        
+        <button id="btnAnularVuelta"
+        class="trip-primary-btn danger"
+        type="button"
+        style="display:none;">
+        
+        <i class="fa-solid fa-ban"></i>
+        Cancelar vuelta
+        
+      </button>
+      
+    </footer>
+  </div>
+
     </section>
 
     <section id="driverPageView" class="driver-page-view hidden"></section>
@@ -366,3 +571,5 @@
   </script>
 </body>
 </html>
+
+

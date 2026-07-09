@@ -37,7 +37,7 @@ export function reconstruirUIDesdeEstado() {
         if (btnIniciarVuelta) btnIniciarVuelta.style.display = "none";
         if (btnAnularVuelta) btnAnularVuelta.style.display = "none";
         if (btnBuscarSiguiente) btnBuscarSiguiente.style.display = "none";
-        if (panel) panel.style.display = "none";
+        ocultarPanelViaje(panel);
         document.body.classList.remove("driver-trip-active");
         if (estadoBox) estadoBox.innerText = "En attente de courses";
         actualizarBotonCobro(null, null);
@@ -46,7 +46,7 @@ export function reconstruirUIDesdeEstado() {
     }
 
     panel?.classList.remove("hidden");
-    panel && (panel.style.display = "block");
+    mostrarPanelViaje(panel);
     document.body.classList.add("driver-trip-active");
     actualizarBotonCobro(viajeActual, estado);
     actualizarDetalleViaje(viajeActual, estado);
@@ -63,7 +63,7 @@ export function reconstruirUIDesdeEstado() {
 
         case "ofertando":
             if (estadoBox) estadoBox.innerText = "Offre en attente...";
-            if (panel) panel.style.display = "block";
+            mostrarPanelViaje(panel);
             if (btnIniciar) btnIniciar.style.display = "none";
             if (btnFinalizar) btnFinalizar.style.display = "none";
             break;
@@ -71,7 +71,7 @@ export function reconstruirUIDesdeEstado() {
         case "asignado":
             estadoBox && (estadoBox.innerText = "En route vers le passager");
             if (btnIniciar) {
-                btnIniciar.style.display = "block";
+                btnIniciar.style.display = "flex";
                 btnIniciar.disabled = false;
                 btnIniciar.innerHTML = `<i class="fa-solid fa-location-dot" aria-hidden="true"></i> Je suis arrive`;
                 btnIniciar.classList.remove("btn-success");
@@ -83,7 +83,7 @@ export function reconstruirUIDesdeEstado() {
         case "llego":
             estadoBox && (estadoBox.innerText = "Passager en attente...");
             if (btnIniciar) {
-                btnIniciar.style.display = "block";
+                btnIniciar.style.display = "flex";
                 btnIniciar.disabled = false;
                 btnIniciar.innerHTML = `<i class="fa-solid fa-play" aria-hidden="true"></i> Demarrer la course`;
                 btnIniciar.classList.remove("btn-warning");
@@ -109,7 +109,7 @@ export function reconstruirUIDesdeEstado() {
                 : esEnvio ? "Livraison en cours - demandez le code" : "Course en cours vers destination");
             if (btnIniciar) btnIniciar.style.display = "none";
             if (btnFinalizar) {
-                btnFinalizar.style.display = "block";
+                btnFinalizar.style.display = "flex";
                 btnFinalizar.innerHTML = `<i class="fa-solid fa-flag-checkered" aria-hidden="true"></i> ${vaDeVuelta ? "Finaliser la vuelta" : esEnvio ? "Confirmer livraison" : "Finaliser la course"}`;
             }
             break;
@@ -121,7 +121,7 @@ export function reconstruirUIDesdeEstado() {
             if (btnIniciar) btnIniciar.style.display = "none";
             if (btnFinalizar) btnFinalizar.style.display = "none";
             if (btnBuscarSiguiente) {
-                btnBuscarSiguiente.style.display = "block";
+                btnBuscarSiguiente.style.display = "flex";
                 btnBuscarSiguiente.onclick = () => limpiarViajeMain({
                     btnIniciar,
                     btnFinalizar,
@@ -163,7 +163,7 @@ export function limpiarViajeMain(ui = {}) {
     actualizarDetalleViaje(null, null);
 
     if (ui.panelControl) {
-        ui.panelControl.style.display = "none";
+        ocultarPanelViaje(ui.panelControl);
     }
     document.body.classList.remove("driver-trip-active");
 
@@ -205,7 +205,7 @@ function actualizarDetalleViaje(viaje, estado) {
         return;
     }
 
-    panel?.setAttribute("data-trip-state", estado);
+    panel?.setAttribute("data-trip-state", normalizarEstadoVisual(estado));
     const pasajero = viaje.pasajero || viaje.usuario || viaje.cliente || {};
     const passengerName = pasajero.nombre || pasajero.name || viaje.pasajeroNombre || "Passager";
     const passengerRating = pasajero.rating || pasajero.calificacion || viaje.pasajeroRating || "4.9";
@@ -245,6 +245,29 @@ function actualizarDetalleViaje(viaje, estado) {
     if (gananciaFinal) {
         gananciaFinal.textContent = formatGourdes(getTripMoney(viaje).gananciaMotorista || getTripMoney(viaje).totalMotorista || viaje.gananciaMotorista || viaje.precio || 0);
     }
+}
+
+function mostrarPanelViaje(panel) {
+    if (!panel) return;
+    panel.classList.remove("hidden");
+    panel.style.display = "flex";
+}
+
+function ocultarPanelViaje(panel) {
+    if (!panel) return;
+    panel.classList.add("hidden");
+    panel.style.display = "none";
+}
+
+function normalizarEstadoVisual(estado) {
+    const estados = {
+        asignado: "aceptado",
+        llego: "esperando",
+        en_curso: "en_viaje",
+        completado: "finalizado"
+    };
+
+    return estados[estado] || estado;
 }
 
 function obtenerEtapaLabel(viaje, estado) {

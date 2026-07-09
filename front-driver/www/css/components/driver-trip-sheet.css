@@ -1,0 +1,1510 @@
+/* ==========================================================
+   TRIP SHEET - BASE (Parte 1)
+   ========================================================== */
+
+:root{
+
+    --trip-bg:#ffffff;
+    --trip-surface:#ffffff;
+    --trip-border:#ececec;
+
+    --trip-text:#111111;
+    --trip-text2:#5f6368;
+    --trip-text3:#8b8b8b;
+
+    --trip-primary:#000000;
+    --trip-success:#18b55b;
+    --trip-danger:#d93025;
+
+    --trip-radius:22px;
+
+    --trip-shadow:
+        0 -8px 28px rgba(0,0,0,.12);
+
+    --trip-transition:220ms cubic-bezier(.2,.8,.2,1);
+
+}
+
+/* ==========================================================
+   SHEET
+   ========================================================== */
+
+.trip-sheet{
+
+    position:absolute;
+
+    left:0;
+    right:0;
+    bottom:0;
+
+    width:100%;
+
+    display:flex;
+    flex-direction:column;
+
+    overflow:hidden;
+
+    background:var(--trip-bg);
+
+    border-radius:
+        var(--trip-radius)
+        var(--trip-radius)
+        0
+        0;
+
+    box-shadow:var(--trip-shadow);
+
+    transition:
+        height var(--trip-transition),
+        transform var(--trip-transition),
+        border-radius var(--trip-transition);
+
+    z-index:2500;
+
+}
+
+/* oculto */
+
+.trip-sheet.hidden{
+
+    display:none;
+
+}
+
+/* ==========================================================
+   SNAP POINTS
+   ========================================================== */
+
+.trip-sheet[data-sheet-size="compact"]{
+
+    height:25vh;
+
+    min-height:210px;
+
+}
+
+.trip-sheet[data-sheet-size="medium"]{
+
+    height:52vh;
+
+}
+
+.trip-sheet[data-sheet-size="full"]{
+
+    height:100dvh;
+
+    border-radius:0;
+
+}
+
+/* ==========================================================
+   HANDLE
+   ========================================================== */
+
+.trip-sheet-handle{
+
+    width:100%;
+
+    height:28px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    border:none;
+
+    background:none;
+
+    cursor:grab;
+
+    touch-action:none;
+
+}
+
+.trip-sheet-handle:active{
+
+    cursor:grabbing;
+
+}
+
+.trip-sheet-handle span{
+
+    width:42px;
+
+    height:5px;
+
+    border-radius:999px;
+
+    background:#d9d9d9;
+
+}
+
+/* ==========================================================
+   HEADER
+   ========================================================== */
+
+.trip-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:
+
+        0
+        20px
+        18px;
+
+}
+
+/* ==========================================================
+   STATUS
+   ========================================================== */
+
+.trip-status{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    font-size:15px;
+
+    font-weight:600;
+
+    color:#000;
+
+}
+
+.trip-status-dot{
+
+    width:9px;
+
+    height:9px;
+
+    border-radius:50%;
+
+    background:var(--trip-success);
+
+}
+
+/* ==========================================================
+   ETA
+   ========================================================== */
+
+.trip-eta-box{
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+}
+
+.trip-eta-box strong{
+
+    font-size:28px;
+
+    font-weight:700;
+
+    line-height:1;
+
+}
+
+.trip-eta-box span{
+
+    margin-top:4px;
+
+    font-size:11px;
+
+    letter-spacing:1px;
+
+    color:#777;
+
+}
+
+/* ==========================================================
+   SCROLL
+   ========================================================== */
+
+.trip-sheet{
+
+    overflow-y:auto;
+
+    scrollbar-width:none;
+
+}
+
+.trip-sheet::-webkit-scrollbar{
+
+    display:none;
+
+}
+
+/* ==========================================================
+   SECCIONES
+   ========================================================== */
+
+.trip-sheet section{
+
+    padding-left:20px;
+
+    padding-right:20px;
+
+}
+
+/* ==========================================================
+   ESPACIADO
+   ========================================================== */
+
+.trip-sheet section+section{
+
+    margin-top:22px;
+
+}
+
+/* ==========================================================
+   FOOTER
+   ========================================================== */
+
+.trip-footer-actions{
+
+    margin-top:auto;
+
+    padding:
+
+        18px
+        20px
+        calc(20px + env(safe-area-inset-bottom));
+
+    background:#fff;
+
+    border-top:1px solid var(--trip-border);
+
+}
+
+/* ==========================================================
+   ANIMACIONES
+   ========================================================== */
+
+@keyframes tripFade{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(20px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:none;
+
+    }
+
+}
+
+.trip-sheet{
+
+    animation:tripFade .25s ease;
+
+}
+
+/* ==========================================================
+   RESPONSIVE
+   ========================================================== */
+
+@media (min-width:768px){
+
+    .trip-sheet{
+
+        width:430px;
+
+        left:auto;
+
+        right:24px;
+
+    }
+
+}
+
+@media (max-width:480px){
+
+    .trip-sheet{
+
+        width:100%;
+
+        left:0;
+
+        right:0;
+
+        border-radius:
+
+            22px
+            22px
+            0
+            0;
+
+    }
+
+}
+
+
+/* ==========================================================
+   PARTE 2
+   PASAJERO Â· DIRECCIÃ“N Â· TARJETAS Â· INDICADORES
+   ========================================================== */
+
+/*==============================
+  PASAJERO
+==============================*/
+
+.trip-rider-section{
+
+    display:flex;
+    align-items:center;
+    gap:16px;
+
+    padding-top:6px;
+    padding-bottom:18px;
+
+    border-bottom:1px solid var(--trip-border);
+
+}
+
+.trip-avatar{
+
+    width:60px;
+    height:60px;
+
+    flex:none;
+
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:24px;
+    font-weight:700;
+
+    color:#111;
+
+    background:#f2f2f2;
+
+}
+
+.trip-rider-info{
+
+    flex:1;
+
+    display:flex;
+    flex-direction:column;
+
+}
+
+.trip-rider-top{
+
+    display:flex;
+    align-items:center;
+
+    gap:12px;
+
+}
+
+.trip-rider-top h2{
+
+    flex:1;
+
+    margin:0;
+
+    font-size:22px;
+    font-weight:700;
+    color:var(--trip-text);
+
+}
+
+.trip-rating{
+
+    padding:6px 10px;
+
+    border-radius:999px;
+
+    background:#f5f5f5;
+
+    font-size:13px;
+
+    font-weight:600;
+
+    color:#444;
+
+}
+
+.trip-rider-actions{
+
+    display:flex;
+
+    gap:10px;
+
+    margin-top:16px;
+
+}
+
+.trip-circle-btn{
+
+    width:46px;
+    height:46px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:#f5f5f5;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    cursor:pointer;
+
+    transition:.18s;
+
+}
+
+.trip-circle-btn:hover{
+
+    background:#e8e8e8;
+
+}
+
+.trip-circle-btn i{
+
+    font-size:18px;
+
+    color:#222;
+
+}
+
+/*==============================
+  DIRECCIÃ“N
+==============================*/
+
+.trip-address-card{
+
+    display:flex;
+
+    align-items:flex-start;
+
+    gap:18px;
+
+}
+
+.trip-stop-marker{
+
+    width:14px;
+
+    margin-top:8px;
+
+    position:relative;
+
+    flex:none;
+
+}
+
+.trip-stop-marker::before{
+
+    content:"";
+
+    width:14px;
+    height:14px;
+
+    border-radius:50%;
+
+    display:block;
+
+}
+
+.trip-stop-marker.pickup::before{
+
+    background:#17b857;
+
+}
+
+.trip-stop-marker::after{
+
+    content:"";
+
+    position:absolute;
+
+    left:6px;
+
+    top:16px;
+
+    width:2px;
+
+    height:56px;
+
+    background:#d8d8d8;
+
+}
+
+.trip-address-content{
+
+    flex:1;
+
+    min-width:0;
+
+}
+
+.trip-address-label{
+
+    display:block;
+
+    font-size:13px;
+
+    color:var(--trip-text3);
+
+    margin-bottom:6px;
+
+}
+
+.trip-address-content strong{
+
+    display:block;
+
+    font-size:20px;
+
+    line-height:1.35;
+
+    color:var(--trip-text);
+
+    font-weight:700;
+
+    word-break:break-word;
+
+}
+
+.trip-address-content small{
+
+    display:block;
+
+    margin-top:8px;
+
+    font-size:14px;
+
+    color:var(--trip-text2);
+
+}
+
+/*==============================
+  INDICADORES
+==============================*/
+
+.trip-stats{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:10px;
+
+    margin-top:10px;
+
+}
+
+.trip-stat{
+
+    flex:1;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+}
+
+.trip-stat strong{
+
+    font-size:20px;
+
+    font-weight:700;
+
+    color:#111;
+
+}
+
+.trip-stat span{
+
+    margin-top:6px;
+
+    font-size:12px;
+
+    color:#8d8d8d;
+
+}
+
+.trip-divider{
+
+    width:1px;
+
+    height:36px;
+
+    background:#ececec;
+
+}
+
+/*==============================
+  ESPERA
+==============================*/
+
+.trip-waiting{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    padding:18px;
+
+    border-radius:18px;
+
+    background:#fff9e7;
+
+    border:1px solid #f0d98d;
+
+}
+
+.trip-waiting-icon{
+
+    width:46px;
+    height:46px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:22px;
+
+    background:#ffe8a3;
+
+}
+
+.trip-waiting-info{
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+.trip-waiting-info span{
+
+    font-size:13px;
+
+    color:#7b6614;
+
+}
+
+.trip-waiting-info strong{
+
+    margin-top:4px;
+
+    font-size:22px;
+
+    color:#111;
+
+}
+
+/*==============================
+  COBRO
+==============================*/
+
+.trip-cash{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:18px;
+
+    border-radius:18px;
+
+    background:#eef8ef;
+
+    border:1px solid #b9e4c1;
+
+}
+
+.trip-cash-left{
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+.trip-cash-left span{
+
+    font-size:13px;
+
+    color:#4b6652;
+
+}
+
+.trip-cash-left strong{
+
+    margin-top:6px;
+
+    font-size:28px;
+
+    font-weight:700;
+
+    color:#0b7f38;
+
+}
+
+.trip-cash i{
+
+    font-size:34px;
+
+    color:#18b55b;
+
+}
+
+/*==============================
+  VIAJE COMPLETADO
+==============================*/
+
+.trip-completed{
+
+    padding:22px;
+
+    border-radius:18px;
+
+    background:#f8f8f8;
+
+}
+
+.trip-completed-header{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:16px;
+
+}
+
+.trip-completed-icon{
+
+    width:56px;
+    height:56px;
+
+    border-radius:50%;
+
+    background:#18b55b;
+
+    color:#fff;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:24px;
+
+    font-weight:700;
+
+}
+
+.trip-completed-header span{
+
+    display:block;
+
+    font-size:13px;
+
+    color:#777;
+
+}
+
+.trip-completed-header strong{
+
+    display:block;
+
+    margin-top:4px;
+
+    font-size:28px;
+
+    color:#111;
+
+}
+
+.trip-stars{
+
+    margin-top:18px;
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:8px;
+
+}
+
+.trip-stars i{
+
+    color:#f5b301;
+
+    font-size:20px;
+
+}
+
+/*==============================
+  DETALLES
+==============================*/
+
+.trip-details{
+
+    margin-top:10px;
+
+    border-top:1px solid var(--trip-border);
+
+    border-bottom:1px solid var(--trip-border);
+
+}
+
+.trip-detail-row{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:16px 0;
+
+}
+
+.trip-detail-row + .trip-detail-row{
+
+    border-top:1px solid #f2f2f2;
+
+}
+
+.trip-detail-row span{
+
+    color:#777;
+
+    font-size:14px;
+
+}
+
+.trip-detail-row strong{
+
+    color:#111;
+
+    font-size:15px;
+
+    font-weight:600;
+
+}
+
+
+/* ==========================================================
+   PARTE 3
+   BOTONES Â· ESTADOS Â· ANIMACIONES Â· RESPONSIVE
+   ========================================================== */
+
+/*==============================
+  BOTÃ“N PRINCIPAL
+==============================*/
+
+.trip-primary-btn{
+
+    width:100%;
+    height:56px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+
+    border:none;
+    border-radius:16px;
+
+    background:#000;
+    color:#fff;
+
+    font-size:16px;
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:
+        background .18s,
+        transform .15s,
+        box-shadow .18s;
+
+    box-shadow:
+        0 8px 20px rgba(0,0,0,.15);
+
+}
+
+.trip-primary-btn:hover{
+
+    background:#1b1b1b;
+
+}
+
+.trip-primary-btn:active{
+
+    transform:scale(.98);
+
+}
+
+.trip-primary-btn i{
+
+    font-size:18px;
+
+}
+
+/*==============================
+  BOTÃ“N ROJO
+==============================*/
+
+.trip-primary-btn.danger{
+
+    background:#d93025;
+
+}
+
+.trip-primary-btn.danger:hover{
+
+    background:#be281e;
+
+}
+
+/*==============================
+  ESTADOS DEL VIAJE
+==============================*/
+
+.trip-sheet[data-trip-state="aceptado"] .trip-status-dot{
+
+    background:#17b857;
+
+}
+
+.trip-sheet[data-trip-state="llegando"] .trip-status-dot{
+
+    background:#2f80ed;
+
+}
+
+.trip-sheet[data-trip-state="esperando"] .trip-status-dot{
+
+    background:#f4b400;
+
+}
+
+.trip-sheet[data-trip-state="en_viaje"] .trip-status-dot{
+
+    background:#111;
+
+}
+
+.trip-sheet[data-trip-state="finalizado"] .trip-status-dot{
+
+    background:#888;
+
+}
+
+/*==============================
+  CABECERA POR ESTADO
+==============================*/
+
+.trip-sheet[data-trip-state="aceptado"] .trip-status{
+
+    color:#17b857;
+
+}
+
+.trip-sheet[data-trip-state="llegando"] .trip-status{
+
+    color:#2f80ed;
+
+}
+
+.trip-sheet[data-trip-state="esperando"] .trip-status{
+
+    color:#d58a00;
+
+}
+
+.trip-sheet[data-trip-state="en_viaje"] .trip-status{
+
+    color:#111;
+
+}
+
+.trip-sheet[data-trip-state="finalizado"] .trip-status{
+
+    color:#666;
+
+}
+
+/*==============================
+  ANIMACIONES
+==============================*/
+
+@keyframes tripAppear{
+
+    from{
+
+        opacity:0;
+        transform:translateY(18px);
+
+    }
+
+    to{
+
+        opacity:1;
+        transform:none;
+
+    }
+
+}
+
+.trip-sheet section{
+
+    animation:tripAppear .25s ease;
+
+}
+
+/*==============================
+  EFECTO PULSACIÃ“N
+==============================*/
+
+@keyframes pulse{
+
+    0%{
+
+        transform:scale(1);
+
+    }
+
+    50%{
+
+        transform:scale(1.08);
+
+    }
+
+    100%{
+
+        transform:scale(1);
+
+    }
+
+}
+
+.trip-sheet[data-trip-state="esperando"] .trip-status-dot{
+
+    animation:pulse 1.2s infinite;
+
+}
+
+/*==============================
+  PANTALLA COMPLETA
+==============================*/
+
+.trip-sheet[data-sheet-size="full"]{
+
+    padding-top:env(safe-area-inset-top);
+
+}
+
+.trip-sheet[data-sheet-size="full"] .trip-header{
+
+    padding-top:18px;
+
+}
+
+.trip-sheet[data-sheet-size="full"] .trip-footer-actions{
+
+    position:sticky;
+
+    bottom:0;
+
+    background:#fff;
+
+}
+
+/*==============================
+  EFECTO BOTONES CIRCULARES
+==============================*/
+
+.trip-circle-btn{
+
+    transition:
+
+        background .18s,
+
+        transform .18s;
+
+}
+
+.trip-circle-btn:hover{
+
+    transform:translateY(-2px);
+
+}
+
+.trip-circle-btn:active{
+
+    transform:scale(.94);
+
+}
+
+/*==============================
+  TARJETAS
+==============================*/
+
+.trip-address-card,
+.trip-waiting,
+.trip-cash,
+.trip-completed{
+
+    transition:
+
+        transform .2s,
+
+        box-shadow .2s;
+
+}
+
+.trip-address-card:hover,
+.trip-waiting:hover,
+.trip-cash:hover,
+.trip-completed:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 10px 28px rgba(0,0,0,.08);
+
+}
+
+/*==============================
+  SCROLL
+==============================*/
+
+.trip-sheet{
+
+    overscroll-behavior:contain;
+
+    -webkit-overflow-scrolling:touch;
+
+}
+
+/*==============================
+  MÃ“VILES
+==============================*/
+
+@media (max-width:430px){
+
+    .trip-avatar{
+
+        width:52px;
+        height:52px;
+
+        font-size:20px;
+
+    }
+
+    .trip-rider-top h2{
+
+        font-size:19px;
+
+    }
+
+    .trip-address-content strong{
+
+        font-size:18px;
+
+    }
+
+    .trip-stat strong{
+
+        font-size:18px;
+
+    }
+
+    .trip-primary-btn{
+
+        height:54px;
+
+        font-size:15px;
+
+    }
+
+}
+
+/*==============================
+  MÃ“VILES MUY PEQUEÃ‘OS
+==============================*/
+
+@media (max-width:360px){
+
+    .trip-header{
+
+        padding-left:16px;
+        padding-right:16px;
+
+    }
+
+    .trip-sheet section{
+
+        padding-left:16px;
+        padding-right:16px;
+
+    }
+
+    .trip-footer-actions{
+
+        padding-left:16px;
+        padding-right:16px;
+
+    }
+
+    .trip-rating{
+
+        font-size:12px;
+
+        padding:5px 8px;
+
+    }
+
+}
+
+/*==============================
+  TABLETS
+==============================*/
+
+@media (min-width:768px){
+
+    .trip-sheet{
+
+        max-width:430px;
+
+    }
+
+}
+
+/*==============================
+  UTILIDADES
+==============================*/
+
+.hidden{
+
+    display:none !important;
+
+}
+
+.fade-in{
+
+    animation:tripAppear .25s ease;
+
+}
+
+.disabled{
+
+    opacity:.55;
+
+    pointer-events:none;
+
+}
+
+@media (min-width: 760px) {
+  .panel-superior.driver-home-topbar {
+    left: 84px;
+    right: 18px;
+    max-width: 720px;
+    margin-left: auto;
+  }
+
+  .driver-map-recenter {
+    top: 92px;
+    right: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .panel-superior.driver-home-topbar {
+    left: calc(max(10px, env(safe-area-inset-left)) + 60px);
+    right: max(10px, env(safe-area-inset-right));
+    top: max(10px, env(safe-area-inset-top));
+    gap: 7px;
+    grid-template-columns: minmax(0, 1fr) 52px 78px;
+  }
+
+  .estado-btn.driver-profile-pill {
+    width: 100%;
+    max-width: none;
+    min-height: 50px;
+    padding: 6px 8px;
+  }
+
+  .driver-avatar-chip {
+    width: 34px;
+    height: 34px;
+  }
+
+  .driver-profile-copy small {
+    display: none;
+  }
+
+  .driver-profile-copy strong {
+    font-size: 0.86rem;
+  }
+
+  .driver-availability-toggle {
+    width: 52px;
+    min-height: 50px;
+    padding: 0;
+  }
+
+  .driver-availability-toggle span {
+    display: none;
+  }
+
+  .wallet-mini {
+    min-width: 78px;
+    min-height: 50px;
+    padding: 0 8px;
+  }
+
+  .wallet-mini span {
+    font-size: 0.62rem;
+  }
+
+  .wallet-mini strong {
+    max-width: 64px;
+    font-size: 0.82rem;
+  }
+
+  .driver-map-recenter {
+    top: calc(max(10px, env(safe-area-inset-top)) + 62px);
+    right: max(12px, env(safe-area-inset-right));
+    width: 46px;
+    height: 46px;
+  }
+
+  .reserva-badge {
+    top: calc(max(10px, env(safe-area-inset-top)) + 66px);
+  }
+
+  .driver-bottom-nav {
+    min-height: 64px;
+  }
+
+  .driver-bottom-nav span {
+    font-size: 0.64rem;
+  }
+
+  .leaflet-control-container .leaflet-bottom.leaflet-right {
+    bottom: 246px;
+  }
+
+  .leaflet-control-zoom {
+    display: none;
+  }
+}
+
+@media (max-height: 720px) {
+  .oferta-panel {
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+  }
+
+  .oferta-card-premium {
+    padding: 12px;
+  }
+
+  .timer-container {
+    width: 58px;
+    height: 58px;
+    margin-bottom: 8px;
+  }
+
+  .progress-ring {
+    width: 58px;
+    height: 58px;
+  }
+
+  .contador-texto {
+    font-size: 1.12rem;
+  }
+
+  #miniMapaOferta,
+  .mini-mapa {
+    height: 108px;
+    margin-bottom: 10px;
+  }
+
+  .oferta-money-block {
+    padding: 10px;
+  }
+
+  .precio-valor {
+    font-size: clamp(1.85rem, 8vw, 2.2rem);
+  }
+
+  .info-secundaria {
+    margin: 10px 0;
+    padding: 10px;
+  }
+
+  .rutas-box {
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+
+  .btn-aceptar {
+    min-height: 50px;
+  }
+}
+
+@media (max-width: 370px) {
+  .panel-superior.driver-home-topbar {
+    grid-template-columns: minmax(0, 1fr) 48px 68px;
+  }
+
+  .driver-avatar-chip {
+    display: none;
+  }
+
+  .wallet-mini {
+    min-width: 68px;
+  }
+
+}
+

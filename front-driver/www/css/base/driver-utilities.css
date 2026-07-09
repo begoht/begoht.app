@@ -1,0 +1,74 @@
+/* =========================================
+   ðŸ› ï¸ UTILIDADES
+   ========================================= */
+.badge {
+  background: var(--uber-red);
+  color: white;
+  font-size: 0.7rem;
+  padding: 2px 7px;
+  border-radius: 50%;
+  margin-left: 5px;
+}
+
+.rutas-box div {
+    transition: all 0.3s ease;
+}
+
+/* =========================================
+   ðŸ“ DISEÃ‘O DE RUTAS EN OFERTA
+   ========================================= */
+.rutas-box {
+  background: #1a1a1a;
+  padding: 15px;
+  border-radius: 18px;
+  margin-bottom: 20px;
+  border: 1px solid #222;
+}
+
+.ruta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ruta-item small {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+#ofertaOrigenNombre, #ofertaDestinoNombre {
+  font-size: 0.9rem;
+  color: #eee;
+  /* Truncar texto largo con puntos suspensivos */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+/* Separador visual opcional entre origen y destino */
+.ruta-item:first-child {
+  padding-bottom: 8px;
+  border-bottom: 1px solid #2a2a2a;
+  margin-bottom: 8px;
+}
+
+.mini-mapa {
+  height: 150px; /* O el alto que prefieras */
+  width: 100%;
+  border-radius: 12px;
+  margin-top: 10px;
+  background-color: #1a1a1a;
+}
+
+#miniMapaOferta {
+  width: 100%;
+  height: 150px; /* Altura obligatoria para que Leaflet aparezca */
+  border-radius: 12px;
+  margin-bottom: 15px;
+  background: #222; /* Color de fondo mientras carga */
+}
+
+.hidden { display: none !important; }

@@ -1,0 +1,108 @@
+/* =========================================
+   ðŸš– PANEL DE OFERTA (ESTILO UBER)
+   ========================================= */
+.oferta-panel {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 20px;
+  z-index: 2000;
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.oferta-panel.hidden {
+  transform: translateY(110%);
+}
+
+.oferta-card-premium {
+  background: #111;
+  color: white;
+  border-radius: 30px;
+  padding: 25px;
+  box-shadow: 0 -10px 40px rgba(0,0,0,0.8);
+  max-width: 500px;
+  margin: 0 auto;
+  position: relative;
+  border: 1px solid #222;
+}
+
+/* Temporizador Circular */
+.timer-container {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-ring { position: absolute; transform: rotate(-90deg); }
+
+.progress-ring__circle {
+  stroke: var(--uber-blue);
+  stroke-dasharray: 213.6; /* Circumference de r=34 */
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1s linear;
+  transform-origin: center;
+}
+
+.contador-texto {
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+/* InformaciÃ³n del Viaje */
+.precio-valor {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: white;
+  display: block;
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+.info-secundaria {
+  display: flex;
+  justify-content: space-around;
+  margin: 20px 0;
+  background: #1a1a1a;
+  padding: 12px;
+  border-radius: 15px;
+}
+
+.destino-box {
+  background: #222;
+  padding: 15px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  border-left: 4px solid var(--uber-blue);
+}
+
+/* Botones de AcciÃ³n */
+.btn-aceptar {
+  width: 100%;
+  background: var(--uber-blue);
+  color: white;
+  padding: 20px;
+  border-radius: 18px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-rechazar-mini {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: #222;
+  color: #888;
+  border: none;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+

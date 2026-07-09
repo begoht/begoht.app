@@ -1,0 +1,45 @@
+/* =========================================
+   ðŸš€ RESET & BASE
+   ========================================= */
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  list-style: none;
+  text-decoration: none;
+  scroll-behavior: smooth;
+}
+
+:root {
+  --text-color: #f5f5f5;
+  --hover-color: #12f7ff;
+  --bg-color: #000000; /* Fondo negro puro para look premium */
+  --secon-bg-color: #1a1a1a;
+  --uber-blue: #276ef1;
+  --uber-green: #00ff88;
+  --uber-red: #ff3b3b;
+  
+  --big-font: 2.5rem;
+  --neon-shadow: 0 0 .5rem #12f7ff;
+  --font-neon-shadow: 0 0 10px rgba(18,247,255,.3);
+}
+
+body {
+  font-family: 'Inter', Arial, sans-serif;
+  background: var(--bg-color);
+  color: var(--text-color);
+  overflow-x: hidden;
+}
+
+.leaflet-marker-icon.bego-map-icon,
+.bego-map-icon {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  filter: drop-shadow(0 8px 10px rgba(37, 99, 235, 0.28));
+  transition: none;
+  will-change: transform;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+

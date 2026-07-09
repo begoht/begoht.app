@@ -1,0 +1,328 @@
+/* Active trip bottom sheet: Uber Driver style */
+.viaje-control {
+  left: 50%;
+  right: auto;
+  bottom: 0;
+  width: min(520px, 100%);
+  max-height: 75vh;
+  min-height: min(560px, 58vh);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 8px max(14px, env(safe-area-inset-right)) calc(14px + env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
+  border: 1px solid rgba(226, 232, 240, 0.12);
+  border-bottom: 0;
+  border-radius: 18px 18px 0 0;
+  color: #f8fafc;
+  background:
+    linear-gradient(180deg, rgba(15, 23, 42, 0.98), rgba(2, 6, 23, 0.98)),
+    #07111f;
+  box-shadow: 0 -18px 46px rgba(0, 0, 0, 0.48);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.viaje-control.hidden {
+  display: none;
+}
+
+.viaje-sheet-handle {
+  flex: 0 0 auto;
+  width: 46px;
+  height: 5px;
+  margin: 0 auto 2px;
+  border-radius: 999px;
+  background: rgba(203, 213, 225, 0.38);
+}
+
+.info-pasajero-mini {
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 40px;
+  text-align: left;
+}
+
+.estado-tag {
+  min-width: 0;
+  min-height: 34px;
+  margin: 0;
+  padding: 7px 11px;
+  border-color: rgba(45, 212, 191, 0.28);
+  color: #ccfbf1;
+  background: rgba(13, 148, 136, 0.16);
+  font-size: 0.78rem;
+}
+
+.viaje-sheet-eta {
+  flex: 0 0 auto;
+  min-width: 78px;
+  display: grid;
+  justify-items: end;
+  line-height: 1;
+}
+
+.viaje-sheet-eta strong {
+  color: #ffffff;
+  font-size: 1.18rem;
+  font-weight: 1000;
+}
+
+.viaje-sheet-eta span {
+  margin-top: 3px;
+  color: #94a3b8;
+  font-size: 0.64rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.viaje-rider-card,
+.viaje-progress-card,
+.viaje-waiting-card,
+.viaje-completed-card {
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.viaje-rider-card {
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr);
+  gap: 12px;
+  padding: 12px;
+}
+
+.viaje-rider-avatar {
+  width: 54px;
+  height: 54px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #022c22;
+  background: linear-gradient(135deg, #f8fafc, #5eead4);
+  font-size: 1.3rem;
+  font-weight: 1000;
+}
+
+.viaje-rider-main {
+  min-width: 0;
+}
+
+.viaje-rider-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.viaje-rider-row strong,
+.viaje-rider-main p {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.viaje-rider-row strong {
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 1000;
+}
+
+.viaje-rider-row span {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #fde68a;
+  font-size: 0.8rem;
+  font-weight: 950;
+}
+
+.viaje-rider-main p {
+  margin: 7px 0 4px;
+  color: #e2e8f0;
+  font-size: 0.9rem;
+  font-weight: 900;
+}
+
+.viaje-rider-main small {
+  display: block;
+  color: #94a3b8;
+  font-size: 0.74rem;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.viaje-quick-actions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.viaje-quick-actions button {
+  min-width: 0;
+  min-height: 62px;
+  display: grid;
+  place-items: center;
+  gap: 5px;
+  padding: 8px 4px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 8px;
+  color: #e2e8f0;
+  background: rgba(30, 41, 59, 0.9);
+  font-size: 0.68rem;
+  font-weight: 900;
+}
+
+.viaje-quick-actions button i {
+  font-size: 1.08rem;
+}
+
+.viaje-quick-actions button.danger {
+  color: #fecaca;
+  background: rgba(127, 29, 29, 0.62);
+}
+
+.viaje-progress-card {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  padding: 4px;
+}
+
+.viaje-progress-card div {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+  padding: 9px 7px;
+  border-radius: 6px;
+  background: rgba(2, 6, 23, 0.38);
+}
+
+.viaje-progress-card span,
+.viaje-waiting-card span,
+.viaje-completed-card span {
+  color: #94a3b8;
+  font-size: 0.65rem;
+  font-weight: 900;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.viaje-progress-card strong {
+  min-width: 0;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 1000;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.viaje-waiting-card,
+.viaje-completed-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px;
+}
+
+.viaje-waiting-card strong {
+  color: #ffffff;
+  font-size: 1.45rem;
+  font-weight: 1000;
+  font-variant-numeric: tabular-nums;
+}
+
+.viaje-completed-card strong {
+  display: block;
+  margin-top: 4px;
+  color: #86efac;
+  font-size: 1.28rem;
+  font-weight: 1000;
+}
+
+.viaje-rating-row {
+  display: flex;
+  gap: 3px;
+  color: #facc15;
+}
+
+.viaje-control .btn-cobrar-efectivo {
+  flex: 0 0 auto;
+  min-height: 50px;
+  margin: 0;
+}
+
+.viaje-control .viaje-actions {
+  position: sticky;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  padding-top: 2px;
+  background: linear-gradient(180deg, rgba(2, 6, 23, 0), #020617 22%);
+}
+
+.viaje-control .viaje-actions > button {
+  width: 100%;
+  flex: none;
+  min-height: 56px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.viaje-control[data-trip-state="llego"] .estado-tag {
+  border-color: rgba(251, 191, 36, 0.35);
+  color: #fef3c7;
+  background: rgba(146, 64, 14, 0.3);
+}
+
+.viaje-control[data-trip-state="en_curso"] .estado-tag {
+  border-color: rgba(96, 165, 250, 0.35);
+  color: #dbeafe;
+  background: rgba(30, 64, 175, 0.3);
+}
+
+.viaje-control[data-trip-state="completado"],
+.viaje-control[data-trip-state="finalizado"] {
+  min-height: min(500px, 54vh);
+}
+
+@media (min-width: 760px) {
+  .viaje-control {
+    left: auto;
+    right: 24px;
+    transform: none;
+    width: 430px;
+    max-height: 75vh;
+    border-radius: 16px 16px 0 0;
+  }
+}
+
+@media (max-width: 380px) {
+  .viaje-quick-actions button span {
+    display: none;
+  }
+
+  .viaje-quick-actions button {
+    min-height: 50px;
+  }
+
+  .viaje-progress-card {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Refined active trip sheet */
+body.driver-trip-active .driver-bottom-nav {
+  transform: translateY(calc(100% + env(safe-area-inset-bottom)));
+  pointer-events: none;
+}
+

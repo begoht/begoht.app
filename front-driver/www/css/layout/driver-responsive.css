@@ -1,0 +1,280 @@
+/* =========================================
+   DRIVER HOME STATUS SWITCH 20260608
+   ========================================= */
+.panel-superior.driver-home-topbar {
+  left: calc(max(12px, env(safe-area-inset-left)) + 68px);
+  right: auto;
+  width: min(188px, calc(100vw - 92px - env(safe-area-inset-right)));
+  display: flex;
+  grid-template-columns: none;
+  align-items: center;
+  gap: 0;
+}
+
+.driver-online-switch.driver-availability-toggle {
+  width: 100%;
+  min-width: 0;
+  min-height: 52px;
+  justify-content: flex-start;
+  gap: 12px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  background:
+    radial-gradient(circle at 16% 8%, rgba(255, 255, 255, 0.18), transparent 26%),
+    linear-gradient(135deg, rgba(127, 29, 29, 0.95), rgba(69, 10, 10, 0.94));
+  box-shadow: var(--driver-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.driver-online-switch.driver-availability-toggle span {
+  display: inline-flex;
+}
+
+.driver-switch-track {
+  width: 60px;
+  height: 34px;
+  flex: 0 0 60px;
+  align-items: center;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(2, 6, 23, 0.52);
+  box-shadow:
+    inset 0 1px 7px rgba(0, 0, 0, 0.36),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.driver-switch-knob {
+  width: 26px;
+  height: 26px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  color: #991b1b;
+  background: #ffffff;
+  box-shadow: 0 7px 16px rgba(0, 0, 0, 0.28);
+  transform: translateX(0);
+  transition: transform 0.22s ease, color 0.22s ease, background 0.22s ease;
+}
+
+.driver-switch-knob i {
+  font-size: 0.82rem;
+}
+
+.driver-switch-copy {
+  min-width: 0;
+  display: flex !important;
+  align-items: center;
+  text-align: left;
+}
+
+.driver-switch-copy small {
+  display: none !important;
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 0.66rem;
+  font-weight: 900;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.driver-switch-copy strong {
+  display: block !important;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 1000;
+  line-height: 1.08;
+  letter-spacing: 0;
+}
+
+.driver-online-switch.is-online {
+  border-color: rgba(134, 239, 172, 0.38);
+  background:
+    radial-gradient(circle at 14% 8%, rgba(255, 255, 255, 0.2), transparent 28%),
+    linear-gradient(135deg, #15803d, #0f766e);
+}
+
+.driver-online-switch.is-online .driver-switch-track {
+  background: rgba(6, 95, 70, 0.72);
+}
+
+.driver-online-switch.is-online .driver-switch-knob {
+  color: #047857;
+  transform: translateX(26px);
+}
+
+.driver-online-switch.is-syncing {
+  border-color: rgba(251, 191, 36, 0.42);
+  background:
+    radial-gradient(circle at 14% 8%, rgba(255, 255, 255, 0.18), transparent 28%),
+    linear-gradient(135deg, #b45309, #92400e);
+}
+
+.driver-online-switch.is-syncing .driver-switch-knob {
+  color: #b45309;
+  transform: translateX(13px);
+}
+
+@media (min-width: 760px) {
+  .panel-superior.driver-home-topbar {
+    left: 84px;
+    right: auto;
+    width: 188px;
+    max-width: none;
+    margin-left: 0;
+  }
+}
+
+@media (min-width: 760px) {
+  .driver-map-compass {
+    top: 154px;
+  }
+}
+
+@media (max-width: 480px) {
+  .driver-map-compass {
+    top: calc(max(10px, env(safe-area-inset-top)) + 118px);
+  }
+}
+
+.driver-location-disclosure {
+  position: fixed;
+  inset: 0;
+  z-index: 12000;
+  display: grid;
+  place-items: center;
+  padding: max(20px, env(safe-area-inset-top)) 18px max(20px, env(safe-area-inset-bottom));
+  color: #f8fafc;
+  background: rgba(2, 6, 22, 0.96);
+}
+
+.driver-location-disclosure.hidden {
+  display: none;
+}
+
+.driver-location-disclosure-card {
+  width: min(440px, 100%);
+  max-height: calc(100dvh - 40px);
+  overflow: auto;
+  padding: 26px 22px;
+  border: 1px solid rgba(96, 165, 250, 0.28);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 90% 0%, rgba(37, 99, 235, 0.26), transparent 42%),
+    #07111f;
+  box-shadow: 0 26px 70px rgba(0, 0, 0, 0.52);
+}
+
+.driver-location-disclosure-icon {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 16px;
+  border-radius: 16px;
+  color: #bfdbfe;
+  background: rgba(37, 99, 235, 0.22);
+  font-size: 1.35rem;
+}
+
+.driver-location-disclosure-card h1 {
+  margin: 0 0 12px;
+  font-size: 1.45rem;
+  line-height: 1.2;
+}
+
+.driver-location-disclosure-card p,
+.driver-location-disclosure-card li {
+  color: #cbd5e1;
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.driver-location-disclosure-card ul {
+  display: grid;
+  gap: 8px;
+  margin: 16px 0;
+  padding-left: 20px;
+}
+
+.driver-location-disclosure-note {
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.driver-location-disclosure-actions {
+  display: grid;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.driver-location-disclosure-actions button {
+  min-height: 48px;
+  border: 0;
+  border-radius: 14px;
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+#driverLocationDisclosureAccept {
+  color: #ffffff;
+  background: linear-gradient(135deg, #2563eb, #0ea5e9);
+}
+
+#driverLocationDisclosureLater {
+  color: #cbd5e1;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 480px) {
+  .panel-superior.driver-home-topbar {
+    left: calc(max(10px, env(safe-area-inset-left)) + 64px);
+    right: auto;
+    width: min(178px, calc(100vw - 88px - env(safe-area-inset-right)));
+    top: max(10px, env(safe-area-inset-top));
+    display: flex;
+    grid-template-columns: none;
+  }
+
+  .driver-online-switch.driver-availability-toggle {
+    width: 100%;
+    min-height: 52px;
+    padding: 7px 10px;
+  }
+
+  .driver-online-switch.driver-availability-toggle span,
+  .driver-switch-track,
+  .driver-switch-knob {
+    display: inline-flex !important;
+  }
+
+  .driver-switch-track {
+    width: 56px;
+    height: 32px;
+    flex-basis: 56px;
+  }
+
+  .driver-switch-knob {
+    width: 24px;
+    height: 24px;
+  }
+
+  .driver-online-switch.is-online .driver-switch-knob {
+    transform: translateX(24px);
+  }
+
+  .driver-online-switch.is-syncing .driver-switch-knob {
+    transform: translateX(12px);
+  }
+}
+
+@media (max-width: 370px) {
+  .panel-superior.driver-home-topbar {
+    width: min(168px, calc(100vw - 84px - env(safe-area-inset-right)));
+  }
+
+  .driver-switch-copy strong {
+    font-size: 0.92rem;
+  }
+}
