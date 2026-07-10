@@ -5,9 +5,9 @@
 @import url("./components/driver-trip-legacy.css");
 @import url("./base/driver-utilities.css");
 @import url("./pages/driver-spa.css");
-@import url("./pages/driver-home.css");
+@import url("./pages/driver-home.css?v=20260710-route-icons");
 @import url("./components/driver-active-trip.css");
 @import url("./layout/driver-responsive.css");
-@import url("./components/driver-trip-sheet.css");
+@import url("./components/driver-trip-sheet.css?v=20260710-route-icons");
 
 /* Main stylesheet kept as the import manifest for the modular driver app CSS. */

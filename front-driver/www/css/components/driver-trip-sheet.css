@@ -290,19 +290,22 @@
 }
 
 .trip-route-point > span {
-  width: 17px;
-  height: 17px;
-  margin-top: 8px;
-  display: block;
+  width: 21px;
+  height: 21px;
+  margin-top: 6px;
+  display: grid;
+  place-items: center;
+  border: 4px solid #050505;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
 }
 
 .trip-route-point.pickup > span {
   border-radius: 50%;
-  background: var(--trip-green);
 }
 
 .trip-route-point.dropoff > span {
-  background: var(--trip-red);
+  border-radius: 0;
 }
 
 .trip-route-point strong {

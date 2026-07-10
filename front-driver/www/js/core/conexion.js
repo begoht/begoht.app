@@ -1,6 +1,6 @@
 (function () {
   const PROD_URL = "https://bego.com.ht";
-  const DEV_URL = "https://bego.com.ht";
+  const DEV_URL = "http://localhost:3000";
 
   function getServerUrl() {
     const hostname = window.location.hostname;

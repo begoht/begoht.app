@@ -5,7 +5,7 @@ import {
   viajesActivos
 } from "../viajeControl/viajeEstado.js";
 import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260710-photo-fix";
-import { dibujarRutaPremium } from "../map.js?v=20260702-visible-labels";
+import { dibujarRutaPremium } from "../map.js?v=20260710-route-icons";
 
 let socketRef = null;
 let clicksBound = false;

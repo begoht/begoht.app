@@ -4,7 +4,7 @@ import { seenOfertas, ofertaState, CONFIG, getViajeId, getOfertaExpiraEn } from 
 import { notificar, reproducirSonido } from "./oferta.ui.js?v=20260608-offer-net-cash";
 import { registrarViaje } from "../viajeControl/viajeControl.js?v=20260608-offer-net-cash";
 import { setViajeEnCurso } from "../viajeControl/viajeEstado.js";
-import { dibujarRutaPremium } from "../map.js?v=20260702-visible-labels";
+import { dibujarRutaPremium } from "../map.js?v=20260710-route-icons";
 import { getUltimaPosicion, refreshDriverLocation } from "../gps.js?v=20260627-map-icons";
 import { isDriverOnline } from "../driver.status.js?v=20260627-map-icons";
 import { normalizarPunto, notificarGuardia } from "../tripGuards.js?v=20260627-map-fluid-arrival";

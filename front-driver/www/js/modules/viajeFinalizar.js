@@ -5,7 +5,7 @@ import {
 } from "./viajeControl/viajeEstado.js";
 
 import { limpiarViajeMain } from "./viajeControl/viajeUI.js?v=20260710-photo-fix";
-import { borrarRuta } from "./map.js?v=20260702-visible-labels";
+import { borrarRuta } from "./map.js?v=20260710-route-icons";
 import { formatGourdes, getPaymentLabel, isCashMethod } from "./oferta/oferta.money.js?v=20260608-offer-net-cash";
 import {
     FINISH_MAX_DISTANCE_METERS,

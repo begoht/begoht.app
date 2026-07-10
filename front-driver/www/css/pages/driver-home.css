@@ -90,6 +90,48 @@ a {
   transform-style: preserve-3d;
 }
 
+.leaflet-marker-icon.bego-map-route-marker {
+  width: 32px !important;
+  height: 32px !important;
+  display: grid;
+  place-items: center;
+  margin: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  filter: drop-shadow(0 3px 7px rgba(0, 0, 0, 0.44));
+}
+
+.bego-route-marker {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border: 6px solid #050505;
+  background: #ffffff;
+}
+
+.bego-route-marker--origen {
+  border-radius: 50%;
+}
+
+.bego-route-marker--origen span {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+}
+
+.bego-route-marker--destino {
+  border-radius: 0;
+}
+
+.bego-route-marker--destino span {
+  width: 16px;
+  height: 16px;
+  background: #ffffff;
+}
+
 .leaflet-control-container .leaflet-bottom.leaflet-right {
   bottom: 166px;
 }

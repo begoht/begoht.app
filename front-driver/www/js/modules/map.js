@@ -17,6 +17,22 @@ let compassButtonBound = false;
 let rutaOutlineLayer = null;
 let followPausedUntil = 0;
 
+function crearRoutePointIcon(tipo = "origen") {
+  if (!window.L?.divIcon) return null;
+  const isDestino = tipo === "destino";
+
+  return L.divIcon({
+    html: `
+      <span class="bego-route-marker ${isDestino ? "bego-route-marker--destino" : "bego-route-marker--origen"}" aria-hidden="true">
+        <span></span>
+      </span>
+    `,
+    iconSize: [32, 32],
+    iconAnchor: [16, 16],
+    className: "bego-map-route-marker"
+  });
+}
+
 export function initMap() {
   if (!window.L?.map) {
     console.warn("Leaflet no disponible: mapa motorista desactivado temporalmente.");
@@ -361,8 +377,16 @@ export async function dibujarRutaPremium(origen, destino) {
   borrarRuta();
   const requestId = ++routeRequestId;
 
-  origenMarkerRef.current = L.marker([origenCoord.lat, origenCoord.lng]).addTo(map);
-  destinoMarkerRef.current = L.marker([destinoCoord.lat, destinoCoord.lng]).addTo(map);
+  const origenIcon = crearRoutePointIcon("origen");
+  const destinoIcon = crearRoutePointIcon("destino");
+  origenMarkerRef.current = L.marker(
+    [origenCoord.lat, origenCoord.lng],
+    origenIcon ? { icon: origenIcon } : {}
+  ).addTo(map);
+  destinoMarkerRef.current = L.marker(
+    [destinoCoord.lat, destinoCoord.lng],
+    destinoIcon ? { icon: destinoIcon } : {}
+  ).addTo(map);
 
   const fallbackCoords = [
     [origenCoord.lat, origenCoord.lng],
