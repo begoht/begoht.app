@@ -31,6 +31,7 @@
   box-shadow: 0 -18px 48px rgba(0, 0, 0, 0.2);
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
+  transition: height 180ms ease, max-height 180ms ease, border-radius 180ms ease;
 }
 
 .trip-sheet::-webkit-scrollbar {
@@ -42,11 +43,13 @@
 }
 
 .trip-sheet[data-sheet-size="compact"] {
-  height: min(43dvh, 420px);
+  height: 25dvh;
+  min-height: 25dvh;
 }
 
 .trip-sheet[data-sheet-size="medium"] {
-  height: min(68dvh, 650px);
+  height: 50dvh;
+  min-height: 50dvh;
 }
 
 .trip-sheet[data-sheet-size="full"] {
@@ -54,6 +57,10 @@
   max-height: 100dvh;
   border-radius: 0;
   padding-top: env(safe-area-inset-top);
+}
+
+.trip-sheet.is-dragging {
+  transition: none;
 }
 
 .trip-sheet-handle {
