@@ -1,6 +1,6 @@
 import { initUI, UI } from "./oferta.ui.js?v=20260608-offer-net-cash";
 import { initSocketEventos } from "./oferta.socket.js?v=20260702-offer-recovery";
-import { aceptarViaje, rechazarViaje } from "./oferta.actions.js?v=20260627-map-icons";
+import { aceptarViaje, rechazarViaje } from "./oferta.actions.js?v=20260710-accept-hide";
 import { ofertaState, setSocketRef } from "./oferta.state.js";
 import { initOfferRecovery } from "./oferta.recovery.js?v=20260702-offer-recovery";
 

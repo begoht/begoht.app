@@ -4,7 +4,7 @@ import {
     setViajeEnCurso
 } from "./viajeControl/viajeEstado.js";
 
-import { limpiarViajeMain } from "./viajeControl/viajeUI.js?v=20260705-driver-trip-sheet";
+import { limpiarViajeMain } from "./viajeControl/viajeUI.js?v=20260710-real-trip-panel";
 import { borrarRuta } from "./map.js?v=20260702-visible-labels";
 import { formatGourdes, getPaymentLabel, isCashMethod } from "./oferta/oferta.money.js?v=20260608-offer-net-cash";
 import {

@@ -12,10 +12,12 @@ import {
     setLlegadaLock
 } from "./viajeEstado.js";
 import { formatGourdes, getTripMoney, isCashMethod } from "../oferta/oferta.money.js?v=20260608-offer-net-cash";
+import { getUltimaPosicion } from "../gps.js?v=20260627-map-icons";
 
 let botonCobroInicializado = false;
 let botonesAccionInicializados = false;
 let sheetDragInicializado = false;
+let gpsUiListenerInicializado = false;
 let waitingTimerInterval = null;
 
 export function reconstruirUIDesdeEstado() {
@@ -95,7 +97,7 @@ export function reconstruirUIDesdeEstado() {
         case "en_curso": {
             const esEnvio = viajeActual?.tipo === "envio";
             if (estadoIdaVuelta === "retorno_pendiente") {
-                estadoBox && (estadoBox.innerText = "Esperando la decision del pasajero");
+                estadoBox && (estadoBox.innerText = "En attente de la decision du passager");
                 if (btnIniciar) btnIniciar.style.display = "none";
                 if (btnFinalizar) btnFinalizar.style.display = "none";
                 if (btnIniciarVuelta) btnIniciarVuelta.style.display = "none";
@@ -292,16 +294,22 @@ function actualizarAvatarPasajero(avatar, foto, passengerName, passengerPhoto) {
 }
 
 function obtenerNombrePasajero(pasajero = {}, viaje = {}) {
+    const pasajeroObj = typeof pasajero === "object" && pasajero !== null ? pasajero : {};
     const fullName =
-        pasajero.fullName ||
-        pasajero.nombreCompleto ||
+        pasajeroObj.fullName ||
+        pasajeroObj.nombreCompleto ||
+        pasajeroObj.displayName ||
+        pasajeroObj.name ||
         viaje.pasajeroNombreCompleto ||
-        viaje.pasajeroNombre;
+        viaje.pasajeroNombre ||
+        viaje.nombrePasajero ||
+        viaje.clienteNombre ||
+        viaje.usuarioNombre;
     if (fullName) return String(fullName).trim();
 
     const parts = [
-        pasajero.nombre || pasajero.name || viaje.pasajero?.nombre,
-        pasajero.apellido || pasajero.lastName || viaje.pasajero?.apellido
+        pasajeroObj.nombre || pasajeroObj.firstName || viaje.pasajero?.nombre || viaje.usuario?.nombre || viaje.cliente?.nombre,
+        pasajeroObj.apellido || pasajeroObj.lastName || viaje.pasajero?.apellido || viaje.usuario?.apellido || viaje.cliente?.apellido
     ].filter(Boolean);
 
     return parts.join(" ").trim() || "Pasajero";
@@ -361,28 +369,34 @@ function obtenerEtapaLabel(viaje, estado) {
 }
 
 function obtenerEtaLabel(viaje, estado, distanceLabel) {
-    const raw = viaje?.etaMinutos ?? viaje?.eta ?? viaje?.duracionMin ?? viaje?.tiempoEstimadoMin ?? null;
+    if (estado === "llego") return { valor: "00:00", label: "espera" };
+
+    const raw = estado === "en_curso"
+        ? (viaje?.etaDestino ?? viaje?.etaMinutosDestino ?? viaje?.eta ?? viaje?.duracionMin ?? viaje?.tiempoEstimadoMin)
+        : (viaje?.etaPasajero ?? viaje?.etaOrigen ?? viaje?.etaMinutosOrigen ?? viaje?.etaMinutos);
     const minutes = Number(raw);
     if (Number.isFinite(minutes) && minutes > 0) {
-        return { valor: `${Math.round(minutes)} min`, label: estado === "llego" ? "attente" : "ETA" };
+        return { valor: `${Math.round(minutes)} min`, label: "ETA" };
     }
 
-    const km = Number(String(distanceLabel).replace(",", ".").match(/[\d.]+/)?.[0]);
-    if (Number.isFinite(km) && km > 0 && /km/i.test(distanceLabel)) {
-        return { valor: `${Math.max(2, Math.round(km * 3))} min`, label: "ETA" };
+    const meters = obtenerMetrosDesdeLabel(distanceLabel);
+    if (Number.isFinite(meters) && meters > 0) {
+        return { valor: `${calcularEtaMinutos(meters)} min`, label: "ETA" };
     }
 
-    return { valor: estado === "llego" ? "00:00" : "--", label: estado === "llego" ? "attente" : "ETA" };
+    return { valor: "--", label: "ETA" };
 }
 
 function obtenerDistanciaLabel(viaje, estado, target) {
+    if (estado === "llego") return "0 m";
+
     const directa = estado === "en_curso"
-        ? (viaje?.distanciaDestino || viaje?.distanciaKm || viaje?.distancia)
-        : (viaje?.distanciaPasajero || viaje?.distanciaOrigen || viaje?.distanciaKm || viaje?.distancia);
+        ? (viaje?.distanciaDestino || viaje?.distanciaKmDestino || viaje?.distanciaKm || viaje?.distancia)
+        : (viaje?.distanciaPasajero || viaje?.distanciaOrigen || viaje?.distanciaKmOrigen);
     const directaLabel = formatearDistanciaValor(directa);
     if (directaLabel) return directaLabel;
 
-    const driver = window.ultimaPosicionMotorista || window.driverLastPosition || null;
+    const driver = getUltimaPosicion() || window.ultimaPosicionMotorista || window.driverLastPosition || null;
     const from = normalizarCoord(driver);
     const to = normalizarCoord(target);
     if (from && to) {
@@ -390,7 +404,21 @@ function obtenerDistanciaLabel(viaje, estado, target) {
         return metros < 1000 ? `${Math.round(metros)} m` : `${(metros / 1000).toFixed(1)} km`;
     }
 
-    return "En calcul";
+    return "--";
+}
+
+function obtenerMetrosDesdeLabel(label = "") {
+    const text = String(label || "").replace(",", ".");
+    const value = Number(text.match(/[\d.]+/)?.[0]);
+    if (!Number.isFinite(value)) return null;
+    if (/km/i.test(text)) return value * 1000;
+    if (/\bm\b/i.test(text)) return value;
+    return null;
+}
+
+function calcularEtaMinutos(metros) {
+    const velocidadMps = (30 * 1000) / 3600;
+    return Math.max(1, Math.ceil(metros / velocidadMps / 60));
 }
 
 function formatearDistanciaValor(valor) {
@@ -442,13 +470,27 @@ function inicializarAccionesViaje() {
     if (botonesAccionInicializados) return;
     botonesAccionInicializados = true;
     inicializarSheetExpandible();
+    inicializarActualizacionGpsPanel();
 
     document.getElementById("btnViajeLlamar")?.addEventListener("click", () => {
         const viaje = obtenerViajeActualUI();
-        const tel = viaje?.pasajero?.telefono || viaje?.pasajero?.phone || viaje?.telefonoPasajero;
+        const pasajero = typeof viaje?.pasajero === "object" ? viaje.pasajero : {};
+        const tel = pasajero.telefono || pasajero.phone || viaje?.telefonoPasajero || viaje?.pasajeroTelefono;
         if (tel) window.location.href = `tel:${tel}`;
     });
 
+}
+
+function inicializarActualizacionGpsPanel() {
+    if (gpsUiListenerInicializado) return;
+    gpsUiListenerInicializado = true;
+
+    window.addEventListener("driver:gps-position", () => {
+        const estado = getEstadoViaje();
+        const viaje = obtenerViajeActualUI();
+        if (!estado || !viaje) return;
+        actualizarDetalleViaje(viaje, estado);
+    });
 }
 
 function inicializarSheetExpandible() {

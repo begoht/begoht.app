@@ -1,4 +1,5 @@
 const Viaje = require("../../../../models/Viaje");
+const User = require("../../../../models/User");
 const { redis } = require("../../../../config/redis");
 
 const snapshotMotorista = require(
@@ -56,9 +57,13 @@ async function sanitizarViajeMotorista(viaje) {
     }
 
     const earnings = await getDriverEarningsForViaje(viaje);
+    const pasajero = await prepararPasajeroMotorista(viaje.pasajero);
     if ((viaje.tipo || "viaje") !== "envio" || !viaje.paquete) {
         return {
             ...viaje,
+            pasajero,
+            pasajeroNombre: pasajero?.nombreCompleto || null,
+            pasajeroTelefono: pasajero?.telefono || null,
             idaVuelta: prepararIdaVueltaPayload(viaje),
             ...earnings
         };
@@ -66,6 +71,9 @@ async function sanitizarViajeMotorista(viaje) {
 
     return {
         ...viaje,
+        pasajero,
+        pasajeroNombre: pasajero?.nombreCompleto || null,
+        pasajeroTelefono: pasajero?.telefono || null,
         idaVuelta: prepararIdaVueltaPayload(viaje),
         ...earnings,
         paquete: {
@@ -74,5 +82,47 @@ async function sanitizarViajeMotorista(viaje) {
             instrucciones: viaje.paquete.instrucciones || "",
             codigoEntregaRequerido: true
         }
+    };
+}
+
+async function prepararPasajeroMotorista(pasajero) {
+    if (!pasajero) return null;
+
+    if (typeof pasajero === "object" && pasajero.nombre) {
+        const nombreCompleto = [pasajero.nombre, pasajero.apellido]
+            .filter(Boolean)
+            .join(" ")
+            .trim();
+
+        return {
+            id: pasajero._id || pasajero.id || null,
+            nombre: pasajero.nombre || "",
+            apellido: pasajero.apellido || "",
+            nombreCompleto: nombreCompleto || pasajero.nombre || "",
+            telefono: pasajero.telefono || "",
+            foto: pasajero.foto || null,
+            rating: pasajero.rating || null
+        };
+    }
+
+    const user = await User.findById(pasajero)
+        .select("nombre apellido telefono foto rating")
+        .lean();
+
+    if (!user) return { id: pasajero.toString?.() || String(pasajero) };
+
+    const nombreCompleto = [user.nombre, user.apellido]
+        .filter(Boolean)
+        .join(" ")
+        .trim();
+
+    return {
+        id: user._id,
+        nombre: user.nombre || "",
+        apellido: user.apellido || "",
+        nombreCompleto: nombreCompleto || user.nombre || "",
+        telefono: user.telefono || "",
+        foto: user.foto || null,
+        rating: user.rating || null
     };
 }

@@ -1,5 +1,5 @@
 import { ofertaState, setLastDecision, getViajeId, CONFIG } from "./oferta.state.js";
-import { UI, notificar, resetBotonAceptar } from "./oferta.ui.js?v=20260608-offer-net-cash";
+import { UI, notificar, resetBotonAceptar, ocultarPanel, detenerSonidoOferta } from "./oferta.ui.js?v=20260608-offer-net-cash";
 import { getUltimaPosicion, setUltimaPosicion } from "../gps.js?v=20260627-map-icons";
 import { limpiarOferta } from "./oferta.render.js?v=20260702-offer-recovery";
 import { getDriverAvailability, isDriverOnline } from "../driver.status.js?v=20260627-map-icons";
@@ -20,6 +20,8 @@ export async function aceptarViaje(socket) {
     UI.btnAceptar.disabled = true;
     UI.btnAceptar.innerHTML = "Localisation...";
   }
+
+  ocultarOfertaAceptada();
 
   const pos = await obtenerPosicionParaAceptar();
   if (!pos) {
@@ -62,6 +64,16 @@ export async function aceptarViaje(socket) {
       notificar(res?.msj || "Impossible de prendre la course", "#ef4444");
     }
   });
+}
+
+function ocultarOfertaAceptada() {
+  if (ofertaState.intervalo) {
+    clearInterval(ofertaState.intervalo);
+    ofertaState.intervalo = null;
+  }
+
+  detenerSonidoOferta();
+  ocultarPanel();
 }
 
 export function rechazarViaje(socket) {

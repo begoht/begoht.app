@@ -4,7 +4,7 @@ import {
   setViajeEnCurso,
   viajesActivos
 } from "../viajeControl/viajeEstado.js";
-import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260705-driver-trip-sheet";
+import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260710-real-trip-panel";
 import { dibujarRutaPremium } from "../map.js?v=20260702-visible-labels";
 
 let socketRef = null;

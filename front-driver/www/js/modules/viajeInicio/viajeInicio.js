@@ -3,7 +3,7 @@ import {
     getViajeEnCursoId, setViajeEnCurso, 
     viajesActivos 
 } from "../viajeControl/viajeEstado.js"; 
-import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260705-driver-trip-sheet";
+import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260710-real-trip-panel";
 import { getUltimaPosicion } from "../gps.js?v=20260627-map-icons";
 import { dibujarRutaPremium } from "../map.js?v=20260702-visible-labels";
 import {
