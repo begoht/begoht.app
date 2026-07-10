@@ -73,7 +73,7 @@ export function reconstruirUIDesdeEstado() {
             if (btnIniciar) {
                 btnIniciar.style.display = "flex";
                 btnIniciar.disabled = false;
-                btnIniciar.innerHTML = `<i class="fa-solid fa-location-dot" aria-hidden="true"></i> LLEGUÉ AL PUNTO DE RECOGIDA`;
+                btnIniciar.innerHTML = `<i class="fa-solid fa-location-dot" aria-hidden="true"></i> LLEGUE AL PUNTO DE RECOGIDA`;
                 btnIniciar.classList.remove("btn-success");
                 btnIniciar.classList.add("btn-warning");
             }
@@ -95,7 +95,7 @@ export function reconstruirUIDesdeEstado() {
         case "en_curso": {
             const esEnvio = viajeActual?.tipo === "envio";
             if (estadoIdaVuelta === "retorno_pendiente") {
-                estadoBox && (estadoBox.innerText = "En attente de la decision du passager");
+                estadoBox && (estadoBox.innerText = "Esperando la decision del pasajero");
                 if (btnIniciar) btnIniciar.style.display = "none";
                 if (btnFinalizar) btnFinalizar.style.display = "none";
                 if (btnIniciarVuelta) btnIniciarVuelta.style.display = "none";
@@ -201,17 +201,17 @@ function actualizarDetalleViaje(viaje, estado) {
         panel?.removeAttribute("data-trip-state");
         if (eta) eta.textContent = "--";
         if (distanciaResumen) distanciaResumen.textContent = "--";
-        if (nombre) nombre.textContent = "Passager";
-        actualizarAvatarPasajero(avatar, foto, "Passager", "");
-        if (direccionPrincipal) direccionPrincipal.textContent = "Point de prise en charge";
-        if (direccionDetalle) direccionDetalle.textContent = "Distance et temps en calcul...";
-        if (destinoPrincipal) destinoPrincipal.textContent = "Destination";
-        if (destinoDetalle) destinoDetalle.textContent = "En attente";
+        if (nombre) nombre.textContent = "Pasajero";
+        actualizarAvatarPasajero(avatar, foto, "Pasajero", "");
+        if (direccionPrincipal) direccionPrincipal.textContent = "Punto de recogida";
+        if (direccionDetalle) direccionDetalle.textContent = "Detalle pendiente";
+        if (destinoPrincipal) destinoPrincipal.textContent = "Destino";
+        if (destinoDetalle) destinoDetalle.textContent = "Detalle pendiente";
         if (tiempo) tiempo.textContent = "--";
         if (distancia) distancia.textContent = "--";
         if (etapa) etapa.textContent = "Pickup";
-        if (tipoServicio) tipoServicio.textContent = "Estandar";
-        if (metodoPago) metodoPago.textContent = "Efectivo";
+        if (tipoServicio) tipoServicio.textContent = "--";
+        if (metodoPago) metodoPago.textContent = "--";
         if (tarifa) tarifa.textContent = "--";
         waitingCard?.classList.add("hidden");
         completedCard?.classList.add("hidden");
@@ -220,8 +220,8 @@ function actualizarDetalleViaje(viaje, estado) {
 
     panel?.setAttribute("data-trip-state", normalizarEstadoVisual(estado));
     const pasajero = viaje.pasajero || viaje.usuario || viaje.cliente || {};
-    const passengerName = pasajero.nombre || pasajero.name || viaje.pasajeroNombre || "Passager";
-    const passengerRating = pasajero.rating || pasajero.calificacion || viaje.pasajeroRating || "4.9";
+    const passengerName = obtenerNombrePasajero(pasajero, viaje);
+    const passengerRating = pasajero.rating || pasajero.calificacion || viaje.pasajeroRating || "--";
     const passengerPhoto = pasajero.foto || pasajero.avatar || pasajero.photo || viaje.pasajeroFoto || "";
     const vaDeVuelta = viaje?.idaVuelta?.estado === "retorno_en_curso";
     const esEnCurso = estado === "en_curso";
@@ -230,17 +230,17 @@ function actualizarDetalleViaje(viaje, estado) {
         : viaje.origen;
     const origen = viaje.origen || {};
     const destino = vaDeVuelta ? (viaje.origen || {}) : (viaje.destino || viaje.proximoDestino || {});
-    const fallbackAddress = esEnCurso ? "Destination finale" : "Point de prise en charge";
+    const fallbackAddress = esEnCurso ? "Destino" : "Punto de recogida";
     const targetAddress = target?.direccion || target?.address || fallbackAddress;
     const origenAddress = origen?.direccion || origen?.address || targetAddress || "Punto de recogida";
     const destinoAddress = destino?.direccion || destino?.address || "Destino";
     const distanceLabel = obtenerDistanciaLabel(viaje, estado, target);
     const etaText = obtenerEtaLabel(viaje, estado, distanceLabel);
     const detail = esEnCurso
-        ? `${viaje.destino?.direccion ? "Route vers destination" : "Route active"}`
+        ? `${viaje.destino?.direccion ? "Ruta al destino" : "Ruta activa"}`
         : estado === "llego"
-            ? "Le passager peut monter maintenant"
-            : "Route vers le passager";
+            ? "El pasajero puede subir ahora"
+            : "Ruta al pasajero";
     const money = getTripMoney(viaje);
     const serviceLabel = obtenerServicioLabel(viaje);
 
@@ -254,7 +254,7 @@ function actualizarDetalleViaje(viaje, estado) {
     if (direccionDetalle) direccionDetalle.textContent = limpiarDireccionDetalle(origenAddress, detail);
     if (destinoPrincipal) destinoPrincipal.textContent = limpiarDireccionPrincipal(destinoAddress);
     if (destinoDetalle) destinoDetalle.textContent = limpiarDireccionDetalle(destinoAddress, vaDeVuelta ? "Retorno" : "Destino");
-    if (tiempo) tiempo.textContent = etaText.valor === "--" ? "Calcul..." : etaText.valor;
+    if (tiempo) tiempo.textContent = etaText.valor === "--" ? "--" : etaText.valor;
     if (distancia) distancia.textContent = distanceLabel;
     if (etapa) etapa.textContent = obtenerEtapaLabel(viaje, estado);
     if (tipoServicio) tipoServicio.textContent = serviceLabel;
@@ -289,6 +289,22 @@ function actualizarAvatarPasajero(avatar, foto, passengerName, passengerPhoto) {
         foto.removeAttribute("src");
         foto.hidden = true;
     }
+}
+
+function obtenerNombrePasajero(pasajero = {}, viaje = {}) {
+    const fullName =
+        pasajero.fullName ||
+        pasajero.nombreCompleto ||
+        viaje.pasajeroNombreCompleto ||
+        viaje.pasajeroNombre;
+    if (fullName) return String(fullName).trim();
+
+    const parts = [
+        pasajero.nombre || pasajero.name || viaje.pasajero?.nombre,
+        pasajero.apellido || pasajero.lastName || viaje.pasajero?.apellido
+    ].filter(Boolean);
+
+    return parts.join(" ").trim() || "Pasajero";
 }
 
 function limpiarDireccionPrincipal(address = "") {
@@ -433,16 +449,6 @@ function inicializarAccionesViaje() {
         if (tel) window.location.href = `tel:${tel}`;
     });
 
-    document.getElementById("btnViajeNavegar")?.addEventListener("click", () => {
-        const viaje = obtenerViajeActualUI();
-        const estado = getEstadoViaje();
-        const target = estado === "en_curso"
-            ? (viaje?.proximoDestino || viaje?.destino)
-            : viaje?.origen;
-        const point = normalizarCoord(target);
-        if (!point) return;
-        window.open(`https://www.google.com/maps/dir/?api=1&destination=${point.lat},${point.lng}`, "_blank", "noopener");
-    });
 }
 
 function inicializarSheetExpandible() {
@@ -512,9 +518,8 @@ function actualizarBotonCobro(viaje, estado) {
     if (!btnCobrar || !montoCobrar) return;
 
     const money = getTripMoney(viaje || {});
-    const mostrar = !!viaje &&
-        isCashMethod(money.metodoPago) &&
-        ["asignado", "llego", "en_curso"].includes(estado);
+    const mostrar = !!viaje && ["asignado", "llego", "en_curso"].includes(estado);
+    const esEfectivo = isCashMethod(money.metodoPago);
 
     if (!mostrar) {
         btnCobrar.classList.add("hidden");
@@ -522,25 +527,30 @@ function actualizarBotonCobro(viaje, estado) {
         btnCobrar.disabled = true;
         btnCobrar.setAttribute("aria-disabled", "true");
         btnCobrar.removeAttribute("data-monto");
-        montoCobrar.textContent = "0 G";
+        montoCobrar.textContent = "--";
         return;
     }
 
-    const monto = formatGourdes(money.totalCobrar);
+    const monto = formatGourdes(money.totalCobrar || money.precio || viaje.precio || 0);
     montoCobrar.textContent = monto;
     btnCobrar.dataset.monto = monto;
-    btnCobrar.disabled = false;
-    btnCobrar.removeAttribute("aria-disabled");
+    btnCobrar.disabled = !esEfectivo;
+    btnCobrar.setAttribute("aria-disabled", esEfectivo ? "false" : "true");
+    btnCobrar.classList.toggle("is-cash", esEfectivo);
     btnCobrar.classList.remove("hidden");
     btnCobrar.style.display = "flex";
 
     if (!botonCobroInicializado) {
         botonCobroInicializado = true;
         btnCobrar.addEventListener("click", () => {
+            const viajeActual = obtenerViajeActualUI();
+            const moneyActual = getTripMoney(viajeActual || {});
+            if (!isCashMethod(moneyActual.metodoPago)) return;
+
             const montoActual = btnCobrar.dataset.monto || montoCobrar.textContent || "0 G";
             if (typeof Toastify !== "undefined") {
                 Toastify({
-                    text: `A encaisser en especes: ${montoActual}`,
+                    text: `A cobrar en efectivo: ${montoActual}`,
                     duration: 3500,
                     gravity: "top",
                     position: "center",

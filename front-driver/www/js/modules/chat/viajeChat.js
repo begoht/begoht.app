@@ -80,16 +80,19 @@ export function initDriverChat(socket) {
 }
 
 function ensureWidget() {
-  if (!document.getElementById("btnDriverViajeChat")) {
-    const actions = document.querySelector("#panelViajeControl .viaje-actions");
-    if (actions) {
-      const btn = document.createElement("button");
-      btn.id = "btnDriverViajeChat";
-      btn.className = "btn-chat-viaje";
-      btn.type = "button";
-      btn.innerHTML = '<i class="fa-solid fa-comments"></i><span>Chat</span><span id="driverViajeChatBadge" class="chat-badge hidden">0</span>';
-      btn.addEventListener("click", openChat);
-      actions.prepend(btn);
+  const messageButton = document.getElementById("btnViajeMensaje");
+  if (messageButton) {
+    if (!document.getElementById("driverViajeChatBadge")) {
+      const badge = document.createElement("span");
+      badge.id = "driverViajeChatBadge";
+      badge.className = "chat-badge hidden";
+      badge.textContent = "0";
+      messageButton.appendChild(badge);
+    }
+
+    if (!messageButton.dataset.chatReady) {
+      messageButton.dataset.chatReady = "true";
+      messageButton.addEventListener("click", openChat);
     }
   }
 
@@ -100,15 +103,15 @@ function ensureWidget() {
     panel.innerHTML = `
       <div class="viaje-chat-card">
         <div class="viaje-chat-header">
-          <strong>Chat passager</strong>
+          <strong>Chat pasajero</strong>
           <button id="btnCerrarDriverViajeChat" type="button" aria-label="Cerrar chat">
             <i class="fa-solid fa-xmark"></i>
           </button>
         </div>
-        <div id="driverViajeChatStatus" class="viaje-chat-status">Connecte avec le passager</div>
+        <div id="driverViajeChatStatus" class="viaje-chat-status">Conectado con el pasajero</div>
         <div id="driverViajeChatBody" class="viaje-chat-body"></div>
         <form id="driverViajeChatForm" class="viaje-chat-form">
-          <input id="driverViajeChatInput" type="text" maxlength="500" autocomplete="off" placeholder="Ecrire un message">
+          <input id="driverViajeChatInput" type="text" maxlength="500" autocomplete="off" placeholder="Escribir un mensaje">
           <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
         </form>
       </div>
@@ -122,7 +125,7 @@ function ensureWidget() {
 
 function syncButton() {
   ensureWidget();
-  const btn = document.getElementById("btnDriverViajeChat");
+  const btn = document.getElementById("btnViajeMensaje");
   if (!btn) return;
 
   const viajeId = getViajeEnCursoId() || activeViajeId || localStorage.getItem("viajeEnCursoId");
@@ -130,6 +133,8 @@ function syncButton() {
   const visible = !!viajeId && ["asignado", "llego", "en_curso"].includes(estado || "asignado");
 
   btn.classList.toggle("hidden", !visible);
+  btn.disabled = !visible;
+  btn.setAttribute("aria-disabled", visible ? "false" : "true");
 }
 
 function openChat() {
@@ -210,31 +215,12 @@ function injectStyles() {
   const style = document.createElement("style");
   style.id = "driverViajeChatStyles";
   style.textContent = `
-    #btnDriverViajeChat.hidden, .chat-badge.hidden, .viaje-chat-panel.hidden { display: none !important; }
-    .btn-chat-viaje {
-      position: relative;
-      width: 100%;
-      min-height: 44px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      border: 0;
-      border-radius: 8px;
-      padding: 8px 10px;
-      background:
-        linear-gradient(135deg, rgba(37, 99, 235, 0.24), rgba(15, 118, 110, 0.22)),
-        #111827;
-      color: white;
-      font-size: 0.78rem;
-      font-weight: 950;
-      line-height: 1.12;
-      letter-spacing: 0;
-    }
+    #btnViajeMensaje.hidden, .chat-badge.hidden, .viaje-chat-panel.hidden { display: none !important; }
+    #btnViajeMensaje { position: relative; }
     .chat-badge {
       position: absolute;
-      top: -6px;
-      right: -6px;
+      top: 0;
+      right: 10px;
       min-width: 18px;
       height: 18px;
       border-radius: 99px;

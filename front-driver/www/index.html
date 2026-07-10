@@ -253,14 +253,10 @@
           <div>
             <h2 id="estadoViaje" class="trip-status">En camino al pasajero</h2>
             <p class="trip-subtitle">
-              Llegada en <span id="viajeSheetEta">4 min</span> &bull; <span id="viajeDistanciaResumen">1.2 km</span>
+              Llegada en <span id="viajeSheetEta">--</span> &bull; <span id="viajeDistanciaResumen">--</span>
             </p>
             <span id="viajeSheetEtaLabel" class="trip-sr-label">ETA</span>
           </div>
-          <button id="btnViajeNavegar" class="trip-navigate-btn" type="button" aria-label="Navegar al punto">
-            <span><i class="fa-solid fa-location-arrow" aria-hidden="true"></i></span>
-            NAVEGAR
-          </button>
         </header>
 
         <section class="trip-rider-section" aria-label="Pasajero">
@@ -270,9 +266,9 @@
           </div>
 
           <div class="trip-rider-info">
-            <h3 id="viajePasajeroNombre">Maria Gonzalez</h3>
+            <h3 id="viajePasajeroNombre">Pasajero</h3>
             <div id="viajePasajeroRating" class="trip-rating">
-              <i class="fa-solid fa-star" aria-hidden="true"></i> 4.9
+              <i class="fa-solid fa-star" aria-hidden="true"></i> --
             </div>
           </div>
 
@@ -295,41 +291,41 @@
             <article class="trip-route-point pickup">
               <span></span>
               <div>
-                <strong id="viajeDireccionPrincipal">Av. Santa Fe 1234</strong>
-                <small id="viajeDireccionDetalle">Palermo, CABA</small>
+                <strong id="viajeDireccionPrincipal">Punto de recogida</strong>
+                <small id="viajeDireccionDetalle">Detalle pendiente</small>
               </div>
             </article>
             <article class="trip-route-point dropoff">
               <span></span>
               <div>
-                <strong id="viajeDestinoPrincipal">Av. Corrientes 4321</strong>
-                <small id="viajeDestinoDetalle">Almagro, CABA</small>
+                <strong id="viajeDestinoPrincipal">Destino</strong>
+                <small id="viajeDestinoDetalle">Detalle pendiente</small>
               </div>
             </article>
           </div>
 
           <div id="btnCobrarEfectivo" class="trip-payment-card hidden" role="button" tabindex="0">
-            <span><i class="fa-regular fa-money-bill-1" aria-hidden="true"></i> <span id="tripMetodoPago">Efectivo</span></span>
-            <strong id="montoCobrarEfectivo">$2.450</strong>
+            <span><i class="fa-regular fa-money-bill-1" aria-hidden="true"></i> <span id="tripMetodoPago">--</span></span>
+            <strong id="montoCobrarEfectivo">--</strong>
           </div>
         </section>
 
         <section class="trip-stats" aria-label="Resumen del viaje">
           <div class="trip-stat">
             <i class="fa-regular fa-clock" aria-hidden="true"></i>
-            <strong id="viajeTiempoEstimado">8 min</strong>
+            <strong id="viajeTiempoEstimado">--</strong>
             <span>Tiempo estimado</span>
           </div>
 
           <div class="trip-stat">
             <i class="fa-solid fa-route" aria-hidden="true"></i>
-            <strong id="viajeDistancia">2.3 km</strong>
+            <strong id="viajeDistancia">--</strong>
             <span>Distancia</span>
           </div>
 
           <div class="trip-stat">
             <i class="fa-solid fa-user" aria-hidden="true"></i>
-            <strong id="tripTipoServicio">Estandar</strong>
+            <strong id="tripTipoServicio">--</strong>
             <span>Tipo de servicio</span>
           </div>
         </section>
@@ -360,7 +356,7 @@
         <footer class="trip-footer-actions viaje-actions">
           <button id="btnLlegue" class="trip-primary-btn" type="button" style="display:none;">
             <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
-            LLEGUÉ AL PUNTO DE RECOGIDA
+            LLEGUE AL PUNTO DE RECOGIDA
           </button>
 
           <button id="btnIniciarViaje" class="trip-primary-btn" type="button" style="display:none;">
@@ -397,14 +393,6 @@
           <button type="button">
             <span><i class="fa-solid fa-xmark" aria-hidden="true"></i></span>
             Cancelar<br>viaje
-          </button>
-          <button type="button">
-            <span><i class="fa-solid fa-share-nodes" aria-hidden="true"></i></span>
-            Compartir<br>viaje
-          </button>
-          <button type="button">
-            <span><i class="fa-solid fa-shield-halved" aria-hidden="true"></i></span>
-            Seguridad
           </button>
         </nav>
       </div>
