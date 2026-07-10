@@ -1,4 +1,4 @@
-import { createPOIIcon } from "../map.icons.js?v=20260628-dark-route-locked";
+import { createPOIIcon } from "../map.icons.js?v=20260710-route-camera";
 
 
 import { cityConfig } from "../config/index.js?v=20260624-cordoba-gps";
@@ -42,3 +42,4 @@ export function renderPOILayer() {
     marker.addTo(layerReferencias);
   });
 }
+

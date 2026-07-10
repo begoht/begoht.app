@@ -1,5 +1,5 @@
 import { viajeState } from "../viaje/viaje.state.js";
-import { asignarDestino } from "./map.destino.js?v=20260628-dark-route-locked";
+import { asignarDestino } from "./map.destino.js?v=20260710-route-camera";
 import { coordsInCity } from "./config/index.js?v=20260624-cordoba-gps";
 
 const MAX_DESTINOS = 3;
@@ -229,3 +229,4 @@ export function initSavedDestinations(map) {
 
   renderList(map);
 }
+

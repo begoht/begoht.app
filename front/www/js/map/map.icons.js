@@ -1,39 +1,33 @@
 const MOTORISTA_WIDTH = 40;
 const MOTORISTA_HEIGHT = 40;
 const SIMPLE_SIZE = 38;
-const PASSENGER_LOCATION_SIZE = 34;
-const ROUTE_POINT_SIZE = 30;
+const PASSENGER_LOCATION_SIZE = 20;
+const ROUTE_POINT_SIZE = 20;
 const POI_SIZE = 26;
 
 function svgDataUrl(svg) {
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 }
 
-const motoTopViewSvg = `
+const carTopViewSvg = `
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <defs>
-    <linearGradient id="moto-body" x1="0" y1="0" x2="0" y2="1">
+    <linearGradient id="car-body" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#ffffff"/>
-      <stop offset="1" stop-color="#dbeafe"/>
+      <stop offset=".58" stop-color="#f8fafc"/>
+      <stop offset="1" stop-color="#d7dce2"/>
     </linearGradient>
-    <linearGradient id="moto-blue" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#60a5fa"/>
-      <stop offset="1" stop-color="#1d4ed8"/>
-    </linearGradient>
-    <filter id="moto-shadow" x="-45%" y="-45%" width="190%" height="190%">
-      <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#020617" flood-opacity=".46"/>
+    <filter id="car-shadow" x="-45%" y="-45%" width="190%" height="190%">
+      <feDropShadow dx="0" dy="5" stdDeviation="3.2" flood-color="#020617" flood-opacity=".45"/>
     </filter>
   </defs>
-  <g filter="url(#moto-shadow)" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M32 4.5c3.8 0 6.4 2.8 6.4 7.2v5.8c0 2.7-2.1 4.8-6.4 4.8s-6.4-2.1-6.4-4.8v-5.8c0-4.4 2.6-7.2 6.4-7.2z" fill="#111827"/>
-    <path d="M21.5 27.5 13 31.2M42.5 27.5l8.5 3.7" fill="none" stroke="#0f172a" stroke-width="5.2"/>
-    <path d="M18 30h9M37 30h9" fill="none" stroke="#e5e7eb" stroke-width="3.4"/>
-    <path d="M32 13c5.9 0 10.2 4.7 11.1 12.4l1.2 10.8c.9 8.5-4 18.1-12.3 23.3-8.3-5.2-13.2-14.8-12.3-23.3l1.2-10.8C21.8 17.7 26.1 13 32 13z" fill="url(#moto-blue)" stroke="#0f172a" stroke-width="2.2"/>
-    <path d="M25.2 19.2c1.2-3.1 3.4-5.1 6.8-5.1s5.6 2 6.8 5.1l1.7 7.9h-17l1.7-7.9z" fill="url(#moto-body)" stroke="#dbeafe" stroke-width="1.5"/>
-    <path d="M25.5 32.5c1.6-4 3.7-6 6.5-6s4.9 2 6.5 6l1.6 12.2c-1.3 3.9-4.1 7.2-8.1 9.8-4-2.6-6.8-5.9-8.1-9.8l1.6-12.2z" fill="#0f172a" stroke="#e5e7eb" stroke-width="1.5"/>
-    <path d="M28 35.2h8M27.1 46.5h9.8" fill="none" stroke="#64748b" stroke-width="2.1"/>
-    <path d="M27.7 55.1h8.6" stroke="#ef4444" stroke-width="3.2"/>
-    <path d="M32 8.5v45" stroke="#ffffff" stroke-width="1.5" opacity=".28"/>
+  <g filter="url(#car-shadow)" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20 16.5c1.6-6.5 5.1-10 12-10s10.4 3.5 12 10l3.2 20.8c1.1 7.1-2.8 15.1-9.2 18.8-1.9 1.1-4 1.6-6 1.6s-4.1-.5-6-1.6c-6.4-3.7-10.3-11.7-9.2-18.8L20 16.5z" fill="url(#car-body)" stroke="#4b5563" stroke-width="2.2"/>
+    <path d="M24.8 18.6c1.4-4.3 3.6-6.5 7.2-6.5s5.8 2.2 7.2 6.5l1.3 7.8h-17l1.3-7.8z" fill="#111827" opacity=".78"/>
+    <path d="M23.1 33.2h17.8l-1.5 12.6c-2.1 2.5-4.6 3.8-7.4 3.8s-5.3-1.3-7.4-3.8l-1.5-12.6z" fill="#e5e7eb" stroke="#cbd5e1" stroke-width="1.2"/>
+    <path d="M19.5 24.8h-3.8M48.3 24.8h-3.8M19.1 42.2h-3.5M48.4 42.2h-3.5" stroke="#111827" stroke-width="4"/>
+    <path d="M23.2 54.1h17.6" stroke="#ef4444" stroke-width="3.2"/>
+    <path d="M23.7 15.9c1.8-4.2 4.4-6.1 8.3-6.1s6.5 1.9 8.3 6.1M23.6 30.6h16.8" stroke="#ffffff" stroke-width="1.7" opacity=".72"/>
   </g>
 </svg>`;
 
@@ -89,11 +83,11 @@ export const destinoIcon = L.divIcon({
 });
 
 export const motoIcon = makeIcon({
-  svg: motoTopViewSvg,
+  svg: carTopViewSvg,
   width: MOTORISTA_WIDTH,
   height: MOTORISTA_HEIGHT,
   anchorY: MOTORISTA_HEIGHT / 2,
-  className: "bego-map-icon bego-map-icon-moto",
+  className: "bego-map-icon bego-map-icon-car",
 });
 
 export function createPOIIcon(categoria = "default") {
@@ -147,6 +141,6 @@ export function createPOIIcon(categoria = "default") {
   });
 }
 
-export const transparentMotoIconUrl = svgDataUrl(motoTopViewSvg);
+export const transparentMotoIconUrl = svgDataUrl(carTopViewSvg);
 export const transparentDestinoIconUrl = svgDataUrl(destinoSvg);
 export const transparentPasajeroIconUrl = svgDataUrl(pasajeroSvg);

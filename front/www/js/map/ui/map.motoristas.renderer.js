@@ -1,10 +1,10 @@
-import { motoIcon } from "../map.icons.js?v=20260621-top-moto";
+import { motoIcon } from "../map.icons.js?v=20260710-route-camera";
 import {
   motoristasCercanos
 } from "../state/map.motoristas.state.js";
 import {
   setMotorcycleMarkerPose
-} from "../utils/map.motorcycle.motion.js?v=20260621-route-moto";
+} from "../utils/map.motorcycle.motion.js?v=20260710-route-camera";
 
 export function renderMotoristas(map, drivers) {
   if (!map || !Array.isArray(drivers)) return;
@@ -75,3 +75,4 @@ export function clearMotoristas(map) {
     delete motoristasCercanos[id];
   });
 }
+

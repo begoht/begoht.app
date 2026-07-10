@@ -2,7 +2,7 @@ import {
   dibujarRuta,
   dibujarRutaReserva,
   limpiarRutas
-} from "../map.ruta.js?v=20260628-dark-route-locked";
+} from "../map.ruta.js?v=20260710-route-camera";
 
 import {
   mismaPosicion,
@@ -272,3 +272,4 @@ export function processRouteFlow({
     target: targetActual
   });
 }
+

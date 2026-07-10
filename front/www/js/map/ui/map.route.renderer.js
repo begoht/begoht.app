@@ -6,9 +6,49 @@ let rutaActualCoords = [];
 
 const ROUTE_CONSUME_MAX_DISTANCE_METERS = 120;
 const ROUTE_CONSUME_FINISH_METERS = 12;
+const ROUTE_FIT_MIN_INTERVAL_MS = 900;
+
+let lastRouteFitAt = 0;
 
 export function getRutaActualCoords() {
   return rutaActualCoords.map((coord) => ({ ...coord }));
+}
+
+export function ajustarVistaRuta(map, extraPoints = [], { force = false } = {}) {
+  if (!map) return false;
+
+  const now = Date.now();
+  if (!force && now - lastRouteFitAt < ROUTE_FIT_MIN_INTERVAL_MS) {
+    return false;
+  }
+
+  const coords = [
+    ...rutaActualCoords,
+    ...normalizarCoords(extraPoints)
+  ];
+  const boundsCoords = compactarCoords(coords)
+    .map((coord) => [coord.lat, coord.lng]);
+
+  if (boundsCoords.length < 2 || !window.L?.latLngBounds) return false;
+
+  try {
+    map._begoProgrammaticFollow = true;
+    map.fitBounds(L.latLngBounds(boundsCoords), {
+      paddingTopLeft: [72, 96],
+      paddingBottomRight: [72, Math.min(320, Math.max(160, Math.round(window.innerHeight * 0.28)))],
+      maxZoom: 17,
+      animate: true,
+      duration: 0.45
+    });
+    lastRouteFitAt = now;
+    window.setTimeout(() => {
+      map._begoProgrammaticFollow = false;
+    }, 650);
+    return true;
+  } catch {
+    map._begoProgrammaticFollow = false;
+    return false;
+  }
 }
 
 export function consumirRutaDesde(map, posicion, {
@@ -52,10 +92,16 @@ export function consumirRutaDesde(map, posicion, {
 /*************************************************
  * 🎨 RENDER RUTA PREMIUM
  *************************************************/
-export function renderRuta(map, coords) {
+export function renderRuta(map, coords, { fit = false, origen = null, destino = null } = {}) {
 
-  const coordsNormalizados = normalizarCoords(coords);
+  const coordsNormalizados = normalizarCoords([
+    origen,
+    ...(coords || []),
+    destino
+  ]);
   const latLngs = coordsNormalizados.map((coord) => [coord.lat, coord.lng]);
+
+  if (latLngs.length < 2) return null;
 
   if (
     rutaActualLayer?.setLatLngs &&
@@ -66,6 +112,7 @@ export function renderRuta(map, coords) {
     rutaActualLayer._outline.setLatLngs(latLngs);
     rutaActualLayer._glow.setLatLngs(latLngs);
     rutaActualLayer.setLatLngs(latLngs);
+    if (fit) ajustarVistaRuta(map, [], { force: true });
     return rutaActualLayer;
   }
 
@@ -95,6 +142,8 @@ export function renderRuta(map, coords) {
   main._outline = outline;
   main._glow = glow;
 
+  if (fit) ajustarVistaRuta(map, [], { force: true });
+
   return main;
 }
 
@@ -110,10 +159,9 @@ export function renderRutaReserva(
 
   limpiarRuta(map);
 
-  const coordsNormalizados = [
-    ...normalizarCoords(coordsActual || []),
-    ...normalizarCoords(coordsHaciaPasajero || [])
-  ];
+  const coordsNormalizados = unirCoordsReserva(coordsActual, coordsHaciaPasajero)
+    .map((coord) => normalizarCoord(coord))
+    .filter(Boolean);
 
   const coordsContinuos = unirCoordsReserva(coordsActual, coordsHaciaPasajero);
 
@@ -157,11 +205,7 @@ export function renderRutaReserva(
 
   if (fit && coordsContinuos.length > 1) {
     try {
-      map.fitBounds(L.latLngBounds(coordsContinuos), {
-        padding: [80, 80],
-        animate: true,
-        duration: 0.6
-      });
+      ajustarVistaRuta(map, [], { force: true });
     } catch {}
   }
 
@@ -195,13 +239,7 @@ export function renderLineaRecta(
   }).addTo(map);
 
   if (fit) {
-    try {
-      map.fitBounds(rutaActualLayer.getBounds(), {
-        padding: [70, 70],
-        animate: true,
-        duration: 0.5
-      });
-    } catch {}
+    ajustarVistaRuta(map, [], { force: true });
   }
 
   return rutaActualLayer;
@@ -239,6 +277,7 @@ export function limpiarRuta(map) {
     rutaActualLayer = null;
     rutaActualCoords = [];
     puntoIntermedioMarker = null;
+    lastRouteFitAt = 0;
 
   } catch (err) {
 

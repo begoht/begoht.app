@@ -46,7 +46,7 @@
 
 /* 7. 🔥 OVERRIDES GLOBALES (ESTO TE FALTA) */
 @import "./base/theme.css";
-@import "./components/map-motion.css?v=20260702-visible-labels";
+@import "./components/map-motion.css?v=20260710-route-camera";
 @import "./components/arrival.css?v=20260628-dark-route-locked";
 
 .leaflet-marker-icon.bego-map-icon,
@@ -306,3 +306,4 @@
   background: rgba(255, 255, 255, 0.14);
   border-color: rgba(255, 255, 255, 0.22);
 }
+

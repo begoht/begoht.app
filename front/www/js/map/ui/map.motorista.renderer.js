@@ -1,16 +1,15 @@
 import { viajeState } from "../../viaje/viaje.state.js";
-import { motoIcon } from "../map.icons.js?v=20260621-top-moto";
+import { motoIcon } from "../map.icons.js?v=20260710-route-camera";
 import {
+  ajustarVistaRuta,
   consumirRutaDesde,
   getRutaActualCoords
-} from "./map.route.renderer.js?v=20260628-dark-route-locked";
+} from "./map.route.renderer.js?v=20260710-route-camera";
 import {
   setMotorcycleMarkerPose
-} from "../utils/map.motorcycle.motion.js?v=20260621-route-moto";
+} from "../utils/map.motorcycle.motion.js?v=20260710-route-camera";
 
 const FOLLOW_PAUSE_MS = 12000;
-const FOLLOW_ZOOM = 17;
-const FOLLOW_ZOOM_DURATION_SECONDS = 0.65;
 let followPausedUntil = 0;
 
 export function renderMotorista(map, motorista) {
@@ -100,57 +99,15 @@ function followMotorista(map, markerPos) {
   if (!Number.isFinite(lat) || !Number.isFinite(lng)) return false;
 
   const point = { lat, lng };
-  map._begoLatestFollowPoint = point;
-
-  const currentZoom = Number(map.getZoom?.()) || 0;
-  if (currentZoom < FOLLOW_ZOOM) {
-    zoomToMotorista(map, point);
-    return true;
+  const routeCoords = getRutaActualCoords();
+  if (routeCoords.length > 1) {
+    return ajustarVistaRuta(map, [point]);
   }
-
-  if (map._begoFollowZooming) return true;
-
-  centerFollowCamera(map, point);
-  return true;
-}
-
-function zoomToMotorista(map, point) {
-  if (map._begoFollowZooming) return;
-
-  map._begoFollowZooming = true;
-  map._begoProgrammaticFollow = true;
-
-  let released = false;
-  const release = () => {
-    if (released) return;
-    released = true;
-    map._begoFollowZooming = false;
-    map._begoProgrammaticFollow = false;
-
-    if (Date.now() >= followPausedUntil && map._begoLatestFollowPoint) {
-      centerFollowCamera(map, map._begoLatestFollowPoint);
-    }
-  };
-
-  if (typeof map.flyTo === "function") {
-    map.once?.("moveend", release);
-    map.flyTo([point.lat, point.lng], FOLLOW_ZOOM, {
-      animate: true,
-      duration: FOLLOW_ZOOM_DURATION_SECONDS
-    });
-    window.setTimeout(release, 1000);
-    return;
-  }
-
-  map.setView?.([point.lat, point.lng], FOLLOW_ZOOM, { animate: true });
-  release();
-}
-
-function centerFollowCamera(map, point) {
-  if (!map || !point || Date.now() < followPausedUntil) return;
 
   map.panTo?.([point.lat, point.lng], {
     animate: false,
     noMoveStart: true
   });
+  return true;
 }
+

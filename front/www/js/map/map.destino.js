@@ -2,11 +2,11 @@
 
 import { viajeState } from "../viaje/viaje.state.js";
 
-import { dibujarRuta } from "./map.ruta.js?v=20260628-dark-route-locked";
+import { dibujarRuta } from "./map.ruta.js?v=20260710-route-camera";
 
 import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260624-cordoba-gps";
 
-import { destinoIcon } from "./map.icons.js?v=20260628-dark-route-locked";
+import { destinoIcon } from "./map.icons.js?v=20260710-route-camera";
 
 import { reverseGeocode } from "./services/map.reverse.js?v=20260624-cordoba-gps";
 
@@ -190,11 +190,6 @@ export async function asignarDestino(
 
     setDestinoTooltip(viajeState.destinoMarker, nombre || "Destino");
   }
-
-  map.flyTo(latlng, 15, {
-    duration: 1.2
-  });
-
   /*************************************************
    * 🌍 DIRECCIÓN
    *************************************************/
@@ -306,3 +301,5 @@ export function cleanupSeleccionDestino() {
     clickMap = null;
   }
 }
+
+

@@ -1,5 +1,5 @@
 import { initGeo } from "../map/map.geo.js?v=20260628-dark-route-locked";
-import { initSeleccionDestino } from "../map/map.destino.js?v=20260628-dark-route-locked";
+import { initSeleccionDestino } from "../map/map.destino.js?v=20260710-route-camera";
 import { actualizarBotonViaje } from "../pasajero/pasajero.ui.js?v=20260624-cordoba-gps";
 import { initPaymentMethodSettings, initToggleMenuDriver, seleccionarPago } from "./pasajero.ui.js?v=20260624-cordoba-gps";
 import { getSocket } from "../socket/socket.js?v=20260606-session-refresh";
@@ -82,3 +82,4 @@ export function initPasajero(map) {
     console.error("Error critico en initPasajero:", err);
   }
 }
+

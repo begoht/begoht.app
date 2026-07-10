@@ -15,7 +15,7 @@ import {
   renderRutaReserva,
   renderLineaRecta,
   limpiarRuta
-} from "./ui/map.route.renderer.js?v=20260628-dark-route-locked";
+} from "./ui/map.route.renderer.js?v=20260710-route-camera";
 
 let ultimaRutaCalculada = 0;
 
@@ -162,19 +162,13 @@ export async function dibujarRuta(
     );
 
     const route =
-      renderRuta(map, coords);
+      renderRuta(map, coords, {
+        fit: !rutaInicialDibujada,
+        origen,
+        destino
+      });
 
     if (!rutaInicialDibujada) {
-
-      map.fitBounds(
-        route.getBounds(),
-        {
-          padding: [80, 80],
-          animate: true,
-          duration: 0.6
-        }
-      );
-
       rutaInicialDibujada = true;
     }
 
@@ -383,3 +377,4 @@ export function resetRutaCache() {
     currentRouteController = null;
   }
 }
+

@@ -1,6 +1,6 @@
 import { viajeState } from "../../viaje/viaje.state.js";
-import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260628-dark-route-locked";
-import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260628-dark-route-locked";
+import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260710-route-camera";
+import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260710-route-camera";
 import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260710-photo-fix";
 
 const RETORNO_AUTO_START_MS = 10000;
@@ -221,3 +221,4 @@ function notificar(text) {
 
   console.log(text);
 }
+

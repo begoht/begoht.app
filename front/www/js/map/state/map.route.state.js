@@ -1,4 +1,4 @@
-import { resetRutaCache } from "../map.ruta.js?v=20260628-dark-route-locked";
+import { resetRutaCache } from "../map.ruta.js?v=20260710-route-camera";
 
 let lastEstado = null;
 
@@ -47,3 +47,4 @@ export function resetRouteState() {
 
   resetRutaCache();
 }
+
