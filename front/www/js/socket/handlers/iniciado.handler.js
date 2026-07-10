@@ -2,7 +2,7 @@ import { viajeState } from "../../viaje/viaje.state.js";
 import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260628-dark-route-locked";
 import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260628-dark-route-locked";
 import { ocultarOrigenEnMapa } from "../../map/map.geo.js?v=20260628-dark-route-locked";
-import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260628-dark-route-locked";
+import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260710-photo-fix";
 import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260615-smooth-autofinish";
 
 let lastIniciadoViajeId = null;

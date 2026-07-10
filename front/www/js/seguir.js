@@ -5,6 +5,18 @@ let markerDriver, markerOrigen, markerDestino;
 let driverPhone = "";
 let lastDriverLatLng = null;
 
+function normalizarFotoUrl(value = "") {
+    const raw = String(value || "").trim();
+    if (!raw) return "";
+    if (/^(?:https?:|data:|blob:)/i.test(raw)) return raw;
+
+    try {
+        return new URL(raw, window.location.origin).href;
+    } catch {
+        return raw;
+    }
+}
+
 const GPS_HEADING_ACCEPT_DEG = 75;
 const GPS_FLIP_GUARD_DEG = 135;
 const HEADING_SMOOTHING = 0.58;
@@ -31,7 +43,14 @@ async function cargarViaje() {
         // Renderizar Info
         document.getElementById("driverNombre").innerText = motorista.nombre;
         document.getElementById("driverAuto").innerText = motorista.placa || "S/N";
-        document.getElementById("driverFoto").src = motorista.foto || "/assets/default-user.png";
+        const driverFoto = document.getElementById("driverFoto");
+        if (driverFoto) {
+            driverFoto.onerror = () => {
+                driverFoto.src = "/assets/default-user.png";
+                driverFoto.onerror = null;
+            };
+            driverFoto.src = normalizarFotoUrl(motorista.foto || motorista.avatar || motorista.photo) || "/assets/default-user.png";
+        }
 
         // Marcadores
         if (viaje.origen) {

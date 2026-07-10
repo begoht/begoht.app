@@ -20,6 +20,35 @@ let sheetDragInicializado = false;
 let gpsUiListenerInicializado = false;
 let waitingTimerInterval = null;
 
+function normalizarFotoUrl(value = "") {
+    const raw = String(value || "").trim();
+    if (!raw) return "";
+    if (/^(?:https?:|data:|blob:)/i.test(raw)) return raw;
+
+    const base = typeof window.getServerUrl === "function"
+        ? window.getServerUrl()
+        : window.location.origin;
+
+    try {
+        return new URL(raw, base).href;
+    } catch {
+        return raw;
+    }
+}
+
+function obtenerFotoPerfil(entity = {}, fallback = "") {
+    return normalizarFotoUrl(
+        entity?.foto ||
+        entity?.avatar ||
+        entity?.photo ||
+        entity?.profilePhoto ||
+        entity?.profileImage ||
+        entity?.imagen ||
+        fallback ||
+        ""
+    );
+}
+
 export function reconstruirUIDesdeEstado() {
     const estado = getEstadoViaje();
     const btnIniciar = document.getElementById("btnIniciarViaje");
@@ -227,7 +256,7 @@ function actualizarDetalleViaje(viaje, estado) {
     const pasajero = viaje.pasajero || viaje.usuario || viaje.cliente || {};
     const passengerName = obtenerNombrePasajero(pasajero, viaje);
     const passengerRating = pasajero.rating || pasajero.calificacion || viaje.pasajeroRating || "--";
-    const passengerPhoto = pasajero.foto || pasajero.avatar || pasajero.photo || viaje.pasajeroFoto || "";
+    const passengerPhoto = obtenerFotoPerfil(pasajero, viaje.pasajeroFoto);
     const vaDeVuelta = viaje?.idaVuelta?.estado === "retorno_en_curso";
     const esEnCurso = estado === "en_curso";
     const target = esEnCurso
@@ -302,13 +331,20 @@ function actualizarAvatarPasajero(avatar, foto, passengerName, passengerPhoto) {
     const initial = String(passengerName || "P").trim().charAt(0).toUpperCase() || "P";
     const fallback = avatar?.querySelector("span");
     if (fallback) fallback.textContent = initial;
+    const photoUrl = normalizarFotoUrl(passengerPhoto);
     if (!foto) {
         if (avatar && !fallback) avatar.textContent = initial;
         return;
     }
 
-    if (passengerPhoto) {
-        foto.src = passengerPhoto;
+    foto.onerror = () => {
+        foto.removeAttribute("src");
+        foto.hidden = true;
+        foto.onerror = null;
+    };
+
+    if (photoUrl) {
+        foto.src = photoUrl;
         foto.hidden = false;
     } else {
         foto.removeAttribute("src");

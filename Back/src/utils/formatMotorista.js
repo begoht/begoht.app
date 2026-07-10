@@ -1,3 +1,5 @@
+const { normalizePhotoUrl } = require("./photoUrl");
+
 module.exports = function formatMotorista(motoristaDoc) {
   if (!motoristaDoc) return null;
 
@@ -11,7 +13,7 @@ module.exports = function formatMotorista(motoristaDoc) {
     nombre: motoristaDoc.nombre || "Motorista",
     apellido: motoristaDoc.apellido || "",
     telefono: motoristaDoc.telefono || null,
-    foto: motoristaDoc.foto || null,
+    foto: normalizePhotoUrl(motoristaDoc.foto || motoristaDoc.avatar || motoristaDoc.photo),
     calificacion: motoristaDoc.rating || motoristaDoc.calificacion || 5.0,
     rating: motoristaDoc.rating || motoristaDoc.calificacion || 5.0,
     ratingCount: motoristaDoc.ratingCount || 0,

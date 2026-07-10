@@ -4,7 +4,7 @@ import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20
 import { cerrarBuscandoMotorista } from "../pasajero/pasajero.ui.js";
 import { limpiarViajePasajero } from "../socket/viaje.limpieza.js";
 import { limpiarRutas } from "../map/map.ruta.js?v=20260628-dark-route-locked";
-import { initDriverMinimize } from "../ui/driver.minimize.js";
+import { initDriverMinimize } from "../ui/driver.minimize.js?v=20260710-photo-fix";
 import { resetRutaController } from "../map/map.route.flow.js?v=20260628-dark-route-locked";
 import { actualizarETA, resetETA } from "../pasajero/pasajero.eta.js";
 import { queuePendingRating, submitViajeRating } from "../rating/rating.api.js?v=20260605-rating-premium";
@@ -13,6 +13,34 @@ import {
   guardarFinalizacionPendiente,
   getViajeIdFromPayload
 } from "../viaje/viaje.finalizado.local.js?v=20260615-smooth-autofinish";
+
+function normalizarFotoUrl(value = "") {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  if (/^(?:https?:|data:|blob:)/i.test(raw)) return raw;
+
+  const base = typeof window.getServerUrl === "function"
+    ? window.getServerUrl()
+    : window.location.origin;
+
+  try {
+    return new URL(raw, base).href;
+  } catch {
+    return raw;
+  }
+}
+
+function obtenerFotoPerfil(entity = {}) {
+  return normalizarFotoUrl(
+    entity.foto ||
+    entity.avatar ||
+    entity.photo ||
+    entity.profilePhoto ||
+    entity.profileImage ||
+    entity.imagen ||
+    ""
+  );
+}
 
 /**
  * Guarda la sesión del viaje actual en localStorage de forma segura
@@ -223,9 +251,14 @@ export function actualizarUIDriver(motoristaInfo, estado, viajeInfo = {}) {
     btnWhats.onclick = phone ? () => { window.location.href = `https://wa.me/${phone.replace("+", "")}`; } : null;
   }
 
+  const driverPhoto = obtenerFotoPerfil(motoristaInfo);
   const img = document.getElementById("driverFoto");
-  if (img && motoristaInfo.foto) {
-    img.src = motoristaInfo.foto;
+  if (img) {
+    img.onerror = () => {
+      img.src = "/assets/logo_primcial.png";
+      img.onerror = null;
+    };
+    img.src = driverPhoto || "/assets/logo_primcial.png";
   }
 
   const estadoBox = document.getElementById("estadoViaje");
@@ -241,7 +274,7 @@ export function actualizarUIDriver(motoristaInfo, estado, viajeInfo = {}) {
 
   if (typeof window.updateDriverBubble === "function") {
     window.updateDriverBubble({
-      foto: motoristaInfo.foto,
+      foto: driverPhoto,
       nombre: nombreCompleto,
       eta: estado === "en_curso" ? "En viaje" : "En camino"
     });

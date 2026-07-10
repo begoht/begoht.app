@@ -1,3 +1,5 @@
+const { normalizePhotoUrl } = require("../../../../utils/photoUrl");
+
 module.exports = async ({
     io,
     viaje,
@@ -24,6 +26,7 @@ module.exports = async ({
             motorista: {
                 id: motoristaId,
                 nombre: data.nombre || "Conductor",
+                foto: normalizePhotoUrl(data.foto || ""),
                 lat: snapshot?.lat || 0,
                 lng: snapshot?.lng || 0,
                 vehiculo: data.vehiculo || "",

@@ -3,7 +3,7 @@ import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v
 import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260701-follow-zoom";
 import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260628-dark-route-locked";
 import { ocultarOrigenEnMapa } from "../../map/map.geo.js?v=20260628-dark-route-locked";
-import { limpiarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260628-dark-route-locked";
+import { limpiarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260710-photo-fix";
 import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260628-dark-route-locked";
 import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260615-smooth-autofinish";
 

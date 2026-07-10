@@ -4,7 +4,7 @@ import {
   actualizarEstadoLlegada,
   reproducirSonidoLlegada
 } from "../../pasajero/pasajero.ui.js?v=20260628-dark-route-locked";
-import { actualizarUIDriver } from "../pasajero.utils.js?v=20260628-dark-route-locked";
+import { actualizarUIDriver } from "../pasajero.utils.js?v=20260710-photo-fix";
 import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260628-dark-route-locked";
 import { ocultarOrigenEnMapa } from "../../map/map.geo.js?v=20260628-dark-route-locked";
 import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260615-smooth-autofinish";

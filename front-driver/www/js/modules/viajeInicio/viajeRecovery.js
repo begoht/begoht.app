@@ -9,7 +9,7 @@ import {
     persistirViajeEstado,
     limpiarViajePersistido
 } from "../viajeControl/viajeEstado.js";
-import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260710-reservation-panel";
+import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260710-photo-fix";
 import { getUltimaPosicion, refreshDriverLocation } from "../gps.js?v=20260627-map-icons";
 import { redibujarRutaRecovery } from "./viajeInicioUI.js?v=20260623-roundtrip-v2";
 

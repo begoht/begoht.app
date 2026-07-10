@@ -11,6 +11,18 @@ export function initDriverMinimize() {
   const STORAGE_KEY = "bego:driver-panel-minimized";
   const TRIP_KEY = "bego:driver-panel-trip";
 
+  const normalizePhoto = (value = "") => {
+    const raw = String(value || "").trim();
+    if (!raw) return "";
+    if (/^(?:https?:|data:|blob:)/i.test(raw)) return raw;
+    const base = typeof window.getServerUrl === "function" ? window.getServerUrl() : window.location.origin;
+    try {
+      return new URL(raw, base).href;
+    } catch {
+      return raw;
+    }
+  };
+
   if (!btnMin || !bubble || !driverBody) return;
 
   const showMini = ({ persist = true } = {}) => {
@@ -33,7 +45,13 @@ export function initDriverMinimize() {
   };
 
   window.updateDriverBubble = ({ foto, nombre, eta } = {}) => {
-    if (miniFoto && foto) miniFoto.src = foto;
+    if (miniFoto) {
+      miniFoto.onerror = () => {
+        miniFoto.src = "assets/logo_primcial.png";
+        miniFoto.onerror = null;
+      };
+      miniFoto.src = normalizePhoto(foto) || "assets/logo_primcial.png";
+    }
     if (miniNombre) miniNombre.textContent = nombre || "Motorista";
     if (miniETA) miniETA.textContent = eta || "En camino";
   };

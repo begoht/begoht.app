@@ -30,6 +30,18 @@ const GENERIC_ADDRESS = new Set([
 
 let followPausedUntil = 0;
 
+function normalizarFotoUrl(value = "") {
+    const raw = String(value || "").trim();
+    if (!raw) return "";
+    if (/^(?:https?:|data:|blob:)/i.test(raw)) return raw;
+
+    try {
+        return new URL(raw, window.location.origin).href;
+    } catch {
+        return raw;
+    }
+}
+
 init();
 
 async function init() {
@@ -125,7 +137,11 @@ function actualizarUI(viaje = {}) {
 
   const driverImg = document.getElementById("driverImg");
   if (driverImg) {
-    driverImg.src = viaje.motorista?.foto || "/assets/logo_primcial.png";
+    driverImg.onerror = () => {
+      driverImg.src = "/assets/logo_primcial.png";
+      driverImg.onerror = null;
+    };
+    driverImg.src = normalizarFotoUrl(viaje.motorista?.foto || viaje.motorista?.avatar || viaje.motorista?.photo) || "/assets/logo_primcial.png";
   }
 
   const callBtn = document.getElementById("callBtn");

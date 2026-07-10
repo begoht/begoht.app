@@ -1,5 +1,6 @@
 const User = require("../../../../models/User");
 const { redis } = require("../../../../config/redis");
+const { normalizePhotoUrl } = require("../../../../utils/photoUrl");
 
 module.exports = async (motoristaId, socket) => {
     try {
@@ -12,6 +13,7 @@ module.exports = async (motoristaId, socket) => {
             !userData ||
             Object.keys(userData).length === 0 ||
             !userData.telefono ||
+            !userData.foto ||
             (!userData.placa && !userData.vehiculoPlaca)
         ) {
             const user = await User.findById(motoristaId).lean();
@@ -20,7 +22,7 @@ module.exports = async (motoristaId, socket) => {
                 userData = {
                     nombre: user.nombre || "",
                     apellido: user.apellido || "",
-                    foto: user.foto || "",
+                    foto: normalizePhotoUrl(user.foto || ""),
                     telefono: user.telefono || "",
                     calificacion: String(user.rating || user.calificacion || 5),
                     vehiculoMarca: user.vehiculo?.marca || "",
@@ -40,7 +42,7 @@ module.exports = async (motoristaId, socket) => {
             id: motoristaId,
             nombre: userData.nombre || (socket?.user?.nombre) || "Motorista",
             apellido: userData.apellido || "",
-            foto: userData.foto || "",
+            foto: normalizePhotoUrl(userData.foto || ""),
             telefono: userData.telefono || "",
             calificacion: parseFloat(userData.calificacion) || 5,
             vehiculo: {

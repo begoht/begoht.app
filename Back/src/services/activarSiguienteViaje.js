@@ -4,6 +4,7 @@ const { redis } = require("../config/redis");
 const { actualizarSnapshotMotorista } = require("../sockets/viajes/motorista/motoristaSnapshot.service");
 const actualizarContextoViaje = require("../sockets/viajes/motorista/services/viajeContext.service");
 const { getDriverEarningsForViaje } = require("./driverEarnings.service");
+const { normalizePhotoUrl } = require("../utils/photoUrl");
 
 const activarSiguienteViaje = async (io, socket, motoristaId) => {
     let lockAcquired = false;
@@ -100,7 +101,7 @@ const activarSiguienteViaje = async (io, socket, motoristaId) => {
                 id: motoristaId,
                 nombre: motoristaDB?.nombre || "Motorista",
                 placa: motoristaDB?.vehiculo?.placa || "N/A",
-                foto: motoristaDB?.foto
+                foto: normalizePhotoUrl(motoristaDB?.foto || "")
             } 
         });
 

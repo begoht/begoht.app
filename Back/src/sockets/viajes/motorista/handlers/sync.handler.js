@@ -7,6 +7,7 @@ const snapshotMotorista = require(
 );
 const { getDriverEarningsForViaje } = require("../../../../services/driverEarnings.service");
 const { prepararIdaVueltaPayload } = require("../../../../services/idaVuelta.service");
+const { normalizePhotoUrl } = require("../../../../utils/photoUrl");
 
 module.exports = (io, socket) => {
     return async () => {
@@ -100,7 +101,7 @@ async function prepararPasajeroMotorista(pasajero) {
             apellido: pasajero.apellido || "",
             nombreCompleto: nombreCompleto || pasajero.nombre || "",
             telefono: pasajero.telefono || "",
-            foto: pasajero.foto || null,
+            foto: normalizePhotoUrl(pasajero.foto || pasajero.avatar || pasajero.photo),
             rating: pasajero.rating || null
         };
     }
@@ -122,7 +123,7 @@ async function prepararPasajeroMotorista(pasajero) {
         apellido: user.apellido || "",
         nombreCompleto: nombreCompleto || user.nombre || "",
         telefono: user.telefono || "",
-        foto: user.foto || null,
+        foto: normalizePhotoUrl(user.foto || ""),
         rating: user.rating || null
     };
 }

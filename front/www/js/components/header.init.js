@@ -35,6 +35,21 @@ function getInitials(name = "Invitado") {
   );
 }
 
+function normalizarFotoUrl(value = "") {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  if (/^(?:https?:|data:|blob:)/i.test(raw)) return raw;
+  const base = typeof window.getServerUrl === "function"
+    ? window.getServerUrl()
+    : window.location.origin;
+
+  try {
+    return new URL(raw, base).href;
+  } catch {
+    return raw;
+  }
+}
+
 function openNotifications() {
   location.hash = "#/noticias";
 }
@@ -88,8 +103,9 @@ function bindAvatar(user) {
     fallback.textContent = decodeURIComponent(getInitials(userName)).slice(0, 2) || "B";
   }
 
-  if (user?.foto) {
-    foto.src = user.foto;
+  const fotoUrl = normalizarFotoUrl(user?.foto || user?.avatar || user?.photo || "");
+  if (fotoUrl) {
+    foto.src = fotoUrl;
     foto.style.display = "block";
     if (fallback) fallback.style.display = "none";
   }
