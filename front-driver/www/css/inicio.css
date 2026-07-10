@@ -7,7 +7,7 @@
 @import url("./pages/driver-spa.css");
 @import url("./pages/driver-home.css");
 @import url("./components/driver-active-trip.css");
-@import url("./components/driver-trip-sheet.css");
 @import url("./layout/driver-responsive.css");
+@import url("./components/driver-trip-sheet.css");
 
 /* Main stylesheet kept as the import manifest for the modular driver app CSS. */

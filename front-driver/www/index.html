@@ -24,7 +24,7 @@
   </script>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="./css/inicio.css?v=20260709-driver-css-modules-trip-sheet" />
+  <link rel="stylesheet" href="./css/inicio.css?v=20260709-driver-trip-sheet-reference" />
   <link rel="stylesheet" href="./css/map-motion.css?v=20260627-map-fluid-arrival" />
 
   <link id="bego-leaflet-css" rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -239,310 +239,177 @@
         data-trip-state="aceptado"
         aria-live="polite"
       >
-      
-      <!-- HANDLE -->
-      <button id="viajeSheetHandle"
-      class="trip-sheet-handle"
-      type="button"
-      aria-expanded="false"
-      aria-label="Expandir o contraer panel de viaje">
-      <span></span>
-    </button>
-    
-    <!-- HEADER -->
-    <header class="trip-header">
-      
-      <div id="estadoViaje" class="trip-status">
-        <span class="trip-status-dot"></span>
-        En camino al pasajero
-      </div>
-      
-      <div class="trip-eta-box">
-        <strong id="viajeSheetEta">4</strong>
-        <span id="viajeSheetEtaLabel">ETA</span>
-      </div>
-      
-    </header>
-    
-    <!-- PASAJERO -->
-    <section class="trip-rider-section">
-      
-      <div id="viajePasajeroAvatar"
-      class="trip-avatar">
-      P
-    </div>
-    
-    <div class="trip-rider-info">
-      
-      <div class="trip-rider-top">
-        
-        <h2 id="viajePasajeroNombre">
-          Pasajero
-        </h2>
-        
-        <div id="viajePasajeroRating"
-        class="trip-rating">
-        <i class="fa-solid fa-star" aria-hidden="true"></i> 4.9
-      </div>
-      
-    </div>
-    
-    <div class="trip-rider-actions">
-      
-      <button id="btnViajeLlamar"
-      class="trip-circle-btn"
-      type="button"
-      aria-label="Llamar al pasajero">
-      <i class="fa-solid fa-phone" aria-hidden="true"></i>
-    </button>
-    
-    <button id="btnViajeMensaje"
-    class="trip-circle-btn"
-    type="button"
-    aria-label="Abrir chat con el pasajero">
-    <i class="fa-solid fa-message" aria-hidden="true"></i>
-  </button>
-  
-</div>
+        <button
+          id="viajeSheetHandle"
+          class="trip-sheet-handle"
+          type="button"
+          aria-expanded="false"
+          aria-label="Expandir o contraer panel de viaje"
+        >
+          <span></span>
+        </button>
 
-</div>
+        <header class="trip-header">
+          <div>
+            <h2 id="estadoViaje" class="trip-status">En camino al pasajero</h2>
+            <p class="trip-subtitle">
+              Llegada en <span id="viajeSheetEta">4 min</span> &bull; <span id="viajeDistanciaResumen">1.2 km</span>
+            </p>
+            <span id="viajeSheetEtaLabel" class="trip-sr-label">ETA</span>
+          </div>
+          <button id="btnViajeNavegar" class="trip-navigate-btn" type="button" aria-label="Navegar al punto">
+            <span><i class="fa-solid fa-location-arrow" aria-hidden="true"></i></span>
+            NAVEGAR
+          </button>
+        </header>
 
-</section>
+        <section class="trip-rider-section" aria-label="Pasajero">
+          <div id="viajePasajeroAvatar" class="trip-avatar" aria-hidden="true">
+            <img id="viajePasajeroFoto" alt="" hidden>
+            <span>P</span>
+          </div>
 
-<!-- DIRECCION -->
-<section class="trip-address-card">
-  
-  <div class="trip-stop-marker pickup"></div>
-  
-        <div class="trip-address-content">
-          
-          <span class="trip-address-label">
-                Recoger en
-            </span>
-
-            <strong id="viajeDireccionPrincipal">
-              Dirección del pasajero
-            </strong>
-
-            <small id="viajeDireccionDetalle">
-                Calculando distancia...
-              </small>
-              
+          <div class="trip-rider-info">
+            <h3 id="viajePasajeroNombre">Maria Gonzalez</h3>
+            <div id="viajePasajeroRating" class="trip-rating">
+              <i class="fa-solid fa-star" aria-hidden="true"></i> 4.9
             </div>
+          </div>
 
-    </section>
-    
-    <!-- RESUMEN -->
-    <section class="trip-stats">
-      
-      <div class="trip-stat">
-        <strong id="viajeTiempoEstimado">
-          8 min
-        </strong>
-        <span>Tiempo</span>
-      </div>
-      
-      <div class="trip-divider"></div>
-      
-      <div class="trip-stat">
-        <strong id="viajeDistancia">
-          2.1 km
-        </strong>
-        <span>Distancia</span>
-      </div>
-      
-      <div class="trip-divider"></div>
-      
-      <div class="trip-stat">
-        <strong id="viajeEtapaLabel">
-          Pickup
-        </strong>
-        <span>Etapa</span>
-      </div>
-      
-    </section>
-    
-    <!-- ESPERA -->
-    <section id="viajeWaitingCard"
-    class="trip-waiting hidden">
-    
-    <div class="trip-waiting-icon">
-      <i class="fa-solid fa-stopwatch" aria-hidden="true"></i>
-    </div>
-    
-    <div class="trip-waiting-info">
-      
-      <span>
-        Esperando al pasajero
-      </span>
-      
-      <strong id="viajeWaitingTimer">
-        00:00
-      </strong>
-      
-    </div>
-    
-  </section>
-  
-  <!-- COBRO -->
-  <section id="btnCobrarEfectivo"
-  class="trip-cash hidden">
-  
-  <div class="trip-cash-left">
-    
-    <span>
-      Cobrar al pasajero
-    </span>
-    
-    <strong id="montoCobrarEfectivo">
-      0 G
-    </strong>
-    
-  </div>
-  
-  <i class="fa-solid fa-money-bill-wave"></i>
-  
-</section>
+          <div class="trip-rider-actions">
+            <button id="btnViajeLlamar" class="trip-circle-btn" type="button" aria-label="Llamar al pasajero">
+              <i class="fa-solid fa-phone" aria-hidden="true"></i>
+              <span>LLAMAR</span>
+            </button>
 
-<!-- VIAJE FINALIZADO -->
-<section id="viajeCompletedCard"
-class="trip-completed hidden">
+            <button id="btnViajeMensaje" class="trip-circle-btn" type="button" aria-label="Abrir chat con el pasajero">
+              <i class="fa-solid fa-message" aria-hidden="true"></i>
+              <span>MENSAJE</span>
+            </button>
+          </div>
+        </section>
 
-<div class="trip-completed-header">
-  
-  <div class="trip-completed-icon">
-    <i class="fa-solid fa-check" aria-hidden="true"></i>
-  </div>
-  
-  <div>
-    
-    <span>
-      Viaje completado
-    </span>
-    
-    <strong id="viajeGananciaFinal">
-      0 G
-    </strong>
-    
-  </div>
-  
-</div>
+        <section class="trip-route-card" aria-label="Ruta y pago">
+          <div class="trip-route-points">
+            <div class="trip-route-line" aria-hidden="true"></div>
+            <article class="trip-route-point pickup">
+              <span></span>
+              <div>
+                <strong id="viajeDireccionPrincipal">Av. Santa Fe 1234</strong>
+                <small id="viajeDireccionDetalle">Palermo, CABA</small>
+              </div>
+            </article>
+            <article class="trip-route-point dropoff">
+              <span></span>
+              <div>
+                <strong id="viajeDestinoPrincipal">Av. Corrientes 4321</strong>
+                <small id="viajeDestinoDetalle">Almagro, CABA</small>
+              </div>
+            </article>
+          </div>
 
-<div class="trip-stars">
-  
-  <i class="fa-solid fa-star"></i>
-  <i class="fa-solid fa-star"></i>
-  <i class="fa-solid fa-star"></i>
-  <i class="fa-solid fa-star"></i>
-  <i class="fa-solid fa-star"></i>
-  
-</div>
+          <div id="btnCobrarEfectivo" class="trip-payment-card hidden" role="button" tabindex="0">
+            <span><i class="fa-regular fa-money-bill-1" aria-hidden="true"></i> <span id="tripMetodoPago">Efectivo</span></span>
+            <strong id="montoCobrarEfectivo">$2.450</strong>
+          </div>
+        </section>
 
-</section>
+        <section class="trip-stats" aria-label="Resumen del viaje">
+          <div class="trip-stat">
+            <i class="fa-regular fa-clock" aria-hidden="true"></i>
+            <strong id="viajeTiempoEstimado">8 min</strong>
+            <span>Tiempo estimado</span>
+          </div>
 
-<!-- INFORMACION EXTRA -->
-<section class="trip-details">
-  
-  <div class="trip-detail-row">
-    
-    <span>Tipo de servicio</span>
-    
-    <strong id="tripTipoServicio">
-      Estándar
-    </strong>
-    
-  </div>
-  
-  <div class="trip-detail-row">
-    
-    <span>Método de pago</span>
-    
-    <strong id="tripMetodoPago">
-      Efectivo
-    </strong>
-    
-  </div>
-  
-  <div class="trip-detail-row">
-    
-    <span>Tarifa estimada</span>
-    
-    <strong id="tripTarifa">
-      --
-    </strong>
-    
-  </div>
-  
-</section>
+          <div class="trip-stat">
+            <i class="fa-solid fa-route" aria-hidden="true"></i>
+            <strong id="viajeDistancia">2.3 km</strong>
+            <span>Distancia</span>
+          </div>
 
-<!-- BOTONES -->
-<footer class="trip-footer-actions viaje-actions">
-  
-  <button id="btnLlegue"
-  class="trip-primary-btn"
-  type="button"
-  style="display:none;">
-  
-            <i class="fa-solid fa-location-dot"></i>
-            Llegué al punto
-            
+          <div class="trip-stat">
+            <i class="fa-solid fa-user" aria-hidden="true"></i>
+            <strong id="tripTipoServicio">Estandar</strong>
+            <span>Tipo de servicio</span>
+          </div>
+        </section>
+
+        <section id="viajeWaitingCard" class="trip-waiting hidden">
+          <i class="fa-solid fa-stopwatch" aria-hidden="true"></i>
+          <span>Esperando al pasajero</span>
+          <strong id="viajeWaitingTimer">00:00</strong>
+        </section>
+
+        <section id="viajeCompletedCard" class="trip-completed hidden">
+          <div>
+            <span>Viaje completado</span>
+            <strong id="viajeGananciaFinal">0 G</strong>
+          </div>
+          <div class="trip-stars" aria-hidden="true">
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+          </div>
+        </section>
+
+        <strong id="tripTarifa" class="trip-hidden-value">--</strong>
+        <strong id="viajeEtapaLabel" class="trip-hidden-value">Pickup</strong>
+
+        <footer class="trip-footer-actions viaje-actions">
+          <button id="btnLlegue" class="trip-primary-btn" type="button" style="display:none;">
+            <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+            LLEGUÉ AL PUNTO DE RECOGIDA
           </button>
-          
-          <button id="btnIniciarViaje"
-          class="trip-primary-btn"
-          type="button"
-          style="display:none;">
-          
-          <i class="fa-solid fa-play"></i>
-          Iniciar viaje
-          
-        </button>
-        
-        <button id="btnFinalizar"
-                class="trip-primary-btn danger"
-                type="button"
-                style="display:none;">
-                
-                <i class="fa-solid fa-flag-checkered"></i>
-                Finalizar viaje
-                
-              </button>
-              
-              <button id="btnBuscarSiguienteViaje"
-              class="trip-primary-btn"
-              type="button"
-                style="display:none;">
-                
-            <i class="fa-solid fa-route"></i>
-            Buscar siguiente viaje
-            
+
+          <button id="btnIniciarViaje" class="trip-primary-btn" type="button" style="display:none;">
+            <i class="fa-solid fa-play" aria-hidden="true"></i>
+            INICIAR VIAJE
           </button>
-          
-          <button id="btnIniciarVuelta"
-          class="trip-primary-btn"
-          type="button"
-          style="display:none;">
-          
-          <i class="fa-solid fa-rotate-right"></i>
-          Iniciar vuelta
-          
-        </button>
-        
-        <button id="btnAnularVuelta"
-        class="trip-primary-btn danger"
-        type="button"
-        style="display:none;">
-        
-        <i class="fa-solid fa-ban"></i>
-        Cancelar vuelta
-        
-      </button>
-      
-    </footer>
-  </div>
+
+          <button id="btnFinalizar" class="trip-primary-btn danger" type="button" style="display:none;">
+            <i class="fa-solid fa-flag-checkered" aria-hidden="true"></i>
+            FINALIZAR VIAJE
+          </button>
+
+          <button id="btnBuscarSiguienteViaje" class="trip-primary-btn" type="button" style="display:none;">
+            <i class="fa-solid fa-route" aria-hidden="true"></i>
+            BUSCAR SIGUIENTE VIAJE
+          </button>
+
+          <button id="btnIniciarVuelta" class="trip-primary-btn" type="button" style="display:none;">
+            <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
+            INICIAR VUELTA
+          </button>
+
+          <button id="btnAnularVuelta" class="trip-primary-btn danger" type="button" style="display:none;">
+            <i class="fa-solid fa-ban" aria-hidden="true"></i>
+            CANCELAR VUELTA
+          </button>
+        </footer>
+
+        <nav class="trip-safety-actions" aria-label="Acciones del viaje">
+          <button type="button">
+            <span><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i></span>
+            Reportar<br>problema
+          </button>
+          <button type="button">
+            <span><i class="fa-solid fa-xmark" aria-hidden="true"></i></span>
+            Cancelar<br>viaje
+          </button>
+          <button type="button">
+            <span><i class="fa-solid fa-share-nodes" aria-hidden="true"></i></span>
+            Compartir<br>viaje
+          </button>
+          <button type="button">
+            <span><i class="fa-solid fa-shield-halved" aria-hidden="true"></i></span>
+            Seguridad
+          </button>
+        </nav>
+      </div>
 
     </section>
-
     <section id="driverPageView" class="driver-page-view hidden"></section>
 
     <nav class="driver-bottom-nav" aria-label="Navigation motorista">

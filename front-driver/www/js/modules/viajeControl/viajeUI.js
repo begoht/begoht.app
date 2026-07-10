@@ -56,24 +56,24 @@ export function reconstruirUIDesdeEstado() {
 
     switch (estado) {
         case "reservado":
-            estadoBox && (estadoBox.innerText = "Course en file");
+            estadoBox && (estadoBox.innerText = "Viaje en cola");
             if (btnIniciar) btnIniciar.style.display = "none";
             if (btnFinalizar) btnFinalizar.style.display = "none";
             break;
 
         case "ofertando":
-            if (estadoBox) estadoBox.innerText = "Offre en attente...";
+            if (estadoBox) estadoBox.innerText = "Oferta en espera...";
             mostrarPanelViaje(panel);
             if (btnIniciar) btnIniciar.style.display = "none";
             if (btnFinalizar) btnFinalizar.style.display = "none";
             break;
 
         case "asignado":
-            estadoBox && (estadoBox.innerText = "En route vers le passager");
+            estadoBox && (estadoBox.innerText = "En camino al pasajero");
             if (btnIniciar) {
                 btnIniciar.style.display = "flex";
                 btnIniciar.disabled = false;
-                btnIniciar.innerHTML = `<i class="fa-solid fa-location-dot" aria-hidden="true"></i> Je suis arrive`;
+                btnIniciar.innerHTML = `<i class="fa-solid fa-location-dot" aria-hidden="true"></i> LLEGUÉ AL PUNTO DE RECOGIDA`;
                 btnIniciar.classList.remove("btn-success");
                 btnIniciar.classList.add("btn-warning");
             }
@@ -81,11 +81,11 @@ export function reconstruirUIDesdeEstado() {
             break;
 
         case "llego":
-            estadoBox && (estadoBox.innerText = "Passager en attente...");
+            estadoBox && (estadoBox.innerText = "Pasajero en espera");
             if (btnIniciar) {
                 btnIniciar.style.display = "flex";
                 btnIniciar.disabled = false;
-                btnIniciar.innerHTML = `<i class="fa-solid fa-play" aria-hidden="true"></i> Demarrer la course`;
+                btnIniciar.innerHTML = `<i class="fa-solid fa-play" aria-hidden="true"></i> INICIAR VIAJE`;
                 btnIniciar.classList.remove("btn-warning");
                 btnIniciar.classList.add("btn-success");
             }
@@ -105,19 +105,19 @@ export function reconstruirUIDesdeEstado() {
 
             const vaDeVuelta = estadoIdaVuelta === "retorno_en_curso";
             estadoBox && (estadoBox.innerText = vaDeVuelta
-                ? "Vuelta en cours vers l'origine"
-                : esEnvio ? "Livraison en cours - demandez le code" : "Course en cours vers destination");
+                ? "Vuelta en curso al origen"
+                : esEnvio ? "Entrega en curso - pide el codigo" : "Viaje en curso a destino");
             if (btnIniciar) btnIniciar.style.display = "none";
             if (btnFinalizar) {
                 btnFinalizar.style.display = "flex";
-                btnFinalizar.innerHTML = `<i class="fa-solid fa-flag-checkered" aria-hidden="true"></i> ${vaDeVuelta ? "Finaliser la vuelta" : esEnvio ? "Confirmer livraison" : "Finaliser la course"}`;
+                btnFinalizar.innerHTML = `<i class="fa-solid fa-flag-checkered" aria-hidden="true"></i> ${vaDeVuelta ? "FINALIZAR VUELTA" : esEnvio ? "CONFIRMAR ENTREGA" : "FINALIZAR VIAJE"}`;
             }
             break;
         }
 
         case "completado":
         case "finalizado":
-            estadoBox && (estadoBox.innerText = "Voyage complete");
+            estadoBox && (estadoBox.innerText = "Viaje completado");
             if (btnIniciar) btnIniciar.style.display = "none";
             if (btnFinalizar) btnFinalizar.style.display = "none";
             if (btnBuscarSiguiente) {
@@ -176,14 +176,21 @@ function actualizarDetalleViaje(viaje, estado) {
     const panel = document.getElementById("panelViajeControl");
     const eta = document.getElementById("viajeSheetEta");
     const etaLabel = document.getElementById("viajeSheetEtaLabel");
+    const distanciaResumen = document.getElementById("viajeDistanciaResumen");
     const nombre = document.getElementById("viajePasajeroNombre");
     const avatar = document.getElementById("viajePasajeroAvatar");
+    const foto = document.getElementById("viajePasajeroFoto");
     const rating = document.getElementById("viajePasajeroRating");
     const direccionPrincipal = document.getElementById("viajeDireccionPrincipal");
     const direccionDetalle = document.getElementById("viajeDireccionDetalle");
+    const destinoPrincipal = document.getElementById("viajeDestinoPrincipal");
+    const destinoDetalle = document.getElementById("viajeDestinoDetalle");
     const tiempo = document.getElementById("viajeTiempoEstimado");
     const distancia = document.getElementById("viajeDistancia");
     const etapa = document.getElementById("viajeEtapaLabel");
+    const tipoServicio = document.getElementById("tripTipoServicio");
+    const metodoPago = document.getElementById("tripMetodoPago");
+    const tarifa = document.getElementById("tripTarifa");
     const waitingCard = document.getElementById("viajeWaitingCard");
     const completedCard = document.getElementById("viajeCompletedCard");
     const waitingTimer = document.getElementById("viajeWaitingTimer");
@@ -193,13 +200,19 @@ function actualizarDetalleViaje(viaje, estado) {
     if (!viaje || !estado) {
         panel?.removeAttribute("data-trip-state");
         if (eta) eta.textContent = "--";
+        if (distanciaResumen) distanciaResumen.textContent = "--";
         if (nombre) nombre.textContent = "Passager";
-        if (avatar) avatar.textContent = "P";
+        actualizarAvatarPasajero(avatar, foto, "Passager", "");
         if (direccionPrincipal) direccionPrincipal.textContent = "Point de prise en charge";
         if (direccionDetalle) direccionDetalle.textContent = "Distance et temps en calcul...";
+        if (destinoPrincipal) destinoPrincipal.textContent = "Destination";
+        if (destinoDetalle) destinoDetalle.textContent = "En attente";
         if (tiempo) tiempo.textContent = "--";
         if (distancia) distancia.textContent = "--";
         if (etapa) etapa.textContent = "Pickup";
+        if (tipoServicio) tipoServicio.textContent = "Estandar";
+        if (metodoPago) metodoPago.textContent = "Efectivo";
+        if (tarifa) tarifa.textContent = "--";
         waitingCard?.classList.add("hidden");
         completedCard?.classList.add("hidden");
         return;
@@ -209,13 +222,18 @@ function actualizarDetalleViaje(viaje, estado) {
     const pasajero = viaje.pasajero || viaje.usuario || viaje.cliente || {};
     const passengerName = pasajero.nombre || pasajero.name || viaje.pasajeroNombre || "Passager";
     const passengerRating = pasajero.rating || pasajero.calificacion || viaje.pasajeroRating || "4.9";
+    const passengerPhoto = pasajero.foto || pasajero.avatar || pasajero.photo || viaje.pasajeroFoto || "";
     const vaDeVuelta = viaje?.idaVuelta?.estado === "retorno_en_curso";
     const esEnCurso = estado === "en_curso";
     const target = esEnCurso
         ? (vaDeVuelta ? (viaje.proximoDestino || viaje.origen) : (viaje.proximoDestino || viaje.destino))
         : viaje.origen;
+    const origen = viaje.origen || {};
+    const destino = vaDeVuelta ? (viaje.origen || {}) : (viaje.destino || viaje.proximoDestino || {});
     const fallbackAddress = esEnCurso ? "Destination finale" : "Point de prise en charge";
     const targetAddress = target?.direccion || target?.address || fallbackAddress;
+    const origenAddress = origen?.direccion || origen?.address || targetAddress || "Punto de recogida";
+    const destinoAddress = destino?.direccion || destino?.address || "Destino";
     const distanceLabel = obtenerDistanciaLabel(viaje, estado, target);
     const etaText = obtenerEtaLabel(viaje, estado, distanceLabel);
     const detail = esEnCurso
@@ -223,17 +241,25 @@ function actualizarDetalleViaje(viaje, estado) {
         : estado === "llego"
             ? "Le passager peut monter maintenant"
             : "Route vers le passager";
+    const money = getTripMoney(viaje);
+    const serviceLabel = obtenerServicioLabel(viaje);
 
     if (eta) eta.textContent = etaText.valor;
     if (etaLabel) etaLabel.textContent = etaText.label;
+    if (distanciaResumen) distanciaResumen.textContent = distanceLabel;
     if (nombre) nombre.textContent = passengerName;
-    if (avatar) avatar.textContent = String(passengerName).trim().charAt(0).toUpperCase() || "P";
+    actualizarAvatarPasajero(avatar, foto, passengerName, passengerPhoto);
     if (rating) rating.innerHTML = `<i class="fa-solid fa-star" aria-hidden="true"></i> ${passengerRating}`;
-    if (direccionPrincipal) direccionPrincipal.textContent = targetAddress;
-    if (direccionDetalle) direccionDetalle.textContent = `${detail} - ${distanceLabel}`;
+    if (direccionPrincipal) direccionPrincipal.textContent = limpiarDireccionPrincipal(origenAddress);
+    if (direccionDetalle) direccionDetalle.textContent = limpiarDireccionDetalle(origenAddress, detail);
+    if (destinoPrincipal) destinoPrincipal.textContent = limpiarDireccionPrincipal(destinoAddress);
+    if (destinoDetalle) destinoDetalle.textContent = limpiarDireccionDetalle(destinoAddress, vaDeVuelta ? "Retorno" : "Destino");
     if (tiempo) tiempo.textContent = etaText.valor === "--" ? "Calcul..." : etaText.valor;
     if (distancia) distancia.textContent = distanceLabel;
     if (etapa) etapa.textContent = obtenerEtapaLabel(viaje, estado);
+    if (tipoServicio) tipoServicio.textContent = serviceLabel;
+    if (metodoPago) metodoPago.textContent = formatearMetodoPago(money.metodoPago);
+    if (tarifa) tarifa.textContent = formatGourdes(money.totalCobrar || money.precio || viaje.precio || 0);
 
     waitingCard?.classList.toggle("hidden", estado !== "llego");
     completedCard?.classList.toggle("hidden", !["completado", "finalizado"].includes(estado));
@@ -243,8 +269,49 @@ function actualizarDetalleViaje(viaje, estado) {
     }
 
     if (gananciaFinal) {
-        gananciaFinal.textContent = formatGourdes(getTripMoney(viaje).gananciaMotorista || getTripMoney(viaje).totalMotorista || viaje.gananciaMotorista || viaje.precio || 0);
+        gananciaFinal.textContent = formatGourdes(money.gananciaMotorista || money.totalMotorista || viaje.gananciaMotorista || viaje.precio || 0);
     }
+}
+
+function actualizarAvatarPasajero(avatar, foto, passengerName, passengerPhoto) {
+    const initial = String(passengerName || "P").trim().charAt(0).toUpperCase() || "P";
+    const fallback = avatar?.querySelector("span");
+    if (fallback) fallback.textContent = initial;
+    if (!foto) {
+        if (avatar && !fallback) avatar.textContent = initial;
+        return;
+    }
+
+    if (passengerPhoto) {
+        foto.src = passengerPhoto;
+        foto.hidden = false;
+    } else {
+        foto.removeAttribute("src");
+        foto.hidden = true;
+    }
+}
+
+function limpiarDireccionPrincipal(address = "") {
+    return String(address || "Direccion").split(",")[0].trim() || "Direccion";
+}
+
+function limpiarDireccionDetalle(address = "", fallback = "") {
+    const parts = String(address || "").split(",").slice(1).map(part => part.trim()).filter(Boolean);
+    return parts.join(", ") || fallback || "Detalle pendiente";
+}
+
+function obtenerServicioLabel(viaje = {}) {
+    if (viaje.tipo === "envio") return "Envio";
+    if (viaje.tipoServicio) return String(viaje.tipoServicio);
+    return "Estandar";
+}
+
+function formatearMetodoPago(method = "") {
+    const value = String(method || "efectivo").toLowerCase();
+    if (value.includes("cash") || value.includes("efect")) return "Efectivo";
+    if (value.includes("wallet")) return "Wallet";
+    if (value.includes("card") || value.includes("tarjeta")) return "Tarjeta";
+    return method || "Efectivo";
 }
 
 function mostrarPanelViaje(panel) {
@@ -364,6 +431,17 @@ function inicializarAccionesViaje() {
         const viaje = obtenerViajeActualUI();
         const tel = viaje?.pasajero?.telefono || viaje?.pasajero?.phone || viaje?.telefonoPasajero;
         if (tel) window.location.href = `tel:${tel}`;
+    });
+
+    document.getElementById("btnViajeNavegar")?.addEventListener("click", () => {
+        const viaje = obtenerViajeActualUI();
+        const estado = getEstadoViaje();
+        const target = estado === "en_curso"
+            ? (viaje?.proximoDestino || viaje?.destino)
+            : viaje?.origen;
+        const point = normalizarCoord(target);
+        if (!point) return;
+        window.open(`https://www.google.com/maps/dir/?api=1&destination=${point.lat},${point.lng}`, "_blank", "noopener");
     });
 }
 
