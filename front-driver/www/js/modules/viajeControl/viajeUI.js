@@ -32,6 +32,7 @@ export function reconstruirUIDesdeEstado() {
     const viajeActual = obtenerViajeActualUI();
     const estadoIdaVuelta = viajeActual?.idaVuelta?.estado || "";
     inicializarAccionesViaje();
+    actualizarResumenReserva();
 
     if (!estado) {
         if (btnIniciar) btnIniciar.style.display = "none";
@@ -44,6 +45,7 @@ export function reconstruirUIDesdeEstado() {
         if (estadoBox) estadoBox.innerText = "En attente de courses";
         actualizarBotonCobro(null, null);
         actualizarDetalleViaje(null, null);
+        actualizarResumenReserva();
         return;
     }
 
@@ -52,6 +54,7 @@ export function reconstruirUIDesdeEstado() {
     document.body.classList.add("driver-trip-active");
     actualizarBotonCobro(viajeActual, estado);
     actualizarDetalleViaje(viajeActual, estado);
+    actualizarResumenReserva();
     if (btnIniciarVuelta) btnIniciarVuelta.style.display = "none";
     if (btnAnularVuelta) btnAnularVuelta.style.display = "none";
     if (btnBuscarSiguiente) btnBuscarSiguiente.style.display = "none";
@@ -273,6 +276,26 @@ function actualizarDetalleViaje(viaje, estado) {
     if (gananciaFinal) {
         gananciaFinal.textContent = formatGourdes(money.gananciaMotorista || money.totalMotorista || viaje.gananciaMotorista || viaje.precio || 0);
     }
+}
+
+function actualizarResumenReserva() {
+    const card = document.getElementById("tripReservationCard");
+    if (!card) return;
+
+    const reservado = obtenerViajeReservadoUI();
+    const hayReservaSeparada = !!reservado && String(reservado.viajeId || reservado.id || "") !== String(getViajeEnCursoId() || "");
+
+    card.classList.toggle("hidden", !hayReservaSeparada);
+    if (!hayReservaSeparada) return;
+
+    const nombre = document.getElementById("tripReservationName");
+    const route = document.getElementById("tripReservationRoute");
+    const pasajero = reservado.pasajero || reservado.usuario || reservado.cliente || {};
+    const origen = limpiarDireccionPrincipal(reservado.origen?.direccion || reservado.origen?.address || "Punto de recogida");
+    const destino = limpiarDireccionPrincipal(reservado.destino?.direccion || reservado.destino?.address || "Destino");
+
+    if (nombre) nombre.textContent = obtenerNombrePasajero(pasajero, reservado);
+    if (route) route.textContent = `${origen} -> ${destino}`;
 }
 
 function actualizarAvatarPasajero(avatar, foto, passengerName, passengerPhoto) {
@@ -549,8 +572,29 @@ function obtenerViajeActualUI() {
         return viajesActivos.get(viajeId);
     }
 
-    return Array.from(viajesActivos.values()).find(viaje =>
+    const activo = Array.from(viajesActivos.values()).find(viaje =>
         ["asignado", "llego", "en_curso"].includes(viaje?.estado)
+    );
+    if (activo) return activo;
+
+    const reservado = obtenerViajeReservadoUI();
+    if (reservado && getEstadoViaje() === "reservado") return reservado;
+
+    return null;
+}
+
+function obtenerViajeReservadoUI() {
+    const reservadoId = getViajeReservadoId();
+    if (reservadoId && viajesActivos.has(String(reservadoId))) {
+        return viajesActivos.get(String(reservadoId));
+    }
+
+    if (reservadoId && viajesActivos.has(reservadoId)) {
+        return viajesActivos.get(reservadoId);
+    }
+
+    return Array.from(viajesActivos.values()).find(viaje =>
+        viaje?.estado === "reservado" || viaje?.esReserva === true || viaje?.tipo === "reserva"
     ) || null;
 }
 

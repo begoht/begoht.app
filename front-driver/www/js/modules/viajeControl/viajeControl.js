@@ -6,7 +6,7 @@ import {
     setViajeReservadoId,
     setEstadoViaje
 } from "./viajeEstado.js";
-import { reconstruirUIDesdeEstado } from "./viajeUI.js?v=20260710-real-trip-panel";
+import { reconstruirUIDesdeEstado } from "./viajeUI.js?v=20260710-reservation-panel";
 
 const offerSound = new Audio(new URL("../../../assets/sounds/bego-offer.wav?v=20260602-bego-offer-persistent", import.meta.url));
 offerSound.preload = "auto";
@@ -46,7 +46,8 @@ export function initViajeControl(socket, uiElements = {}) {
         const id = data?.viaje?._id || data?.viaje?.id || data?.viajeId;
         if (!id) return;
 
-        setViajeReservadoId(id);
+        const viajeReserva = data.viaje || data;
+        registrarViaje(id, { ...viajeReserva, estado: "reservado", esReserva: true });
         console.log("Reserva confirmada en cola:", id);
 
         if (typeof Toastify !== "undefined") {
@@ -163,6 +164,15 @@ export function registrarViaje(id, data = {}) {
 
     if ((data.estado === "reservado" || data.esReserva) && hayViajeActivo) {
         setViajeReservadoId(viajeId);
+        viajesActivos.set(viajeId, {
+            ...(viajesActivos.get(viajeId) || {}),
+            ...data,
+            id: viajeId,
+            viajeId,
+            estado: "reservado",
+            esReserva: true
+        });
+        reconstruirUIDesdeEstado();
         console.log("Reserva guardada sin afectar viaje activo");
         return;
     }
@@ -170,6 +180,14 @@ export function registrarViaje(id, data = {}) {
     if (data.estado === "reservado" || data.esReserva) {
         setViajeReservadoId(viajeId);
         setEstadoViaje("reservado");
+        viajesActivos.set(viajeId, {
+            ...(viajesActivos.get(viajeId) || {}),
+            ...data,
+            id: viajeId,
+            viajeId,
+            estado: "reservado",
+            esReserva: true
+        });
         reconstruirUIDesdeEstado();
         return;
     }

@@ -9,7 +9,7 @@ import {
     persistirViajeEstado,
     limpiarViajePersistido
 } from "../viajeControl/viajeEstado.js";
-import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260710-real-trip-panel";
+import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260710-reservation-panel";
 import { getUltimaPosicion, refreshDriverLocation } from "../gps.js?v=20260627-map-icons";
 import { redibujarRutaRecovery } from "./viajeInicioUI.js?v=20260623-roundtrip-v2";
 
@@ -147,8 +147,13 @@ function procesarSyncReserva(data = {}) {
             ...data,
             viajeId,
             estado: data.estado || "reservado",
-            tipo: "reserva"
+            tipo: "reserva",
+            esReserva: true
         }));
+    }
+
+    if (!getViajeEnCursoId()) {
+        setEstadoViaje("reservado");
     }
 
     persistirViajeEstado();
