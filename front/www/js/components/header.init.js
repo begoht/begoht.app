@@ -1,3 +1,6 @@
+import { getFreshAccessToken, getStoredAccessToken } from "../auth/session.js?v=20260710-photo-persist";
+import { getServerUrl } from "../conexion.js";
+
 function getStoredUser() {
   try {
     return (
@@ -73,6 +76,43 @@ function showHeaderToast(message) {
   }, 2200);
 }
 
+function persistUser(user = {}) {
+  ["BeGO_user", "usuario", "user"].forEach((key) => {
+    try {
+      localStorage.setItem(key, JSON.stringify(user));
+    } catch {}
+  });
+  if (user.rol) localStorage.setItem("rol", user.rol);
+}
+
+async function uploadProfilePhoto(file, currentUser = {}) {
+  const formData = new FormData();
+  if (currentUser.nombre) formData.append("nombre", currentUser.nombre);
+  if (currentUser.email) formData.append("email", currentUser.email);
+  formData.append("foto", file);
+
+  let token = getStoredAccessToken();
+  const request = () => fetch(`${getServerUrl().replace(/\/$/, "")}/api/users/profile`, {
+    method: "PUT",
+    headers: { Authorization: `Bearer ${token || ""}` },
+    body: formData
+  });
+
+  let response = await request();
+  if (response.status === 401) {
+    token = await getFreshAccessToken(0);
+    response = await request();
+  }
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.error || data.msg || "No se pudo guardar la foto");
+  }
+
+  persistUser(data);
+  return data;
+}
+
 function bindBackButton() {
   const backBtn = document.getElementById("headerBackBtn");
   if (!backBtn) return;
@@ -134,12 +174,23 @@ function bindAvatar(user) {
       foto.src = reader.result;
       foto.style.display = "block";
       if (fallback) fallback.style.display = "none";
-      localStorage.setItem("BeGO_user", JSON.stringify({
-        ...(user || {}),
+      persistUser({
+        ...(getStoredUser() || user || {}),
         foto: reader.result
-      }));
+      });
     };
     reader.readAsDataURL(file);
+
+    uploadProfilePhoto(file, getStoredUser() || user || {})
+      .then((updatedUser) => {
+        const updatedPhoto = normalizarFotoUrl(updatedUser?.foto || "");
+        if (updatedPhoto) foto.src = updatedPhoto;
+        showHeaderToast("Foto guardada");
+      })
+      .catch((error) => {
+        console.error("No se pudo subir la foto:", error);
+        showHeaderToast(error.message || "No se pudo guardar la foto");
+      });
   });
 }
 

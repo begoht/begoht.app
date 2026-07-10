@@ -12,6 +12,7 @@ const trackReservedTrip = require("../sockets/viajes/motorista/ubicacion/reserva
 const Wallet = require("../models/Wallet");
 const Viaje = require("../models/Viaje");
 const { redis } = require("../config/redis");
+const { normalizePhotoUrl } = require("../utils/photoUrl");
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
@@ -21,6 +22,7 @@ function cleanUser(user) {
   delete userClean.password;
   delete userClean.pinHash;
   delete userClean.refreshToken;
+  userClean.foto = normalizePhotoUrl(userClean.foto || "");
   return userClean;
 }
 
@@ -131,6 +133,10 @@ router.put("/profile", authHttp, upload.single("foto"), async (req, res) => {
     }
 
     await user.save();
+
+    if (user.rol === "motorista") {
+      await redis.hset(`motorista:data:${user._id}`, "foto", normalizePhotoUrl(user.foto || ""));
+    }
 
     res.json(cleanUser(user));
   } catch (err) {
