@@ -1,11 +1,11 @@
-const MOTORISTA_WIDTH = 40;
+const MOTORISTA_WIDTH = 38;
 const MOTORISTA_HEIGHT = 40;
 const SIMPLE_SIZE = 38;
 const PASSENGER_LOCATION_SIZE = 20;
 const ROUTE_POINT_SIZE = 20;
 const POI_SIZE = 26;
 const carReferenceUrl = new URL(
-  "../../assets/icons/auto-referencia.png?v=20260710-auto-reference",
+  "../../assets/icons/auto-referencia-mapa.png?v=20260711-street-car",
   import.meta.url
 ).href;
 
@@ -77,7 +77,7 @@ export const destinoIcon = L.divIcon({
 
 export const motoIcon = makeImageIcon({
   url: carReferenceUrl,
-  width: MOTORISTA_WIDTH + 14,
+  width: MOTORISTA_WIDTH,
   height: MOTORISTA_HEIGHT,
   anchorY: MOTORISTA_HEIGHT / 2,
   className: "bego-map-icon bego-map-icon-car",
