@@ -1,7 +1,7 @@
 import { viajeState } from "../../viaje/viaje.state.js";
 import { cerrarBuscandoMotorista, animarMotoristaEncontrado } from "../../pasajero/pasajero.ui.js";
 import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260623-roundtrip-v2";
-import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260710-live-driver";
+import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260711-car-route-center";
 import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260710-route-camera";
 import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260710-photo-fix";
 import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260710-route-camera";

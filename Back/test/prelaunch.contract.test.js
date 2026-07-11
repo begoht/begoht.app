@@ -87,6 +87,7 @@ test("la app motorista muestra la divulgacion antes del permiso GPS", () => {
   const gps = readWorkspaceFile("front-driver/www/js/modules/gps.js");
   const capacitor = readWorkspaceFile("front-driver/capacitor.config.json");
   const hardening = readWorkspaceFile("scripts/harden-android-generated.mjs");
+  const manifest = readWorkspaceFile("front-driver/android/app/src/main/AndroidManifest.xml");
 
   assert.match(html, /id="driverLocationDisclosure"/);
   assert.match(html, /en arrière-plan/i);
@@ -96,7 +97,9 @@ test("la app motorista muestra la divulgacion antes del permiso GPS", () => {
       gps.indexOf("startBackgroundGeolocation()")
   );
   assert.doesNotMatch(capacitor, /useLegacyBridge/);
-  assert.match(hardening, /ensurePermissionRemoval\([\s\S]*driverManifest,[\s\S]*android\.permission\.ACCESS_BACKGROUND_LOCATION/);
+  assert.match(manifest, /android\.permission\.ACCESS_BACKGROUND_LOCATION/);
+  assert.doesNotMatch(manifest, /ACCESS_BACKGROUND_LOCATION" tools:node="remove"/);
+  assert.doesNotMatch(hardening, /ensurePermissionRemoval\([\s\S]*driverManifest,[\s\S]*android\.permission\.ACCESS_BACKGROUND_LOCATION/);
 });
 
 test("cada formulario registra una sola accion principal de alta", () => {

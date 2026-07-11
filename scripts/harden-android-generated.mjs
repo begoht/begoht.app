@@ -191,12 +191,7 @@ function escapeRegExp(value) {
 let changed = false;
 
 let driverManifest = ensureToolsNamespace(read(files.driverManifest));
-driverManifest = removePermission(driverManifest, "android.permission.ACCESS_BACKGROUND_LOCATION");
 driverManifest = removePermission(driverManifest, "android.permission.USE_FINGERPRINT");
-driverManifest = ensurePermissionRemoval(
-  driverManifest,
-  "android.permission.ACCESS_BACKGROUND_LOCATION"
-);
 driverManifest = ensurePermissionRemoval(driverManifest, "android.permission.USE_FINGERPRINT");
 driverManifest = ensureDriverServicePrivate(driverManifest);
 driverManifest = normalizeManifestSpacing(driverManifest);

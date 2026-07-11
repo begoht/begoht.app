@@ -1,4 +1,4 @@
-import { mostrarMotoristas } from "../../map/map.motorista.js?v=20260710-live-driver";
+import { mostrarMotoristas } from "../../map/map.motorista.js?v=20260711-car-route-center";
 
 export const handleMotoristas = (motoristas) => {
   if (Array.isArray(motoristas)) mostrarMotoristas(motoristas);

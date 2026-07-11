@@ -4,7 +4,7 @@ import {
 } from "../state/map.motoristas.state.js";
 import {
   setMotorcycleMarkerPose
-} from "../utils/map.motorcycle.motion.js?v=20260710-route-camera";
+} from "../utils/map.motorcycle.motion.js?v=20260711-car-route-center";
 
 export function renderMotoristas(map, drivers) {
   if (!map || !Array.isArray(drivers)) return;

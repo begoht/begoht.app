@@ -10,7 +10,7 @@ import {
 import {
   renderMotorista,
   removeMotorista
-} from "./ui/map.motorista.renderer.js?v=20260710-live-driver";
+} from "./ui/map.motorista.renderer.js?v=20260711-car-route-center";
 
 import {
   renderMotoristas,
