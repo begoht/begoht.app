@@ -4,7 +4,7 @@ import { runCleanup, setCleanup } from "./router.cleanup.js";
 import { afterRender, pushURL, actualizarLinksActivos } from "./router.utils.js";
 import { runPageInit } from "../app/app.lifecycle.js?v=20260702-visible-labels";
 import { AppState } from "../state.js";
-import { stopGeo } from "../../map/map.geo.js?v=20260628-dark-route-locked";
+import { stopGeo } from "../../map/map.geo.js?v=20260711-map-geo-modular";
 
 let navigationId = 0;
 let routerReady = false;

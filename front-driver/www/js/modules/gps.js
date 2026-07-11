@@ -9,10 +9,8 @@ import { crearMotoIcon, motoIcon } from "./map.icons.js?v=20260620-driver-naviga
 import {
   setMotorcycleMarkerPose
 } from "./map.motion.js?v=20260627-map-fluid-arrival";
-import {
-  getDriverAccessToken,
-  refreshDriverAccessToken
-} from "../auth/session.js";
+import { patchDriverLocation } from "./gps/gps.http.js?v=20260711-driver-gps-http";
+import { normalizePosition, readFreshPosition } from "./gps/gps.position.js?v=20260711-driver-gps-position";
 
 let ultimaPosicion = null;
 let ultimaLectura = null;
@@ -374,13 +372,7 @@ async function sendHttpFallback(position, { force = false, source = "gps" } = {}
   ultimaEmisionHttpTime = now;
 
   try {
-    let token = getDriverAccessToken();
-    let response = await requestDriverLocation(position, token, source);
-
-    if (response.status === 401) {
-      token = await refreshDriverAccessToken(getServerUrl());
-      response = await requestDriverLocation(position, token, source);
-    }
+    const response = await patchDriverLocation(position, source);
 
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
@@ -397,56 +389,3 @@ async function sendHttpFallback(position, { force = false, source = "gps" } = {}
   }
 }
 
-function requestDriverLocation({ lat, lng, heading }, token, source) {
-  return fetch(`${getServerUrl()}/api/users/driver-location`, {
-    method: "PATCH",
-    headers: {
-      "Authorization": `Bearer ${token || ""}`,
-      "Content-Type": "application/json",
-      "ngrok-skip-browser-warning": "true"
-    },
-    body: JSON.stringify({
-      lat,
-      lng,
-      heading,
-      disponible: true,
-      source
-    }),
-    keepalive: true
-  });
-}
-
-function getServerUrl() {
-  return typeof window.getServerUrl === "function"
-    ? window.getServerUrl().replace(/\/$/, "")
-    : window.location.origin.replace(/\/$/, "");
-}
-
-function normalizePosition(posicion) {
-  const coords = posicion?.coords || posicion || {};
-  const lat = Number(coords.latitude ?? coords.lat);
-  const lng = Number(coords.longitude ?? coords.lng);
-  const heading = Number.isFinite(Number(coords.heading ?? coords.bearing))
-    ? Number(coords.heading ?? coords.bearing)
-    : null;
-
-  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
-
-  return { lat, lng, heading };
-}
-
-function readFreshPosition() {
-  if (!navigator.geolocation) return Promise.resolve(null);
-
-  return new Promise((resolve) => {
-    navigator.geolocation.getCurrentPosition(
-      (pos) => resolve(normalizePosition(pos)),
-      () => resolve(null),
-      {
-        enableHighAccuracy: true,
-        maximumAge: 5000,
-        timeout: 8000
-      }
-    );
-  });
-}

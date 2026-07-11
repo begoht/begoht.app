@@ -12,42 +12,26 @@ import {
     setLlegadaLock
 } from "./viajeEstado.js";
 import { formatGourdes, getTripMoney, isCashMethod } from "../oferta/oferta.money.js?v=20260608-offer-net-cash";
-import { getUltimaPosicion } from "../gps.js?v=20260627-map-icons";
+import { getUltimaPosicion } from "../gps.js?v=20260711-driver-gps-modular";
+import {
+    formatearMetodoPago,
+    limpiarDireccionDetalle,
+    limpiarDireccionPrincipal,
+    normalizarEstadoVisual,
+    normalizarFotoUrl,
+    obtenerDistanciaLabel,
+    obtenerEtapaLabel,
+    obtenerEtaLabel,
+    obtenerFotoPerfil,
+    obtenerNombrePasajero,
+    obtenerServicioLabel
+} from "./viajePresentacion.js?v=20260711-trip-presentation";
 
 let botonCobroInicializado = false;
 let botonesAccionInicializados = false;
 let sheetDragInicializado = false;
 let gpsUiListenerInicializado = false;
 let waitingTimerInterval = null;
-
-function normalizarFotoUrl(value = "") {
-    const raw = String(value || "").trim();
-    if (!raw) return "";
-    if (/^(?:https?:|data:|blob:)/i.test(raw)) return raw;
-
-    const base = typeof window.getServerUrl === "function"
-        ? window.getServerUrl()
-        : window.location.origin;
-
-    try {
-        return new URL(raw, base).href;
-    } catch {
-        return raw;
-    }
-}
-
-function obtenerFotoPerfil(entity = {}, fallback = "") {
-    return normalizarFotoUrl(
-        entity?.foto ||
-        entity?.avatar ||
-        entity?.photo ||
-        entity?.profilePhoto ||
-        entity?.profileImage ||
-        entity?.imagen ||
-        fallback ||
-        ""
-    );
-}
 
 export function reconstruirUIDesdeEstado() {
     const estado = getEstadoViaje();
@@ -268,7 +252,8 @@ function actualizarDetalleViaje(viaje, estado) {
     const targetAddress = target?.direccion || target?.address || fallbackAddress;
     const origenAddress = origen?.direccion || origen?.address || targetAddress || "Punto de recogida";
     const destinoAddress = destino?.direccion || destino?.address || "Destino";
-    const distanceLabel = obtenerDistanciaLabel(viaje, estado, target);
+    const driverPosition = getUltimaPosicion() || window.ultimaPosicionMotorista || window.driverLastPosition || null;
+    const distanceLabel = obtenerDistanciaLabel(viaje, estado, target, driverPosition);
     const etaText = obtenerEtaLabel(viaje, estado, distanceLabel);
     const detail = esEnCurso
         ? `${viaje.destino?.direccion ? "Ruta al destino" : "Ruta activa"}`
@@ -352,51 +337,6 @@ function actualizarAvatarPasajero(avatar, foto, passengerName, passengerPhoto) {
     }
 }
 
-function obtenerNombrePasajero(pasajero = {}, viaje = {}) {
-    const pasajeroObj = typeof pasajero === "object" && pasajero !== null ? pasajero : {};
-    const fullName =
-        pasajeroObj.fullName ||
-        pasajeroObj.nombreCompleto ||
-        pasajeroObj.displayName ||
-        pasajeroObj.name ||
-        viaje.pasajeroNombreCompleto ||
-        viaje.pasajeroNombre ||
-        viaje.nombrePasajero ||
-        viaje.clienteNombre ||
-        viaje.usuarioNombre;
-    if (fullName) return String(fullName).trim();
-
-    const parts = [
-        pasajeroObj.nombre || pasajeroObj.firstName || viaje.pasajero?.nombre || viaje.usuario?.nombre || viaje.cliente?.nombre,
-        pasajeroObj.apellido || pasajeroObj.lastName || viaje.pasajero?.apellido || viaje.usuario?.apellido || viaje.cliente?.apellido
-    ].filter(Boolean);
-
-    return parts.join(" ").trim() || "Pasajero";
-}
-
-function limpiarDireccionPrincipal(address = "") {
-    return String(address || "Direccion").split(",")[0].trim() || "Direccion";
-}
-
-function limpiarDireccionDetalle(address = "", fallback = "") {
-    const parts = String(address || "").split(",").slice(1).map(part => part.trim()).filter(Boolean);
-    return parts.join(", ") || fallback || "Detalle pendiente";
-}
-
-function obtenerServicioLabel(viaje = {}) {
-    if (viaje.tipo === "envio") return "Envio";
-    if (viaje.tipoServicio) return String(viaje.tipoServicio);
-    return "Estandar";
-}
-
-function formatearMetodoPago(method = "") {
-    const value = String(method || "efectivo").toLowerCase();
-    if (value.includes("cash") || value.includes("efect")) return "Efectivo";
-    if (value.includes("wallet")) return "Wallet";
-    if (value.includes("card") || value.includes("tarjeta")) return "Tarjeta";
-    return method || "Efectivo";
-}
-
 function mostrarPanelViaje(panel) {
     if (!panel) return;
     panel.classList.remove("hidden");
@@ -407,102 +347,6 @@ function ocultarPanelViaje(panel) {
     if (!panel) return;
     panel.classList.add("hidden");
     panel.style.display = "none";
-}
-
-function normalizarEstadoVisual(estado) {
-    const estados = {
-        asignado: "aceptado",
-        llego: "esperando",
-        en_curso: "en_viaje",
-        completado: "finalizado"
-    };
-
-    return estados[estado] || estado;
-}
-
-function obtenerEtapaLabel(viaje, estado) {
-    if (estado === "llego") return "Attente";
-    if (estado === "en_curso") return viaje?.idaVuelta?.estado === "retorno_en_curso" ? "Retour" : "Destination";
-    if (["completado", "finalizado"].includes(estado)) return "Resume";
-    return "Pickup";
-}
-
-function obtenerEtaLabel(viaje, estado, distanceLabel) {
-    if (estado === "llego") return { valor: "00:00", label: "espera" };
-
-    const raw = estado === "en_curso"
-        ? (viaje?.etaDestino ?? viaje?.etaMinutosDestino ?? viaje?.eta ?? viaje?.duracionMin ?? viaje?.tiempoEstimadoMin)
-        : (viaje?.etaPasajero ?? viaje?.etaOrigen ?? viaje?.etaMinutosOrigen ?? viaje?.etaMinutos);
-    const minutes = Number(raw);
-    if (Number.isFinite(minutes) && minutes > 0) {
-        return { valor: `${Math.round(minutes)} min`, label: "ETA" };
-    }
-
-    const meters = obtenerMetrosDesdeLabel(distanceLabel);
-    if (Number.isFinite(meters) && meters > 0) {
-        return { valor: `${calcularEtaMinutos(meters)} min`, label: "ETA" };
-    }
-
-    return { valor: "--", label: "ETA" };
-}
-
-function obtenerDistanciaLabel(viaje, estado, target) {
-    if (estado === "llego") return "0 m";
-
-    const directa = estado === "en_curso"
-        ? (viaje?.distanciaDestino || viaje?.distanciaKmDestino || viaje?.distanciaKm || viaje?.distancia)
-        : (viaje?.distanciaPasajero || viaje?.distanciaOrigen || viaje?.distanciaKmOrigen);
-    const directaLabel = formatearDistanciaValor(directa);
-    if (directaLabel) return directaLabel;
-
-    const driver = getUltimaPosicion() || window.ultimaPosicionMotorista || window.driverLastPosition || null;
-    const from = normalizarCoord(driver);
-    const to = normalizarCoord(target);
-    if (from && to) {
-        const metros = calcularDistanciaMetros(from, to);
-        return metros < 1000 ? `${Math.round(metros)} m` : `${(metros / 1000).toFixed(1)} km`;
-    }
-
-    return "--";
-}
-
-function obtenerMetrosDesdeLabel(label = "") {
-    const text = String(label || "").replace(",", ".");
-    const value = Number(text.match(/[\d.]+/)?.[0]);
-    if (!Number.isFinite(value)) return null;
-    if (/km/i.test(text)) return value * 1000;
-    if (/\bm\b/i.test(text)) return value;
-    return null;
-}
-
-function calcularEtaMinutos(metros) {
-    const velocidadMps = (30 * 1000) / 3600;
-    return Math.max(1, Math.ceil(metros / velocidadMps / 60));
-}
-
-function formatearDistanciaValor(valor) {
-    if (valor === null || valor === undefined || valor === "") return "";
-    if (typeof valor === "string") return valor;
-    const num = Number(valor);
-    if (!Number.isFinite(num) || num <= 0) return "";
-    return num > 100 ? `${Math.round(num)} m` : `${num.toFixed(num >= 10 ? 0 : 1)} km`;
-}
-
-function normalizarCoord(coord) {
-    const lat = Number(coord?.lat ?? coord?.latitude);
-    const lng = Number(coord?.lng ?? coord?.lon ?? coord?.longitude);
-    return Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : null;
-}
-
-function calcularDistanciaMetros(a, b) {
-    const earth = 6371000;
-    const toRad = value => value * Math.PI / 180;
-    const dLat = toRad(b.lat - a.lat);
-    const dLng = toRad(b.lng - a.lng);
-    const lat1 = toRad(a.lat);
-    const lat2 = toRad(b.lat);
-    const h = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
-    return 2 * earth * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
 }
 
 function iniciarWaitingTimer(node, viaje) {

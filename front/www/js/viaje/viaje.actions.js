@@ -6,7 +6,7 @@ import { cerrarBuscandoMotorista } from "../pasajero/ui/overlays/buscandoMotoris
 import { cityConfig } from "../map/config/index.js?v=20260624-cordoba-gps";
 import { reverseGeocode } from "../map/services/map.reverse.js?v=20260624-cordoba-gps";
 import { getMap } from "../map/map.singleton.js?v=20260702-visible-labels";
-import { asegurarOrigenGpsReal } from "../map/map.geo.js?v=20260628-dark-route-locked";
+import { asegurarOrigenGpsReal } from "../map/map.geo.js?v=20260711-map-geo-modular";
 
 let socket = null;
 let cotizacionTimer = null;

@@ -1,4 +1,4 @@
-import { stopGeo } from "../../map/map.geo.js?v=20260628-dark-route-locked";
+import { stopGeo } from "../../map/map.geo.js?v=20260711-map-geo-modular";
 
 // ===============================
 // 🌍 BASE PATH ROBUSTO

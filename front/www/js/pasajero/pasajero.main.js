@@ -1,4 +1,4 @@
-import { initGeo } from "../map/map.geo.js?v=20260628-dark-route-locked";
+import { initGeo } from "../map/map.geo.js?v=20260711-map-geo-modular";
 import { initSeleccionDestino } from "../map/map.destino.js?v=20260710-route-camera";
 import { actualizarBotonViaje } from "../pasajero/pasajero.ui.js?v=20260624-cordoba-gps";
 import { initPaymentMethodSettings, initToggleMenuDriver, seleccionarPago } from "./pasajero.ui.js?v=20260624-cordoba-gps";

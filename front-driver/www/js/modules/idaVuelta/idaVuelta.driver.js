@@ -4,7 +4,7 @@ import {
   setViajeEnCurso,
   viajesActivos
 } from "../viajeControl/viajeEstado.js";
-import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260710-sheet-snap";
+import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260711-trip-ui-modular";
 import { dibujarRutaPremium } from "../map.js?v=20260710-route-icons";
 
 let socketRef = null;

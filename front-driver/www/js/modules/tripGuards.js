@@ -1,4 +1,4 @@
-import { getUltimaPosicion, refreshDriverLocation } from "./gps.js?v=20260627-map-icons";
+import { getUltimaPosicion, refreshDriverLocation } from "./gps.js?v=20260711-driver-gps-modular";
 import {
   ARRIVAL_MAX_DISTANCE_METERS,
   FINISH_MAX_DISTANCE_METERS,

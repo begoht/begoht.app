@@ -3,8 +3,8 @@ import {
     getViajeEnCursoId, setViajeEnCurso, 
     viajesActivos 
 } from "../viajeControl/viajeEstado.js"; 
-import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260710-sheet-snap";
-import { getUltimaPosicion } from "../gps.js?v=20260627-map-icons";
+import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260711-trip-ui-modular";
+import { getUltimaPosicion } from "../gps.js?v=20260711-driver-gps-modular";
 import { dibujarRutaPremium } from "../map.js?v=20260710-route-icons";
 import {
     ARRIVAL_MAX_DISTANCE_METERS,
