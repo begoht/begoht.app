@@ -1,4 +1,4 @@
-import { pasajeroIcon } from "./map.icons.js?v=20260710-route-camera";
+import { pasajeroIcon } from "./map.icons.js?v=20260710-auto-reference";
 import { ACTIVE_CITY, cityConfig, coordsInCity, inferCityConfigFromCoords, persistDetectedCity } from "./config/index.js?v=20260624-cordoba-gps";
 import { viajeState } from "../viaje/viaje.state.js";
 import { reverseGeocode } from "./services/map.reverse.js?v=20260624-cordoba-gps";

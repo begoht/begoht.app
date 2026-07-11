@@ -1,7 +1,6 @@
 import { viajeState } from "../../viaje/viaje.state.js";
-import { motoIcon } from "../map.icons.js?v=20260710-route-camera";
+import { motoIcon } from "../map.icons.js?v=20260710-auto-reference";
 import {
-  ajustarVistaRuta,
   consumirRutaDesde,
   getRutaActualCoords
 } from "./map.route.renderer.js?v=20260710-route-camera";
@@ -10,6 +9,8 @@ import {
 } from "../utils/map.motorcycle.motion.js?v=20260710-route-camera";
 
 const FOLLOW_PAUSE_MS = 12000;
+const FOLLOW_ZOOM = 17;
+const FOLLOW_ZOOM_DURATION_SECONDS = 0.65;
 let followPausedUntil = 0;
 
 export function renderMotorista(map, motorista) {
@@ -99,15 +100,58 @@ function followMotorista(map, markerPos) {
   if (!Number.isFinite(lat) || !Number.isFinite(lng)) return false;
 
   const point = { lat, lng };
-  const routeCoords = getRutaActualCoords();
-  if (routeCoords.length > 1) {
-    return ajustarVistaRuta(map, [point]);
+  map._begoLatestFollowPoint = point;
+
+  const currentZoom = Number(map.getZoom?.()) || 0;
+  if (currentZoom < FOLLOW_ZOOM) {
+    zoomToMotorista(map, point);
+    return true;
   }
 
-  map.panTo?.([point.lat, point.lng], {
-    animate: false,
-    noMoveStart: true
-  });
+  if (map._begoFollowZooming) return true;
+
+  centerFollowCamera(map, point);
   return true;
+}
+
+function zoomToMotorista(map, point) {
+  if (!map?.setView) return;
+
+  map._begoProgrammaticFollow = true;
+  map._begoFollowZooming = true;
+
+  try {
+    map.setView([point.lat, point.lng], FOLLOW_ZOOM, {
+      animate: true,
+      duration: FOLLOW_ZOOM_DURATION_SECONDS,
+      noMoveStart: true
+    });
+  } catch {
+    map.setView([point.lat, point.lng], FOLLOW_ZOOM);
+  }
+
+  window.setTimeout(() => {
+    map._begoProgrammaticFollow = false;
+    map._begoFollowZooming = false;
+
+    if (map._begoLatestFollowPoint) {
+      centerFollowCamera(map, map._begoLatestFollowPoint);
+    }
+  }, Math.round(FOLLOW_ZOOM_DURATION_SECONDS * 1000) + 80);
+}
+
+function centerFollowCamera(map, point) {
+  map._begoProgrammaticFollow = true;
+
+  try {
+    map.panTo?.([point.lat, point.lng], {
+      animate: false,
+      noMoveStart: true
+    });
+  } finally {
+    window.setTimeout(() => {
+      map._begoProgrammaticFollow = false;
+    }, 0);
+  }
 }
 

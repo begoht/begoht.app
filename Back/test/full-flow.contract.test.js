@@ -40,8 +40,8 @@ test("cadena de cache: la app pasajero carga el handler nuevo de vuelta", () => 
   assert.match(index, /app\.js\?v=20260702-visible-labels/);
   assert.match(app, /router\.js\?v=20260702-visible-labels/);
   assert.match(router, /app\.lifecycle\.js\?v=20260702-visible-labels/);
-  assert.match(lifecycle, /pasajero\.main\.js\?v=20260701-follow-zoom/);
-  assert.match(passengerMain, /pasajero\.socket\.js\?v=20260701-follow-zoom/);
+  assert.match(lifecycle, /pasajero\.main\.js\?v=20260710-live-driver/);
+  assert.match(passengerMain, /pasajero\.socket\.js\?v=20260710-live-driver/);
   assert.match(passengerSocket, /idaVuelta\.handler\.js\?v=20260628-dark-route-locked/);
 });
 

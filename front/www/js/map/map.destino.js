@@ -6,7 +6,7 @@ import { dibujarRuta } from "./map.ruta.js?v=20260710-route-camera";
 
 import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260624-cordoba-gps";
 
-import { destinoIcon } from "./map.icons.js?v=20260710-route-camera";
+import { destinoIcon } from "./map.icons.js?v=20260710-auto-reference";
 
 import { reverseGeocode } from "./services/map.reverse.js?v=20260624-cordoba-gps";
 

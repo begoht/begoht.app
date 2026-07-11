@@ -27,7 +27,7 @@
     // Desarrollo local
     if (hostname === "localhost" || hostname === "127.0.0.1") {
       console.log("Desarrollo local detectado");
-      return DEV_URL;
+      return `${window.location.protocol}//${hostname}:3000`;
     }
 
     // Producción

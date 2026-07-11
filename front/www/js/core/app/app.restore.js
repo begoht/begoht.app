@@ -1,5 +1,5 @@
 import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260623-roundtrip-v2";
-import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260701-follow-zoom";
+import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260710-live-driver";
 import { getMap } from "../../map/map.singleton.js?v=20260702-visible-labels";
 import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260710-route-camera";
 import { viajeState } from "../../viaje/viaje.state.js";
