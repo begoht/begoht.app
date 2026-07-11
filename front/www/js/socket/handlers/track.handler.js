@@ -3,7 +3,7 @@ import { mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260711-ca
 import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260710-route-camera";
 import { ocultarOrigenEnMapa } from "../../map/map.geo.js?v=20260628-dark-route-locked";
 import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260710-route-camera";
-import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260710-photo-fix";
+import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260711-passenger-profile-photo-utils";
 import { getMap } from "../../map/map.singleton.js?v=20260702-visible-labels";
 import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260615-smooth-autofinish";
 

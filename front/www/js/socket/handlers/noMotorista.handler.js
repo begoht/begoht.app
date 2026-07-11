@@ -1,6 +1,6 @@
 import { viajeState } from "../../viaje/viaje.state.js";
 import { mostrarBusquedaSinMotorista } from "../../pasajero/pasajero.ui.js?v=20260608-search-modal";
-import { manejarCancelacionOLimpieza } from "../pasajero.utils.js";
+import { manejarCancelacionOLimpieza } from "../pasajero.utils.js?v=20260711-passenger-profile-photo-utils";
 
 export const handleNoMotorista = (data = {}) => {
   if (viajeState.estado === "en_curso" || viajeState.estado === "asignado") {

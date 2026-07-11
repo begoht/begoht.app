@@ -1,5 +1,5 @@
 import { viajeState } from "../../viaje/viaje.state.js";
-import { manejarCancelacionOLimpieza } from "../pasajero.utils.js";
+import { manejarCancelacionOLimpieza } from "../pasajero.utils.js?v=20260711-passenger-profile-photo-utils";
 import { mostrarPagoNoDisponible } from "../../pasajero/ui/modales/pagoNoDisponible.ui.js?v=20260606-payment-methods";
 import { clearCotizacionTimer, resetCotizacionPendiente } from "../../viaje/viaje.actions.js?v=20260628-dark-route-locked";
 

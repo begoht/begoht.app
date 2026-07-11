@@ -3,7 +3,7 @@ import { cerrarBuscandoMotorista, animarMotoristaEncontrado } from "../../pasaje
 import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260623-roundtrip-v2";
 import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260711-car-route-center";
 import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260710-route-camera";
-import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260710-photo-fix";
+import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260711-passenger-profile-photo-utils";
 import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260710-route-camera";
 import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260615-smooth-autofinish";
 

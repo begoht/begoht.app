@@ -5,6 +5,30 @@ import {
   getDriverAccessToken,
   refreshDriverAccessToken,
 } from "../auth/session.js";
+import {
+  actionTile,
+  closeSidebar,
+  emptyState,
+  escapeHtml,
+  formatDate,
+  formatMoney,
+  formatMovementType,
+  isThisWeek,
+  isToday,
+  isWeakWalletPin,
+  kpi,
+  listItem,
+  loadingRow,
+  normalizeRoute,
+  notifyDriverPin,
+  notifyDriverWallet,
+  pageShell,
+  renderDriverTripRow,
+  safeJson,
+  setText,
+  toggleItem,
+  updateAvailabilityCopy
+} from "./driverSpa/driver.spa.utils.js?v=20260711-modular-driver-spa";
 
 let pageView = null;
 let homeView = null;
@@ -856,96 +880,6 @@ function hydrateDriverAccount() {
   setText("driverAccountName", name);
 }
 
-function pageShell(title, subtitle, content) {
-  return `
-    <div class="driver-page-shell">
-      <header class="driver-page-header">
-        <a class="driver-page-back" data-driver-route href="#/" aria-label="Volver al inicio">
-          <i class="fa-solid fa-arrow-left"></i>
-        </a>
-        <div>
-          <span class="driver-eyebrow">${subtitle}</span>
-          <h1>${title}</h1>
-        </div>
-      </header>
-      ${content}
-    </div>
-  `;
-}
-
-function kpi(label, value, caption, icon, valueId = "") {
-  return `
-    <article class="driver-kpi">
-      <i class="fa-solid ${icon}"></i>
-      <span>${label}</span>
-      <strong ${valueId ? `id="${valueId}"` : ""}>${value}</strong>
-      <small>${caption}</small>
-    </article>
-  `;
-}
-
-function listItem(title, text, icon, route = "") {
-  const isExternal = /^https?:\/\//i.test(route) || /\.html(?:#.*)?$/i.test(route);
-  const attrs = route
-    ? isExternal
-      ? `href="${route}" target="_blank" rel="noopener"`
-      : `data-driver-route href="${route}"`
-    : "";
-  const tag = route ? "a" : "article";
-  return `
-    <${tag} class="driver-list-item" ${attrs}>
-      <i class="fa-solid ${icon}"></i>
-      <div>
-        <strong>${title}</strong>
-        <span>${text}</span>
-      </div>
-      <i class="fa-solid fa-chevron-right"></i>
-    </${tag}>
-  `;
-}
-
-function actionTile(label, icon, route) {
-  return `
-    <a class="driver-action-tile" data-driver-route href="${route}">
-      <i class="fa-solid ${icon}"></i>
-      <span>${label}</span>
-    </a>
-  `;
-}
-
-function toggleItem(label, checked) {
-  return `
-    <label class="driver-toggle-row">
-      <span>${label}</span>
-      <input type="checkbox" ${checked ? "checked" : ""}>
-    </label>
-  `;
-}
-
-function renderDriverTripRow(viaje) {
-  const estado = viaje.estado || "pendiente";
-  const pasajero = viaje.pasajero?.nombre || "Pasajero";
-  const origen = shortAddress(viaje.origen?.direccion, "Origen");
-  const destino = shortAddress(viaje.destino?.direccion, "Destino");
-  const amount = Number(viaje.paBeGOrista || viaje.precio || 0);
-
-  return `
-    <article class="driver-trip-row ${estado}">
-      <div class="driver-trip-icon">
-        <i class="fa-solid ${estado === "cancelado" ? "fa-ban" : "fa-motorcycle"}"></i>
-      </div>
-      <div class="driver-trip-main">
-        <div class="driver-trip-top">
-          <strong>${titleCase(estado)}</strong>
-          <span>${formatMoney(amount)} G</span>
-        </div>
-        <p>${origen} -> ${destino}</p>
-        <small>${pasajero} - ${formatDate(viaje.finViajeAt || viaje.createdAt)}</small>
-      </div>
-    </article>
-  `;
-}
-
 async function fetchDriverTrips() {
   const viajes = await fetchJson("/api/viajes/mis-viajes");
   return Array.isArray(viajes) ? viajes : [];
@@ -1015,108 +949,4 @@ async function fetchJson(path, options = {}, retry = true) {
 
   if (!res.ok) throw new Error(data?.error || data?.msg || `HTTP ${res.status}`);
   return data;
-}
-
-function notifyDriverWallet(message, isError = false) {
-  const hint = document.getElementById("driverCommissionPayHint");
-  if (hint) {
-    hint.textContent = message;
-    hint.classList.toggle("is-error", !!isError);
-  }
-}
-
-function notifyDriverPin(message, isError = false) {
-  const hint = document.getElementById("driverWalletPinHint");
-  if (hint) {
-    hint.textContent = message;
-    hint.classList.toggle("is-error", !!isError);
-  }
-}
-
-function isWeakWalletPin(pin) {
-  if (!/^\d{4}$/.test(pin)) return true;
-  if (/^(\d)\1{3}$/.test(pin)) return true;
-  return ["0123", "1234", "4321", "0000"].includes(pin);
-}
-
-function updateAvailabilityCopy(state) {
-  const pageStatus = document.getElementById("driverPageStatus");
-  if (!pageStatus || !state) return;
-  pageStatus.textContent = state.socketConnected ? "Compte BeGO" : "Connexion...";
-}
-
-function normalizeRoute(value) {
-  const clean = (value || "#/")
-    .replace(/^#/, "")
-    .replace(/\.html$/i, "");
-  return clean && clean !== "#" ? clean : "/";
-}
-
-function closeSidebar() {
-  document.getElementById("sidebar")?.classList.remove("active");
-  document.getElementById("backdrop")?.classList.remove("active");
-}
-
-function setText(id, value) {
-  const el = document.getElementById(id);
-  if (el) el.textContent = String(value);
-}
-
-function loadingRow(text) {
-  return `<div class="driver-empty-state"><i class="fa-solid fa-circle-notch fa-spin"></i><span>${text}</span></div>`;
-}
-
-function emptyState(text) {
-  return `<div class="driver-empty-state"><i class="fa-solid fa-inbox"></i><span>${text}</span></div>`;
-}
-
-function safeJson(value) {
-  try {
-    return value ? JSON.parse(value) : null;
-  } catch {
-    return null;
-  }
-}
-
-function escapeHtml(value) {
-  return String(value || "").replace(/[&<>'"]/g, (char) => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;",
-  })[char]);
-}
-
-function shortAddress(value, fallback) {
-  return (value || fallback).split(",")[0].trim();
-}
-
-function formatDate(value) {
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? "--" : date.toLocaleString();
-}
-
-function formatMoney(value) {
-  const number = Number(value || 0);
-  return number.toLocaleString(undefined, { maximumFractionDigits: 2 });
-}
-
-function isToday(viaje) {
-  const date = new Date(viaje.finViajeAt || viaje.createdAt);
-  const now = new Date();
-  return date.toDateString() === now.toDateString();
-}
-
-function isThisWeek(viaje) {
-  const date = new Date(viaje.finViajeAt || viaje.createdAt);
-  const now = new Date();
-  const diff = now.getTime() - date.getTime();
-  return diff >= 0 && diff <= 7 * 24 * 60 * 60 * 1000;
-}
-
-function titleCase(value) {
-  return String(value || "")
-    .replace(/_/g, " ")
-    .replace(/\b\w/g, (letter) => letter.toUpperCase());
-}
-
-function formatMovementType(value) {
-  return titleCase(value || "Movimiento");
 }

@@ -1,5 +1,5 @@
 import { viajeState } from "../../viaje/viaje.state.js";
-import { manejarCancelacionOLimpieza } from "../pasajero.utils.js";
+import { manejarCancelacionOLimpieza } from "../pasajero.utils.js?v=20260711-passenger-profile-photo-utils";
 
 export const handleExpirado = ({ viajeId }) => {
   // 1. Validación de seguridad
