@@ -1,7 +1,7 @@
 import { viajeState } from "../../viaje/viaje.state.js";
 import { mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260711-car-route-center";
 import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260710-route-camera";
-import { ocultarOrigenEnMapa } from "../../map/map.geo.js?v=20260711-map-geo-modular";
+import { ocultarOrigenEnMapa } from "../../map/map.geo.js?v=20260711-map-geo-split";
 import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260710-route-camera";
 import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260711-passenger-profile-photo-utils";
 import { getMap } from "../../map/map.singleton.js?v=20260702-visible-labels";

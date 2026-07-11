@@ -1,4 +1,4 @@
-import { stopGeo } from "../../map/map.geo.js?v=20260711-map-geo-modular";
+import { stopGeo } from "../../map/map.geo.js?v=20260711-map-geo-split";
 
 // ===============================
 // 🌍 BASE PATH ROBUSTO
