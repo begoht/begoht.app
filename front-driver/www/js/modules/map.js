@@ -16,6 +16,7 @@ let recenterButtonBound = false;
 let compassButtonBound = false;
 let rutaOutlineLayer = null;
 let followPausedUntil = 0;
+let RotatingRouteMarker = null;
 
 function crearRoutePointIcon(tipo = "origen") {
   if (!window.L?.divIcon) return null;
@@ -33,6 +34,29 @@ function crearRoutePointIcon(tipo = "origen") {
   });
 }
 
+function crearRouteMarker(latLng, icon) {
+  if (!RotatingRouteMarker) {
+    RotatingRouteMarker = L.Marker.extend({
+      _setPos(pos) {
+        const rotateEnabled = this._map?._rotate;
+        if (this._map) this._map._rotate = false;
+        try {
+          L.Marker.prototype._setPos.call(this, pos);
+        } finally {
+          if (this._map) this._map._rotate = rotateEnabled;
+        }
+      }
+    });
+  }
+
+  return new RotatingRouteMarker(latLng, {
+    ...(icon ? { icon } : {}),
+    pane: "overlayPane",
+    interactive: false,
+    keyboard: false
+  });
+}
+
 export function initMap() {
   if (!window.L?.map) {
     console.warn("Leaflet no disponible: mapa motorista desactivado temporalmente.");
@@ -46,7 +70,8 @@ export function initMap() {
     return map;
   }
 
-  const vectorRenderer = L.svg({ padding: 0.5 });
+  // A generous SVG viewport keeps the complete route painted while the map rotates.
+  const vectorRenderer = L.svg({ padding: 2 });
 
   map = L.map("map", {
     zoomControl: false,
@@ -66,7 +91,7 @@ export function initMap() {
     .setView(DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM);
 
   L.tileLayer(
-    "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",
+    "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png",
     {
       maxZoom: 19,
       detectRetina: false,
@@ -80,7 +105,7 @@ export function initMap() {
   ).addTo(map);
 
   L.tileLayer(
-    "https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png",
+    "https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png",
     {
       maxZoom: 19,
       detectRetina: false,
@@ -379,13 +404,13 @@ export async function dibujarRutaPremium(origen, destino) {
 
   const origenIcon = crearRoutePointIcon("origen");
   const destinoIcon = crearRoutePointIcon("destino");
-  origenMarkerRef.current = L.marker(
+  origenMarkerRef.current = crearRouteMarker(
     [origenCoord.lat, origenCoord.lng],
-    origenIcon ? { icon: origenIcon } : {}
+    origenIcon
   ).addTo(map);
-  destinoMarkerRef.current = L.marker(
+  destinoMarkerRef.current = crearRouteMarker(
     [destinoCoord.lat, destinoCoord.lng],
-    destinoIcon ? { icon: destinoIcon } : {}
+    destinoIcon
   ).addTo(map);
 
   const fallbackCoords = [
@@ -403,7 +428,8 @@ export async function dibujarRutaPremium(origen, destino) {
     const coords = await fetchRutaReal(origenCoord, destinoCoord);
     if (requestId !== routeRequestId || !coords?.length) return;
 
-    renderRutaCoords(coords, {
+    const connectedCoords = conectarRutaAExtremos(coords, origenCoord, destinoCoord);
+    renderRutaCoords(connectedCoords, {
       color: "#3b9cff",
       dashArray: null,
       fit: false
@@ -413,6 +439,18 @@ export async function dibujarRutaPremium(origen, destino) {
   }
 
   return true;
+}
+
+function conectarRutaAExtremos(coords, origen, destino) {
+  const route = normalizarCoords(coords);
+  if (!route.length) return [origen, destino];
+
+  const connected = [{ lat: origen.lat, lng: origen.lng }, ...route];
+  const last = connected[connected.length - 1];
+  if (last.lat !== destino.lat || last.lng !== destino.lng) {
+    connected.push({ lat: destino.lat, lng: destino.lng });
+  }
+  return connected;
 }
 
 function renderRutaCoords(coords, { color, dashArray, fit } = {}) {

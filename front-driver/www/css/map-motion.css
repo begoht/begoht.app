@@ -1,5 +1,5 @@
 #map.leaflet-container {
-  background: transparent !important;
+  background: #e8edf2 !important;
 }
 
 #map.leaflet-container .leaflet-map-pane,
@@ -23,4 +23,12 @@
 #map.leaflet-container .leaflet-overlay-pane svg {
   overflow: visible;
   shape-rendering: geometricPrecision;
+}
+
+/* Route, endpoint icons and base map share the same rotating pane. */
+#map.leaflet-container .leaflet-rotate-pane,
+#map.leaflet-container .leaflet-overlay-pane,
+#map.leaflet-container .bego-map-route-marker {
+  transform-origin: center center;
+  backface-visibility: hidden;
 }

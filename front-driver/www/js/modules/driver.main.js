@@ -1,5 +1,5 @@
 import { initSocket } from "./socket.js?v=20260627-map-icons";
-import { initMap } from "./map.js?v=20260710-route-icons";
+import { initMap } from "./map.js?v=20260712-light-connected-route";
 import { initGPS } from "./gps.js?v=20260711-driver-gps-modular";
 import { initOferta } from "./oferta/oferta.index.js?v=20260702-offer-recovery";
 import { initViajeInicio } from "./viajeInicio/viajeInicio.js?v=20260623-roundtrip-v2";

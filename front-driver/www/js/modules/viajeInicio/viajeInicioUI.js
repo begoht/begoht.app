@@ -1,4 +1,4 @@
-import { borrarRuta, dibujarRutaPremium } from "../map.js?v=20260710-route-icons";
+import { borrarRuta, dibujarRutaPremium } from "../map.js?v=20260712-light-connected-route";
 import { setViajeEnCurso, setEstadoViaje,viajesActivos,setViajeReservadoId} from "../viajeControl/viajeEstado.js";
 import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260711-trip-ui-split";
 import { llegadaTimeout } from "./viajeInicioEstado.js";
