@@ -5,7 +5,7 @@ import {
 } from "./viajeControl/viajeEstado.js";
 
 import { limpiarViajeMain } from "./viajeControl/viajeUI.js?v=20260711-trip-ui-split";
-import { borrarRuta } from "./map.js?v=20260712-light-connected-route";
+import { borrarRuta } from "./map.js?v=20260712-voyager-menu-toggle";
 import { formatGourdes, getPaymentLabel, isCashMethod } from "./oferta/oferta.money.js?v=20260608-offer-net-cash";
 import {
     FINISH_MAX_DISTANCE_METERS,

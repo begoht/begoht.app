@@ -24,7 +24,7 @@
   </script>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="./css/inicio.css?v=20260712-driver-menu-reference" />
+  <link rel="stylesheet" href="./css/inicio.css?v=20260712-voyager-menu-toggle" />
   <link rel="stylesheet" href="./css/map-motion.css?v=20260712-light-connected-route" />
 
   <link id="bego-leaflet-css" rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -135,7 +135,7 @@
     </div>
   </div>
 
-  <button id="menuBtn" class="menu-btn" onclick="toggleMenu()" aria-label="Ouvrir le menu" title="Menu">
+  <button id="menuBtn" class="menu-btn" onclick="toggleMenu()" aria-label="Ouvrir le menu" aria-expanded="false" title="Menu">
     <i class="fa-solid fa-bars" aria-hidden="true"></i>
   </button>
   <div id="backdrop" onclick="toggleMenu()"></div>
@@ -437,7 +437,7 @@
   <script src="./js/core/conexion.js?v=20260710-local-driver"></script>
   <script src="./js/core/native-runtime-loader.js?v=20260627-map-fluid-arrival"></script>
   <script type="module" src="./js/monitoring/frontend-monitor.js?v=20260607-monitor-suspend"></script>
-  <script type="module" src="js/modules/driver.main.js?v=20260712-driver-menu-reference"></script>
+  <script type="module" src="js/modules/driver.main.js?v=20260712-voyager-menu-toggle"></script>
   <script src="./js/i18n/fr.visual.js?v=20260601-fr"></script>
 
   <script>

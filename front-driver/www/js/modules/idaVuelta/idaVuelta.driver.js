@@ -5,7 +5,7 @@ import {
   viajesActivos
 } from "../viajeControl/viajeEstado.js";
 import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260711-trip-ui-split";
-import { dibujarRutaPremium } from "../map.js?v=20260712-light-connected-route";
+import { dibujarRutaPremium } from "../map.js?v=20260712-voyager-menu-toggle";
 
 let socketRef = null;
 let clicksBound = false;

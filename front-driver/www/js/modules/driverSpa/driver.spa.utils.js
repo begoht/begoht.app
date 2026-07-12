@@ -127,6 +127,8 @@ export function normalizeRoute(value) {
 export function closeSidebar() {
   document.getElementById("sidebar")?.classList.remove("active");
   document.getElementById("backdrop")?.classList.remove("active");
+  document.body.classList.remove("driver-menu-open");
+  document.getElementById("menuBtn")?.setAttribute("aria-expanded", "false");
 }
 
 export function setText(id, value) {

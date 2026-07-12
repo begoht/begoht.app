@@ -5,7 +5,7 @@ import {
 } from "../viajeControl/viajeEstado.js"; 
 import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260711-trip-ui-split";
 import { getUltimaPosicion } from "../gps.js?v=20260711-driver-gps-modular";
-import { dibujarRutaPremium } from "../map.js?v=20260712-light-connected-route";
+import { dibujarRutaPremium } from "../map.js?v=20260712-voyager-menu-toggle";
 import {
     ARRIVAL_MAX_DISTANCE_METERS,
     validarCercaniaViaje,

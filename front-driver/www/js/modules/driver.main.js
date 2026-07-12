@@ -1,5 +1,5 @@
 import { initSocket } from "./socket.js?v=20260627-map-icons";
-import { initMap } from "./map.js?v=20260712-light-connected-route";
+import { initMap } from "./map.js?v=20260712-voyager-menu-toggle";
 import { initGPS } from "./gps.js?v=20260711-driver-gps-modular";
 import { initOferta } from "./oferta/oferta.index.js?v=20260702-offer-recovery";
 import { initViajeInicio } from "./viajeInicio/viajeInicio.js?v=20260623-roundtrip-v2";
@@ -162,8 +162,10 @@ function bindGlobalUi() {
     const backdrop = document.getElementById("backdrop");
 
     if (sidebar && backdrop) {
-      sidebar.classList.toggle("active");
-      backdrop.classList.toggle("active");
+      const isOpen = sidebar.classList.toggle("active");
+      backdrop.classList.toggle("active", isOpen);
+      document.body.classList.toggle("driver-menu-open", isOpen);
+      document.getElementById("menuBtn")?.setAttribute("aria-expanded", String(isOpen));
     }
   };
 

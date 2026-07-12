@@ -1,4 +1,4 @@
-import { borrarRuta } from "../map.js?v=20260712-light-connected-route";
+import { borrarRuta } from "../map.js?v=20260712-voyager-menu-toggle";
 import {
     getEstadoViaje,
     setViajeEnCurso,
