@@ -3,7 +3,7 @@ import {
   getRutaActualCoords,
   consumirRutaDesde,
   seguirMotoristaEnMapa
-} from "./map.js?v=20260712-voyager-menu-toggle";
+} from "./map.js?v=20260712-route-700m-small-pins";
 import { isDriverOnline, updateDriverPosition } from "./driver.status.js?v=20260627-map-icons";
 import { crearMotoIcon, motoIcon } from "./map.icons.js?v=20260620-driver-navigation";
 import {

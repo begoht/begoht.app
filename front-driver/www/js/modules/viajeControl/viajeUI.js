@@ -1,4 +1,4 @@
-import { borrarRuta } from "../map.js?v=20260712-voyager-menu-toggle";
+import { borrarRuta } from "../map.js?v=20260712-route-700m-small-pins";
 import {
     getEstadoViaje,
     setViajeEnCurso,

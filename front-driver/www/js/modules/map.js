@@ -6,6 +6,7 @@ export let destinoMarkerRef = { current: null };
 const DEFAULT_MAP_CENTER = [18.2343, -72.5354];
 const DEFAULT_MAP_ZOOM = 14;
 const NAVIGATION_LEAD_METERS = 72;
+const NAVIGATION_VISIBLE_ROUTE_METERS = 700;
 const FOLLOW_PAUSE_MS = 12000;
 const ROUTE_CONSUME_MAX_DISTANCE_METERS = 120;
 const ROUTE_CONSUME_FINISH_METERS = 12;
@@ -28,8 +29,8 @@ function crearRoutePointIcon(tipo = "origen") {
         <span></span>
       </span>
     `,
-    iconSize: [32, 32],
-    iconAnchor: [16, 16],
+    iconSize: [24, 24],
+    iconAnchor: [12, 12],
     className: "bego-map-route-marker"
   });
 }
@@ -340,13 +341,19 @@ export function seguirMotoristaEnMapa(posicion, {
   if (!force && Date.now() < followPausedUntil) return false;
 
   const center = puntoAdelantado(point, heading, NAVIGATION_LEAD_METERS);
+  const routeActive = rutaActualCoords.length >= 2;
+  const navigationZoom = routeActive ? calcularZoomNavegacion(point.lat) : null;
 
   map._begoProgrammaticMove = true;
-  map.panTo([center.lat, center.lng], {
-    animate: true,
-    duration: 0.42,
-    noMoveStart: true
-  });
+  if (navigationZoom != null && Math.abs((map.getZoom?.() || 0) - navigationZoom) >= 0.5) {
+    map.setView([center.lat, center.lng], navigationZoom, { animate: false });
+  } else {
+    map.panTo([center.lat, center.lng], {
+      animate: true,
+      duration: 0.42,
+      noMoveStart: true
+    });
+  }
   map.once?.("moveend", () => {
     map._begoProgrammaticMove = false;
   });
@@ -355,6 +362,18 @@ export function seguirMotoristaEnMapa(posicion, {
   }, 900);
 
   return true;
+}
+
+function calcularZoomNavegacion(latitude) {
+  const mapHeight = Number(map?.getSize?.().y) || window.innerHeight || 720;
+  const usableHeight = Math.max(320, Math.floor(mapHeight * 0.68));
+  const latitudeFactor = Math.max(0.2, Math.cos(Number(latitude || 0) * Math.PI / 180));
+  const rawZoom = Math.log2(
+    (156543.03392 * latitudeFactor * usableHeight) / NAVIGATION_VISIBLE_ROUTE_METERS
+  );
+
+  // Rounding down guarantees that at least 700 m remain visible vertically.
+  return Math.max(15, Math.min(17, Math.floor(rawZoom)));
 }
 
 function setDriverMapView(lat, lng, zoom = 16) {
