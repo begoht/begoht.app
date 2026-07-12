@@ -62,6 +62,7 @@ export function initDriverSpa() {
     refrescarPaginaDriver();
   });
   renderRoute();
+  initDriverMenuSummary();
 
   cleanupAvailability?.();
   cleanupAvailability = onDriverAvailabilityChange(updateAvailabilityCopy);
@@ -73,6 +74,35 @@ export function initDriverSpa() {
       refrescarPaginaDriver();
     });
   }
+}
+
+function initDriverMenuSummary() {
+  const user = safeJson(localStorage.getItem("motorista")) || safeJson(localStorage.getItem("usuario")) || {};
+  const fullName = String(user.nombre || user.name || localStorage.getItem("nombre") || "Motorista BeGO").trim();
+  const firstName = fullName.split(/\s+/)[0] || "Motorista";
+  setText("driverMenuName", firstName);
+
+  const startedAt = Number(sessionStorage.getItem("driver:session-start")) || Date.now();
+  sessionStorage.setItem("driver:session-start", String(startedAt));
+  const updateHours = () => {
+    const minutes = Math.max(0, Math.floor((Date.now() - startedAt) / 60000));
+    setText("driverMenuHours", `${Math.floor(minutes / 60)} h ${String(minutes % 60).padStart(2, "0")} min`);
+  };
+  updateHours();
+  window.setInterval(updateHours, 60000);
+
+  window.addEventListener("wallet:update", (event) => {
+    const wallet = event.detail || {};
+    setText("driverMenuBalance", `${Number(wallet.gananciaDisponible ?? wallet.saldo ?? 0).toFixed(2)} G`);
+  });
+
+  fetchJson("/api/notifications/news").then((news) => {
+    const count = Array.isArray(news) ? news.length : 0;
+    const badge = document.getElementById("driverMenuMessages");
+    if (!badge) return;
+    badge.textContent = count > 99 ? "99+" : String(count);
+    badge.classList.toggle("hidden", count === 0);
+  }).catch(() => {});
 }
 
 function bindNavigation() {

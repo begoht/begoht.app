@@ -56,15 +56,34 @@
   min-height: 100dvh;
 }
 
-.driver-menu-head {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-height: 82px;
-  padding: 18px 22px;
-  border-bottom: 1px solid #2a2f38;
-  background: #111827;
+.driver-menu-hero {
+  position: relative;
+  min-height: 190px;
+  overflow: hidden;
+  padding: calc(56px + env(safe-area-inset-top)) 24px 24px;
+  color: #fff;
+  background: #ec0049;
+  isolation: isolate;
 }
+
+.driver-menu-orb { position: absolute; z-index: -1; border-radius: 50%; }
+.driver-menu-orb.orb-one { width: 245px; height: 245px; left: -76px; top: -95px; background: #f0447b; }
+.driver-menu-orb.orb-two { width: 250px; height: 250px; right: -112px; top: -94px; background: #f34278; box-shadow: -135px 86px 0 26px #ed2c69; }
+.driver-menu-hero p { margin: 0; font-size: clamp(1.55rem, 7vw, 2rem); font-weight: 900; line-height: 1.15; }
+.driver-menu-hero p strong { font-weight: 900; }
+.driver-menu-wave { display: block; margin-top: 16px; font-size: 2.2rem; transform: rotate(-12deg); transform-origin: left center; }
+.driver-menu-hero small { display: block; margin-top: 9px; color: rgba(255,255,255,.78); font-weight: 700; }
+
+.driver-menu-stats { position: relative; z-index: 2; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: -16px 18px 14px; }
+.sidebar .driver-menu-stat { min-height: 128px; margin: 0; padding: 20px 16px; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 9px; border: 1px solid rgba(255,255,255,.08); border-radius: 16px; color: #f8fafc; background: rgba(30,37,51,.96); box-shadow: 0 10px 26px rgba(0,0,0,.22); }
+.sidebar .driver-menu-stat:hover, .sidebar .driver-menu-stat.active { border-left: 1px solid rgba(255,255,255,.08); background: #252c39; }
+.driver-menu-stat .stat-icon { position: relative; font-size: 1.6rem; }
+.driver-menu-stat .stat-icon b { position: absolute; left: 19px; top: -9px; min-width: 25px; padding: 3px 7px; border-radius: 999px; color: #fff; background: #c92d31; font-size: .72rem; text-align: center; }
+.driver-menu-stat > strong { font-size: 1.05rem; line-height: 1.15; }
+.driver-menu-stat > small { color: #aeb9ca; font-size: .78rem; font-weight: 750; }
+.driver-menu-links { padding: 2px 8px 28px; }
+.sidebar .driver-menu-links a { margin: 2px 4px; font-size: 1rem; }
+.driver-menu-links .menu-chevron { width: auto; margin-left: auto; color: #8d98a9; font-size: .8rem; }
 
 .driver-menu-head strong,
 .driver-menu-head small {

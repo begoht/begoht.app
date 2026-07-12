@@ -24,7 +24,7 @@
   </script>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="./css/inicio.css?v=20260710-sheet-snap" />
+  <link rel="stylesheet" href="./css/inicio.css?v=20260712-driver-menu-reference" />
   <link rel="stylesheet" href="./css/map-motion.css?v=20260627-map-fluid-arrival" />
 
   <link id="bego-leaflet-css" rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -141,25 +141,41 @@
   <div id="backdrop" onclick="toggleMenu()"></div>
 
   <div id="sidebar" class="sidebar">
-    <div class="driver-menu-head">
-      <span class="driver-status-dot offline" id="driverAvailabilityDot"></span>
-      <div>
-        <strong>BeGO Driver</strong>
-        <small id="driverPageStatus">Compte BeGO</small>
-      </div>
-    </div>
-    <div class="menu-arreglo">
-      <a href="#/" class="item" data-driver-route><i class="fa-solid fa-map-location-dot"></i><span>Accueil</span></a>
-      <a href="#/ganancias" class="item" data-driver-route><i class="fa-solid fa-chart-line"></i><span>Gains</span></a>
-      <a href="#/actividad" class="item" data-driver-route><i class="fa-solid fa-clock-rotate-left"></i><span>Activite</span></a>
-      <a href="#/creditos" class="item" data-driver-route><i class="fa-solid fa-hand-holding-dollar"></i><span>Creditos</span></a>
-      <a href="#/wallet" class="item billeteras" data-driver-route><i class="fa-solid fa-wallet"></i><span>Wallet</span> <span id="walletBadge" class="badge hidden">0</span></a>
-      <a href="#/soporte" class="item horas" data-driver-route><i class="fa-solid fa-headset"></i><span>Support</span></a>
-      <a href="#/noticias" class="item" data-driver-route><i class="fa-solid fa-bell"></i><span>Noticias</span></a>
-    </div>
-    <a href="#/cuenta" data-driver-route><i class="fa-solid fa-user-shield"></i><span>Compte</span></a>
-    <a href="#/ajustes" data-driver-route><i class="fa-solid fa-sliders"></i><span>Reglages</span></a>
-    <a href="#/legal" data-driver-route><i class="fa-solid fa-scale-balanced"></i><span>Legal</span></a>
+    <header class="driver-menu-hero">
+      <span class="driver-menu-orb orb-one" aria-hidden="true"></span>
+      <span class="driver-menu-orb orb-two" aria-hidden="true"></span>
+      <p>Hola, <strong id="driverMenuName">Motorista BeGO</strong></p>
+      <span class="driver-menu-wave" aria-hidden="true">👋</span>
+      <small id="driverPageStatus">Cuenta BeGO</small>
+    </header>
+
+    <section class="driver-menu-stats" aria-label="Resumen de tu cuenta">
+      <a href="#/noticias" data-driver-route class="driver-menu-stat">
+        <span class="stat-icon"><i class="fa-solid fa-bell"></i><b id="driverMenuMessages" class="hidden">0</b></span>
+        <strong>Mensajes</strong>
+      </a>
+      <a href="#/ganancias" data-driver-route class="driver-menu-stat">
+        <span class="stat-icon"><i class="fa-regular fa-clock"></i></span>
+        <strong>Horas de conexión</strong><small id="driverMenuHours">0 h 00 min</small>
+      </a>
+      <a href="#/wallet" data-driver-route class="driver-menu-stat">
+        <span class="stat-icon"><i class="fa-solid fa-wallet"></i></span>
+        <strong>Balance</strong><small id="driverMenuBalance">0.00 G</small>
+      </a>
+      <a href="#/actividad" data-driver-route class="driver-menu-stat">
+        <span class="stat-icon"><i class="fa-solid fa-money-bill-transfer"></i></span>
+        <strong>Pagos</strong>
+      </a>
+    </section>
+
+    <nav class="driver-menu-links" aria-label="Menú del motorista">
+      <a href="#/cuenta" data-driver-route><i class="fa-regular fa-circle-user"></i><span>Perfil</span></a>
+      <a href="#/wallet" data-driver-route><i class="fa-solid fa-money-bill-wave"></i><span>Finanzas</span><i class="fa-solid fa-chevron-right menu-chevron"></i></a>
+      <a href="#/creditos" data-driver-route><i class="fa-solid fa-fire-flame-curved"></i><span>Extras</span><i class="fa-solid fa-chevron-right menu-chevron"></i></a>
+      <a href="#/ganancias" data-driver-route><i class="fa-solid fa-chart-column"></i><span>Rendimiento</span></a>
+      <a href="#/ajustes" data-driver-route><i class="fa-solid fa-gear"></i><span>Configuración</span></a>
+      <a href="#/soporte" data-driver-route><i class="fa-solid fa-headset"></i><span>Soporte</span></a>
+    </nav>
   </div>
 
   <main id="driverAppShell" class="driver-shell">
@@ -421,7 +437,7 @@
   <script src="./js/core/conexion.js?v=20260710-local-driver"></script>
   <script src="./js/core/native-runtime-loader.js?v=20260627-map-fluid-arrival"></script>
   <script type="module" src="./js/monitoring/frontend-monitor.js?v=20260607-monitor-suspend"></script>
-  <script type="module" src="js/modules/driver.main.js?v=20260710-sheet-snap"></script>
+  <script type="module" src="js/modules/driver.main.js?v=20260712-driver-menu-reference"></script>
   <script src="./js/i18n/fr.visual.js?v=20260601-fr"></script>
 
   <script>
