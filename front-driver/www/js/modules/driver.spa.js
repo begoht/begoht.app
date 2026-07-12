@@ -127,6 +127,7 @@ function renderRoute() {
   lastRoute = route;
 
   document.body.classList.toggle("driver-page-active", !isHome);
+  document.body.classList.toggle("driver-support-page", route === "/soporte");
   homeView?.classList.toggle("hidden", !isHome);
   pageView?.classList.toggle("hidden", isHome);
 
