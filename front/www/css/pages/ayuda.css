@@ -17,6 +17,13 @@
   min-width: 0;
 }
 
+/* Keep the final assistance cards fully above the fixed app footer. */
+.route-ayuda .ayuda-container,
+.route-soporte .soporte-container {
+  padding-bottom: calc(var(--footer-height, 76px) + env(safe-area-inset-bottom, 0px) + 32px);
+  scroll-padding-bottom: calc(var(--footer-height, 76px) + env(safe-area-inset-bottom, 0px) + 32px);
+}
+
 .support-hero {
   min-height: 142px;
   display: flex;
@@ -394,7 +401,7 @@
   .ayuda-container,
   .soporte-container,
   .css-seguridad .seguridad {
-    padding: 8px 12px 14px;
+    padding: 8px 12px calc(var(--footer-height, 76px) + env(safe-area-inset-bottom, 0px) + 28px);
     gap: 12px;
   }
 
