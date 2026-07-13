@@ -37,12 +37,26 @@ test("cadena de cache: la app pasajero carga el handler nuevo de vuelta", () => 
   const passengerMain = readWorkspaceFile("front/www/js/pasajero/pasajero.main.js");
   const passengerSocket = readWorkspaceFile("front/www/js/socket/pasajero.socket.js");
 
-  assert.match(index, /app\.js\?v=20260713-passenger-connection-hotfix/);
-  assert.match(app, /router\.js\?v=20260713-passenger-connection-hotfix/);
-  assert.match(router, /app\.lifecycle\.js\?v=20260713-passenger-connection-hotfix/);
+  assert.match(index, /app\.js\?v=20260713-profile-photo-stable/);
+  assert.match(app, /router\.js\?v=20260713-profile-photo-stable/);
+  assert.match(router, /app\.lifecycle\.js\?v=20260713-profile-photo-stable/);
   assert.match(lifecycle, /pasajero\.main\.js\?v=20260713-passenger-connection-hotfix/);
   assert.match(passengerMain, /pasajero\.socket\.js\?v=20260713-passenger-connection-hotfix/);
   assert.match(passengerSocket, /idaVuelta\.handler\.js\?v=20260713-live-trip-tracking/);
+});
+
+test("foto pasajero: guarda solo la URL final y recupera fallos temporales de imagen", () => {
+  const header = readWorkspaceFile("front/www/js/components/header.init.js");
+  const editProfile = readWorkspaceFile("front/www/js/editar-perfil.js");
+  const lifecycle = readWorkspaceFile("front/www/js/core/app/app.lifecycle.js");
+
+  assert.match(header, /URL\.createObjectURL\(file\)/);
+  assert.doesNotMatch(header, /new FileReader\(\)/);
+  assert.match(header, /attempt < retries/);
+  assert.match(header, /getServerUrl\(\) \|\| window\.location\.origin/);
+  assert.match(header, /bego:profile-updated/);
+  assert.match(editProfile, /\["BeGO_user", "usuario", "user"\]/);
+  assert.match(lifecycle, /header\.init\.js\?v=20260713-profile-photo-stable/);
 });
 
 test("seguimiento en vivo: descuenta ETA y recupera el canal si queda silencioso", () => {

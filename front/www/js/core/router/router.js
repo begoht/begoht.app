@@ -2,7 +2,7 @@ import { routes } from "./router.routes.js?v=20260629-news-push";
 import { renderLayout } from "./router.render.js?v=20260628-dark-route-locked";
 import { runCleanup, setCleanup } from "./router.cleanup.js";
 import { afterRender, pushURL, actualizarLinksActivos } from "./router.utils.js";
-import { runPageInit } from "../app/app.lifecycle.js?v=20260713-passenger-connection-hotfix";
+import { runPageInit } from "../app/app.lifecycle.js?v=20260713-profile-photo-stable";
 import { AppState } from "../state.js";
 import { stopGeo } from "../../map/map.geo.js?v=20260711-map-geo-split";
 

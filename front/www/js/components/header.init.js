@@ -42,15 +42,61 @@ function normalizarFotoUrl(value = "") {
   const raw = String(value || "").trim();
   if (!raw) return "";
   if (/^(?:https?:|data:|blob:)/i.test(raw)) return raw;
-  const base = typeof window.getServerUrl === "function"
-    ? window.getServerUrl()
-    : window.location.origin;
+  const base = getServerUrl() || window.location.origin;
 
   try {
     return new URL(raw, base).href;
   } catch {
     return raw;
   }
+}
+
+function withRetryToken(url = "") {
+  if (!url || /^(?:data:|blob:)/i.test(url)) return url;
+  try {
+    const parsed = new URL(url, window.location.origin);
+    parsed.searchParams.set("bego_photo_retry", Date.now());
+    return parsed.href;
+  } catch {
+    return url;
+  }
+}
+
+function mostrarFotoPerfil(foto, fallback, rawUrl, { retries = 2 } = {}) {
+  const photoUrl = normalizarFotoUrl(rawUrl);
+  const requestId = `${Date.now()}-${Math.random()}`;
+  foto.dataset.photoRequest = requestId;
+
+  if (!photoUrl) {
+    foto.removeAttribute("src");
+    foto.style.display = "none";
+    if (fallback) fallback.style.display = "grid";
+    return;
+  }
+
+  let attempt = 0;
+  const load = (url) => {
+    if (foto.dataset.photoRequest !== requestId) return;
+    foto.onload = () => {
+      if (foto.dataset.photoRequest !== requestId) return;
+      foto.style.display = "block";
+      if (fallback) fallback.style.display = "none";
+    };
+    foto.onerror = () => {
+      if (foto.dataset.photoRequest !== requestId) return;
+      if (attempt < retries) {
+        attempt += 1;
+        window.setTimeout(() => load(withRetryToken(photoUrl)), attempt * 700);
+        return;
+      }
+      foto.removeAttribute("src");
+      foto.style.display = "none";
+      if (fallback) fallback.style.display = "grid";
+    };
+    if (foto.getAttribute("src") !== url) foto.src = url;
+  };
+
+  load(photoUrl);
 }
 
 function openNotifications() {
@@ -144,18 +190,7 @@ function bindAvatar(user) {
   }
 
   const fotoUrl = normalizarFotoUrl(user?.foto || user?.avatar || user?.photo || "");
-  if (fotoUrl) {
-    foto.src = fotoUrl;
-    foto.style.display = "block";
-    if (fallback) fallback.style.display = "none";
-  }
-
-  foto.onerror = () => {
-    foto.removeAttribute("src");
-    foto.style.display = "none";
-    if (fallback) fallback.style.display = "grid";
-    foto.onerror = null;
-  };
+  mostrarFotoPerfil(foto, fallback, fotoUrl);
 
   avatar.addEventListener("click", () => input.click());
   avatar.addEventListener("keydown", event => {
@@ -165,32 +200,27 @@ function bindAvatar(user) {
     }
   });
 
-  input.addEventListener("change", event => {
+  input.addEventListener("change", async event => {
     const file = event.target.files?.[0];
     if (!file) return;
+    const previousPhoto = normalizarFotoUrl((getStoredUser() || user || {})?.foto || fotoUrl);
+    const previewUrl = URL.createObjectURL(file);
+    mostrarFotoPerfil(foto, fallback, previewUrl, { retries: 0 });
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      foto.src = reader.result;
-      foto.style.display = "block";
-      if (fallback) fallback.style.display = "none";
-      persistUser({
-        ...(getStoredUser() || user || {}),
-        foto: reader.result
-      });
-    };
-    reader.readAsDataURL(file);
-
-    uploadProfilePhoto(file, getStoredUser() || user || {})
-      .then((updatedUser) => {
-        const updatedPhoto = normalizarFotoUrl(updatedUser?.foto || "");
-        if (updatedPhoto) foto.src = updatedPhoto;
-        showHeaderToast("Foto guardada");
-      })
-      .catch((error) => {
-        console.error("No se pudo subir la foto:", error);
-        showHeaderToast(error.message || "No se pudo guardar la foto");
-      });
+    try {
+      const updatedUser = await uploadProfilePhoto(file, getStoredUser() || user || {});
+      const updatedPhoto = normalizarFotoUrl(updatedUser?.foto || "");
+      mostrarFotoPerfil(foto, fallback, updatedPhoto);
+      window.dispatchEvent(new CustomEvent("bego:profile-updated", { detail: updatedUser }));
+      showHeaderToast("Foto guardada");
+    } catch (error) {
+      mostrarFotoPerfil(foto, fallback, previousPhoto);
+      console.error("No se pudo subir la foto:", error);
+      showHeaderToast(error.message || "No se pudo guardar la foto");
+    } finally {
+      window.setTimeout(() => URL.revokeObjectURL(previewUrl), 2000);
+      input.value = "";
+    }
   });
 }
 

@@ -52,7 +52,10 @@ guardarBtn.addEventListener("click", async () => {
     }
 
     const updatedUser = await res.json();
-    localStorage.setItem("BeGO_user", JSON.stringify(updatedUser));
+    ["BeGO_user", "usuario", "user"].forEach((key) => {
+      localStorage.setItem(key, JSON.stringify(updatedUser));
+    });
+    window.dispatchEvent(new CustomEvent("bego:profile-updated", { detail: updatedUser }));
 
     alert("✅ Perfil actualizado correctamente");
     history.back();
