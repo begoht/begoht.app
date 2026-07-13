@@ -3,7 +3,7 @@ import { viajeState } from "../viaje/viaje.state.js";
 import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260628-dark-route-locked";
 import { eliminarMotoristaDelMapa } from "../map/map.motorista.js?v=20260711-car-route-center";
 import { getMap } from "../map/map.singleton.js?v=20260702-visible-labels";
-import { getSocket } from "../socket/socket.js?v=20260606-session-refresh";
+import { getSocket } from "../socket/socket.js?v=20260713-passenger-connection-hotfix";
 import { destroyPasajeroSocket } from "./pasajero.socket.js";
 
 /**

@@ -1,14 +1,14 @@
-import { getSocket } from "./socket.js?v=20260713-live-trip-tracking";
+import { getSocket } from "./socket.js?v=20260713-passenger-connection-hotfix";
 import { viajeState } from "../viaje/viaje.state.js";
 
-import { handlePrecio } from "./handlers/precio.handler.js?v=20260713-live-trip-tracking";
+import { handlePrecio } from "./handlers/precio.handler.js?v=20260713-passenger-connection-hotfix";
 import { handleAsignado } from "./handlers/asignado.handler.js?v=20260713-live-trip-tracking";
 import { handleTrack } from "./handlers/track.handler.js?v=20260713-live-trip-tracking";
 import { handleLlego } from "./handlers/llego.handler.js?v=20260713-live-trip-tracking";
 import { handleIniciado } from "./handlers/iniciado.handler.js?v=20260713-live-trip-tracking";
 import { handleFinalizado } from "./handlers/finalizado.handler.js?v=20260713-live-trip-tracking";
 import { handleConnect } from "./handlers/connect.handler.js?v=20260629-email-receipt";
-import { handleError } from "./handlers/error.handler.js?v=20260713-live-trip-tracking";
+import { handleError } from "./handlers/error.handler.js?v=20260713-passenger-connection-hotfix";
 import { handleNoMotorista } from "./handlers/noMotorista.handler.js?v=20260713-live-trip-tracking";
 import { handleCancelado } from "./handlers/cancelado.handler.js?v=20260713-live-trip-tracking";
 import { handleExpirado } from "./handlers/expirado.handler.js?v=20260713-live-trip-tracking";

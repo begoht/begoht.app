@@ -1,4 +1,4 @@
-import { getSocket } from "../../../socket/socket.js?v=20260606-session-refresh";
+import { getSocket } from "../../../socket/socket.js?v=20260713-passenger-connection-hotfix";
 import { getMapaInstance } from "../../../map/state/map.motoristas.state.js";
 import {
   eliminarMotoristaDelMapa,

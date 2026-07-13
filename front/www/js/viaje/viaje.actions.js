@@ -1,8 +1,8 @@
-import { getSocket } from "../socket/socket.js?v=20260606-session-refresh";
+import { getSocket } from "../socket/socket.js?v=20260713-passenger-connection-hotfix";
 import { viajeState } from "./viaje.state.js";
 import { limpiarViajePasajero } from "../socket/viaje.limpieza.js";
-import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260623-roundtrip-v2";
-import { cerrarBuscandoMotorista } from "../pasajero/ui/overlays/buscandoMotorista.ui.js?v=20260608-search-modal";
+import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260713-passenger-connection-hotfix";
+import { cerrarBuscandoMotorista } from "../pasajero/ui/overlays/buscandoMotorista.ui.js?v=20260713-passenger-connection-hotfix";
 import { cityConfig } from "../map/config/index.js?v=20260624-cordoba-gps";
 import { reverseGeocode } from "../map/services/map.reverse.js?v=20260624-cordoba-gps";
 import { getMap } from "../map/map.singleton.js?v=20260702-visible-labels";
@@ -25,6 +25,29 @@ const DIRECCIONES_GENERICAS = new Set([
 function getSafeSocket() {
   if (!socket) socket = getSocket();
   return socket;
+}
+
+function esperarSocketConectado(socketActual, timeoutMs = 6000) {
+  if (!socketActual) return Promise.resolve(false);
+  if (socketActual.connected) return Promise.resolve(true);
+
+  socketActual.connect?.();
+  return new Promise((resolve) => {
+    let settled = false;
+    const finish = (connected) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      socketActual.off?.("connect", onConnect);
+      socketActual.off?.("connect_error", onError);
+      resolve(connected);
+    };
+    const onConnect = () => finish(true);
+    const onError = () => finish(false);
+    const timer = setTimeout(() => finish(socketActual.connected === true), timeoutMs);
+    socketActual.once?.("connect", onConnect);
+    socketActual.once?.("connect_error", onError);
+  });
 }
 
 function crearQuoteId() {
@@ -147,7 +170,7 @@ export async function pedirViaje() {
   }
 
   const socket = getSafeSocket();
-  if (!socket || socket.connected === false) {
+  if (!await esperarSocketConectado(socket)) {
     resetCotizacionPendiente();
     alert("Conexion no disponible. Intenta nuevamente en unos segundos.");
     return;

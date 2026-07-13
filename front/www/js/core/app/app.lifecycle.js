@@ -55,7 +55,7 @@ async function initHome(initId) {
     const map = getMap();
     if (!map) return;
 
-    const { initPasajero } = await import("../../pasajero/pasajero.main.js?v=20260713-live-trip-tracking");
+    const { initPasajero } = await import("../../pasajero/pasajero.main.js?v=20260713-passenger-connection-hotfix");
 
     if (initId !== currentInitId) return;
 

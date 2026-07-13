@@ -45,6 +45,10 @@ async function refreshSocketAuth() {
 
 export function getSocket() {
   if (socketInstance) return socketInstance;
+  if (window.__begoPassengerSocket) {
+    socketInstance = window.__begoPassengerSocket;
+    return socketInstance;
+  }
 
   const token = validarToken();
   if (!token) {
@@ -56,8 +60,7 @@ export function getSocket() {
   console.log("Conectando socket a:", serverUrl);
 
   socketInstance = io(serverUrl, {
-    transports: ["websocket", "polling"],
-    upgrade: true,
+    transports: ["websocket"],
     auth: { token },
     reconnection: true,
     reconnectionAttempts: Infinity,
@@ -100,5 +103,6 @@ export function getSocket() {
   });
 
   window.socket = socketInstance;
+  window.__begoPassengerSocket = socketInstance;
   return socketInstance;
 }

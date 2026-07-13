@@ -37,11 +37,11 @@ test("cadena de cache: la app pasajero carga el handler nuevo de vuelta", () => 
   const passengerMain = readWorkspaceFile("front/www/js/pasajero/pasajero.main.js");
   const passengerSocket = readWorkspaceFile("front/www/js/socket/pasajero.socket.js");
 
-  assert.match(index, /app\.js\?v=20260713-live-trip-tracking/);
-  assert.match(app, /router\.js\?v=20260713-live-trip-tracking/);
-  assert.match(router, /app\.lifecycle\.js\?v=20260713-live-trip-tracking/);
-  assert.match(lifecycle, /pasajero\.main\.js\?v=20260713-live-trip-tracking/);
-  assert.match(passengerMain, /pasajero\.socket\.js\?v=20260713-live-trip-tracking/);
+  assert.match(index, /app\.js\?v=20260713-passenger-connection-hotfix/);
+  assert.match(app, /router\.js\?v=20260713-passenger-connection-hotfix/);
+  assert.match(router, /app\.lifecycle\.js\?v=20260713-passenger-connection-hotfix/);
+  assert.match(lifecycle, /pasajero\.main\.js\?v=20260713-passenger-connection-hotfix/);
+  assert.match(passengerMain, /pasajero\.socket\.js\?v=20260713-passenger-connection-hotfix/);
   assert.match(passengerSocket, /idaVuelta\.handler\.js\?v=20260713-live-trip-tracking/);
 });
 
@@ -56,11 +56,23 @@ test("seguimiento en vivo: descuenta ETA y recupera el canal si queda silencioso
   assert.match(passengerSocket, /Date\.now\(\) - lastTrackAt < 30000/);
   assert.match(passengerSocket, /requestPassengerSync\(socket\)/);
   assert.match(passengerEta, /etaDeadlineMs - Date\.now\(\)/);
-  assert.match(socket, /transports:\s*\["websocket", "polling"\]/);
+  assert.match(socket, /transports:\s*\["websocket"\]/);
+  assert.match(socket, /window\.__begoPassengerSocket/);
   assert.match(driverGps, /const HEARTBEAT_MS = 12000/);
   assert.match(driverRender, /if \(waitingTimerInterval && waitingTimerKey\.startsWith/);
   assert.match(driverRender, /etaDeadlineMs - Date\.now\(\)/);
   assert.match(driverIndex, /class="boot-logo"><img src="assets\/logo_primcial\.png" alt="BeGO"/);
+});
+
+test("solicitud pasajero: comparte un solo socket y espera la conexion antes de cotizar", () => {
+  const actions = readWorkspaceFile("front/www/js/viaje/viaje.actions.js");
+  const passengerMain = readWorkspaceFile("front/www/js/pasajero/pasajero.main.js");
+  const overlay = readWorkspaceFile("front/www/js/pasajero/ui/overlays/buscandoMotorista.ui.js");
+
+  assert.match(actions, /socket\.js\?v=20260713-passenger-connection-hotfix/);
+  assert.match(passengerMain, /socket\.js\?v=20260713-passenger-connection-hotfix/);
+  assert.match(overlay, /socket\.js\?v=20260713-passenger-connection-hotfix/);
+  assert.match(actions, /await esperarSocketConectado\(socket\)/);
 });
 
 test("cierre pasajero: recupera la finalizacion si la app estaba cerrada", () => {

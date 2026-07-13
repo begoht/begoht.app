@@ -4,7 +4,7 @@ import { mostrarModalPrecio, mostrarBuscandoMotorista } from "../../pasajero/pas
 import { guardarSesionViaje } from "../pasajero.utils.js?v=20260713-live-trip-tracking";
 import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260623-roundtrip-v2";
 import { cityConfig } from "../../map/config/index.js?v=20260624-cordoba-gps";
-import { resolverCotizacionPendiente, resetCotizacionPendiente } from "../../viaje/viaje.actions.js?v=20260628-dark-route-locked";
+import { resolverCotizacionPendiente, resetCotizacionPendiente } from "../../viaje/viaje.actions.js?v=20260713-passenger-connection-hotfix";
 import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260607-finalized-guard";
 import {
   aplicarSeleccionIdaVuelta,
