@@ -3,7 +3,7 @@ import { limpiarMotoristas, mostrarMotoristaEnMapa } from "../../map/map.motoris
 import { getMap } from "../../map/map.singleton.js?v=20260702-visible-labels";
 import { actualizarRutaSegunEstado } from "../../map/map.route.flow.js?v=20260710-route-camera";
 import { viajeState } from "../../viaje/viaje.state.js";
-import { actualizarUIDriver, mostrarModalFinalizado } from "../../socket/pasajero.utils.js?v=20260711-passenger-profile-photo-utils";
+import { actualizarUIDriver, mostrarModalFinalizado } from "../../socket/pasajero.utils.js?v=20260713-live-trip-tracking";
 import {
   obtenerFinalizacionPendiente,
   viajeFueFinalizado

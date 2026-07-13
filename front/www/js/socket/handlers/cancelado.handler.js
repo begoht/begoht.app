@@ -1,5 +1,5 @@
 import { viajeState } from "../../viaje/viaje.state.js";
-import { manejarCancelacionOLimpieza } from "../pasajero.utils.js?v=20260711-passenger-profile-photo-utils";
+import { manejarCancelacionOLimpieza } from "../pasajero.utils.js?v=20260713-live-trip-tracking";
 
 export const handleCancelado = ({ viajeId, penalidad, reembolso, busquedaAnulada, estado, historial }) => {
   console.log("Viaje cancelado:", viajeId, "| Penalidad:", penalidad, "Reembolso:", reembolso);

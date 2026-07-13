@@ -9,14 +9,14 @@ import {
     setLlegadaRetryTimeout,
     setLlegadaLock
 } from "./viajeEstado.js";
-import { inicializarAccionesViaje } from "./viajeEvents.js?v=20260711-trip-events";
+import { inicializarAccionesViaje } from "./viajeEvents.js?v=20260713-live-trip-tracking";
 import {
     actualizarBotonCobro,
     actualizarDetalleViaje,
     actualizarResumenReserva
-} from "./viajeRender.js?v=20260711-trip-render";
+} from "./viajeRender.js?v=20260713-live-trip-tracking";
 import { obtenerViajeActualUI } from "./viajeSelectors.js?v=20260711-trip-selectors";
-import { mostrarPanelViaje, ocultarPanelViaje } from "./viajeSheet.js?v=20260711-trip-sheet";
+import { mostrarPanelViaje, ocultarPanelViaje } from "./viajeSheet.js?v=20260713-live-trip-tracking";
 
 export function reconstruirUIDesdeEstado() {
     const estado = getEstadoViaje();

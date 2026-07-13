@@ -4,7 +4,7 @@ import { initWalletUI } from "../../wallet.js";
 import { initLogout } from "../../logout.js";
 import { initHeader } from "../../components/header.init.js?v=20260710-photo-persist";
 import { getMap } from "../../map/map.singleton.js?v=20260702-visible-labels";
-import { restoreViajeUI } from "./app.restore.js?v=20260702-visible-labels";
+import { restoreViajeUI } from "./app.restore.js?v=20260713-live-trip-tracking";
 import { viajeState } from "../../viaje/viaje.state.js";
 
 let currentInitId = 0;
@@ -55,7 +55,7 @@ async function initHome(initId) {
     const map = getMap();
     if (!map) return;
 
-    const { initPasajero } = await import("../../pasajero/pasajero.main.js?v=20260711-car-route-center");
+    const { initPasajero } = await import("../../pasajero/pasajero.main.js?v=20260713-live-trip-tracking");
 
     if (initId !== currentInitId) return;
 

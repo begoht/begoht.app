@@ -1,5 +1,5 @@
 import { getEstadoViaje } from "./viajeEstado.js";
-import { actualizarDetalleViaje } from "./viajeRender.js?v=20260711-trip-render";
+import { actualizarDetalleViaje } from "./viajeRender.js?v=20260713-live-trip-tracking";
 import { obtenerViajeActualUI } from "./viajeSelectors.js?v=20260711-trip-selectors";
 import { inicializarSheetExpandible } from "./viajeSheet.js?v=20260711-trip-sheet";
 

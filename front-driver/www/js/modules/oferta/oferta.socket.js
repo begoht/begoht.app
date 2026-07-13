@@ -5,7 +5,7 @@ import { notificar, reproducirSonido } from "./oferta.ui.js?v=20260608-offer-net
 import { registrarViaje } from "../viajeControl/viajeControl.js?v=20260608-offer-net-cash";
 import { setViajeEnCurso } from "../viajeControl/viajeEstado.js";
 import { dibujarRutaPremium } from "../map.js?v=20260712-route-700m-small-pins";
-import { getUltimaPosicion, refreshDriverLocation } from "../gps.js?v=20260711-driver-gps-modular";
+import { getUltimaPosicion, refreshDriverLocation } from "../gps.js?v=20260713-live-trip-tracking";
 import { isDriverOnline } from "../driver.status.js?v=20260627-map-icons";
 import { normalizarPunto, notificarGuardia } from "../tripGuards.js?v=20260627-map-fluid-arrival";
 

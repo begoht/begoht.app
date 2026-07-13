@@ -28,7 +28,7 @@ let heartbeatTimer = null;
 let heartbeatInFlight = false;
 
 const FRECUENCIA_MS = 4000;
-const HEARTBEAT_MS = 25000;
+const HEARTBEAT_MS = 12000;
 const DISTANCIA_MINIMA_METROS = 0.00002;
 
 const LOCATION_DISCLOSURE_KEY = "bego_driver_location_disclosure_v1";

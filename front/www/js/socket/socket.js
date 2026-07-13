@@ -56,7 +56,8 @@ export function getSocket() {
   console.log("Conectando socket a:", serverUrl);
 
   socketInstance = io(serverUrl, {
-    transports: ["websocket"],
+    transports: ["websocket", "polling"],
+    upgrade: true,
     auth: { token },
     reconnection: true,
     reconnectionAttempts: Infinity,

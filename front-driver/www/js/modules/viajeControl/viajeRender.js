@@ -1,5 +1,5 @@
 import { formatGourdes, getTripMoney, isCashMethod } from "../oferta/oferta.money.js?v=20260608-offer-net-cash";
-import { getUltimaPosicion } from "../gps.js?v=20260711-driver-gps-modular";
+import { getUltimaPosicion } from "../gps.js?v=20260713-live-trip-tracking";
 import { getViajeEnCursoId } from "./viajeEstado.js";
 import {
     formatearMetodoPago,
@@ -13,11 +13,16 @@ import {
     obtenerFotoPerfil,
     obtenerNombrePasajero,
     obtenerServicioLabel
-} from "./viajePresentacion.js?v=20260711-trip-presentation";
+} from "./viajePresentacion.js?v=20260713-live-trip-tracking";
 import { obtenerViajeActualUI, obtenerViajeReservadoUI } from "./viajeSelectors.js?v=20260711-trip-selectors";
 
 let botonCobroInicializado = false;
 let waitingTimerInterval = null;
+let waitingTimerKey = "";
+let etaCountdownInterval = null;
+let etaCountdownKey = "";
+let etaDeadlineMs = 0;
+let etaLastIncomingMinutes = null;
 
 export function actualizarDetalleViaje(viaje, estado) {
     const panel = document.getElementById("panelViajeControl");
@@ -43,8 +48,9 @@ export function actualizarDetalleViaje(viaje, estado) {
     const waitingTimer = document.getElementById("viajeWaitingTimer");
     const gananciaFinal = document.getElementById("viajeGananciaFinal");
 
-    detenerWaitingTimer();
     if (!viaje || !estado) {
+        detenerWaitingTimer();
+        detenerEtaCountdown();
         panel?.removeAttribute("data-trip-state");
         if (eta) eta.textContent = "--";
         if (distanciaResumen) distanciaResumen.textContent = "--";
@@ -92,17 +98,17 @@ export function actualizarDetalleViaje(viaje, estado) {
     const money = getTripMoney(viaje);
     const serviceLabel = obtenerServicioLabel(viaje);
 
-    if (eta) eta.textContent = etaText.valor;
+    actualizarEtaCountdown({ eta, tiempo, viaje, estado, etaText });
     if (etaLabel) etaLabel.textContent = etaText.label;
     if (distanciaResumen) distanciaResumen.textContent = distanceLabel;
     if (nombre) nombre.textContent = passengerName;
     actualizarAvatarPasajero(avatar, foto, passengerName, passengerPhoto);
-    if (rating) rating.innerHTML = `<i class="fa-solid fa-star" aria-hidden="true"></i> ${passengerRating}`;
+    const ratingHtml = `<i class="fa-solid fa-star" aria-hidden="true"></i> ${passengerRating}`;
+    if (rating && rating.innerHTML !== ratingHtml) rating.innerHTML = ratingHtml;
     if (direccionPrincipal) direccionPrincipal.textContent = limpiarDireccionPrincipal(origenAddress);
     if (direccionDetalle) direccionDetalle.textContent = limpiarDireccionDetalle(origenAddress, detail);
     if (destinoPrincipal) destinoPrincipal.textContent = limpiarDireccionPrincipal(destinoAddress);
     if (destinoDetalle) destinoDetalle.textContent = limpiarDireccionDetalle(destinoAddress, vaDeVuelta ? "Retorno" : "Destino");
-    if (tiempo) tiempo.textContent = etaText.valor === "--" ? "--" : etaText.valor;
     if (distancia) distancia.textContent = distanceLabel;
     if (etapa) etapa.textContent = obtenerEtapaLabel(viaje, estado);
     if (tipoServicio) tipoServicio.textContent = serviceLabel;
@@ -114,6 +120,8 @@ export function actualizarDetalleViaje(viaje, estado) {
 
     if (estado === "llego" && waitingTimer) {
         iniciarWaitingTimer(waitingTimer, viaje);
+    } else {
+        detenerWaitingTimer();
     }
 
     if (gananciaFinal) {
@@ -211,7 +219,7 @@ function actualizarAvatarPasajero(avatar, foto, passengerName, passengerPhoto) {
     };
 
     if (photoUrl) {
-        foto.src = photoUrl;
+        if (foto.getAttribute("src") !== photoUrl) foto.src = photoUrl;
         foto.hidden = false;
     } else {
         foto.removeAttribute("src");
@@ -220,7 +228,17 @@ function actualizarAvatarPasajero(avatar, foto, passengerName, passengerPhoto) {
 }
 
 function iniciarWaitingTimer(node, viaje) {
-    const start = Number(viaje?.llegoAt || viaje?.arrivedAt || Date.now());
+    const tripKey = String(viaje?.viajeId || viaje?._id || "viaje");
+    if (waitingTimerInterval && waitingTimerKey.startsWith(`${tripKey}:`)) return;
+    const rawStart = viaje?.llegoAt || viaje?.arrivedAt;
+    const numericStart = Number(rawStart);
+    const parsedStart = rawStart ? Date.parse(rawStart) : NaN;
+    const start = Number.isFinite(numericStart) && numericStart > 0
+        ? numericStart
+        : Number.isFinite(parsedStart) ? parsedStart : Date.now();
+    const key = `${tripKey}:${start}`;
+    detenerWaitingTimer();
+    waitingTimerKey = key;
     const render = () => {
         const elapsed = Math.max(0, Date.now() - start);
         const totalSeconds = Math.floor(elapsed / 1000);
@@ -237,4 +255,58 @@ function detenerWaitingTimer() {
         clearInterval(waitingTimerInterval);
         waitingTimerInterval = null;
     }
+    waitingTimerKey = "";
+}
+
+function actualizarEtaCountdown({ eta, tiempo, viaje, estado, etaText }) {
+    if (estado === "llego") {
+        detenerEtaCountdown();
+        setTextIfChanged(eta, "00:00");
+        setTextIfChanged(tiempo, "00:00");
+        return;
+    }
+
+    const incomingMinutes = Number.parseFloat(String(etaText?.valor || "").replace(",", "."));
+    if (!Number.isFinite(incomingMinutes) || incomingMinutes <= 0) {
+        detenerEtaCountdown();
+        setTextIfChanged(eta, "--");
+        setTextIfChanged(tiempo, "--");
+        return;
+    }
+
+    const key = `${viaje?.viajeId || viaje?._id || "viaje"}:${estado}`;
+    const now = Date.now();
+    const remainingMinutes = etaDeadlineMs > now ? (etaDeadlineMs - now) / 60000 : 0;
+    if (etaCountdownKey !== key || !etaDeadlineMs) {
+        etaCountdownKey = key;
+        etaDeadlineMs = now + incomingMinutes * 60000;
+    } else if (
+        incomingMinutes < remainingMinutes - 0.2 ||
+        (etaLastIncomingMinutes !== null && incomingMinutes > etaLastIncomingMinutes + 2)
+    ) {
+        etaDeadlineMs = now + incomingMinutes * 60000;
+    }
+    etaLastIncomingMinutes = incomingMinutes;
+
+    const render = () => {
+        const remaining = Math.max(0, etaDeadlineMs - Date.now());
+        const label = remaining <= 60000 ? "Llegando" : `${Math.ceil(remaining / 60000)} min`;
+        setTextIfChanged(eta, label);
+        setTextIfChanged(tiempo, label);
+    };
+
+    render();
+    if (!etaCountdownInterval) etaCountdownInterval = window.setInterval(render, 1000);
+}
+
+function detenerEtaCountdown() {
+    if (etaCountdownInterval) window.clearInterval(etaCountdownInterval);
+    etaCountdownInterval = null;
+    etaCountdownKey = "";
+    etaDeadlineMs = 0;
+    etaLastIncomingMinutes = null;
+}
+
+function setTextIfChanged(node, value) {
+    if (node && node.textContent !== value) node.textContent = value;
 }

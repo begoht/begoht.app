@@ -1,168 +1,85 @@
-
-
 let etaInicial = null;
 let ultimaETA = null;
 let ultimoEstado = null;
+let etaDeadlineMs = 0;
+let etaCountdownTimer = null;
+let etaCountdownKey = "";
+let etaLastIncomingMinutes = null;
 
-/*************************************************
- * 🔥 HELPERS
- *************************************************/
 function clamp(num, min, max) {
   return Math.min(Math.max(num, min), max);
 }
 
-/*************************************************
- * 🔥 RESET ETA
- *************************************************/
 export function resetETA() {
   etaInicial = null;
   ultimaETA = null;
   ultimoEstado = null;
+  etaDeadlineMs = 0;
+  etaCountdownKey = "";
+  etaLastIncomingMinutes = null;
+  if (etaCountdownTimer) window.clearInterval(etaCountdownTimer);
+  etaCountdownTimer = null;
 
   const etaText = document.getElementById("driverEtaText");
   const etaBar = document.getElementById("driverEtaBar");
-
-  if (etaText) {
-    etaText.textContent = "--";
-  }
-
-  if (etaBar) {
-    etaBar.style.width = "0%";
-  }
+  if (etaText) etaText.textContent = "--";
+  if (etaBar) etaBar.style.width = "0%";
 }
 
-/*************************************************
- * 🔥 ACTUALIZAR ETA
- *************************************************/
-export function actualizarETA({
-  minutos,
-  estado = null
-}) {
-
+export function actualizarETA({ minutos, estado = null, viajeId = null }) {
   const etaText = document.getElementById("driverEtaText");
   const etaBar = document.getElementById("driverEtaBar");
-
   if (!etaText || !etaBar) return;
 
-  /*************************************************
-   * 🛑 ETA inválida
-   *************************************************/
-  if (
-    minutos == null ||
-    isNaN(minutos) ||
-    minutos < 0
-  ) {
+  minutos = Number(minutos);
+  if (!Number.isFinite(minutos) || minutos < 0) {
     etaText.textContent = "Calculando...";
     return;
   }
 
-  /*************************************************
-   * 🔥 RESET POR CAMBIO DE ESTADO
-   *************************************************/
-  if (
-    estado &&
-    ultimoEstado &&
-    estado !== ultimoEstado
+  const key = `${viajeId || "viaje"}:${estado || "activo"}`;
+  const now = Date.now();
+  const remaining = etaDeadlineMs > now ? (etaDeadlineMs - now) / 60000 : 0;
+
+  if (etaCountdownKey !== key || !etaDeadlineMs) {
+    etaInicial = Math.max(minutos, 1);
+    etaDeadlineMs = now + minutos * 60000;
+    etaCountdownKey = key;
+  } else if (
+    minutos < remaining - 0.2 ||
+    (etaLastIncomingMinutes !== null && minutos > etaLastIncomingMinutes + 2)
   ) {
-    etaInicial = null;
-    ultimaETA = null;
+    etaInicial = Math.max(etaInicial || 1, minutos);
+    etaDeadlineMs = now + minutos * 60000;
   }
 
+  etaLastIncomingMinutes = minutos;
+  ultimaETA = minutos;
   ultimoEstado = estado;
 
-  /*************************************************
-   * 🔥 ANTI-JITTER
-   *************************************************/
-  if (ultimaETA !== null) {
+  const render = () => {
+    const currentMinutes = Math.max(0, (etaDeadlineMs - Date.now()) / 60000);
+    etaText.textContent = currentMinutes <= 1 ? "Llegando..." : `${Math.ceil(currentMinutes)} min`;
+    const porcentaje = clamp(100 - ((currentMinutes / Math.max(etaInicial || 1, 1)) * 100), 5, 100);
+    etaBar.style.width = `${porcentaje}%`;
 
-    // ignorar saltos absurdos
-    const diff = Math.abs(minutos - ultimaETA);
-
-    if (diff > 8) {
-      minutos = ultimaETA;
+    if (currentMinutes > 5) {
+      etaBar.style.background = "linear-gradient(90deg,#4caf50,#2e7d32)";
+    } else if (currentMinutes > 2) {
+      etaBar.style.background = "linear-gradient(90deg,#ff9800,#ef6c00)";
+    } else {
+      etaBar.style.background = "linear-gradient(90deg,#f44336,#b71c1c)";
     }
+  };
 
-    // suavizado
-    minutos =
-      (ultimaETA * 0.7) +
-      (minutos * 0.3);
-  }
-
-  minutos = Math.max(0, minutos);
-
-  /*************************************************
-   * 🔥 ETA INICIAL
-   *************************************************/
-  if (
-    etaInicial === null ||
-    minutos > etaInicial
-  ) {
-    etaInicial = minutos;
-  }
-
-  ultimaETA = minutos;
-
-  /*************************************************
-   * 🔥 TEXTO
-   *************************************************/
-  if (minutos <= 1) {
-    etaText.textContent = "Llegando...";
-  } else {
-    etaText.textContent =
-      `${Math.ceil(minutos)} min`;
-  }
-
-  /*************************************************
-   * 🔥 PROGRESO
-   *************************************************/
-  let porcentaje = 0;
-
-  if (etaInicial > 0) {
-    porcentaje =
-      100 -
-      ((minutos / etaInicial) * 100);
-  }
-
-  porcentaje = clamp(porcentaje, 5, 100);
-
-  etaBar.style.width = `${porcentaje}%`;
-
-  /*************************************************
-   * 🎨 COLORES
-   *************************************************/
-  if (minutos > 5) {
-
-    etaBar.style.background =
-      "linear-gradient(90deg,#4caf50,#2e7d32)";
-
-  } else if (minutos > 2) {
-
-    etaBar.style.background =
-      "linear-gradient(90deg,#ff9800,#ef6c00)";
-
-  } else {
-
-    etaBar.style.background =
-      "linear-gradient(90deg,#f44336,#b71c1c)";
-  }
+  render();
+  if (!etaCountdownTimer) etaCountdownTimer = window.setInterval(render, 1000);
 }
 
-/*************************************************
- * 🔥 INICIAR ETA
- *************************************************/
 export function iniciarSimulacionETA(min = 6) {
-
-  etaInicial = min;
-  ultimaETA = min;
-
-  actualizarETA({
-    minutos: min
-  });
+  actualizarETA({ minutos: min });
 }
 
-/*************************************************
- * 🔥 DETENER ETA
- *************************************************/
 export function detenerSimulacionETA() {
   resetETA();
 }

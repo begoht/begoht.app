@@ -19,7 +19,7 @@ test("flujo ida/vuelta: al terminar la ida queda pendiente y el pasajero puede a
   assert.match(service, /ESTADO_RETORNO_PENDIENTE/);
   assert.match(service, /ida-vuelta:pendiente/);
 
-  assert.match(passengerSocket, /idaVuelta\.handler\.js\?v=20260628-dark-route-locked/);
+  assert.match(passengerSocket, /idaVuelta\.handler\.js\?v=20260713-live-trip-tracking/);
   assert.match(passengerHandler, /const\s+RETORNO_AUTO_START_MS\s*=/);
   assert.match(passengerHandler, /id="btnAnularVueltaPasajero"/);
   assert.match(passengerHandler, />\s*Anular vuelta\s*</);
@@ -37,12 +37,30 @@ test("cadena de cache: la app pasajero carga el handler nuevo de vuelta", () => 
   const passengerMain = readWorkspaceFile("front/www/js/pasajero/pasajero.main.js");
   const passengerSocket = readWorkspaceFile("front/www/js/socket/pasajero.socket.js");
 
-  assert.match(index, /app\.js\?v=20260702-visible-labels/);
-  assert.match(app, /router\.js\?v=20260702-visible-labels/);
-  assert.match(router, /app\.lifecycle\.js\?v=20260702-visible-labels/);
-  assert.match(lifecycle, /pasajero\.main\.js\?v=20260711-car-route-center/);
-  assert.match(passengerMain, /pasajero\.socket\.js\?v=20260711-car-route-center/);
-  assert.match(passengerSocket, /idaVuelta\.handler\.js\?v=20260628-dark-route-locked/);
+  assert.match(index, /app\.js\?v=20260713-live-trip-tracking/);
+  assert.match(app, /router\.js\?v=20260713-live-trip-tracking/);
+  assert.match(router, /app\.lifecycle\.js\?v=20260713-live-trip-tracking/);
+  assert.match(lifecycle, /pasajero\.main\.js\?v=20260713-live-trip-tracking/);
+  assert.match(passengerMain, /pasajero\.socket\.js\?v=20260713-live-trip-tracking/);
+  assert.match(passengerSocket, /idaVuelta\.handler\.js\?v=20260713-live-trip-tracking/);
+});
+
+test("seguimiento en vivo: descuenta ETA y recupera el canal si queda silencioso", () => {
+  const passengerSocket = readWorkspaceFile("front/www/js/socket/pasajero.socket.js");
+  const passengerEta = readWorkspaceFile("front/www/js/pasajero/pasajero.eta.js");
+  const socket = readWorkspaceFile("front/www/js/socket/socket.js");
+  const driverGps = readWorkspaceFile("front-driver/www/js/modules/gps.js");
+  const driverRender = readWorkspaceFile("front-driver/www/js/modules/viajeControl/viajeRender.js");
+  const driverIndex = readWorkspaceFile("front-driver/www/index.html");
+
+  assert.match(passengerSocket, /Date\.now\(\) - lastTrackAt < 30000/);
+  assert.match(passengerSocket, /requestPassengerSync\(socket\)/);
+  assert.match(passengerEta, /etaDeadlineMs - Date\.now\(\)/);
+  assert.match(socket, /transports:\s*\["websocket", "polling"\]/);
+  assert.match(driverGps, /const HEARTBEAT_MS = 12000/);
+  assert.match(driverRender, /if \(waitingTimerInterval && waitingTimerKey\.startsWith/);
+  assert.match(driverRender, /etaDeadlineMs - Date\.now\(\)/);
+  assert.match(driverIndex, /class="boot-logo"><img src="assets\/logo_primcial\.png" alt="BeGO"/);
 });
 
 test("cierre pasajero: recupera la finalizacion si la app estaba cerrada", () => {

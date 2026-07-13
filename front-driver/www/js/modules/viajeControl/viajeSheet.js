@@ -99,12 +99,12 @@ export function inicializarSheetExpandible() {
 
 export function mostrarPanelViaje(panel) {
     if (!panel) return;
-    panel.classList.remove("hidden");
-    panel.style.display = "flex";
+    if (panel.classList.contains("hidden")) panel.classList.remove("hidden");
+    if (panel.style.display !== "flex") panel.style.display = "flex";
 }
 
 export function ocultarPanelViaje(panel) {
     if (!panel) return;
-    panel.classList.add("hidden");
-    panel.style.display = "none";
+    if (!panel.classList.contains("hidden")) panel.classList.add("hidden");
+    if (panel.style.display !== "none") panel.style.display = "none";
 }

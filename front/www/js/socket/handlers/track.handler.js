@@ -3,7 +3,7 @@ import { mostrarMotoristaEnMapa } from "../../map/map.motorista.js?v=20260711-ca
 import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260710-route-camera";
 import { ocultarOrigenEnMapa } from "../../map/map.geo.js?v=20260711-map-geo-split";
 import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260710-route-camera";
-import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260711-passenger-profile-photo-utils";
+import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260713-live-trip-tracking";
 import { getMap } from "../../map/map.singleton.js?v=20260702-visible-labels";
 import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260615-smooth-autofinish";
 
@@ -45,7 +45,7 @@ export const handleTrack = (data) => {
   // 🛡️ anti-track zombie
   if (
     data.viajeId &&
-    data.viajeId !== viajeState.viajeId
+    String(data.viajeId) !== String(viajeState.viajeId)
   ) {
     console.warn("⚠️ Track viejo ignorado");
     return;

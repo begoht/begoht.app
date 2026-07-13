@@ -1,7 +1,7 @@
 import { viajeState } from "../../viaje/viaje.state.js";
 import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260710-route-camera";
 import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260710-route-camera";
-import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260711-passenger-profile-photo-utils";
+import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260713-live-trip-tracking";
 
 const RETORNO_AUTO_START_MS = 10000;
 const MODAL_RETORNO_ID = "modalIdaVueltaDecision";

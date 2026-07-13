@@ -112,18 +112,18 @@ export function obtenerEtaLabel(viaje, estado, distanceLabel) {
 export function obtenerDistanciaLabel(viaje, estado, target, driverPosition = null) {
     if (estado === "llego") return "0 m";
 
-    const directa = estado === "en_curso"
-        ? (viaje?.distanciaDestino || viaje?.distanciaKmDestino || viaje?.distanciaKm || viaje?.distancia)
-        : (viaje?.distanciaPasajero || viaje?.distanciaOrigen || viaje?.distanciaKmOrigen);
-    const directaLabel = formatearDistanciaValor(directa);
-    if (directaLabel) return directaLabel;
-
     const from = normalizarCoord(driverPosition);
     const to = normalizarCoord(target);
     if (from && to) {
         const metros = calcularDistanciaMetros(from, to);
         return metros < 1000 ? `${Math.round(metros)} m` : `${(metros / 1000).toFixed(1)} km`;
     }
+
+    const directa = estado === "en_curso"
+        ? (viaje?.distanciaDestino || viaje?.distanciaKmDestino || viaje?.distanciaKm || viaje?.distancia)
+        : (viaje?.distanciaPasajero || viaje?.distanciaOrigen || viaje?.distanciaKmOrigen);
+    const directaLabel = formatearDistanciaValor(directa);
+    if (directaLabel) return directaLabel;
 
     return "--";
 }

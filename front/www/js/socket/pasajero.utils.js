@@ -6,7 +6,7 @@ import { limpiarViajePasajero } from "../socket/viaje.limpieza.js";
 import { limpiarRutas } from "../map/map.ruta.js?v=20260710-route-camera";
 import { initDriverMinimize } from "../ui/driver.minimize.js?v=20260710-photo-fix";
 import { resetRutaController } from "../map/map.route.flow.js?v=20260710-route-camera";
-import { actualizarETA, resetETA } from "../pasajero/pasajero.eta.js";
+import { actualizarETA, resetETA } from "../pasajero/pasajero.eta.js?v=20260713-live-trip-tracking";
 import { obtenerFotoPerfil } from "../pasajero/utils/perfilFoto.utils.js?v=20260711-passenger-profile-photo-utils";
 import { queuePendingRating, submitViajeRating } from "../rating/rating.api.js?v=20260605-rating-premium";
 import {
@@ -188,7 +188,12 @@ export function actualizarUIDriver(motoristaInfo, estado, viajeInfo = {}) {
   setText("driverPrecio", formatMoney(viaje.precio));
   setText("driverPago", formatPago());
   setText("driverDistancia", formatKm(viaje.distanciaKm));
-  setText("driverEtaText", formatEta());
+  const etaMinutes = Number(viaje.eta ?? viaje.duracionMin);
+  if (Number.isFinite(etaMinutes) && etaMinutes >= 0) {
+    actualizarETA({ minutos: etaMinutes, estado, viajeId: viaje.viajeId });
+  } else {
+    setText("driverEtaText", formatEta());
+  }
   setText("driverOrigen", truncar(viaje.origen?.direccion || viaje.origen?.address || "Origen confirmado", 54));
   setText("driverDestino", truncar(viaje.destino?.direccion || viaje.destino?.address || "Destino confirmado", 54));
   renderCodigoEntrega(viaje);
@@ -231,7 +236,8 @@ export function actualizarUIDriver(motoristaInfo, estado, viajeInfo = {}) {
       img.src = "/assets/logo_primcial.png";
       img.onerror = null;
     };
-    img.src = driverPhoto || "/assets/logo_primcial.png";
+    const nextPhoto = driverPhoto || "/assets/logo_primcial.png";
+    if (img.getAttribute("src") !== nextPhoto) img.src = nextPhoto;
   }
 
   const estadoBox = document.getElementById("estadoViaje");

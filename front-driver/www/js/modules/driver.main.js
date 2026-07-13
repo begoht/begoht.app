@@ -1,10 +1,10 @@
 import { initSocket } from "./socket.js?v=20260627-map-icons";
 import { initMap } from "./map.js?v=20260712-route-700m-small-pins";
-import { initGPS } from "./gps.js?v=20260711-driver-gps-modular";
+import { initGPS } from "./gps.js?v=20260713-live-trip-tracking";
 import { initOferta } from "./oferta/oferta.index.js?v=20260702-offer-recovery";
 import { initViajeInicio } from "./viajeInicio/viajeInicio.js?v=20260623-roundtrip-v2";
 import { initViajeFinalizar } from "./viajeFinalizar.js?v=20260627-map-fluid-arrival";
-import { initViajeControl } from "./viajeControl/viajeControl.js?v=20260710-sheet-snap";
+import { initViajeControl } from "./viajeControl/viajeControl.js?v=20260713-live-trip-tracking";
 import { initIdaVueltaDriver } from "./idaVuelta/idaVuelta.driver.js?v=20260627-map-fluid-arrival";
 import { initDriverChat } from "./chat/viajeChat.js?v=20260608-trip-panel-compact";
 import { initDriverStatus } from "./driver.status.js?v=20260627-map-icons";

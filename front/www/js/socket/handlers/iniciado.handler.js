@@ -2,7 +2,7 @@ import { viajeState } from "../../viaje/viaje.state.js";
 import { actualizarRutaSegunEstado, resetRutaController } from "../../map/map.route.flow.js?v=20260710-route-camera";
 import { mostrarDestinoEnMapa } from "../../map/map.destino.js?v=20260710-route-camera";
 import { ocultarOrigenEnMapa } from "../../map/map.geo.js?v=20260711-map-geo-split";
-import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260711-passenger-profile-photo-utils";
+import { guardarSesionViaje, actualizarUIDriver } from "../pasajero.utils.js?v=20260713-live-trip-tracking";
 import { viajeFueFinalizado } from "../../viaje/viaje.finalizado.local.js?v=20260615-smooth-autofinish";
 
 let lastIniciadoViajeId = null;

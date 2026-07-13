@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="color-scheme" content="light dark" />
   <title>BeGO Driver</title>
-  <link rel="icon" type="image/svg+xml" href="./assets/icons/moto-transparent.svg?v=20260615-smooth-autofinish">
+  <link rel="icon" type="image/svg+xml" href="./assets/icons/pasajero-transparent.svg?v=20260713-passenger-logo">
 
   <script>
     (function () {
@@ -45,9 +45,10 @@
       inset: 0;
       z-index: 9999;
       display: none;
-      align-items: center;
-      justify-content: center;
-      background: #05070a;
+      place-items: center;
+      background:
+        radial-gradient(circle at 50% 16%, rgba(37, 99, 235, 0.36), transparent 34%),
+        linear-gradient(180deg, #07111f 0%, #0b1628 52%, #050b14 100%);
       color: #ffffff;
       text-align: center;
       padding: 24px;
@@ -58,23 +59,36 @@
     }
 
     .boot-box {
-      width: min(320px, 92vw);
+      width: min(340px, 92vw);
+      min-height: 260px;
+      display: grid;
+      justify-items: center;
+      align-content: center;
+      gap: 18px;
     }
 
-    .boot-spinner {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      border: 4px solid rgba(255, 255, 255, 0.16);
-      border-top-color: #2563eb;
-      margin: 0 auto 16px;
-      animation: bootSpin 0.9s linear infinite;
+    .boot-logo {
+      width: 92px;
+      height: 92px;
+      display: grid;
+      place-items: center;
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      box-shadow: 0 28px 70px rgba(2, 6, 23, 0.42);
+      overflow: hidden;
+    }
+
+    .boot-logo img {
+      width: 74px;
+      height: 74px;
+      object-fit: contain;
     }
 
     .boot-title {
-      font-size: 1.05rem;
+      font-size: 28px;
+      line-height: 1;
       font-weight: 800;
-      margin-bottom: 6px;
     }
 
     .boot-status {
@@ -83,8 +97,27 @@
       line-height: 1.4;
     }
 
-    @keyframes bootSpin {
-      to { transform: rotate(360deg); }
+    .boot-loader {
+      width: 116px;
+      height: 4px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    .boot-loader::before {
+      content: "";
+      display: block;
+      width: 45%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #60a5fa, #22d3ee);
+      animation: bootLoading 1.05s ease-in-out infinite;
+    }
+
+    @keyframes bootLoading {
+      0% { transform: translateX(-120%); }
+      100% { transform: translateX(260%); }
     }
   </style>
 </head>
@@ -129,9 +162,10 @@
 
   <div id="driverBootScreen" class="boot-screen">
     <div class="boot-box">
-      <div class="boot-spinner"></div>
-      <div class="boot-title">Connexion BeGO Driver</div>
+      <div class="boot-logo"><img src="assets/logo_primcial.png" alt="BeGO" /></div>
+      <div class="boot-title">BeGO</div>
       <div id="driverBootStatus" class="boot-status">Verification de la session et de la position...</div>
+      <div class="boot-loader" aria-hidden="true"></div>
     </div>
   </div>
 
@@ -436,7 +470,7 @@
   <script src="./js/core/conexion.js?v=20260710-local-driver"></script>
   <script src="./js/core/native-runtime-loader.js?v=20260627-map-fluid-arrival"></script>
   <script type="module" src="./js/monitoring/frontend-monitor.js?v=20260607-monitor-suspend"></script>
-  <script type="module" src="js/modules/driver.main.js?v=20260712-driver-support-footer-home-menu"></script>
+  <script type="module" src="js/modules/driver.main.js?v=20260713-live-trip-tracking"></script>
   <script src="./js/i18n/fr.visual.js?v=20260601-fr"></script>
 
   <script>
