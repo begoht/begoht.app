@@ -22,20 +22,37 @@ export function getServerUrl() {
 }
 
 function requestDriverLocation({ lat, lng, heading }, token, source) {
-  return fetch(`${getServerUrl()}/api/users/driver-location`, {
+  const url = `${getServerUrl()}/api/users/driver-location`;
+  const headers = {
+    "Authorization": `Bearer ${token || ""}`,
+    "Content-Type": "application/json",
+    "ngrok-skip-browser-warning": "true"
+  };
+  const body = {
+    lat,
+    lng,
+    heading,
+    disponible: true,
+    source
+  };
+  const capacitorHttp = window.Capacitor?.Plugins?.CapacitorHttp;
+
+  if (capacitorHttp?.patch) {
+    return capacitorHttp.patch({
+      url,
+      headers,
+      data: body
+    }).then((response) => ({
+      ok: response.status >= 200 && response.status < 300,
+      status: response.status,
+      json: () => Promise.resolve(response.data)
+    }));
+  }
+
+  return fetch(url, {
     method: "PATCH",
-    headers: {
-      "Authorization": `Bearer ${token || ""}`,
-      "Content-Type": "application/json",
-      "ngrok-skip-browser-warning": "true"
-    },
-    body: JSON.stringify({
-      lat,
-      lng,
-      heading,
-      disponible: true,
-      source
-    }),
+    headers,
+    body: JSON.stringify(body),
     keepalive: true
   });
 }

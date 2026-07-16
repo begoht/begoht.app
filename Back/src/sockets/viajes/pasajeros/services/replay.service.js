@@ -135,6 +135,7 @@ module.exports = async function replayViaje(socket, options = {}) {
         viajeId,
         lat: posicion.lat,
         lng: posicion.lng,
+        heading: posicion.heading,
         origen: viaje.origen,
         destino: viaje.destino,
         proximoDestino,
@@ -250,7 +251,14 @@ async function obtenerUltimaPosicion(motoristaId) {
       const pos = JSON.parse(raw);
       const lat = Number(pos.lat);
       const lng = Number(pos.lng);
-      if (Number.isFinite(lat) && Number.isFinite(lng)) return { lat, lng };
+      const heading = pos.heading == null ? null : Number(pos.heading);
+      if (Number.isFinite(lat) && Number.isFinite(lng)) {
+        return {
+          lat,
+          lng,
+          heading: Number.isFinite(heading) ? heading : null
+        };
+      }
     } catch {}
   }
 
@@ -258,7 +266,11 @@ async function obtenerUltimaPosicion(motoristaId) {
   const lat = Number(data?.lat);
   const lng = Number(data?.lng);
 
-  return Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : null;
+  const heading = data?.heading == null ? null : Number(data.heading);
+
+  return Number.isFinite(lat) && Number.isFinite(lng)
+    ? { lat, lng, heading: Number.isFinite(heading) ? heading : null }
+    : null;
 }
 
 function prepararPaquetePasajero(viaje) {
@@ -279,6 +291,7 @@ function prepararMotorista(motoristaDoc, posicion) {
 
   return {
     ...motorista,
+    heading: posicion.heading ?? motorista.heading ?? null,
     lat: posicion.lat,
     lng: posicion.lng,
     ubicacion: {

@@ -10,7 +10,7 @@ import {
     limpiarViajePersistido
 } from "../viajeControl/viajeEstado.js";
 import { reconstruirUIDesdeEstado } from "../viajeControl/viajeUI.js?v=20260711-trip-ui-split";
-import { getUltimaPosicion, refreshDriverLocation } from "../gps.js?v=20260713-live-trip-tracking";
+import { getUltimaPosicion, refreshDriverLocation } from "../gps.js?v=20260716-live-trip-tracking";
 import { redibujarRutaRecovery } from "./viajeInicioUI.js?v=20260623-roundtrip-v2";
 
 let ultimoSyncProcesado = null;

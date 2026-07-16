@@ -1,4 +1,4 @@
-export const DOWNLOAD_VERSION = "20260703-driver-install";
+export const DOWNLOAD_VERSION = "20260716-driver-background-gps";
 export const PASSENGER_DOWNLOAD_VERSION = "20260705-passenger-header-up";
 
 export const DOWNLOAD_APPS = Object.freeze({

@@ -79,7 +79,10 @@ export const handleAsignado = (data = {}) => {
 
   guardarSesionViaje(estadoEntrante);
   actualizarBotonViaje();
-  mostrarDestinoEnMapa(data.destino);
+  const destinoVisual = estadoEntrante === "en_curso"
+    ? (data.proximoDestino || data.destino)
+    : (data.proximoDestino || data.origen || data.destino);
+  mostrarDestinoEnMapa(destinoVisual);
 
   if (motoristaInfo?.lat != null) {
     mostrarMotoristaEnMapa(motoristaInfo);

@@ -86,7 +86,10 @@ export const handleSync = (data, socket) => {
     proximoDestino: data.proximoDestino || null
   });
 
-  mostrarDestinoEnMapa(data.estado === "en_curso" ? (data.proximoDestino || data.destino) : data.destino);
+  const destinoVisual = data.estado === "en_curso"
+    ? (data.proximoDestino || data.destino)
+    : (data.proximoDestino || data.origen || data.destino);
+  mostrarDestinoEnMapa(destinoVisual);
   if (["llego", "en_curso"].includes(data.estado)) {
     ocultarOrigenEnMapa();
   }

@@ -9,7 +9,7 @@ import { crearMotoIcon, motoIcon } from "./map.icons.js?v=20260620-driver-naviga
 import {
   setMotorcycleMarkerPose
 } from "./map.motion.js?v=20260627-map-fluid-arrival";
-import { patchDriverLocation } from "./gps/gps.http.js?v=20260711-driver-gps-http";
+import { patchDriverLocation } from "./gps/gps.http.js?v=20260716-driver-gps-http";
 import { normalizePosition, readFreshPosition } from "./gps/gps.position.js?v=20260711-driver-gps-position";
 
 let ultimaPosicion = null;

@@ -127,7 +127,7 @@ export const handleTrack = (data) => {
 
   const targetVisual = estadoFinal === "en_curso"
     ? (viajeState.proximoDestino || viajeState.destino)
-    : viajeState.destino;
+    : (proximoDestino || viajeState.proximoDestino || viajeState.origen || viajeState.destino);
 
   if (targetVisual) {
     mostrarDestinoEnMapa(targetVisual);
