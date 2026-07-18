@@ -1,4 +1,4 @@
-import { motoIcon } from "../map.icons.js?v=20260711-street-car";
+import { motoIcon } from "../map.icons.js?v=20260718-bego-moto-map";
 import {
   motoristasCercanos
 } from "../state/map.motoristas.state.js";
