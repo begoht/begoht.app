@@ -22,14 +22,14 @@ export function initSeguridad() {
   }
 
   async function compartirViaje() {
-    const viajeId = getViajeId(viajeActivo);
+    const viajeId = getViajeId(viajeActivo) || getViajeId(safeJson(localStorage.getItem("viajeActivo")));
     if (!viajeId) {
       alert("Aucune course active");
       return;
     }
 
     try {
-      const token = localStorage.getItem("token");
+      const token = getAccessToken();
       const response = await fetch(
         `${getServerUrl()}/api/pagos/viaje/${encodeURIComponent(viajeId)}/compartir`,
         {
@@ -56,6 +56,7 @@ export function initSeguridad() {
         alert(`Lien securise copie:\n${data.url}`);
       }
     } catch (err) {
+      if (err?.name === "AbortError") return;
       console.error("Erreur partage:", err);
       alert(err.message || "Impossible de partager la course");
     }
@@ -150,6 +151,14 @@ export function initSeguridad() {
 
 function getViajeId(viaje) {
   return String(viaje?.viajeId || viaje?.id || viaje?._id || "").trim();
+}
+
+function getAccessToken() {
+  const raw = localStorage.getItem("token") || localStorage.getItem("BeGO_token") || "";
+  const token = String(raw).trim();
+  return token.startsWith("\"") && token.endsWith("\"")
+    ? token.slice(1, -1)
+    : token;
 }
 
 function getCurrentLocation() {

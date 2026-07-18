@@ -29,12 +29,17 @@ export function initDriverChat(socket) {
     syncButton();
   });
 
-  ["viaje-finalizado", "viaje:cancelado"].forEach((eventName) => {
-    socket.on(eventName, () => {
+  socket.on("viaje-finalizado", () => {
+    clearChatMessages();
+    activeViajeId = null;
+    closeChat();
+    syncButton();
+  });
+
+  socket.on("viaje:cancelado", () => {
       activeViajeId = null;
       closeChat();
       syncButton();
-    });
   });
 
   socket.on("viaje:chat:history", ({ viajeId, mensajes = [] } = {}) => {
@@ -65,15 +70,7 @@ export function initDriverChat(socket) {
   socket.on("viaje:chat:closed", ({ viajeId } = {}) => {
     if (!isCurrentTrip(viajeId)) return;
     
-    seenMessages.clear();
-    unread = 0;
-    
-    const body = document.getElementById("driverViajeChatBody");
-    
-    if (body) {
-      body.innerHTML = "";
-    }
-    
+    clearChatMessages();
     closeChat();
     updateBadge();
   });
@@ -156,6 +153,16 @@ function openChat() {
 function closeChat() {
   isOpen = false;
   document.getElementById("driverViajeChatPanel")?.classList.add("hidden");
+}
+
+function clearChatMessages() {
+  seenMessages.clear();
+  unread = 0;
+
+  const body = document.getElementById("driverViajeChatBody");
+  if (body) {
+    body.innerHTML = "";
+  }
 }
 
 function sendMessage(event) {

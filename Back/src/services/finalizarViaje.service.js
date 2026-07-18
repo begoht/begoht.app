@@ -582,6 +582,7 @@ module.exports = async function finalizarViaje({
       .emit("viaje-finalizado", finalizadoPayload);
     io.to(`track:${viajeId}`).emit("track:cerrado", finalizadoPayload);
     io.to(`motorista:${motoristaId}`).emit("driver:actividad-actualizada", finalizadoPayload);
+    require("../sockets/viajes/chat.socket").limpiarChatViaje(viajeId);
     enviarReciboFinalizacion(viaje, viajeId, total);
 
     if (tieneSiguiente) {

@@ -3,6 +3,7 @@ let joined = false;
 let typingTimer = null;
 let remoteTypingTimer = null;
 const ownClientIds = new Set();
+const seenMessages = new Set();
 
 export function initDriverSupportChat() {
   injectStyles();
@@ -36,6 +37,23 @@ function bindSocket() {
     setStatus(online ? "Assistance en ligne" : "Hors ligne", Boolean(online));
   });
 
+  socket.on("soporte:history", ({ mensajes = [] } = {}) => {
+    const body = document.getElementById("driverSupportChatBody");
+    if (!body) return;
+    body.innerHTML = "";
+    seenMessages.clear();
+    mensajes.forEach((data) => {
+      renderDriverSupportMessage({
+        id: data.id,
+        clientId: data.clientId,
+        text: data.mensaje,
+        type: data.from === "soporte" ? "soporte" : "usuario",
+        name: data.from === "soporte" ? (data.nombre || "BeGO") : "Vous",
+        time: data.createdAt,
+      });
+    });
+  });
+
   socket.on("soporte:mensaje", (data = {}) => {
     if (data.from === "usuario" && data.clientId && ownClientIds.has(data.clientId)) {
       return;
@@ -46,6 +64,8 @@ function bindSocket() {
     }
 
     renderDriverSupportMessage({
+      id: data.id,
+      clientId: data.clientId,
       text: data.mensaje,
       type: data.from === "soporte" ? "soporte" : "sistema",
       name: data.nombre || "BeGO",
@@ -120,6 +140,8 @@ function sendSupportMessage() {
   ownClientIds.add(clientId);
 
   const messageEl = renderDriverSupportMessage({
+    id: clientId,
+    clientId,
     text,
     type: "usuario",
     status: "Envoi...",
@@ -141,9 +163,13 @@ function sendSupportMessage() {
   });
 }
 
-function renderDriverSupportMessage({ text, type, name, status, time }) {
+function renderDriverSupportMessage({ id, clientId, text, type, name, status, time }) {
   const body = document.getElementById("driverSupportChatBody");
   if (!body || !text) return null;
+
+  const key = id || clientId;
+  if (key && seenMessages.has(key)) return null;
+  if (key) seenMessages.add(key);
 
   const empty = body.querySelector(".driver-support-empty");
   if (empty) empty.remove();

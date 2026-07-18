@@ -3,6 +3,7 @@ import socket from "./conexionSocket.js?v=20260606-session-refresh";
 const chatBody = document.getElementById("chatBody");
 const input = document.getElementById("mensajeInput");
 const enviarBtn = document.getElementById("enviarBtn");
+const seenMessages = new Set();
 
 /*********************************
  * CONECTAR A SOPORTE
@@ -35,18 +36,35 @@ function enviar() {
 /*********************************
  * RECIBIR MENSAJES
  *********************************/
+socket.on("soporte:history", ({ mensajes = [] } = {}) => {
+  if (!chatBody) return;
+  chatBody.innerHTML = "";
+  seenMessages.clear();
+  mensajes.forEach((data) => {
+    agregarMensaje(
+      data.mensaje,
+      data.from === "soporte" ? "soporte" : "usuario",
+      data.nombre,
+      data.id || data.clientId
+    );
+  });
+});
+
 socket.on("soporte:mensaje", data => {
   const { mensaje, from, nombre } = data;
 
   if (from === "usuario") return; // evitar duplicado
 
-  agregarMensaje(mensaje, "soporte", nombre);
+  agregarMensaje(mensaje, "soporte", nombre, data.id || data.clientId);
 });
 
 /*********************************
  * UI
  *********************************/
-function agregarMensaje(texto, tipo, nombre = "") {
+function agregarMensaje(texto, tipo, nombre = "", id = "") {
+  if (id && seenMessages.has(id)) return;
+  if (id) seenMessages.add(id);
+
   const div = document.createElement("div");
   div.className = "mensaje " + tipo;
 

@@ -1,7 +1,9 @@
 const MAX_MENSAJE = 1000;
+const { redis } = require("../config/redis");
 
 const ADMIN_ROOM = "soporte:admins";
 const ACTIVE_USERS_ROOM = "soporte:usuarios-activos";
+const MAX_HISTORIAL = 120;
 
 function getUserId(socket) {
   return socket.user?._id?.toString() || socket.user?.id?.toString();
@@ -32,6 +34,32 @@ function limpiarMensaje(mensaje) {
 
 function crearId(prefix = "support") {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
+function soporteKey(userId) {
+  return `soporte:chat:${userId}`;
+}
+
+async function guardarMensajeSoporte(userId, payload) {
+  const key = soporteKey(userId);
+  await redis
+    .multi()
+    .rpush(key, JSON.stringify(payload))
+    .ltrim(key, -MAX_HISTORIAL, -1)
+    .exec();
+}
+
+async function obtenerHistorialSoporte(userId) {
+  const rows = await redis.lrange(soporteKey(userId), 0, -1);
+  return rows
+    .map((row) => {
+      try {
+        return JSON.parse(row);
+      } catch {
+        return null;
+      }
+    })
+    .filter(Boolean);
 }
 
 function normalizarUsuario(socketData = {}) {
@@ -105,7 +133,6 @@ module.exports = (io, socket) => {
       socket.emit("soporte:estado", {
         online: true,
         rol,
-        ephemeral: true,
       });
       return;
     }
@@ -123,7 +150,11 @@ module.exports = (io, socket) => {
     socket.emit("soporte:estado", {
       online: true,
       rol,
-      ephemeral: true,
+    });
+
+    socket.emit("soporte:history", {
+      userId,
+      mensajes: await obtenerHistorialSoporte(userId),
     });
 
     io.to(ADMIN_ROOM).emit("soporte:usuario-online", {
@@ -162,9 +193,9 @@ module.exports = (io, socket) => {
         userId,
         rol,
         createdAt: new Date().toISOString(),
-        ephemeral: true,
       };
 
+      await guardarMensajeSoporte(userId, payload);
       emitirAConversacion(io, userId, "soporte:mensaje", payload);
 
       if (typeof ack === "function") {
@@ -191,7 +222,6 @@ module.exports = (io, socket) => {
       from: esAdmin ? "soporte" : "usuario",
       nombre: getNombre(socket),
       isTyping: Boolean(data.isTyping),
-      ephemeral: true,
     };
 
     if (esAdmin) {
@@ -212,7 +242,6 @@ module.exports = (io, socket) => {
       userId,
       from: esAdmin ? "soporte" : "usuario",
       readAt: new Date().toISOString(),
-      ephemeral: true,
     };
 
     if (esAdmin) {
@@ -231,8 +260,22 @@ module.exports = (io, socket) => {
       mensaje,
       from: "soporte",
       createdAt: new Date().toISOString(),
-      ephemeral: true,
     });
+  });
+
+  socket.on("soporte:history:request", async (data = {}) => {
+    try {
+      if (!socket.user || socket.user.rol !== "admin") return;
+      const userId = String(data.userId || "");
+      if (!userId) return;
+
+      socket.emit("soporte:history", {
+        userId,
+        mensajes: await obtenerHistorialSoporte(userId),
+      });
+    } catch (err) {
+      console.error("Error obteniendo historial soporte:", err);
+    }
   });
 
   socket.on("disconnect", async () => {

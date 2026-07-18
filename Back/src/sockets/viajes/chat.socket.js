@@ -1,8 +1,10 @@
 const mongoose = require("mongoose");
 const Viaje = require("../../models/Viaje");
+const { redis } = require("../../config/redis");
 
 const ESTADOS_CHAT = new Set(["asignado", "llego", "en_curso"]);
 const MAX_TEXTO = 500;
+const MAX_HISTORIAL = 80;
 
 function getUserId(socket) {
   return socket.user?._id?.toString() || socket.user?.id?.toString();
@@ -62,6 +64,32 @@ function crearMensaje({ socket, viaje, viajeId, texto, clientId }) {
   };
 }
 
+function chatKey(viajeId) {
+  return `viaje:chat:${viajeId}`;
+}
+
+async function guardarMensaje(viajeId, payload) {
+  const key = chatKey(viajeId);
+  await redis
+    .multi()
+    .rpush(key, JSON.stringify(payload))
+    .ltrim(key, -MAX_HISTORIAL, -1)
+    .exec();
+}
+
+async function obtenerHistorial(viajeId) {
+  const rows = await redis.lrange(chatKey(viajeId), 0, -1);
+  return rows
+    .map((row) => {
+      try {
+        return JSON.parse(row);
+      } catch {
+        return null;
+      }
+    })
+    .filter(Boolean);
+}
+
 function emitirAParticipantes(io, viaje, eventName, payload) {
   const pasajeroId = viaje.pasajero?.toString();
   const motoristaId = viaje.motorista?.toString();
@@ -101,8 +129,7 @@ module.exports = function initViajeChat(io, socket) {
 
       socket.emit("viaje:chat:history", {
         viajeId,
-        mensajes: [],
-        ephemeral: true,
+        mensajes: await obtenerHistorial(viajeId),
       });
     } catch (err) {
       console.error("Error join chat viaje:", err);
@@ -135,6 +162,7 @@ module.exports = function initViajeChat(io, socket) {
         clientId,
       });
 
+      await guardarMensaje(viajeId, payload);
       emitirAParticipantes(io, viaje, "viaje:chat:mensaje", payload);
     } catch (err) {
       console.error("Error enviando chat viaje:", err);
@@ -174,13 +202,16 @@ module.exports = function initViajeChat(io, socket) {
     }
   });
 
-  ["viaje-finalizado", "viaje:cancelado", "viaje-expirado"].forEach((evento) => {
-    socket.on(evento, ({ viajeId } = {}) => {
-      cerrarChatViaje(io, viajeId);
-    });
+  socket.on("viaje-finalizado", ({ viajeId } = {}) => {
+    cerrarChatViaje(io, viajeId);
   });
 };
 
 module.exports.limpiarChatViaje = function limpiarChatViaje(viajeId) {
+  if (viajeId) {
+    redis.del(chatKey(viajeId)).catch((error) => {
+      console.error("Error limpiando historial chat viaje:", error);
+    });
+  }
   cerrarChatViaje(global.io, viajeId);
 };

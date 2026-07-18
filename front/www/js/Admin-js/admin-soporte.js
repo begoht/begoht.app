@@ -117,6 +117,14 @@ socket.on("soporte:mensaje", (data = {}) => {
   }
 });
 
+socket.on("soporte:history", ({ userId, mensajes = [] } = {}) => {
+  if (!userId) return;
+  conversaciones.set(userId, mensajes.slice(-80));
+  if (usuarioActivo === userId) {
+    renderConversation(userId);
+  }
+});
+
 socket.on("soporte:typing", (data = {}) => {
   if (data.from !== "usuario") return;
 
@@ -247,6 +255,7 @@ function setSelectedUser(usuario) {
   if (selectedAvatar) selectedAvatar.textContent = initials(usuario.nombre);
 
   socket.emit("soporte:read", { userId: usuarioActivo });
+  socket.emit("soporte:history:request", { userId: usuarioActivo });
   renderUsuarios();
   renderConversation(usuarioActivo);
   mensajeInput?.focus();

@@ -8,8 +8,8 @@ let compartiendo = false;
 async function compartirViaje() {
   if (compartiendo) return;
 
-  const viajeId = viajeState?.viajeId || window.viajeEnCursoId;
-  const token = localStorage.getItem("token");
+  const viajeId = getViajeIdActivo();
+  const token = getAccessToken();
 
   if (!viajeId) {
     alert("No hay un viaje activo para compartir.");
@@ -58,12 +58,44 @@ async function compartirViaje() {
     await copiarAlPortapapeles(data.url);
     abrirWhatsApp(mensaje);
   } catch (err) {
+    if (err?.name === "AbortError") return;
     console.error("Error compartiendo viaje:", err);
     alert(err.message || "No se pudo compartir el viaje.");
   } finally {
     compartiendo = false;
     setLoading(btn, false);
   }
+}
+
+function getViajeIdActivo() {
+  const ids = [
+    viajeState?.viajeId,
+    window.viajeEnCursoId,
+    window.viajeActivo?.viajeId,
+    readStoredTripId("viajeActivo"),
+    readStoredTripId("viajeEnCurso")
+  ];
+
+  return String(ids.find(Boolean) || "").trim();
+}
+
+function readStoredTripId(key) {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return "";
+    const parsed = JSON.parse(raw);
+    return parsed?.viajeId || parsed?._id || parsed?.id || "";
+  } catch {
+    return localStorage.getItem(key) || "";
+  }
+}
+
+function getAccessToken() {
+  const raw = localStorage.getItem("token") || localStorage.getItem("BeGO_token") || "";
+  const token = String(raw).trim();
+  return token.startsWith("\"") && token.endsWith("\"")
+    ? token.slice(1, -1)
+    : token;
 }
 
 async function copiarAlPortapapeles(texto) {

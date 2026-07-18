@@ -1,5 +1,5 @@
 import { getDriverAvailability, onDriverAvailabilityChange } from "./driver.status.js?v=20260627-map-icons";
-import { initDriverSupportChat } from "./support/supportChat.js?v=20260604-live-support";
+import { initDriverSupportChat } from "./support/supportChat.js?v=20260716-chat-history";
 import {
   clearDriverSession,
   getDriverAccessToken,

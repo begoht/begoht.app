@@ -26,7 +26,14 @@ export function initPasajeroChat(socket) {
     }
   });
 
-  ["viaje-finalizado", "viaje:cancelado", "viaje-expirado"].forEach((eventName) => {
+  socket.on("viaje-finalizado", () => {
+    clearChatMessages();
+    activeViajeId = null;
+    closeChat();
+    syncChatButton();
+  });
+
+  ["viaje:cancelado", "viaje-expirado"].forEach((eventName) => {
     socket.on(eventName, () => {
       activeViajeId = null;
       closeChat();
@@ -62,15 +69,7 @@ export function initPasajeroChat(socket) {
   socket.on("viaje:chat:closed", ({ viajeId } = {}) => {
     if (!isCurrentTrip(viajeId)) return;
     
-    seenMessages.clear();
-    unread = 0;
-    
-    const body = document.getElementById("viajeChatBody");
-    
-    if (body) {
-      body.innerHTML = "";
-    }
-    
+    clearChatMessages();
     closeChat();
     updateBadge();
   });
@@ -148,6 +147,16 @@ function openChat() {
 function closeChat() {
   isOpen = false;
   document.getElementById("viajeChatPanel")?.classList.add("hidden");
+}
+
+function clearChatMessages() {
+  seenMessages.clear();
+  unread = 0;
+
+  const body = document.getElementById("viajeChatBody");
+  if (body) {
+    body.innerHTML = "";
+  }
 }
 
 function sendMessage(event) {

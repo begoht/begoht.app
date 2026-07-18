@@ -10,6 +10,7 @@ const typingBox = document.getElementById("supportTyping");
 const backBtn = document.getElementById("supportBackBtn");
 
 const ownClientIds = new Set();
+const seenMessages = new Set();
 let typingTimer = null;
 let remoteTypingTimer = null;
 let joined = false;
@@ -50,6 +51,22 @@ socket.on("soporte:estado", ({ online } = {}) => {
   setStatus(online ? "Assistance en ligne" : "Hors ligne", Boolean(online));
 });
 
+socket.on("soporte:history", ({ mensajes = [] } = {}) => {
+  if (!chatBody) return;
+  chatBody.innerHTML = "";
+  seenMessages.clear();
+  mensajes.forEach((data) => {
+    renderMessage({
+      id: data.id,
+      clientId: data.clientId,
+      text: data.mensaje,
+      type: data.from === "soporte" ? "soporte" : "usuario",
+      name: data.from === "soporte" ? (data.nombre || "BeGO") : "Vous",
+      time: data.createdAt,
+    });
+  });
+});
+
 socket.on("soporte:mensaje", (data = {}) => {
   if (data.from === "usuario" && data.clientId && ownClientIds.has(data.clientId)) {
     return;
@@ -60,6 +77,8 @@ socket.on("soporte:mensaje", (data = {}) => {
   }
 
   renderMessage({
+    id: data.id,
+    clientId: data.clientId,
     text: data.mensaje,
     type: data.from === "soporte" ? "soporte" : "sistema",
     name: data.nombre || "BeGO",
@@ -115,6 +134,8 @@ function sendMessage() {
   ownClientIds.add(clientId);
 
   const messageEl = renderMessage({
+    id: clientId,
+    clientId,
     text,
     type: "usuario",
     name: "Vous",
@@ -141,8 +162,12 @@ function renderSystem(text) {
   renderMessage({ text, type: "sistema" });
 }
 
-function renderMessage({ text, type, name, status, time }) {
+function renderMessage({ id, clientId, text, type, name, status, time }) {
   if (!chatBody || !text) return null;
+
+  const key = id || clientId;
+  if (key && seenMessages.has(key)) return null;
+  if (key) seenMessages.add(key);
 
   const div = document.createElement("div");
   div.className = `mensaje ${type}`;

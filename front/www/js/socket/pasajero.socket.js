@@ -22,7 +22,7 @@ import {
   handleRetornoAnulado,
   handleRetornoIniciado
 } from "./handlers/idaVuelta.handler.js?v=20260713-live-trip-tracking";
-import { initPasajeroChat } from "../chat/viajeChat.pasajero.js";
+import { initPasajeroChat } from "../chat/viajeChat.pasajero.js?v=20260716-chat-history";
 
 let listenersRegistrados = false;
 let handlersActivos = {};
