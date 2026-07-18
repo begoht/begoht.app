@@ -7,7 +7,7 @@ import {
 } from "./map.route.renderer.js?v=20260710-route-camera";
 import {
   setMotorcycleMarkerPose
-} from "../utils/map.motorcycle.motion.js?v=20260711-car-route-center";
+} from "../utils/map.motorcycle.motion.js?v=20260718-bego-moto-heading";
 
 const FOLLOW_PAUSE_MS = 12000;
 let followPausedUntil = 0;
