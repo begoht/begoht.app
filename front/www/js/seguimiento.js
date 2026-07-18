@@ -11,7 +11,7 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 // ICONO MOTORISTA
 // ===============================
 const motoIcon = L.icon({
-  iconUrl: "/assets/icons/bego-motorista-map.png?v=20260718-bego-moto-map",
+  iconUrl: "/assets/icons/bego-motorista-map.png?v=20260718-bego-moto-clean",
   iconSize: [44, 44],
   iconAnchor: [22, 22],
   className: "bego-map-icon bego-map-icon-moto",

@@ -471,7 +471,7 @@ async function reverseGeocodePublico(lat, lng) {
 
 function iconoMoto() {
   return L.icon({
-    iconUrl: "/assets/icons/bego-motorista-map.png?v=20260718-bego-moto-map",
+    iconUrl: "/assets/icons/bego-motorista-map.png?v=20260718-bego-moto-clean",
     iconSize: [44, 44],
     iconAnchor: [22, 22],
     className: "moto-live-icon"

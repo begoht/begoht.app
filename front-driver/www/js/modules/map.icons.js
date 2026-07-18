@@ -1,6 +1,6 @@
 const NAVIGATION_SIZE = 58;
 export const transparentMotoIconUrl = new URL(
-  "../../assets/icons/bego-motorista-map.png?v=20260718-bego-moto-map",
+  "../../assets/icons/bego-motorista-map.png?v=20260718-bego-moto-clean",
   import.meta.url
 ).href;
 

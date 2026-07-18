@@ -1,5 +1,5 @@
-export const DOWNLOAD_VERSION = "20260718-bego-moto-map";
-export const PASSENGER_DOWNLOAD_VERSION = "20260718-bego-moto-heading";
+export const DOWNLOAD_VERSION = "20260718-bego-moto-clean";
+export const PASSENGER_DOWNLOAD_VERSION = "20260718-bego-moto-clean";
 
 export const DOWNLOAD_APPS = Object.freeze({
   passenger: Object.freeze({

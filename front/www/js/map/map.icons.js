@@ -5,7 +5,7 @@ const PASSENGER_LOCATION_SIZE = 20;
 const ROUTE_POINT_SIZE = 20;
 const POI_SIZE = 26;
 const motoristaReferenceUrl = new URL(
-  "../../assets/icons/bego-motorista-map.png?v=20260718-bego-moto-map",
+  "../../assets/icons/bego-motorista-map.png?v=20260718-bego-moto-clean",
   import.meta.url
 ).href;
 

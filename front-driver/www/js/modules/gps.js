@@ -5,7 +5,7 @@ import {
   seguirMotoristaEnMapa
 } from "./map.js?v=20260712-route-700m-small-pins";
 import { isDriverOnline, updateDriverPosition } from "./driver.status.js?v=20260627-map-icons";
-import { crearMotoIcon, motoIcon } from "./map.icons.js?v=20260718-bego-moto-map";
+import { crearMotoIcon, motoIcon } from "./map.icons.js?v=20260718-bego-moto-clean";
 import {
   setMotorcycleMarkerPose
 } from "./map.motion.js?v=20260627-map-fluid-arrival";

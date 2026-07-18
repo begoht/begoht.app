@@ -1,5 +1,5 @@
 import { viajeState } from "../../viaje/viaje.state.js";
-import { motoIcon } from "../map.icons.js?v=20260718-bego-moto-map";
+import { motoIcon } from "../map.icons.js?v=20260718-bego-moto-clean";
 import {
   ajustarVistaRuta,
   consumirRutaDesde,
