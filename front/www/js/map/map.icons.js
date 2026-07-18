@@ -134,6 +134,6 @@ export function createPOIIcon(categoria = "default") {
   });
 }
 
-export const transparentMotoIconUrl = carReferenceUrl;
+export const transparentMotoIconUrl = motoristaReferenceUrl;
 export const transparentDestinoIconUrl = svgDataUrl(destinoSvg);
 export const transparentPasajeroIconUrl = svgDataUrl(pasajeroSvg);
