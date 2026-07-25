@@ -10,57 +10,16 @@
 <body>
   <main class="auth-page">
     <section class="auth-shell" aria-label="Acceso BeGO">
-      <aside class="auth-brand">
-        <div class="brand-mark" aria-hidden="true">
-          <span>BeGO</span>
-        </div>
-
-        <div class="brand-copy">
-          <p class="eyebrow">Pasajeros BeGO</p>
-          <h1>Tu viaje empieza con una cuenta segura.</h1>
-          <p>Entra rapido, revisa tu perfil y pide tu motorista cuando estes listo.</p>
-        </div>
-
-        <div class="brand-metrics" aria-hidden="true">
-          <div>
-            <strong>24/7</strong>
-            <span>Disponible</span>
-          </div>
-          <div>
-            <strong>GPS</strong>
-            <span>En vivo</span>
-          </div>
-          <div>
-            <strong>PIN</strong>
-            <span>Seguro</span>
-          </div>
-        </div>
-      </aside>
-
       <section class="auth-panel">
-        <div class="auth-topline">
-          <div>
-            <span class="panel-kicker">Cuenta pasajero</span>
-            <h2>Bienvenido a BeGO</h2>
-          </div>
-          <span class="secure-pill">Conexion segura</span>
-        </div>
-
-        <div class="auth-tabs">
-          <button class="tab-pill tab-login" type="button">Ingresar</button>
-          <button class="tab-pill tab-register" type="button">Crear cuenta</button>
-        </div>
-
         <div class="auth-container">
           <section class="auth-box login active" aria-label="Iniciar sesion">
             <div class="form-heading">
               <h3>Iniciar sesion</h3>
-              <p>Usa tu telefono o email registrado.</p>
             </div>
 
             <label class="field">
-              <span>Telefono, email o alias</span>
-              <input type="text" id="loginTelefono" placeholder="Ej: +50937123456 o bego" autocomplete="username">
+              <span>Email o numero de telefono</span>
+              <input type="text" id="loginTelefono" placeholder="Email o numero de telefono" autocomplete="username">
             </label>
 
             <label class="field">
@@ -68,9 +27,16 @@
               <input type="password" id="loginPassword" placeholder="Tu contrasena" autocomplete="current-password">
             </label>
 
-            <button id="btnLogin" class="primary-action" type="button">Ingresar</button>
+            <div class="login-options">
+              <label class="remember-me">
+                <input type="checkbox" id="loginRemember">
+                <span>Remember me</span>
+              </label>
+              <button id="btnForgotPassword" class="link-action" type="button">Olvidar contrasena</button>
+            </div>
+
+            <button id="btnLogin" class="primary-action" type="button">Conectar</button>
             <button id="btnHuella" class="btn-huella" type="button">Ingresar con huella</button>
-            <button id="btnForgotPassword" class="btn-huella" type="button">Olvide mi contrasena</button>
             <div id="msgLogin" class="msg" role="status" aria-live="polite"></div>
 
             <div class="phone-otp-card" id="passwordResetBox" hidden>
@@ -100,7 +66,7 @@
             </div>
 
             <p class="switch">
-              No tienes cuenta? <a id="irRegistro">Registrate</a>
+              Si no tenes cuenta, <a id="irRegistro">registrar</a>
             </p>
           </section>
 
@@ -188,32 +154,6 @@
           </section>
         </div>
 
-        <div class="social-block">
-          <p class="social-title">Redes sociales oficiales</p>
-          <div class="social-links">
-            <a class="social-link" href="https://www.facebook.com/search/top?q=bego%20haiti" target="_blank" rel="noopener">
-              <span>f</span> BeGO Haiti
-            </a>
-            <a class="social-link" href="https://www.instagram.com/bego.haiti" target="_blank" rel="noopener">
-              <span>IG</span> @bego.haiti
-            </a>
-            <a class="social-link" href="https://www.tiktok.com/@bego.ht" target="_blank" rel="noopener">
-              <span>TT</span> @bego.ht
-            </a>
-          </div>
-        </div>
-
-        <div class="download-block">
-          <p class="download-title">Descargar app Android</p>
-          <div class="download-links">
-            <a class="download-link" href="/download/bego-pasajero.apk?v=20260705-passenger-header-up" download>
-              <span>↓</span> App pasajero
-            </a>
-            <a class="download-link driver" href="/download/bego-motorista.apk?v=20260703-driver-install" download>
-              <span>↓</span> App motorista
-            </a>
-          </div>
-        </div>
       </section>
     </section>
   </main>

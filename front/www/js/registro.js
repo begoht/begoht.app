@@ -54,6 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnLogin = document.getElementById("btnLogin");
   const loginTelefono = document.getElementById("loginTelefono");
   const loginPassword = document.getElementById("loginPassword");
+  const loginRemember = document.getElementById("loginRemember");
   const msgLogin = document.getElementById("msgLogin");
   const btnForgotPassword = document.getElementById("btnForgotPassword");
   const passwordResetBox = document.getElementById("passwordResetBox");
@@ -62,6 +63,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const resetPassword = document.getElementById("resetPassword");
   const btnSendResetCode = document.getElementById("btnSendResetCode");
   const btnResetPassword = document.getElementById("btnResetPassword");
+  const rememberedLogin = localStorage.getItem("BeGO_remembered_login") || "";
+  if (rememberedLogin && loginTelefono) {
+    loginTelefono.value = rememberedLogin;
+    if (loginRemember) loginRemember.checked = true;
+  }
   setAuthMode("login");
 
   // =============================
@@ -425,7 +431,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     btnLogin.disabled = true;
-    btnLogin.textContent = "Ingresando...";
+    btnLogin.textContent = "Conectando...";
 
     try {
 
@@ -449,6 +455,11 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("usuario", JSON.stringify(data.user));
       localStorage.setItem("BeGO_user", JSON.stringify(data.user));
+      if (loginRemember?.checked) {
+        localStorage.setItem("BeGO_remembered_login", datos.identificador);
+      } else {
+        localStorage.removeItem("BeGO_remembered_login");
+      }
 
       await ofrecerActivacionHuella();
 
@@ -468,7 +479,7 @@ document.addEventListener("DOMContentLoaded", () => {
       mostrarMsg(msgLogin, err.message || "Error de conexión");
     } finally {
       btnLogin.disabled = false;
-      btnLogin.textContent = "Ingresar";
+      btnLogin.textContent = "Conectar";
     }
 
   });

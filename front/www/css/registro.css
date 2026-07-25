@@ -44,10 +44,10 @@ body {
 }
 
 .auth-shell {
-  width: min(1040px, 100%);
-  min-height: 640px;
+  width: min(460px, 100%);
+  min-height: auto;
   display: grid;
-  grid-template-columns: minmax(300px, 0.95fr) minmax(360px, 1.05fr);
+  grid-template-columns: 1fr;
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -142,7 +142,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 24px;
+  gap: 0;
 }
 
 .auth-topline {
@@ -202,7 +202,7 @@ body {
 
 .auth-container {
   position: relative;
-  min-height: 390px;
+  min-height: auto;
 }
 
 .auth-box {
@@ -220,7 +220,8 @@ body {
 .form-heading {
   display: grid;
   gap: 7px;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
+  text-align: center;
 }
 
 .form-heading h3 {
@@ -322,6 +323,44 @@ select:focus {
 
 .btn-huella.visible {
   display: block;
+}
+
+.login-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin: 2px 0 16px;
+}
+
+.remember-me {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #253348;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.remember-me input {
+  width: 18px;
+  min-height: 18px;
+  accent-color: var(--brand);
+}
+
+.link-action {
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.link-action:hover {
+  text-decoration: underline;
 }
 
 .switch {
@@ -651,6 +690,7 @@ body {
 .auth-topline h2,
 .form-heading h3,
 .field span,
+.remember-me,
 .check,
 .phone-otp-head strong,
 .switch,
@@ -729,6 +769,11 @@ select:focus {
   box-shadow:
     0 12px 24px rgba(0, 0, 0, 0.36),
     inset 0 8px 18px rgba(255, 255, 255, 0.035);
+}
+
+.download-block,
+.social-block {
+  display: none;
 }
 
 .download-link.driver {
