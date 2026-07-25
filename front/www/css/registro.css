@@ -822,10 +822,8 @@ body {
   height: 44dvh;
   min-height: 220px;
   background:
-    radial-gradient(circle at 50% 0%, rgba(255, 122, 0, 0.38), transparent 34%),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 12px, transparent 12px) 0 0 / 56px 56px,
-    linear-gradient(0deg, rgba(255, 122, 0, 0.09) 18px, transparent 18px) 0 0 / 74px 74px,
-    linear-gradient(135deg, #0f172a 0%, #020616 58%, #08111f 100%);
+    linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(2, 6, 22, 0.18)),
+    url("../img/login-reference-texture.png") center top / cover no-repeat;
 }
 
 .auth-hero {
