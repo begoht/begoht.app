@@ -675,7 +675,7 @@
   }
 
   function shouldSkipElement(element) {
-    return ["SCRIPT", "STYLE", "NOSCRIPT"].includes(element.tagName);
+    return ["SCRIPT", "STYLE", "NOSCRIPT"].includes(element.tagName) || Boolean(element.closest?.("[data-no-translate]"));
   }
 
   function translateElement(element) {
@@ -695,6 +695,7 @@
 
     if (node.nodeType === Node.TEXT_NODE) {
       if (node.parentElement?.tagName === "TEXTAREA") return;
+      if (node.parentElement?.closest?.("[data-no-translate]")) return;
       const next = translateText(node.nodeValue);
       if (next !== node.nodeValue) node.nodeValue = next;
       return;

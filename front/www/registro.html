@@ -9,7 +9,12 @@
 </head>
 <body>
   <main class="auth-page">
-    <section class="auth-shell" aria-label="Acceso BeGO">
+    <div class="auth-hero" aria-hidden="true">
+      <h1>Welcome</h1>
+      <p>Accede rapido y seguro a BeGO.</p>
+    </div>
+
+    <section class="auth-shell" aria-label="Acceso BeGO" data-no-translate>
       <section class="auth-panel">
         <div class="auth-container">
           <section class="auth-box login active" aria-label="Iniciar sesion">
@@ -36,7 +41,7 @@
             </div>
 
             <button id="btnLogin" class="primary-action" type="button">Conectar</button>
-            <button id="btnHuella" class="btn-huella" type="button">Ingresar con huella</button>
+            <button id="btnHuella" class="btn-huella visible" type="button">Ingresar con huella</button>
             <div id="msgLogin" class="msg" role="status" aria-live="polite"></div>
 
             <div class="phone-otp-card" id="passwordResetBox" hidden>
