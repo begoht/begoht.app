@@ -1,36 +1,209 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#020616">
-  <meta name="description" content="BeGO - Plataforma oficial de moto taxi, envios, wallet y soporte en Haiti.">
-  <meta property="og:title" content="BeGO - Plataforma Oficial">
-  <meta property="og:description" content="Viajes en moto, envios y billetera digital para moverse mejor en Haiti.">
+  <meta name="theme-color" content="#050505">
+  <meta name="description" content="BeGO - plateforme officielle pour commander un voyage, telecharger les apps et rejoindre les chauffeurs en Haiti.">
+  <meta property="og:title" content="BeGO - Plateforme officielle">
+  <meta property="og:description" content="Voyages rapides, chauffeurs verifies, wallet et support pour Haiti.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://bego.com.ht/">
-  <meta property="og:image" content="https://bego.com.ht/assets/logo_primcial.png">
+  <meta property="og:image" content="https://bego.com.ht/bego-web/assets/images/logo-bego.png">
   <link rel="canonical" href="https://bego.com.ht/">
   <link rel="manifest" href="/manifest.webmanifest">
-  <title>BeGO - Plataforma Oficial</title>
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./modules/landing/landing.css?v=20260627-map-icons">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/bego-web/site.css?v=20260813-official">
+  <title>BeGO - Plateforme officielle</title>
 </head>
 <body>
-  <div id="landing-root" class="landing-root" aria-live="polite"></div>
+  <header class="bego-header" id="site-header">
+    <div class="bego-header__inner">
+      <a href="/" class="bego-header__logo" aria-label="BeGO accueil">
+        <img src="/bego-web/assets/images/logo-bego.png" alt="BeGO">
+      </a>
 
-  <noscript>
-    <main class="noscript-shell">
-      <h1>BeGO</h1>
-      <p>Activa JavaScript para ver la plataforma oficial de BeGO.</p>
-      <a href="/download/bego-pasajero.apk?v=20260705-passenger-header-up" download>Descargar pasajero</a>
-      <a href="/download/bego-motorista.apk?v=20260703-driver-install" download>Descargar motorista</a>
-    </main>
-  </noscript>
+      <nav class="bego-nav" aria-label="Navigation principale">
+        <a href="#inicio">Accueil</a>
+        <a href="#como-funciona">Comment ca marche</a>
+        <a href="/viajes/">Voyages</a>
+        <a href="#chauffeurs">Chauffeurs</a>
+        <a href="#bego">A propos</a>
+      </nav>
 
-  <script type="module" src="./modules/landing/index.js?v=20260701-map-colors-restored"></script>
+      <div class="bego-header__actions">
+        <a href="/login.html" class="bego-login">Connexion</a>
+        <a href="/app.html" class="bego-cta">Demander un voyage <span>-></span></a>
+      </div>
+
+      <button class="bego-menu-button" id="bego-menu-button" type="button" aria-label="Ouvrir le menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+
+    <nav class="bego-mobile-nav" id="bego-mobile-nav" aria-label="Navigation mobile">
+      <a href="#inicio">Accueil</a>
+      <a href="#como-funciona">Comment ca marche</a>
+      <a href="/viajes/">Voyages</a>
+      <a href="/descargar/">Telecharger</a>
+      <a href="/ayuda/">Centre d'aide</a>
+      <a href="/login.html">Connexion</a>
+      <a href="/app.html">Demander un voyage</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="inicio">
+      <div class="hero__copy">
+        <span class="eyebrow">BEGO HAITI</span>
+        <h1>Commandez votre voyage avec BeGO.</h1>
+        <p>Une plateforme simple pour demander un trajet, suivre votre chauffeur, payer avec flexibilite et rester accompagne pendant chaque deplacement.</p>
+        <div class="hero__actions">
+          <a href="/app.html" class="button button--light">Demander un voyage</a>
+          <a href="/descargar/" class="button button--dark">Telecharger l'application</a>
+        </div>
+      </div>
+      <div class="hero__visual">
+        <img src="/bego-web/assets/images/chauffeurs/bego-chauffeur.png" alt="Chauffeur BeGO">
+      </div>
+    </section>
+
+    <section class="how" id="como-funciona">
+      <div class="section-head">
+        <span class="eyebrow">COMMENT CA MARCHE</span>
+        <h2>Demander un voyage est tres simple.</h2>
+      </div>
+      <div class="steps">
+        <article>
+          <span>01</span>
+          <img src="/bego-web/assets/images/como-funciona/paso-1.png" alt="Selectionner une destination">
+          <h3>Selectionnez votre destination</h3>
+          <p>Indiquez ou vous voulez aller et BeGO prepare l'itineraire avec une estimation claire.</p>
+        </article>
+        <article>
+          <span>02</span>
+          <img src="/bego-web/assets/images/como-funciona/paso-2.png" alt="Choisir le paiement">
+          <h3>Choisissez le paiement</h3>
+          <p>Payez en especes, avec Wallet BeGO ou avec les options disponibles dans votre application.</p>
+        </article>
+        <article>
+          <span>03</span>
+          <img src="/bego-web/assets/images/como-funciona/paso-3.png" alt="Demander le voyage">
+          <h3>Envoyez la demande</h3>
+          <p>Confirmez votre trajet et attendez qu'un chauffeur verifie accepte votre demande.</p>
+        </article>
+        <article>
+          <span>04</span>
+          <img src="/bego-web/assets/images/como-funciona/paso-4.png" alt="Suivre le voyage">
+          <h3>Suivez votre chauffeur</h3>
+          <p>Voyez l'arrivee, les details du trajet et les actions de securite depuis l'app.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="drivers" id="chauffeurs">
+      <div class="drivers__image">
+        <img src="/bego-web/assets/images/bego1.png" alt="Passager avec BeGO">
+      </div>
+      <div class="drivers__copy">
+        <span class="eyebrow">CHAUFFEURS</span>
+        <h2>Conduis. Travaille. Avance.</h2>
+        <p>Rejoins BeGO et recois des demandes selon tes disponibilites. Une app dediee t'aide a gerer les voyages, ton activite et tes revenus.</p>
+        <div class="split-actions">
+          <a href="/driver/registro.html" class="button button--light">Devenir chauffeur</a>
+          <a href="/motoristas/requisitos/" class="text-link">Voir les requis -></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="about" id="bego">
+      <div>
+        <span class="eyebrow">A PROPOS DE BEGO</span>
+        <h2>Le transport autrement en Haiti.</h2>
+      </div>
+      <div class="about__grid">
+        <article>
+          <h3>Simple</h3>
+          <p>Une experience claire pour commander, payer et suivre un voyage depuis le telephone.</p>
+        </article>
+        <article>
+          <h3>Rapide</h3>
+          <p>Une connexion directe avec les chauffeurs proches et une demande en quelques etapes.</p>
+        </article>
+        <article>
+          <h3>Fiable</h3>
+          <p>Profils verifies, suivi du trajet et support pour accompagner les utilisateurs.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="download-band">
+      <div>
+        <span class="eyebrow">APPLICATIONS</span>
+        <h2>Votre ville dans votre poche.</h2>
+        <p>Choisissez l'application BeGO qui correspond a votre role.</p>
+      </div>
+      <div class="download-band__actions">
+        <a href="/download/bego-pasajero.apk" class="button button--light" download>App passager</a>
+        <a href="/download/bego-motorista.apk" class="button button--dark" download>App chauffeur</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bego-footer">
+    <section class="footer-cta">
+      <div>
+        <h2>Ton prochain voyage commence ici.</h2>
+        <p>Reserve un voyage, telecharge l'app ou rejoins les chauffeurs BeGO.</p>
+      </div>
+      <a href="/app.html" class="button button--light">Demander un voyage</a>
+    </section>
+
+    <div class="footer-grid">
+      <div>
+        <h3>BeGO</h3>
+        <a href="/">Accueil</a>
+        <a href="/contacto/">Contact</a>
+        <a href="/ayuda/">Centre d'aide</a>
+        <a href="/descargar/">Telecharger</a>
+      </div>
+      <div>
+        <h3>Services</h3>
+        <a href="/viajes/">Voyages</a>
+        <a href="/reservas/">Reservas</a>
+        <a href="/premium/">Premium</a>
+        <a href="/empresas/">Empresas</a>
+        <a href="/tarifas/">Tarifas</a>
+      </div>
+      <div>
+        <h3>Motoristas</h3>
+        <a href="/motoristas/">Convertirse en motorista</a>
+        <a href="/motoristas/ventajas/">Ventajas</a>
+        <a href="/motoristas/requisitos/">Requisitos</a>
+        <a href="/motoristas/app/">App motorista</a>
+      </div>
+      <div>
+        <h3>Legal</h3>
+        <a href="/seguridad/">Seguridad</a>
+        <a href="/faq/">Preguntas frecuentes</a>
+        <a href="/terminos/">Terminos y condiciones</a>
+        <a href="/privacidad/">Politica de privacidad</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>&copy; 2026 BeGO. Todos los derechos reservados.</span>
+      <div>
+        <a href="https://instagram.com/bego.haiti" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.tiktok.com/@bego.ht" target="_blank" rel="noopener">TikTok</a>
+        <a href="https://facebook.com/bego.haiti" target="_blank" rel="noopener">Facebook</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/bego-web/site.js?v=20260813-official"></script>
 </body>
 </html>
