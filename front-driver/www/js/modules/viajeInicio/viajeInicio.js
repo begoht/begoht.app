@@ -15,6 +15,8 @@ import { UI_REFS, llegadaTimeout } from "./viajeInicioEstado.js";
 import { limpiarInterfazViaje, redibujarRutaRecovery } from "./viajeInicioUI.js?v=20260623-roundtrip-v2";
 import { initViajeRecovery } from "./viajeRecovery.js?v=20260623-roundtrip-v2";
 
+let onCancelacionViajeInicio = null;
+
 export function initViajeInicio(socket, detenerSimulacionETA) {
     if (!socket) return console.error("Socket no disponible en ViajeInicio");
     
@@ -30,7 +32,10 @@ export function initViajeInicio(socket, detenerSimulacionETA) {
     // Inicializar el módulo de recuperación (escucha sync-viaje)
     initViajeRecovery(socket);
 
-    ["viaje:cancelado", "confirmacion-llegada", "viaje:motorista-llego", "viaje:iniciado"].forEach(ev => socket.off(ev));
+    ["confirmacion-llegada", "viaje:motorista-llego", "viaje:iniciado"].forEach(ev => socket.off(ev));
+    if (onCancelacionViajeInicio) {
+        socket.off("viaje:cancelado", onCancelacionViajeInicio);
+    }
 
     // 🔥 MODIFICACIÓN: Al conectar/reconectar, pedir el estado actual al servidor
     socket.on("connect", () => {
@@ -38,12 +43,12 @@ export function initViajeInicio(socket, detenerSimulacionETA) {
         socket.emit("sync-solicitado"); // Dispara la lógica de Snapshot en el backend
     });
 
-    socket.on("viaje:cancelado", (data) => {
+    onCancelacionViajeInicio = (data) => {
         const viajeActivo = getViajeEnCursoId();
         if (!viajeActivo) return;
         
         const idRecibido = data?.viajeId || data?.id;
-        if (idRecibido && idRecibido !== viajeActivo) return;
+        if (idRecibido && String(idRecibido) !== String(viajeActivo)) return;
         
         console.warn("🚨 Cancelado por el pasajero");
         limpiarInterfazViaje(detenerSimulacionETA);
@@ -60,7 +65,9 @@ export function initViajeInicio(socket, detenerSimulacionETA) {
                 }
             }).showToast();
         }
-    });
+    };
+
+    socket.on("viaje:cancelado", onCancelacionViajeInicio);
 
     const procesarLlegadaExitosa = () => {
         if (!getViajeEnCursoId()) return;

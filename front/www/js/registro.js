@@ -479,7 +479,7 @@ document.addEventListener("DOMContentLoaded", () => {
       mostrarMsg(msgLogin, err.message || "Error de conexión");
     } finally {
       btnLogin.disabled = false;
-      btnLogin.textContent = "Conectar";
+      btnLogin.textContent = "Ingresar";
     }
 
   });

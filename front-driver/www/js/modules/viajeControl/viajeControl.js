@@ -10,6 +10,7 @@ import { reconstruirUIDesdeEstado } from "./viajeUI.js?v=20260713-live-trip-trac
 
 const offerSound = new Audio(new URL("../../../assets/sounds/bego-offer.wav?v=20260602-bego-offer-persistent", import.meta.url));
 offerSound.preload = "auto";
+let onCancelacionViajeControl = null;
 
 export function playOfferSound() {
     try {
@@ -30,9 +31,12 @@ export function initViajeControl(socket, uiElements = {}) {
         "viaje-confirmado-motorista",
         "viaje-siguiente-confirmado",
         "iniciar-viaje-siguiente",
-        "viaje:cancelado",
         "viaje-asignado"
     ].forEach((eventName) => socket.off(eventName));
+
+    if (onCancelacionViajeControl) {
+        socket.off("viaje:cancelado", onCancelacionViajeControl);
+    }
 
     socket.on("viaje-confirmado-motorista", (data) => {
         const id = data?.viaje?._id || data?.viaje?.id || data?.viajeId;
@@ -101,7 +105,7 @@ export function initViajeControl(socket, uiElements = {}) {
         }
     });
 
-    socket.on("viaje:cancelado", (data) => {
+    onCancelacionViajeControl = (data) => {
         const viajeActivo = getViajeEnCursoId();
         const viajeReservado = getViajeReservadoId();
         const idRecibido = data?.viajeId || data?.id;
@@ -153,7 +157,9 @@ export function initViajeControl(socket, uiElements = {}) {
                 style: { background: "linear-gradient(to right, #ff5f6d, #ffc371)" }
             }).showToast();
         }
-    });
+    };
+
+    socket.on("viaje:cancelado", onCancelacionViajeControl);
 }
 
 export function registrarViaje(id, data = {}) {

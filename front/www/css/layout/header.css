@@ -2,21 +2,6 @@
    Passenger header - production dock
    ========================================= */
 
-.app-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  min-height: calc(var(--header-height, 76px) + env(safe-area-inset-top));
-  padding: calc(env(safe-area-inset-top) + 4px) 12px 8px;
-  background:
-    linear-gradient(180deg, rgba(2, 6, 23, 0.94), rgba(2, 6, 23, 0.68) 70%, rgba(2, 6, 23, 0));
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  z-index: 1200;
-  pointer-events: none;
-}
-
 .header-shell {
   pointer-events: all;
   width: min(100%, 560px);

@@ -8,6 +8,17 @@ import { viajeState } from "../../../viaje/viaje.state.js";
 import { actualizarBotonViaje } from "../boton/botonViaje.ui.js?v=20260628-dark-route-locked";
 
 const CANDIDATE_FALLBACK_MS = 14_000;
+const MAP_RESIZE_FALLBACK_DELAY_MS = 120;
+const MAP_FLYTO_DELAY_MS = 180;
+const CANDIDATE_ANIMATION_MS = 620;
+const CANDIDATE_TIMER_GRACE_MS = 700;
+const EMPTY_AUTOCLOSE_MS = 9_000;
+const CANCEL_CONFIRMATION_TIMEOUT_MS = 8_000;
+
+function invalidateMapSize() {
+  window.map?.invalidateSize?.();
+  getMapaInstance()?.invalidateSize?.();
+}
 
 function ensureMapVisible() {
   const mapEl = document.getElementById("map");
@@ -16,10 +27,17 @@ function ensureMapVisible() {
   mapEl.classList.remove("hidden");
   mapEl.style.display = "block";
 
+  if (typeof ResizeObserver === "function") {
+    const resizeObserver = new ResizeObserver(() => {
+      invalidateMapSize();
+      resizeObserver.disconnect();
+    });
+    resizeObserver.observe(mapEl);
+  }
+
   window.setTimeout(() => {
-    window.map?.invalidateSize?.();
-    getMapaInstance()?.invalidateSize?.();
-  }, 120);
+    invalidateMapSize();
+  }, MAP_RESIZE_FALLBACK_DELAY_MS);
 }
 
 function normalizeMotorista(motorista = {}) {
@@ -82,7 +100,7 @@ function setCandidateState(modal, motorista = {}) {
       { transform: "translateY(-2px) scale(1.012)", boxShadow: "0 24px 80px rgba(37, 99, 235, 0.28)" },
       { transform: "translateY(0) scale(1)", boxShadow: "0 24px 70px rgba(15, 23, 42, 0.32)" }
     ],
-    { duration: 620, easing: "ease-out" }
+    { duration: CANDIDATE_ANIMATION_MS, easing: "ease-out" }
   );
 }
 
@@ -113,7 +131,7 @@ function focusMotoristaOnMap(motorista = {}) {
       animate: true,
       duration: 0.85
     });
-  }, 180);
+  }, MAP_FLYTO_DELAY_MS);
 }
 
 function stopCandidateTimer(modal) {
@@ -125,7 +143,7 @@ function stopCandidateTimer(modal) {
 
 function startCandidateTimer(modal, ttl) {
   stopCandidateTimer(modal);
-  const waitMs = Math.max(8_000, Math.min(Number(ttl || CANDIDATE_FALLBACK_MS), 18_000)) + 700;
+  const waitMs = Math.max(8_000, Math.min(Number(ttl || CANDIDATE_FALLBACK_MS), 18_000)) + CANDIDATE_TIMER_GRACE_MS;
   modal.candidateTimer = window.setTimeout(() => setStillSearchingState(modal), waitMs);
 }
 
@@ -518,11 +536,46 @@ function buildSearchModal() {
   return modal;
 }
 
+function limpiarEstadoBusquedaCancelada() {
+  Object.assign(viajeState, {
+    activo: false,
+    buscando: false,
+    asignado: false,
+    enCurso: false,
+    llego: false,
+    cancelado: false,
+    precioConfirmado: false,
+    viajeId: null,
+    motorista: null,
+    proximoDestino: null,
+    estado: null
+  });
+
+  localStorage.removeItem("viajeActivo");
+  sessionStorage.removeItem("viajeActivo");
+}
+
+function resetCancelButton(btn) {
+  if (!btn) return;
+  btn.dataset.cancelando = "false";
+  btn.disabled = false;
+  btn.innerHTML = `<i class="fa-solid fa-xmark"></i><span>Annuler la recherche</span>`;
+}
+
 export function mostrarBuscandoMotorista(force = false) {
   if (!force && !viajeState.precioConfirmado) return;
 
-  cerrarBuscandoMotorista();
   ensureMapVisible();
+
+  const modalExistente = document.getElementById("buscandoMotorista");
+  if (modalExistente) {
+    if (modalExistente.dataset.state === "searching") {
+      setSearchingState(modalExistente);
+    }
+    viajeState.buscando = true;
+    actualizarBotonViaje();
+    return;
+  }
 
   const modal = buildSearchModal();
   document.body.appendChild(modal);
@@ -543,34 +596,68 @@ export function mostrarBuscandoMotorista(force = false) {
     const btn = event.currentTarget;
     if (btn?.dataset.cancelando === "true") return;
 
+    const viajeId = viajeState.viajeId;
+    const socket = getSocket();
+
+    if (!viajeId || !socket?.connected) {
+      setText(modal, "#busquedaHint", "Connexion indisponible. Reessayez dans quelques secondes.");
+      resetCancelButton(btn);
+      return;
+    }
+
     btn.dataset.cancelando = "true";
     btn.disabled = true;
     btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i><span>Annulation...</span>`;
 
-    const socket = getSocket();
-    if (viajeState.viajeId && socket) {
-      socket.emit("cancelar-viaje", { viajeId: viajeState.viajeId });
-    }
+    let settled = false;
+    let timeoutId = null;
 
-    Object.assign(viajeState, {
-      activo: false,
-      buscando: false,
-      asignado: false,
-      enCurso: false,
-      llego: false,
-      cancelado: false,
-      precioConfirmado: false,
-      viajeId: null,
-      motorista: null,
-      proximoDestino: null,
-      estado: null
-    });
+    const cleanupListeners = () => {
+      socket.off?.("viaje:cancelado", onCancelado);
+      socket.off?.("error", onError);
+      socket.off?.("disconnect", onDisconnect);
+      if (timeoutId) window.clearTimeout(timeoutId);
+    };
 
-    localStorage.removeItem("viajeActivo");
-    sessionStorage.removeItem("viajeActivo");
+    const failCancel = (message) => {
+      if (settled) return;
+      settled = true;
+      cleanupListeners();
+      setText(modal, "#busquedaHint", message);
+      resetCancelButton(btn);
+    };
 
-    cerrarBuscandoMotorista();
-    actualizarBotonViaje();
+    const completeCancel = () => {
+      if (settled) return;
+      settled = true;
+      cleanupListeners();
+      limpiarEstadoBusquedaCancelada();
+      cerrarBuscandoMotorista();
+      actualizarBotonViaje();
+    };
+
+    const onCancelado = (data = {}) => {
+      const idRecibido = data?.viajeId || data?.id;
+      if (idRecibido && String(idRecibido) !== String(viajeId)) return;
+      completeCancel();
+    };
+
+    const onError = (error = {}) => {
+      failCancel(error?.mensaje || "Impossible d'annuler pour le moment. Reessayez.");
+    };
+
+    const onDisconnect = () => {
+      failCancel("Connexion perdue. Reessayez dans quelques secondes.");
+    };
+
+    socket.on?.("viaje:cancelado", onCancelado);
+    socket.on?.("error", onError);
+    socket.on?.("disconnect", onDisconnect);
+    timeoutId = window.setTimeout(() => {
+      failCancel("Annulation non confirmee. Verifiez votre connexion et reessayez.");
+    }, CANCEL_CONFIRMATION_TIMEOUT_MS);
+
+    socket.emit("cancelar-viaje", { viajeId });
   });
 }
 
@@ -627,5 +714,5 @@ export function mostrarBusquedaSinMotorista(data = {}) {
       cerrarBuscandoMotorista();
       actualizarBotonViaje();
     }
-  }, 9000);
+  }, EMPTY_AUTOCLOSE_MS);
 }

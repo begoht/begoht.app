@@ -127,7 +127,7 @@ function renderEstadoViaje({
             break;
 
         case "asignado":
-            estadoBox && (estadoBox.innerText = "En camino al pasajero");
+            estadoBox && (estadoBox.innerText = "En route ver le passager");
             configurarBotonPrincipal(btnIniciar, {
                 label: "LLEGUE AL PUNTO DE RECOGIDA",
                 icon: "fa-location-dot",

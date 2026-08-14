@@ -584,12 +584,12 @@ export function mostrarModalPrecio({ precio, precioBase = null, descuentoWallet 
         btnConfirmar.disabled = true;
         if (btnCancelar) btnCancelar.disabled = true;
         if (btnCerrar) btnCerrar.disabled = true;
+        cerrarModalPrecio();
         onConfirm?.({
             idaVuelta: puedeIdaVuelta
                 ? aplicarSeleccionIdaVuelta(idaVueltaInfo, idaVueltaSeleccionada)
                 : { solicitada: false }
         });
-        cerrarModalPrecio();
     }, { once: true });
 
     btnCancelar?.addEventListener("click", cancelar, { once: true });

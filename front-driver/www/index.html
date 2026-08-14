@@ -300,9 +300,9 @@
 
         <header class="trip-header">
           <div>
-            <h2 id="estadoViaje" class="trip-status">En camino al pasajero</h2>
+            <h2 id="estadoViaje" class="trip-status"></h2>
             <p class="trip-subtitle">
-              Llegada en <span id="viajeSheetEta">--</span> &bull; <span id="viajeDistanciaResumen">--</span>
+              <span id="viajeSheetEta"></span> &bull; <span id="viajeDistanciaResumen">--</span>
             </p>
             <span id="viajeSheetEtaLabel" class="trip-sr-label">ETA</span>
           </div>
@@ -330,12 +330,12 @@
           <div class="trip-rider-actions">
             <button id="btnViajeLlamar" class="trip-circle-btn" type="button" aria-label="Llamar al pasajero">
               <i class="fa-solid fa-phone" aria-hidden="true"></i>
-              <span>LLAMAR</span>
+              <span> Call </span>
             </button>
 
             <button id="btnViajeMensaje" class="trip-circle-btn" type="button" aria-label="Abrir chat con el pasajero">
               <i class="fa-solid fa-message" aria-hidden="true"></i>
-              <span>MENSAJE</span>
+              <span> Message </span>
             </button>
           </div>
         </section>
@@ -369,19 +369,19 @@
           <div class="trip-stat">
             <i class="fa-regular fa-clock" aria-hidden="true"></i>
             <strong id="viajeTiempoEstimado">--</strong>
-            <span>Tiempo estimado</span>
+            <span> Temps estimé </span>
           </div>
 
           <div class="trip-stat">
             <i class="fa-solid fa-route" aria-hidden="true"></i>
             <strong id="viajeDistancia">--</strong>
-            <span>Distancia</span>
+            <span>Distance</span>
           </div>
 
           <div class="trip-stat">
             <i class="fa-solid fa-user" aria-hidden="true"></i>
             <strong id="tripTipoServicio">--</strong>
-            <span>Tipo de servicio</span>
+            <span>Type de service</span>
           </div>
         </section>
 
@@ -411,45 +411,35 @@
         <footer class="trip-footer-actions viaje-actions">
           <button id="btnLlegue" class="trip-primary-btn" type="button" style="display:none;">
             <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
-            LLEGUE AL PUNTO DE RECOGIDA
+            Arrivé au point de prise en charge
           </button>
 
           <button id="btnIniciarViaje" class="trip-primary-btn" type="button" style="display:none;">
             <i class="fa-solid fa-play" aria-hidden="true"></i>
-            INICIAR VIAJE
+            Démarrer le voyage
           </button>
 
           <button id="btnFinalizar" class="trip-primary-btn danger" type="button" style="display:none;">
             <i class="fa-solid fa-flag-checkered" aria-hidden="true"></i>
-            FINALIZAR VIAJE
+            Terminer le voyage
           </button>
 
           <button id="btnBuscarSiguienteViaje" class="trip-primary-btn" type="button" style="display:none;">
             <i class="fa-solid fa-route" aria-hidden="true"></i>
-            BUSCAR SIGUIENTE VIAJE
+            Rechercher le prochain voyage
           </button>
 
           <button id="btnIniciarVuelta" class="trip-primary-btn" type="button" style="display:none;">
             <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
-            INICIAR VUELTA
+            Démarrer la retour
           </button>
 
           <button id="btnAnularVuelta" class="trip-primary-btn danger" type="button" style="display:none;">
             <i class="fa-solid fa-ban" aria-hidden="true"></i>
-            CANCELAR VUELTA
+            Annuler la retour
           </button>
         </footer>
 
-        <nav class="trip-safety-actions" aria-label="Acciones del viaje">
-          <button type="button">
-            <span><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i></span>
-            Reportar<br>problema
-          </button>
-          <button type="button">
-            <span><i class="fa-solid fa-xmark" aria-hidden="true"></i></span>
-            Cancelar<br>viaje
-          </button>
-        </nav>
       </div>
 
     </section>
