@@ -1,0 +1,1137 @@
+/* =====================================================
+   BEGO
+   TÉLÉCHARGER
+===================================================== */
+
+
+/* =====================================================
+   HERO
+===================================================== */
+
+.bego-download-hero {
+
+    width: min(
+        calc(100% - 48px),
+        var(--container)
+    );
+
+    margin: 0 auto;
+
+    padding:
+        155px
+        0
+        100px;
+}
+
+
+.bego-download-hero__inner {
+
+    max-width: 950px;
+}
+
+
+/* =====================================================
+   EYEBROW
+===================================================== */
+
+.bego-download-hero__eyebrow {
+
+    display: block;
+
+    margin-bottom: 25px;
+
+    color: var(--bego-black-60);
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: .18em;
+}
+
+
+/* =====================================================
+   TITLE
+===================================================== */
+
+.bego-download-hero h1 {
+
+    margin: 0;
+
+    color: var(--bego-black);
+
+    font-size: clamp(
+        70px,
+        10vw,
+        140px
+    );
+
+    line-height: .82;
+
+    letter-spacing: -.075em;
+
+    font-weight: 650;
+}
+
+
+.bego-download-hero h1 span {
+
+    display: block;
+
+    color: var(--bego-black-60);
+}
+
+
+/* =====================================================
+   DESCRIPTION
+===================================================== */
+
+.bego-download-hero p {
+
+    max-width: 600px;
+
+    margin: 40px 0 0;
+
+    color: var(--bego-black-60);
+
+    font-size: 17px;
+
+    line-height: 1.7;
+}
+
+
+/* =====================================================
+   APPS
+===================================================== */
+
+.bego-download-apps {
+
+
+
+    width: min(
+        calc(100% - 48px),
+        var(--container)
+    );
+
+    margin: 0 auto;
+
+    padding:
+        40px
+        0
+        130px;
+}
+
+
+/* =====================================================
+   SECTION HEADER
+===================================================== */
+
+.bego-download-apps__header {
+
+    margin-bottom: 55px;
+}
+
+
+.bego-download-apps__header > span {
+
+    display: block;
+
+    margin-bottom: 18px;
+
+    color: var(--bego-black-60);
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: .18em;
+}
+
+
+.bego-download-apps__header h2 {
+
+    margin: 0;
+
+    color: var(--bego-black);
+
+    font-size: clamp(
+        45px,
+        6vw,
+        78px
+    );
+
+    line-height: .9;
+
+    letter-spacing: -.06em;
+
+    font-weight: 650;
+}
+
+
+.bego-download-apps__header h2 span {
+
+    color: var(--bego-black-60);
+}
+
+
+/* =====================================================
+   GRID
+===================================================== */
+
+.bego-download-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+
+    gap: 20px;
+}
+
+
+/* =====================================================
+   CARD
+===================================================== */
+
+.bego-download-card {
+
+    overflow: hidden;
+
+    border:
+        1px solid
+        rgba(
+            0,
+            0,
+            0,
+            .10
+        );
+
+    border-radius: 30px;
+
+    background: #f7f7f7;
+
+    transition:
+        transform var(--transition),
+        box-shadow var(--transition);
+}
+
+
+.bego-download-card:hover {
+
+    transform: translateY(-8px);
+
+    box-shadow:
+        0 25px 70px
+        rgba(
+            0,
+            0,
+            0,
+            .10
+        );
+}
+
+
+/* =====================================================
+   CARD TOP
+===================================================== */
+
+.bego-download-card__top {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 28px 30px 0;
+}
+
+
+.bego-download-card__number {
+
+    color: var(--bego-black-60);
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: .15em;
+}
+
+
+.bego-download-card__label {
+
+    color: var(--bego-black-60);
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: .18em;
+}
+
+
+/* =====================================================
+   VISUAL
+===================================================== */
+
+.bego-download-card__visual {
+
+    min-height: 440px;
+
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: center;
+
+    padding:
+        30px
+        50px
+        0;
+}
+
+
+.bego-download-card__visual img {
+
+    display: block;
+
+    width: min(
+        100%,
+        330px
+    );
+
+    max-height: 430px;
+
+    object-fit: contain;
+
+    object-position: bottom;
+
+    filter:
+        drop-shadow(
+            0
+            25px
+            35px
+            rgba(
+                0,
+                0,
+                0,
+                .14
+            )
+        );
+
+    transition:
+        transform .5s ease;
+}
+
+
+.bego-download-card:hover
+.bego-download-card__visual img {
+
+    transform:
+        translateY(-8px)
+        scale(1.02);
+}
+
+
+/* =====================================================
+   CONTENT
+===================================================== */
+
+.bego-download-card__content {
+
+    padding:
+        35px
+        35px
+        40px;
+
+    background: var(--bego-white);
+}
+
+
+.bego-download-card__content h3 {
+
+    margin: 0;
+
+    color: var(--bego-black);
+
+    font-size: 34px;
+
+    line-height: 1;
+
+    letter-spacing: -.045em;
+
+    font-weight: 650;
+}
+
+
+.bego-download-card__content p {
+
+    max-width: 480px;
+
+    margin: 18px 0 0;
+
+    color: var(--bego-black-60);
+
+    font-size: 14px;
+
+    line-height: 1.7;
+}
+
+
+/* =====================================================
+   ACTIONS
+===================================================== */
+
+.bego-download-card__actions {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin-top: 28px;
+}
+
+
+/* =====================================================
+   MAIN BUTTON
+===================================================== */
+
+.bego-download-button {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    padding:
+        7px
+        7px
+        7px
+        20px;
+
+    border-radius: 999px;
+
+    background: var(--bego-black);
+
+    color: var(--bego-white);
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    text-decoration: none;
+
+    transition:
+        transform var(--transition);
+}
+
+
+.bego-download-button:hover {
+
+    transform: translateY(-3px);
+}
+
+
+.bego-download-button span:last-child {
+
+    width: 38px;
+    height: 38px;
+
+    display: grid;
+
+    place-items: center;
+
+    border-radius: 50%;
+
+    background: var(--bego-white);
+
+    color: var(--bego-black);
+
+    font-size: 16px;
+}
+
+
+/* =====================================================
+   PLATFORM
+===================================================== */
+
+.bego-download-platform {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    height: 52px;
+
+    padding:
+        0
+        20px;
+
+    border:
+        1px solid
+        rgba(
+            0,
+            0,
+            0,
+            .12
+        );
+
+    border-radius: 999px;
+
+    color: var(--bego-black);
+
+    font-size: 13px;
+
+    font-weight: 650;
+
+    text-decoration: none;
+
+    transition:
+        background var(--transition),
+        color var(--transition);
+}
+
+
+.bego-download-platform:hover {
+
+    background: var(--bego-black);
+
+    color: var(--bego-white);
+}
+
+
+/* =====================================================
+   BOTTOM CTA
+===================================================== */
+
+.bego-download-cta {
+
+    width: min(
+        calc(100% - 48px),
+        var(--container)
+    );
+
+    margin:
+        0
+        auto
+        100px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 50px;
+
+    padding: 65px;
+
+    border-radius: 30px;
+
+    background: var(--bego-black);
+
+    color: var(--bego-white);
+}
+
+
+.bego-download-cta__content > span {
+
+    display: block;
+
+    margin-bottom: 18px;
+
+    color: var(--bego-white-60);
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: .18em;
+}
+
+
+.bego-download-cta h2 {
+
+    margin: 0;
+
+    color: var(--bego-white);
+
+    font-size: clamp(
+        45px,
+        5vw,
+        72px
+    );
+
+    line-height: .9;
+
+    letter-spacing: -.06em;
+
+    font-weight: 650;
+}
+
+
+.bego-download-cta h2 strong {
+
+    display: block;
+
+    color: var(--bego-white-60);
+
+    font-weight: inherit;
+}
+
+
+.bego-download-cta p {
+
+    max-width: 500px;
+
+    margin: 25px 0 0;
+
+    color: var(--bego-white-60);
+
+    font-size: 15px;
+
+    line-height: 1.6;
+}
+
+
+/* =====================================================
+   CTA BUTTON
+===================================================== */
+
+.bego-download-cta__button {
+
+    flex-shrink: 0;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 18px;
+
+    padding:
+        8px
+        8px
+        8px
+        24px;
+
+    border-radius: 999px;
+
+    background: var(--bego-white);
+
+    color: var(--bego-black);
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    text-decoration: none;
+
+    transition:
+        transform var(--transition);
+}
+
+
+.bego-download-cta__button:hover {
+
+    transform: translateY(-4px);
+}
+
+
+.bego-download-cta__button span:last-child {
+
+    width: 44px;
+    height: 44px;
+
+    display: grid;
+
+    place-items: center;
+
+    border-radius: 50%;
+
+    background: var(--bego-black);
+
+    color: var(--bego-white);
+
+    font-size: 18px;
+}
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width: 900px) {
+
+    .bego-download-grid {
+
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 16px;
+    }
+
+
+    .bego-download-card__visual {
+
+        min-height: 360px;
+
+        padding:
+            25px
+            25px
+            0;
+    }
+
+
+    .bego-download-card__visual img {
+
+        width: min(
+            100%,
+            280px
+        );
+
+        max-height: 350px;
+    }
+
+
+    .bego-download-card__content {
+
+        padding:
+            28px
+            25px
+            32px;
+    }
+
+
+    .bego-download-card__content h3 {
+
+        font-size: 30px;
+    }
+
+
+    .bego-download-cta {
+
+        padding: 50px;
+    }
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 700px) {
+
+    /* =================================================
+       HERO
+    ================================================= */
+
+    .bego-download-hero {
+
+        width: calc(100% - 32px);
+
+        padding:
+            110px
+            0
+            60px;
+    }
+
+
+    .bego-download-hero h1 {
+
+        font-size: 58px;
+    }
+
+
+    .bego-download-hero p {
+
+        font-size: 15px;
+
+        line-height: 1.6;
+    }
+
+
+
+    /* =================================================
+       APPS
+    ================================================= */
+
+    .bego-download-apps {
+
+        width: calc(100% - 32px);
+
+        padding:
+            30px
+            0
+            70px;
+    }
+
+
+    /* =================================================
+       HEADER
+    ================================================= */
+
+    .bego-download-apps__header {
+
+        margin-bottom: 30px;
+    }
+
+
+    .bego-download-apps__header h2 {
+
+        font-size: 40px;
+    }
+
+
+
+    /* =================================================
+       DOS APPS — LADO A LADO
+    ================================================= */
+
+    .bego-download-grid {
+
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 12px;
+
+        width: 100%;
+    }
+
+
+
+    /* =================================================
+       CARD
+    ================================================= */
+
+    .bego-download-card {
+
+        width: 100%;
+
+        border-radius: 20px;
+    }
+
+
+
+    /* =================================================
+       CARD TOP
+    ================================================= */
+
+    .bego-download-card__top {
+
+        padding:
+            18px
+            16px
+            0;
+    }
+
+
+    .bego-download-card__number {
+
+        font-size: 9px;
+    }
+
+
+    .bego-download-card__label {
+
+        font-size: 8px;
+
+        letter-spacing: .12em;
+    }
+
+
+
+    /* =================================================
+       IMAGE
+    ================================================= */
+
+    .bego-download-card__visual {
+
+        min-height: 240px;
+
+        padding:
+            15px
+            10px
+            0;
+    }
+
+
+    .bego-download-card__visual img {
+
+        width: 100%;
+
+        max-width: 180px;
+
+        max-height: 235px;
+    }
+
+
+
+    /* =================================================
+       CONTENT
+    ================================================= */
+
+    .bego-download-card__content {
+
+        padding:
+            22px
+            16px
+            22px;
+    }
+
+
+    .bego-download-card__content h3 {
+
+        font-size: 22px;
+
+        line-height: 1;
+    }
+
+
+    .bego-download-card__content p {
+
+        margin-top: 12px;
+
+        font-size: 12px;
+
+        line-height: 1.55;
+    }
+
+
+
+    /* =================================================
+       ACTIONS
+    ================================================= */
+
+    .bego-download-card__actions {
+
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+        gap: 8px;
+
+        margin-top: 18px;
+    }
+
+
+    .bego-download-button {
+
+        width: 100%;
+
+        justify-content: space-between;
+
+        padding-left: 14px;
+
+        font-size: 11px;
+    }
+
+
+    .bego-download-button span:last-child {
+
+        width: 32px;
+
+        height: 32px;
+
+        font-size: 14px;
+    }
+
+
+    .bego-download-platform {
+
+        width: 100%;
+
+        height: 40px;
+
+        padding: 0;
+
+        font-size: 11px;
+    }
+
+
+
+    /* =================================================
+       BOTTOM CTA
+    ================================================= */
+
+    .bego-download-cta {
+
+        width: calc(100% - 32px);
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 30px;
+
+        margin-bottom: 70px;
+
+        padding:
+            40px
+            28px;
+
+        border-radius: 24px;
+    }
+
+
+    .bego-download-cta__button {
+
+        width: 100%;
+
+        justify-content: space-between;
+    }
+
+}
+
+
+/* =====================================================
+   MOBILE PEQUEÑO
+===================================================== */
+
+@media (max-width: 480px) {
+
+    .bego-download-hero {
+
+        width: calc(100% - 24px);
+
+        padding:
+            95px
+            0
+            50px;
+    }
+
+
+    .bego-download-hero h1 {
+
+        font-size: 46px;
+    }
+
+
+    .bego-download-apps {
+
+        width: calc(100% - 24px);
+    }
+
+
+    /* ================================================
+       SIEMPRE 2 COLUMNAS
+    ================================================= */
+
+    .bego-download-grid {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 10px;
+    }
+
+
+    .bego-download-card {
+
+        border-radius: 18px;
+    }
+
+
+    .bego-download-card__top {
+
+        padding:
+            15px
+            12px
+            0;
+    }
+
+
+    .bego-download-card__visual {
+
+        min-height: 210px;
+
+        padding:
+            10px
+            6px
+            0;
+    }
+
+
+    .bego-download-card__visual img {
+
+        max-height: 205px;
+    }
+
+
+    .bego-download-card__content {
+
+        padding:
+            18px
+            12px
+            18px;
+    }
+
+
+    .bego-download-card__content h3 {
+
+        font-size: 19px;
+    }
+
+
+    .bego-download-card__content p {
+
+        font-size: 11px;
+
+        line-height: 1.5;
+    }
+
+
+    .bego-download-card__actions {
+
+        margin-top: 15px;
+    }
+
+
+    .bego-download-button {
+
+        font-size: 10px;
+
+        padding:
+            5px
+            5px
+            5px
+            10px;
+    }
+
+
+    .bego-download-button span:last-child {
+
+        width: 28px;
+
+        height: 28px;
+    }
+
+
+    .bego-download-platform {
+
+        height: 36px;
+
+        font-size: 10px;
+    }
+
+
+    .bego-download-cta {
+
+        width: calc(100% - 24px);
+    }
+
+}

@@ -1,0 +1,602 @@
+/* =====================================================
+   BEGO HEADER
+   BLACK & WHITE ONLY
+===================================================== */
+
+.bego-header {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    z-index: 1000;
+
+    width: 100%;
+    height: var(--header-height);
+
+    background: var(--bego-black-soft);
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    border-bottom:
+        1px solid transparent;
+
+    transition:
+        background var(--transition),
+        border-color var(--transition),
+        box-shadow var(--transition);
+}
+
+
+/* =====================================================
+   HEADER SCROLLED
+===================================================== */
+
+.bego-header.is-scrolled {
+
+    background:
+        rgba(0, 0, 0, 0.94);
+
+    border-bottom-color:
+        var(--bego-white-15);
+
+    box-shadow:
+        0 10px 40px
+        rgba(0, 0, 0, 0.60);
+}
+
+
+/* =====================================================
+   INNER
+===================================================== */
+
+.bego-header__inner {
+
+    width: min(
+        calc(100% - 48px),
+        var(--container)
+    );
+
+    height: 100%;
+
+    margin: 0 auto;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 32px;
+}
+
+
+/* =====================================================
+   LOGO
+===================================================== */
+
+.bego-header__logo {
+
+    display: flex;
+
+    align-items: center;
+
+    flex-shrink: 0;
+}
+
+
+.bego-header__logo img {
+
+    width: 112px;
+
+    height: auto;
+
+    display: block;
+}
+
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+
+.bego-nav {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 34px;
+
+    margin-left: auto;
+}
+
+
+.bego-nav__link {
+
+    position: relative;
+
+    color:
+        var(--bego-white-75);
+
+    font-size: 14px;
+
+    font-weight: 500;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+
+    transition:
+        color var(--transition);
+}
+
+
+.bego-nav__link:hover {
+
+    color:
+        var(--bego-white);
+}
+
+
+/* =====================================================
+   ACTIVE / HOVER LINE
+===================================================== */
+
+.bego-nav__link::after {
+
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+
+    bottom: -10px;
+
+    width: 0;
+
+    height: 2px;
+
+    background:
+        var(--bego-white);
+
+    transition:
+        width var(--transition);
+}
+
+
+.bego-nav__link:hover::after,
+.bego-nav__link.is-active::after {
+
+    width: 100%;
+}
+
+
+.bego-nav__link.is-active {
+
+    color:
+        var(--bego-white);
+}
+
+
+/* =====================================================
+   ACTIONS
+===================================================== */
+
+.bego-header__actions {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    flex-shrink: 0;
+}
+
+
+/* =====================================================
+   LANGUAGE
+===================================================== */
+
+.bego-language {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding:
+        11px
+        14px;
+
+    border:
+        1px solid
+        var(--bego-white-15);
+
+    border-radius:
+        999px;
+
+    background:
+        transparent;
+
+    color:
+        var(--bego-white);
+
+    cursor: pointer;
+
+    font-size: 13px;
+
+    transition:
+        background var(--transition),
+        border-color var(--transition);
+}
+
+
+.bego-language:hover {
+
+    background:
+        var(--bego-white-08);
+
+    border-color:
+        var(--bego-white-45);
+}
+
+
+.bego-language__globe {
+
+    color:
+        var(--bego-white);
+
+    font-size: 15px;
+}
+
+
+.bego-language__arrow {
+
+    color:
+        var(--bego-white-60);
+}
+
+
+/* =====================================================
+   LOGIN
+===================================================== */
+
+.bego-login {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding:
+        12px
+        19px;
+
+    border:
+        1px solid
+        var(--bego-white-25);
+
+    border-radius:
+        999px;
+
+    color:
+        var(--bego-white);
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+
+    transition:
+        background var(--transition),
+        border-color var(--transition),
+        color var(--transition);
+}
+
+
+.bego-login:hover {
+
+    background:
+        var(--bego-white);
+
+    border-color:
+        var(--bego-white);
+
+    color:
+        var(--bego-black);
+}
+
+
+/* =====================================================
+   PRIMARY CTA
+===================================================== */
+
+.bego-cta {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+
+    padding:
+        7px
+        8px
+        7px
+        20px;
+
+    border-radius:
+        999px;
+
+    background:
+        var(--bego-white);
+
+    color:
+        var(--bego-black);
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+
+    transition:
+        transform var(--transition),
+        background var(--transition);
+}
+
+
+.bego-cta:hover {
+
+    background:
+        var(--bego-white-90);
+
+    transform:
+        translateY(-1px);
+}
+
+
+/* =====================================================
+   CTA ARROW
+===================================================== */
+
+.bego-cta__arrow {
+
+    width: 34px;
+
+    height: 34px;
+
+    display: grid;
+
+    place-items: center;
+
+    flex-shrink: 0;
+
+    border-radius:
+        50%;
+
+    background:
+        var(--bego-black);
+
+    color:
+        var(--bego-white);
+
+    font-size: 19px;
+
+    transition:
+        transform var(--transition);
+}
+
+
+.bego-cta:hover
+.bego-cta__arrow {
+
+    transform:
+        translateX(2px);
+}
+
+
+/* =====================================================
+   MOBILE MENU BUTTON
+===================================================== */
+
+.bego-menu-button {
+
+    display: none;
+
+    width: 44px;
+
+    height: 44px;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-direction: column;
+
+    gap: 6px;
+
+    flex-shrink: 0;
+
+    padding: 0;
+
+    border:
+        1px solid
+        var(--bego-white-15);
+
+    border-radius:
+        50%;
+
+    background:
+        transparent;
+
+    cursor: pointer;
+
+    transition:
+        background var(--transition),
+        border-color var(--transition);
+}
+
+
+.bego-menu-button:hover {
+
+    background:
+        var(--bego-white);
+
+    border-color:
+        var(--bego-white);
+}
+
+
+.bego-menu-button span {
+
+    width: 18px;
+
+    height: 1.5px;
+
+    display: block;
+
+    background:
+        var(--bego-white);
+
+    transition:
+        transform var(--transition),
+        background var(--transition);
+}
+
+
+.bego-menu-button:hover span {
+
+    background:
+        var(--bego-black);
+}
+
+
+/* =====================================================
+   RESPONSIVE — TABLET
+===================================================== */
+
+@media (max-width: 1100px) {
+
+    .bego-header__inner {
+
+        gap: 20px;
+    }
+
+
+    .bego-nav {
+
+        gap: 20px;
+    }
+
+
+    .bego-header__actions {
+
+        gap: 7px;
+    }
+
+
+    .bego-login {
+
+        padding:
+            10px
+            14px;
+    }
+
+
+    .bego-cta {
+
+        padding-left:
+            15px;
+
+        gap: 10px;
+    }
+
+
+    .bego-language {
+
+        padding:
+            10px
+            12px;
+    }
+}
+
+
+/* =====================================================
+   RESPONSIVE — MOBILE
+===================================================== */
+
+@media (max-width: 900px) {
+
+    .bego-header {
+
+        height: var(--header-height);
+    }
+
+
+    .bego-nav,
+    .bego-header__actions {
+
+        display: none;
+    }
+
+
+    .bego-menu-button {
+
+        display: flex;
+    }
+
+
+    .bego-header__inner {
+
+        width: min(
+            calc(100% - 32px),
+            var(--container)
+        );
+
+        gap: 16px;
+    }
+
+
+    .bego-header__logo img {
+
+        width: 100px;
+    }
+}
+
+
+/* =====================================================
+   RESPONSIVE — SMALL MOBILE
+===================================================== */
+
+@media (max-width: 480px) {
+
+    .bego-header__inner {
+
+        width:
+            calc(100% - 24px);
+    }
+
+
+    .bego-header__logo img {
+
+        width: 92px;
+    }
+
+
+    .bego-menu-button {
+
+        width: 42px;
+
+        height: 42px;
+    }
+}

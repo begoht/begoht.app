@@ -1,0 +1,826 @@
+/* =====================================================
+   BEGO
+   CHAUFFEURS
+===================================================== */
+
+
+/* =====================================================
+   SECTION
+===================================================== */
+
+.bego-drivers {
+    position: relative;
+
+    width: min(
+        calc(100% - 48px),
+        var(--container)
+    );
+
+    margin: 0 auto;
+
+    padding: 100px 0;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.bego-drivers__header {
+    max-width: 900px;
+
+    margin: 0 0 70px;
+}
+
+
+.bego-drivers__eyebrow {
+    display: inline-block;
+
+    margin-bottom: 24px;
+
+    color: var(--bego-black-60);
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.18em;
+}
+
+
+.bego-drivers__header h2 {
+    margin: 0;
+
+    color: var(--bego-black);
+
+    font-size: clamp(
+        60px,
+        8vw,
+        110px
+    );
+
+    line-height: 0.88;
+
+    letter-spacing: -0.065em;
+
+    font-weight: 650;
+}
+
+
+.bego-drivers__header h2 span {
+    display: block;
+
+    color: var(--bego-black-60);
+}
+
+
+.bego-drivers__header p {
+    max-width: 600px;
+
+    margin: 30px 0 0;
+
+    color: var(--bego-black-60);
+
+    font-size: 17px;
+
+    line-height: 1.65;
+}
+
+
+/* =====================================================
+   CONTENIDO PRINCIPAL
+   IMAGEN + TEXTO SUPERPUESTO
+===================================================== */
+
+.bego-drivers__main {
+    position: relative;
+
+    display: block;
+
+    width: 100%;
+
+    min-height: 720px;
+
+    overflow: hidden;
+
+    border-radius: 32px;
+
+    background: var(--bego-white);
+}
+
+
+/* =====================================================
+   IMAGE
+===================================================== */
+
+.bego-drivers__image-wrapper {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    min-height: 0;
+
+    display: block;
+
+    padding: 0;
+
+    overflow: hidden;
+
+    border-radius: inherit;
+
+    background: var(--bego-white);
+}
+
+
+/* =====================================================
+   IMAGE
+===================================================== */
+
+.bego-drivers__image {
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 1;
+
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    max-width: none;
+    max-height: none;
+
+    object-fit: cover;
+
+    object-position: center;
+
+    transition:
+        transform var(--transition);
+}
+
+
+.bego-drivers__image-wrapper:hover
+.bego-drivers__image {
+    transform: scale(1.02);
+}
+
+
+/* =====================================================
+   OVERLAY BLANCO
+   SOLO NEGRO / BLANCO
+===================================================== */
+
+.bego-drivers__image-wrapper::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 2;
+
+    width: 58%;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.97) 0%,
+            rgba(255, 255, 255, 0.93) 32%,
+            rgba(255, 255, 255, 0.72) 58%,
+            rgba(255, 255, 255, 0.22) 82%,
+            rgba(255, 255, 255, 0) 100%
+        );
+
+    pointer-events: none;
+}
+
+
+/* =====================================================
+   DESACTIVAR DECORACIÓN ANTERIOR
+===================================================== */
+
+.bego-drivers__image-wrapper::after {
+    display: none;
+}
+
+
+/* =====================================================
+   CONTENIDO SOBRE LA IMAGEN
+===================================================== */
+
+.bego-drivers__content {
+    position: relative;
+
+    z-index: 5;
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 25px;
+
+    width: 52%;
+
+    min-height: 720px;
+
+    padding:
+        90px
+        0
+        90px
+        70px;
+}
+
+
+/* =====================================================
+   NÚMERO
+   OCULTO PARA UN DISEÑO MÁS PREMIUM
+===================================================== */
+
+.bego-drivers__number {
+    display: none;
+}
+
+
+/* =====================================================
+   TEXTO
+===================================================== */
+
+.bego-drivers__text {
+    max-width: 520px;
+}
+
+
+.bego-drivers__label {
+    display: block;
+
+    margin-bottom: 20px;
+
+    color: var(--bego-black-60);
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.18em;
+}
+
+
+.bego-drivers__text h3 {
+    margin: 0;
+
+    color: var(--bego-black);
+
+    font-size: clamp(
+        52px,
+        6vw,
+        88px
+    );
+
+    line-height: 0.9;
+
+    letter-spacing: -0.065em;
+
+    font-weight: 650;
+}
+
+
+.bego-drivers__text h3 span {
+    display: block;
+
+    color: var(--bego-black-60);
+}
+
+
+.bego-drivers__text p {
+    max-width: 440px;
+
+    margin: 30px 0 0;
+
+    color: var(--bego-black-60);
+
+    font-size: 16px;
+
+    line-height: 1.7;
+}
+
+
+/* =====================================================
+   LÍNEA DECORATIVA
+===================================================== */
+
+.bego-drivers__text p::before {
+    content: "";
+
+    display: block;
+
+    width: 64px;
+    height: 2px;
+
+    margin-bottom: 25px;
+
+    background: var(--bego-black);
+}
+
+
+/* =====================================================
+   BUTTON
+===================================================== */
+
+.bego-drivers__button {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 18px;
+
+    margin-top: 35px;
+
+    padding:
+        8px
+        8px
+        8px
+        24px;
+
+    border-radius: 999px;
+
+    background: var(--bego-black);
+
+    color: var(--bego-white);
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    text-decoration: none;
+
+    transition:
+        transform var(--transition),
+        opacity var(--transition);
+}
+
+
+.bego-drivers__button:hover {
+    transform: translateY(-4px);
+
+    opacity: 0.92;
+}
+
+
+/* =====================================================
+   ARROW
+===================================================== */
+
+.bego-drivers__arrow {
+    width: 44px;
+    height: 44px;
+
+    display: grid;
+
+    place-items: center;
+
+    border-radius: 50%;
+
+    background: var(--bego-white);
+
+    color: var(--bego-black);
+
+    font-size: 19px;
+}
+
+
+/* =====================================================
+   BENEFICIOS
+===================================================== */
+
+.bego-drivers__benefits {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            3,
+            1fr
+        );
+
+    margin-top: 100px;
+
+    border-top:
+        1px solid
+        rgba(
+            0,
+            0,
+            0,
+            0.10
+        );
+
+    border-bottom:
+        1px solid
+        rgba(
+            0,
+            0,
+            0,
+            0.10
+        );
+}
+
+
+.bego-drivers__benefit {
+    min-height: 250px;
+
+    padding: 35px 30px;
+}
+
+
+.bego-drivers__benefit
++ .bego-drivers__benefit {
+    border-left:
+        1px solid
+        rgba(
+            0,
+            0,
+            0,
+            0.10
+        );
+}
+
+
+.bego-drivers__benefit-number {
+    display: block;
+
+    margin-bottom: 35px;
+
+    color: var(--bego-black-60);
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.16em;
+}
+
+
+.bego-drivers__benefit h3 {
+    margin: 0;
+
+    color: var(--bego-black);
+
+    font-size: 32px;
+
+    line-height: 1;
+
+    letter-spacing: -0.04em;
+
+    font-weight: 650;
+}
+
+
+.bego-drivers__benefit p {
+    max-width: 300px;
+
+    margin: 16px 0 0;
+
+    color: var(--bego-black-60);
+
+    font-size: 14px;
+
+    line-height: 1.65;
+}
+
+
+/* =====================================================
+   CTA FINAL
+===================================================== */
+
+.bego-drivers__cta {
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 40px;
+
+    margin-top: 100px;
+
+    padding:
+        55px
+        60px;
+
+    overflow: hidden;
+
+    border-radius: 30px;
+
+    background: var(--bego-black);
+
+    color: var(--bego-white);
+}
+
+
+.bego-drivers__cta > div {
+    position: relative;
+
+    z-index: 2;
+}
+
+
+.bego-drivers__cta span:first-child {
+    display: block;
+
+    margin-bottom: 15px;
+
+    color: var(--bego-white-60);
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.17em;
+}
+
+
+.bego-drivers__cta h3 {
+    margin: 0;
+
+    color: var(--bego-white);
+
+    font-size: clamp(
+        36px,
+        4vw,
+        58px
+    );
+
+    line-height: 0.95;
+
+    letter-spacing: -0.05em;
+
+    font-weight: 650;
+}
+
+
+.bego-drivers__cta h3 strong {
+    color: var(--bego-white-60);
+
+    font-weight: inherit;
+}
+
+
+/* =====================================================
+   CTA BUTTON
+===================================================== */
+
+.bego-drivers__cta-button {
+    position: relative;
+
+    z-index: 2;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 20px;
+
+    padding:
+        8px
+        8px
+        8px
+        24px;
+
+    border-radius: 999px;
+
+    background: var(--bego-white);
+
+    color: var(--bego-black);
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    text-decoration: none;
+
+    transition:
+        transform var(--transition);
+}
+
+
+.bego-drivers__cta-button:hover {
+    transform: translateY(-4px);
+}
+
+
+.bego-drivers__cta-button span:last-child {
+    width: 48px;
+    height: 48px;
+
+    display: grid;
+
+    place-items: center;
+
+    border-radius: 50%;
+
+    background: var(--bego-black);
+
+    color: var(--bego-white);
+
+    font-size: 20px;
+}
+
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width: 1000px) {
+
+    .bego-drivers {
+        width: calc(100% - 48px);
+
+        padding: 80px 0;
+    }
+
+
+    .bego-drivers__header {
+        margin-bottom: 55px;
+    }
+
+
+    .bego-drivers__main {
+        min-height: 620px;
+    }
+
+
+    .bego-drivers__image-wrapper::before {
+        width: 70%;
+
+        background:
+            linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0.97) 0%,
+                rgba(255, 255, 255, 0.90) 40%,
+                rgba(255, 255, 255, 0.50) 72%,
+                rgba(255, 255, 255, 0) 100%
+            );
+    }
+
+
+    .bego-drivers__content {
+        width: 62%;
+
+        min-height: 620px;
+
+        padding:
+            70px
+            0
+            70px
+            50px;
+    }
+
+
+    .bego-drivers__text h3 {
+        font-size: clamp(
+            48px,
+            6vw,
+            72px
+        );
+    }
+
+
+    .bego-drivers__benefits {
+        margin-top: 70px;
+    }
+
+
+    .bego-drivers__cta {
+        padding: 45px;
+    }
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 700px) {
+
+    .bego-drivers__benefits {
+        grid-template-columns: repeat(3, 1fr);
+        margin-top: 60px;
+    }
+
+    .bego-drivers__benefit {
+        min-height: auto;
+        padding: 25px 12px;
+    }
+
+    .bego-drivers__benefit + .bego-drivers__benefit {
+        border-left: 1px solid rgba(0, 0, 0, 0.10);
+        border-top: none;
+    }
+
+    .bego-drivers__benefit-number {
+        margin-bottom: 20px;
+        font-size: 9px;
+    }
+
+    .bego-drivers__benefit h3 {
+        font-size: 20px;
+    }
+
+    .bego-drivers__benefit p {
+        max-width: none;
+        font-size: 11px;
+        line-height: 1.5;
+    }
+
+}
+
+
+/* =====================================================
+   MOBILE PEQUEÑO
+===================================================== */
+
+@media (max-width: 480px) {
+
+    .bego-drivers {
+        width: calc(100% - 24px);
+
+        padding: 45px 0;
+    }
+
+
+    .bego-drivers__header h2 {
+        font-size: 44px;
+    }
+
+
+    .bego-drivers__main {
+        min-height: 650px;
+
+        border-radius: 20px;
+    }
+
+
+    .bego-drivers__image {
+        object-position: 63% center;
+    }
+
+
+    .bego-drivers__content {
+        min-height: 650px;
+
+        padding:
+            40px
+            18px
+            30px;
+    }
+
+
+    .bego-drivers__label {
+        font-size: 9px;
+
+        letter-spacing: 0.15em;
+    }
+
+
+    .bego-drivers__text h3 {
+        font-size: 36px;
+    }
+
+
+    .bego-drivers__text p {
+        max-width: 300px;
+
+        font-size: 14px;
+    }
+
+
+    .bego-drivers__button {
+        padding-left: 20px;
+    }
+
+
+    .bego-drivers__arrow {
+        width: 40px;
+        height: 40px;
+    }
+
+
+    .bego-drivers__cta {
+        padding:
+            32px
+            22px;
+    }
+
+
+    .bego-drivers__cta h3 {
+        font-size: 36px;
+    }
+
+}

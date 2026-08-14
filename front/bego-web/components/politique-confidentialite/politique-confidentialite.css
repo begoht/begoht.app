@@ -1,0 +1,644 @@
+/* =====================================================
+   BEGO
+   POLITIQUE DE CONFIDENTIALITÉ
+===================================================== */
+
+
+/* =====================================================
+   HERO
+===================================================== */
+
+.bego-privacy-hero {
+
+    width: min(
+        calc(100% - 48px),
+        var(--container)
+    );
+
+    margin: 0 auto;
+
+    padding:
+        155px
+        0
+        110px;
+}
+
+
+.bego-privacy-hero__inner {
+
+    max-width: 950px;
+}
+
+
+/* =====================================================
+   EYEBROW
+===================================================== */
+
+.bego-privacy-hero__eyebrow {
+
+    display: block;
+
+    margin-bottom: 25px;
+
+    color: var(--bego-black-60);
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: .18em;
+}
+
+
+/* =====================================================
+   TITLE
+===================================================== */
+
+.bego-privacy-hero h1 {
+
+    margin: 0;
+
+    color: var(--bego-black);
+
+    font-size: clamp(
+        58px,
+        8vw,
+        110px
+    );
+
+    line-height: .88;
+
+    letter-spacing: -.065em;
+
+    font-weight: 650;
+}
+
+
+.bego-privacy-hero h1 span {
+
+    display: block;
+
+    color: var(--bego-black-60);
+}
+
+
+/* =====================================================
+   DESCRIPTION
+===================================================== */
+
+.bego-privacy-hero p {
+
+    max-width: 650px;
+
+    margin: 40px 0 0;
+
+    color: var(--bego-black-60);
+
+    font-size: 17px;
+
+    line-height: 1.7;
+}
+
+
+/* =====================================================
+   DATE
+===================================================== */
+
+.bego-privacy-hero__date {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    margin-top: 35px;
+
+    color: var(--bego-black-60);
+
+    font-size: 12px;
+}
+
+
+.bego-privacy-hero__date strong {
+
+    color: var(--bego-black);
+
+    font-weight: 700;
+}
+
+
+/* =====================================================
+   MAIN
+===================================================== */
+
+.bego-privacy {
+
+    width: min(
+        calc(100% - 48px),
+        var(--container)
+    );
+
+    margin: 0 auto;
+
+    display: grid;
+
+    grid-template-columns:
+        250px
+        minmax(0, 760px);
+
+    gap: 100px;
+
+    padding:
+        40px
+        0
+        130px;
+}
+
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+
+.bego-privacy__nav {
+
+    position: sticky;
+
+    top: 110px;
+
+    align-self: start;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+
+.bego-privacy__nav > span {
+
+    margin-bottom: 20px;
+
+    color: var(--bego-black-60);
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: .18em;
+}
+
+
+.bego-privacy__nav a {
+
+    position: relative;
+
+    padding:
+        8px
+        0;
+
+    color: var(--bego-black-60);
+
+    font-size: 13px;
+
+    line-height: 1.4;
+
+    text-decoration: none;
+
+    transition:
+        color var(--transition),
+        transform var(--transition);
+}
+
+
+.bego-privacy__nav a:hover {
+
+    color: var(--bego-black);
+
+    transform: translateX(5px);
+}
+
+
+/* =====================================================
+   CONTENT
+===================================================== */
+
+.bego-privacy__content {
+
+    min-width: 0;
+}
+
+
+/* =====================================================
+   SECTION
+===================================================== */
+
+.bego-privacy__section {
+
+    padding:
+        0
+        0
+        90px;
+
+    margin-bottom: 90px;
+
+    border-bottom:
+        1px solid
+        rgba(
+            0,
+            0,
+            0,
+            .10
+        );
+
+    scroll-margin-top: 110px;
+}
+
+
+.bego-privacy__section:last-child {
+
+    margin-bottom: 0;
+
+    border-bottom: 0;
+}
+
+
+
+/* =====================================================
+   TITLE
+===================================================== */
+
+.bego-privacy__section h2 {
+
+    margin: 0 0 30px;
+
+    color: var(--bego-black);
+
+    font-size: clamp(
+        36px,
+        4vw,
+        58px
+    );
+
+    line-height: .95;
+
+    letter-spacing: -.05em;
+
+    font-weight: 650;
+}
+
+
+/* =====================================================
+   PARAGRAPHS
+===================================================== */
+
+.bego-privacy__section p {
+
+    max-width: 700px;
+
+    margin: 0 0 22px;
+
+    color: var(--bego-black-60);
+
+    font-size: 15px;
+
+    line-height: 1.8;
+}
+
+
+/* =====================================================
+   LIST
+===================================================== */
+
+.bego-privacy__section ul {
+
+    max-width: 700px;
+
+    margin: 30px 0 0;
+
+    padding: 0;
+
+    list-style: none;
+}
+
+
+.bego-privacy__section li {
+
+    position: relative;
+
+    padding:
+        14px
+        0
+        14px
+        25px;
+
+    border-top:
+        1px solid
+        rgba(
+            0,
+            0,
+            0,
+            .08
+        );
+
+    color: var(--bego-black-60);
+
+    font-size: 15px;
+
+    line-height: 1.65;
+}
+
+
+.bego-privacy__section li:last-child {
+
+    border-bottom:
+        1px solid
+        rgba(
+            0,
+            0,
+            0,
+            .08
+        );
+}
+
+
+.bego-privacy__section li::before {
+
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+
+    top: 25px;
+
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: var(--bego-black);
+}
+
+
+/* =====================================================
+   CONTACT
+===================================================== */
+
+.bego-privacy__section--contact {
+
+    padding:
+        45px;
+
+    border: 0;
+
+    border-radius: 28px;
+
+    background: var(--bego-black);
+}
+
+
+.bego-privacy__section--contact
+
+
+.bego-privacy__section--contact h2 {
+
+    color: var(--bego-white);
+}
+
+
+.bego-privacy__section--contact p {
+
+    color: var(--bego-white-60);
+}
+
+
+/* =====================================================
+   CONTACT BUTTON
+===================================================== */
+
+.bego-privacy__contact-button {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 18px;
+
+    margin-top: 20px;
+
+    padding:
+        8px
+        8px
+        8px
+        24px;
+
+    border-radius: 999px;
+
+    background: var(--bego-white);
+
+    color: var(--bego-black);
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    text-decoration: none;
+
+    transition:
+        transform var(--transition);
+}
+
+
+.bego-privacy__contact-button:hover {
+
+    transform: translateY(-4px);
+}
+
+
+.bego-privacy__contact-button span:last-child {
+
+    width: 44px;
+    height: 44px;
+
+    display: grid;
+
+    place-items: center;
+
+    border-radius: 50%;
+
+    background: var(--bego-black);
+
+    color: var(--bego-white);
+
+    font-size: 18px;
+}
+
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width: 1000px) {
+
+    .bego-privacy {
+
+        grid-template-columns:
+            190px
+            minmax(0, 1fr);
+
+        gap: 60px;
+    }
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 700px) {
+
+    .bego-privacy-hero {
+
+        width: calc(100% - 32px);
+
+        padding:
+            110px
+            0
+            70px;
+    }
+
+
+    .bego-privacy-hero h1 {
+
+        font-size: 52px;
+    }
+
+
+    .bego-privacy-hero p {
+
+        font-size: 15px;
+
+        margin-top: 30px;
+    }
+
+
+    .bego-privacy {
+
+        width: calc(100% - 32px);
+
+        display: block;
+
+        padding-bottom: 80px;
+    }
+
+
+    /* NAVIGATION */
+
+    .bego-privacy__nav {
+
+        position: relative;
+
+        top: auto;
+
+        margin-bottom: 70px;
+
+        padding:
+            25px;
+
+        border:
+            1px solid
+            rgba(
+                0,
+                0,
+                0,
+                .10
+            );
+
+        border-radius: 20px;
+    }
+
+
+    .bego-privacy__nav a {
+
+        padding: 9px 0;
+    }
+
+
+    /* CONTENT */
+
+    .bego-privacy__section {
+
+        padding-bottom: 65px;
+
+        margin-bottom: 65px;
+    }
+
+
+    .bego-privacy__section h2 {
+
+        font-size: 40px;
+    }
+
+
+    .bego-privacy__section p {
+
+        font-size: 14px;
+
+        line-height: 1.75;
+    }
+
+
+    .bego-privacy__section li {
+
+        font-size: 14px;
+    }
+
+
+    .bego-privacy__section--contact {
+
+        padding: 30px 25px;
+
+        border-radius: 22px;
+    }
+
+}
+
+
+/* =====================================================
+   MOBILE PETIT
+===================================================== */
+
+@media (max-width: 480px) {
+
+    .bego-privacy-hero {
+
+        width: calc(100% - 24px);
+
+        padding:
+            95px
+            0
+            60px;
+    }
+
+
+    .bego-privacy-hero h1 {
+
+        font-size: 43px;
+    }
+
+
+    .bego-privacy {
+
+        width: calc(100% - 24px);
+    }
+
+
+    .bego-privacy__section h2 {
+
+        font-size: 36px;
+    }
+
+}

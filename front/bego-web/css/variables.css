@@ -1,0 +1,33 @@
+:root {
+    /* =========================
+       BEGO — BLACK & WHITE
+    ========================= */
+
+    --bego-black: #000000;
+    --bego-black-soft: #050505;
+    --bego-surface: #0a0a0a;
+
+    --bego-white: #ffffff;
+
+    /* Blanco con transparencia */
+    --bego-white-90: rgba(255, 255, 255, 0.90);
+    --bego-white-75: rgba(255, 255, 255, 0.75);
+    --bego-white-60: rgba(255, 255, 255, 0.60);
+    --bego-white-45: rgba(255, 255, 255, 0.45);
+    --bego-white-25: rgba(255, 255, 255, 0.25);
+    --bego-white-15: rgba(255, 255, 255, 0.15);
+    --bego-white-10: rgba(255, 255, 255, 0.10);
+    --bego-white-08: rgba(255, 255, 255, 0.08);
+
+    --bego-border: rgba(255, 255, 255, 0.15);
+
+    --header-height: 82px;
+
+    --container: 1440px;
+
+    --radius-sm: 10px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+
+    --transition: 220ms ease;
+}

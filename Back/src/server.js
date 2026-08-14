@@ -165,6 +165,7 @@ app.get("/readyz", async (req, res) => {
 
 const driverPath = path.resolve(__dirname, "../../front-driver/www");
 const pasajeroPath = path.resolve(__dirname, "../../front/www");
+const begoWebPath = path.resolve(__dirname, "../../front/bego-web");
 const downloadsPath = path.resolve(__dirname, "../../downloads");
 const allowedDownloadFiles = Object.freeze({
   "bego-pasajero.apk": "bego-pasajero.apk",
@@ -172,10 +173,41 @@ const allowedDownloadFiles = Object.freeze({
 });
 
 app.get("/", (req, res) => {
-  res.sendFile(path.join(pasajeroPath, "landing.html"));
+  res.sendFile(path.join(begoWebPath, "index.html"));
 });
 
 app.use("/driver", express.static(driverPath));
+app.use("/front/bego-web", express.static(begoWebPath));
+app.use("/front/www", express.static(pasajeroPath));
+app.use("/front-driver/www", express.static(driverPath));
+
+app.get("/pedir-viaje", (req, res) => {
+  res.redirect(302, "/app.html");
+});
+
+app.get(["/viajes", "/reservas", "/premium", "/tarifas"], (req, res) => {
+  res.redirect(302, "/app.html");
+});
+
+app.get(["/motoristas", "/motoristas/ventajas", "/motoristas/requisitos"], (req, res) => {
+  res.redirect(302, "/driver/registro.html");
+});
+
+app.get("/motoristas/app", (req, res) => {
+  res.redirect(302, "/download/bego-motorista.apk");
+});
+
+app.get(["/contacto", "/empresas"], (req, res) => {
+  res.redirect(302, "/paginas/soporte-chat.html");
+});
+
+app.get(["/seguridad", "/faq"], (req, res) => {
+  res.redirect(302, "/front/bego-web/components/centre-aide/centre-aide.html");
+});
+
+app.get("/terminos", (req, res) => {
+  res.redirect(302, "/legal.html");
+});
 
 app.get(["/download/:apk", "/downloads/:apk"], (req, res) => {
   const fileName = allowedDownloadFiles[req.params.apk];

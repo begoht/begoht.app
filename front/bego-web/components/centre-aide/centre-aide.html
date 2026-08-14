@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Centre d'aide — BeGO
+    </title>
+
+
+    <!-- VARIABLES -->
+
+    <link
+        rel="stylesheet"
+        href="/front/bego-web/css/variables.css"
+    >
+
+
+    <!-- RESET -->
+
+    <link
+        rel="stylesheet"
+        href="/front/bego-web/css/reset.css"
+    >
+
+
+    <!-- HEADER -->
+
+    <link
+        rel="stylesheet"
+        href="/front/bego-web/components/header/header.css"
+    >
+
+
+    <!-- FOOTER -->
+
+    <link
+        rel="stylesheet"
+        href="/front/bego-web/components/footer/footer.css"
+    >
+
+
+    <!-- HELP -->
+
+    <link
+        rel="stylesheet"
+        href="/front/bego-web/components/centre-aide/centre-aide.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <div id="header-container"></div>
+
+
+
+    <main>
+
+
+        <!-- =================================================
+             HERO
+        ================================================== -->
+
+        <section class="bego-help-hero">
+
+
+            <div class="bego-help-hero__inner">
+
+
+                <span class="bego-help-hero__eyebrow">
+                    CENTRE D'AIDE
+                </span>
+
+
+                <h1>
+                    Comment pouvons-nous
+                    <span>vous aider ?</span>
+                </h1>
+
+
+                <p>
+                    Retrouvez rapidement les réponses
+                    à vos questions concernant BeGO.
+                </p>
+
+
+                <!-- SEARCH -->
+
+                <div class="bego-help-search">
+
+                    <span class="bego-help-search__icon">
+                        ⌕
+                    </span>
+
+                    <input
+                        type="search"
+                        id="helpSearch"
+                        placeholder="Rechercher une question..."
+                        autocomplete="off"
+                    >
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             CATEGORIES
+        ================================================== -->
+
+        <section class="bego-help-categories">
+
+
+            <div class="bego-help-section-header">
+
+                <span>
+                    BESOIN D'AIDE ?
+                </span>
+
+                <h2>
+                    Choisissez une catégorie.
+                </h2>
+
+            </div>
+
+
+
+            <div class="bego-help-grid">
+
+
+                <!-- VOYAGES -->
+
+                <a
+                    href="#voyages"
+                    class="bego-help-card"
+                >
+
+                    <span class="bego-help-card__number">
+                        01
+                    </span>
+
+                    <div>
+
+                        <h3>
+                            Voyages
+                        </h3>
+
+                        <p>
+                            Demander, suivre ou
+                            annuler un voyage.
+                        </p>
+
+                    </div>
+
+                    <span class="bego-help-card__arrow">
+                        ↗
+                    </span>
+
+                </a>
+
+
+
+                <!-- PAIEMENT -->
+
+                <a
+                    href="#paiement"
+                    class="bego-help-card"
+                >
+
+                    <span class="bego-help-card__number">
+                        02
+                    </span>
+
+                    <div>
+
+                        <h3>
+                            Paiement
+                        </h3>
+
+                        <p>
+                            Modes de paiement,
+                            tarifs et facturation.
+                        </p>
+
+                    </div>
+
+                    <span class="bego-help-card__arrow">
+                        ↗
+                    </span>
+
+                </a>
+
+
+
+                <!-- COMPTE -->
+
+                <a
+                    href="#compte"
+                    class="bego-help-card"
+                >
+
+                    <span class="bego-help-card__number">
+                        03
+                    </span>
+
+                    <div>
+
+                        <h3>
+                            Mon compte
+                        </h3>
+
+                        <p>
+                            Profil, connexion et
+                            paramètres du compte.
+                        </p>
+
+                    </div>
+
+                    <span class="bego-help-card__arrow">
+                        ↗
+                    </span>
+
+                </a>
+
+
+
+                <!-- SÉCURITÉ -->
+
+                <a
+                    href="#securite"
+                    class="bego-help-card"
+                >
+
+                    <span class="bego-help-card__number">
+                        04
+                    </span>
+
+                    <div>
+
+                        <h3>
+                            Sécurité
+                        </h3>
+
+                        <p>
+                            Tout savoir sur votre
+                            sécurité avec BeGO.
+                        </p>
+
+                    </div>
+
+                    <span class="bego-help-card__arrow">
+                        ↗
+                    </span>
+
+                </a>
+
+
+
+                <!-- MOTORISTAS -->
+
+                <a
+                    href="#motoristes"
+                    class="bego-help-card"
+                >
+
+                    <span class="bego-help-card__number">
+                        05
+                    </span>
+
+                    <div>
+
+                        <h3>
+                            Motoristes
+                        </h3>
+
+                        <p>
+                            Informations pour les
+                            chauffeurs BeGO.
+                        </p>
+
+                    </div>
+
+                    <span class="bego-help-card__arrow">
+                        ↗
+                    </span>
+
+                </a>
+
+
+
+                <!-- APPLICATION -->
+
+                <a
+                    href="#application"
+                    class="bego-help-card"
+                >
+
+                    <span class="bego-help-card__number">
+                        06
+                    </span>
+
+                    <div>
+
+                        <h3>
+                            Application
+                        </h3>
+
+                        <p>
+                            Utilisation et problèmes
+                            liés à l'application.
+                        </p>
+
+                    </div>
+
+                    <span class="bego-help-card__arrow">
+                        ↗
+                    </span>
+
+                </a>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             QUESTIONS FRÉQUENTES
+        ================================================== -->
+
+        <section
+            class="bego-help-faq"
+            id="faq"
+        >
+
+
+            <div class="bego-help-section-header">
+
+                <span>
+                    QUESTIONS FRÉQUENTES
+                </span>
+
+                <h2>
+                    Les réponses aux questions
+                    les plus courantes.
+                </h2>
+
+            </div>
+
+
+
+            <div class="bego-help-faq__list">
+
+
+                <!-- FAQ 01 -->
+
+                <article
+                    class="bego-help-faq__item"
+                    id="voyages"
+                >
+
+                    <button
+                        class="bego-help-faq__question"
+                        type="button"
+                    >
+
+                        <span>
+                            Comment demander un voyage ?
+                        </span>
+
+                        <span class="bego-help-faq__plus">
+                            +
+                        </span>
+
+                    </button>
+
+
+                    <div class="bego-help-faq__answer">
+
+                        <p>
+                            Ouvre l'application BeGO,
+                            indique ta destination,
+                            vérifie les informations du voyage
+                            puis confirme ta demande.
+                        </p>
+
+                    </div>
+
+                </article>
+
+
+
+                <!-- FAQ 02 -->
+
+                <article
+                    class="bego-help-faq__item"
+                    id="paiement"
+                >
+
+                    <button
+                        class="bego-help-faq__question"
+                        type="button"
+                    >
+
+                        <span>
+                            Quels modes de paiement sont disponibles ?
+                        </span>
+
+                        <span class="bego-help-faq__plus">
+                            +
+                        </span>
+
+                    </button>
+
+
+                    <div class="bego-help-faq__answer">
+
+                        <p>
+                            Les modes de paiement disponibles
+                            sont affichés directement dans
+                            l'application lors de la demande
+                            de votre voyage.
+                        </p>
+
+                    </div>
+
+                </article>
+
+
+
+                <!-- FAQ 03 -->
+
+                <article
+                    class="bego-help-faq__item"
+                    id="compte"
+                >
+
+                    <button
+                        class="bego-help-faq__question"
+                        type="button"
+                    >
+
+                        <span>
+                            Comment modifier les informations de mon compte ?
+                        </span>
+
+                        <span class="bego-help-faq__plus">
+                            +
+                        </span>
+
+                    </button>
+
+
+                    <div class="bego-help-faq__answer">
+
+                        <p>
+                            Accède à ton profil depuis
+                            l'application BeGO puis ouvre
+                            les paramètres de ton compte.
+                        </p>
+
+                    </div>
+
+                </article>
+
+
+
+                <!-- FAQ 04 -->
+
+                <article
+                    class="bego-help-faq__item"
+                    id="securite"
+                >
+
+                    <button
+                        class="bego-help-faq__question"
+                        type="button"
+                    >
+
+                        <span>
+                            Que faire en cas de problème pendant un voyage ?
+                        </span>
+
+                        <span class="bego-help-faq__plus">
+                            +
+                        </span>
+
+                    </button>
+
+
+                    <div class="bego-help-faq__answer">
+
+                        <p>
+                            Si tu rencontres un problème,
+                            utilise les options d'aide disponibles
+                            dans l'application ou contacte
+                            directement le support BeGO.
+                        </p>
+
+                    </div>
+
+                </article>
+
+
+
+                <!-- FAQ 05 -->
+
+                <article
+                    class="bego-help-faq__item"
+                    id="motoristes"
+                >
+
+                    <button
+                        class="bego-help-faq__question"
+                        type="button"
+                    >
+
+                        <span>
+                            Comment devenir motorista BeGO ?
+                        </span>
+
+                        <span class="bego-help-faq__plus">
+                            +
+                        </span>
+
+                    </button>
+
+
+                    <div class="bego-help-faq__answer">
+
+                        <p>
+                            Consulte la section Motoristes
+                            pour découvrir les conditions,
+                            les documents nécessaires et
+                            les étapes d'inscription.
+                        </p>
+
+                    </div>
+
+                </article>
+
+
+
+                <!-- FAQ 06 -->
+
+                <article
+                    class="bego-help-faq__item"
+                    id="application"
+                >
+
+                    <button
+                        class="bego-help-faq__question"
+                        type="button"
+                    >
+
+                        <span>
+                            Que faire si l'application ne fonctionne pas ?
+                        </span>
+
+                        <span class="bego-help-faq__plus">
+                            +
+                        </span>
+
+                    </button>
+
+
+                    <div class="bego-help-faq__answer">
+
+                        <p>
+                            Vérifie ta connexion internet,
+                            redémarre l'application et assure-toi
+                            d'utiliser la dernière version disponible.
+                        </p>
+
+                    </div>
+
+                </article>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             CONTACT
+        ================================================== -->
+
+        <section class="bego-help-contact">
+
+
+            <div class="bego-help-contact__content">
+
+                <span>
+                    BESOIN D'AIDE ?
+                </span>
+
+                <h2>
+                    Nous sommes là
+                    <strong>pour vous.</strong>
+                </h2>
+
+                <p>
+                    Si tu ne trouves pas la réponse
+                    à ta question, notre équipe peut
+                    t'aider.
+                </p>
+
+            </div>
+
+
+            <a
+                href="/contacto"
+                class="bego-help-contact__button"
+            >
+
+                <span>
+                    Contacter BeGO
+                </span>
+
+                <span>
+                    ↗
+                </span>
+
+            </a>
+
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <div id="footer-container"></div>
+
+
+
+    <!-- =====================================================
+         SCRIPTS
+    ====================================================== -->
+
+    <script>
+
+        async function loadComponent(
+            selector,
+            file
+        ) {
+
+            const element =
+                document.querySelector(selector);
+
+            if (!element) return;
+
+
+            try {
+
+                const response =
+                    await fetch(file);
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        `No se pudo cargar ${file}`
+                    );
+
+                }
+
+
+                element.innerHTML =
+                    await response.text();
+
+
+            } catch (error) {
+
+                console.error(error);
+
+            }
+
+        }
+
+
+
+        async function init() {
+
+
+            await loadComponent(
+                "#header-container",
+                "/front/bego-web/components/header/header.html"
+            );
+
+
+            await loadComponent(
+                "#footer-container",
+                "/front/bego-web/components/footer/footer.html"
+            );
+
+
+            const headerScript =
+                document.createElement("script");
+
+
+            headerScript.src =
+                "/front/bego-web/components/header/header.js";
+
+
+            document.body.appendChild(
+                headerScript
+            );
+
+
+        }
+
+
+        init();
+
+    </script>
+
+
+    <script
+        src="/front/bego-web/components/centre-aide/centre-aide.js"
+    ></script>
+
+
+</body>
+
+</html>

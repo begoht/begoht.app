@@ -1,0 +1,932 @@
+/* =====================================================
+   BEGO FOOTER
+   BLACK & WHITE ONLY
+===================================================== */
+
+.bego-footer {
+
+    position:
+        relative;
+
+    overflow:
+        hidden;
+
+    background:
+        var(--bego-black);
+
+    border-top:
+        1px solid
+        var(--bego-white-10);
+}
+
+
+/* =====================================================
+   BIG CTA
+===================================================== */
+
+.bego-footer__cta {
+
+    position:
+        relative;
+
+    width:
+        min(
+            calc(100% - 48px),
+            var(--container)
+        );
+
+    min-height:
+        420px;
+
+    margin:
+        80px auto 0;
+
+    padding:
+        64px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        70px;
+
+    overflow:
+        hidden;
+
+    border-radius:
+        32px;
+
+    background:
+        var(--bego-surface);
+
+    border:
+        1px solid
+        var(--bego-white-10);
+}
+
+
+/* =====================================================
+   DECORATIVE CIRCLE
+===================================================== */
+
+.bego-footer__cta::before {
+
+    content:
+        "";
+
+    position:
+        absolute;
+
+    width:
+        520px;
+
+    height:
+        520px;
+
+    right:
+        -180px;
+
+    top:
+        -260px;
+
+    border-radius:
+        50%;
+
+    border:
+        1px solid
+        var(--bego-white-10);
+
+    pointer-events:
+        none;
+}
+
+
+.bego-footer__cta::after {
+
+    content:
+        "";
+
+    position:
+        absolute;
+
+    width:
+        700px;
+
+    height:
+        700px;
+
+    right:
+        -280px;
+
+    top:
+        -350px;
+
+    border-radius:
+        50%;
+
+    border:
+        1px solid
+        var(--bego-white-08);
+
+    pointer-events:
+        none;
+}
+
+
+/* =====================================================
+   CTA CONTENT
+   TEXTO IZQUIERDO
+===================================================== */
+
+.bego-footer__cta-content {
+
+    position:
+        relative;
+
+    z-index:
+        2;
+
+    flex:
+        1;
+
+    min-width:
+        0;
+
+    max-width:
+        600px;
+}
+
+
+/* =====================================================
+   CTA TITLE
+===================================================== */
+
+.bego-footer__cta h2 {
+
+    max-width:
+        720px;
+
+    margin:
+        0;
+
+    color:
+        var(--bego-white);
+
+    font-size:
+        clamp(
+            48px,
+            6vw,
+            92px
+        );
+
+    line-height:
+        0.94;
+
+    letter-spacing:
+        -0.055em;
+
+    font-weight:
+        650;
+}
+
+
+.bego-footer__cta h2 span {
+
+    display:
+        block;
+
+    color:
+        var(--bego-white);
+}
+
+
+/* =====================================================
+   CTA TEXT
+===================================================== */
+
+.bego-footer__cta p {
+
+    max-width:
+        460px;
+
+    margin:
+        26px 0 0;
+
+    color:
+        var(--bego-white-60);
+
+    font-size:
+        16px;
+
+    line-height:
+        1.6;
+}
+
+
+/* =====================================================
+   CTA VISUAL
+   IMAGEN DERECHA
+===================================================== */
+
+.bego-footer__cta-visual {
+
+    position:
+        relative;
+
+    z-index:
+        2;
+
+    flex:
+        0 1 400px;
+
+    width:
+        500px;
+
+    max-width:
+        100%;
+
+    min-width:
+        0;
+}
+
+
+/* =====================================================
+   CTA IMAGE
+===================================================== */
+
+.bego-footer__cta-image {
+
+    display:
+        block;
+
+    width:
+        100%;
+
+    height:
+        340px;
+
+    object-fit:
+        cover;
+
+    object-position:
+        center;
+
+    border-radius:
+        26px;
+
+    border:
+        1px solid
+        var(--bego-white-10);
+
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.25);
+
+    transition:
+        transform var(--transition);
+}
+
+
+.bego-footer__cta-image:hover {
+
+    transform:
+        scale(1.015);
+}
+
+
+/* =====================================================
+   CTA BUTTON
+   ENCIMA DE LA IMAGEN
+===================================================== */
+
+.bego-footer__cta-button {
+
+    position:
+        absolute;
+
+    z-index:
+        10;
+
+    top:
+        24px;
+
+    right:
+        24px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        20px;
+
+    padding:
+        8px
+        8px
+        8px
+        24px;
+
+    border-radius:
+        999px;
+
+    background:
+        var(--bego-white);
+
+    color:
+        var(--bego-black);
+
+    font-size:
+        15px;
+
+    font-weight:
+        700;
+
+    text-decoration:
+        none;
+
+    white-space:
+        nowrap;
+
+    box-shadow:
+        0 12px 30px
+        rgba(0, 0, 0, 0.25);
+
+    transition:
+        transform var(--transition),
+        background var(--transition),
+        box-shadow var(--transition);
+}
+
+
+.bego-footer__cta-button:hover {
+
+    transform:
+        translateY(-4px);
+
+    background:
+        var(--bego-white-90);
+
+    box-shadow:
+        0 18px 35px
+        rgba(0, 0, 0, 0.30);
+}
+
+
+/* =====================================================
+   CTA ARROW
+===================================================== */
+
+.bego-footer__cta-arrow {
+
+    width:
+        48px;
+
+    height:
+        48px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    flex-shrink:
+        0;
+
+    border-radius:
+        50%;
+
+    background:
+        var(--bego-black);
+
+    color:
+        var(--bego-white);
+
+    font-size:
+        22px;
+}
+
+
+/* =====================================================
+   MAIN FOOTER
+===================================================== */
+
+.bego-footer__main {
+
+    width:
+        min(
+            calc(100% - 48px),
+            var(--container)
+        );
+
+    margin:
+        0 auto;
+
+    padding:
+        100px
+        0
+        90px;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        1.5fr
+        repeat(4, 1fr);
+
+    gap:
+        50px;
+}
+
+
+
+.bego-footer__location {
+
+    color:
+        var(--bego-white);
+
+    font-size:
+        14px;
+}
+
+
+/* =====================================================
+   COLUMNS
+===================================================== */
+
+.bego-footer__column {
+
+    margin-left:
+        50%;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    align-items:
+        flex-start;
+
+    gap:
+        15px;
+}
+
+
+.bego-footer__column h3 {
+
+    margin:
+        0 0 12px;
+
+    color:
+        var(--bego-white);
+
+    font-size:
+        14px;
+
+    font-weight:
+        650;
+}
+
+
+.bego-footer__column h3::after {
+
+    content:
+        "";
+
+    display:
+        block;
+
+    width:
+        24px;
+
+    height:
+        2px;
+
+    margin-top:
+        12px;
+
+    background:
+        var(--bego-white);
+}
+
+
+.bego-footer__column a {
+
+    color:
+        var(--bego-white-45);
+
+    font-size:
+        14px;
+
+    text-decoration:
+        none;
+
+    transition:
+        color var(--transition),
+        transform var(--transition);
+}
+
+
+.bego-footer__column a:hover {
+
+    color:
+        var(--bego-white);
+
+    transform:
+        translateX(4px);
+}
+
+
+/* =====================================================
+   BOTTOM
+===================================================== */
+
+.bego-footer__bottom {
+
+    width:
+        min(
+            calc(100% - 48px),
+            var(--container)
+        );
+
+    margin:
+        0 auto;
+
+    padding:
+        28px
+        0
+        34px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        25px;
+
+    border-top:
+        1px solid
+        var(--bego-white-10);
+
+    color:
+        var(--bego-white-45);
+
+    font-size:
+        12px;
+}
+
+
+.bego-footer__socials,
+.bego-footer__legal {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        22px;
+}
+
+
+.bego-footer__socials a,
+.bego-footer__legal a {
+
+    color:
+        var(--bego-white-45);
+
+    text-decoration:
+        none;
+
+    transition:
+        color var(--transition);
+}
+
+
+.bego-footer__socials a:hover,
+.bego-footer__legal a:hover {
+
+    color:
+        var(--bego-white);
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 1000px) {
+
+    .bego-footer__cta {
+
+        padding:
+            50px;
+
+        gap:
+            40px;
+    }
+
+
+    .bego-footer__cta-content {
+
+        max-width:
+            480px;
+    }
+
+
+    .bego-footer__cta h2 {
+
+        font-size:
+            clamp(
+                44px,
+                6vw,
+                68px
+            );
+    }
+
+
+    .bego-footer__cta-visual {
+
+        flex-basis:
+            450px;
+
+        width:
+            450px;
+    }
+
+
+    .bego-footer__cta-image {
+
+        height:
+            300px;
+    }
+
+
+    .bego-footer__main {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 700px) {
+
+    .bego-footer__cta {
+
+        width:
+            calc(100% - 32px);
+
+        min-height:
+            auto;
+
+        margin-top:
+            40px;
+
+        padding:
+            40px 28px;
+
+        display:
+            flex;
+
+        flex-direction:
+            column;
+
+        align-items:
+            stretch;
+
+        gap:
+            35px;
+
+        border-radius:
+            24px;
+    }
+
+
+    .bego-footer__cta-content {
+
+        width:
+            100%;
+
+        max-width:
+            none;
+    }
+
+
+    .bego-footer__cta h2 {
+
+        font-size:
+            48px;
+    }
+
+
+    .bego-footer__cta p {
+
+        max-width:
+            100%;
+
+        margin-top:
+            24px;
+    }
+
+
+    .bego-footer__cta-visual {
+
+        width:
+            100%;
+
+        flex:
+            none;
+    }
+
+
+    .bego-footer__cta-image {
+
+        width:
+            100%;
+
+        height:
+            300px;
+
+        border-radius:
+            20px;
+    }
+
+
+    .bego-footer__cta-button {
+
+        top:
+            18px;
+
+        right:
+            18px;
+
+        padding:
+            7px
+            7px
+            7px
+            18px;
+
+        gap:
+            12px;
+
+        font-size:
+            14px;
+    }
+
+
+    .bego-footer__cta-arrow {
+
+        width:
+            42px;
+
+        height:
+            42px;
+
+        font-size:
+            19px;
+    }
+
+
+    .bego-footer__main {
+
+        width:
+            calc(100% - 32px);
+
+        padding:
+            70px 0;
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+        gap:
+            50px 30px;
+    }
+
+
+    .bego-footer__bottom {
+
+        width:
+            calc(100% - 32px);
+
+        flex-direction:
+            column;
+
+        align-items:
+            flex-start;
+    }
+}
+
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media (max-width: 480px) {
+
+    .bego-footer__cta {
+
+        padding:
+            34px 22px;
+
+        gap:
+            30px;
+    }
+
+
+    .bego-footer__cta h2 {
+
+        font-size:
+            42px;
+    }
+
+
+    .bego-footer__cta p {
+
+        font-size:
+            15px;
+    }
+
+
+    .bego-footer__cta-image {
+
+        height:
+            250px;
+
+        border-radius:
+            18px;
+    }
+
+
+    .bego-footer__cta-button {
+
+        top:
+            14px;
+
+        right:
+            14px;
+
+        padding:
+            6px
+            6px
+            6px
+            16px;
+
+        gap:
+            10px;
+
+        font-size:
+            13px;
+    }
+
+
+    .bego-footer__cta-arrow {
+
+        width:
+            38px;
+
+        height:
+            38px;
+
+        font-size:
+            18px;
+    }
+
+
+    .bego-footer__main {
+
+        grid-template-columns:
+            1fr;
+    }
+
+
+
+    .bego-footer__socials,
+    .bego-footer__legal {
+
+        flex-wrap:
+            wrap;
+
+        gap:
+            14px;
+    }
+}

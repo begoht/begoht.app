@@ -1,0 +1,959 @@
+/* =====================================================
+   BEGO
+   À PROPOS DE BEGO
+===================================================== */
+
+
+/* =====================================================
+   SECTION
+===================================================== */
+
+.bego-about {
+    position: relative;
+
+    width: min(
+        calc(100% - 48px),
+        var(--container)
+    );
+
+    margin: 0 auto;
+
+    padding: 100px 0;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.bego-about__header {
+    max-width: 900px;
+
+    margin: 0 0 70px;
+}
+
+
+.bego-about__eyebrow {
+    display: inline-block;
+
+    margin-bottom: 24px;
+
+    color: var(--bego-black-60);
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.18em;
+}
+
+
+.bego-about__header h2 {
+    margin: 0;
+
+    color: var(--bego-black);
+
+    font-size: clamp(
+        60px,
+        8vw,
+        110px
+    );
+
+    line-height: 0.88;
+
+    letter-spacing: -0.065em;
+
+    font-weight: 650;
+}
+
+
+.bego-about__header h2 span {
+    display: block;
+
+    color: var(--bego-black-60);
+}
+
+
+/* =====================================================
+   CONTENIDO PRINCIPAL
+   IMAGEN + TEXTO SUPERPUESTO
+===================================================== */
+
+.bego-about__main {
+    position: relative;
+
+    display: block;
+
+    width: 100%;
+
+    min-height: 720px;
+
+    overflow: hidden;
+
+    border-radius: 32px;
+
+    background: var(--bego-white);
+}
+
+
+/* =====================================================
+   IMAGE WRAPPER
+===================================================== */
+
+.bego-about__image-wrapper {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    min-height: 0;
+
+    display: block;
+
+    padding: 0;
+
+    overflow: hidden;
+
+    border-radius: inherit;
+
+    background: var(--bego-white);
+}
+
+
+/* =====================================================
+   IMAGE
+===================================================== */
+
+.bego-about__image {
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 1;
+
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    max-width: none;
+    max-height: none;
+
+    object-fit: cover;
+
+    object-position: center;
+
+    transition:
+        transform var(--transition);
+}
+
+
+.bego-about__image-wrapper:hover
+.bego-about__image {
+    transform: scale(1.02);
+}
+
+
+/* =====================================================
+   OVERLAY BLANCO
+   SOLO NEGRO / BLANCO
+===================================================== */
+
+.bego-about__image-wrapper::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 2;
+
+    width: 58%;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.97) 0%,
+            rgba(255, 255, 255, 0.93) 32%,
+            rgba(255, 255, 255, 0.72) 58%,
+            rgba(255, 255, 255, 0.22) 82%,
+            rgba(255, 255, 255, 0) 100%
+        );
+
+    pointer-events: none;
+}
+
+
+/* =====================================================
+   DESACTIVAR DECORACIONES ANTERIORES
+===================================================== */
+
+.bego-about__image-wrapper::after {
+    display: none;
+}
+
+
+/* =====================================================
+   CONTENIDO SOBRE LA IMAGEN
+===================================================== */
+
+.bego-about__content {
+    position: relative;
+
+    z-index: 5;
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 25px;
+
+    width: 52%;
+
+    min-height: 720px;
+
+    padding:
+        90px
+        0
+        90px
+        70px;
+}
+
+
+/* =====================================================
+   NÚMERO
+   OCULTO PARA EL DISEÑO PREMIUM
+===================================================== */
+
+.bego-about__number {
+    display: none;
+}
+
+
+/* =====================================================
+   TEXTO
+===================================================== */
+
+.bego-about__text {
+    max-width: 520px;
+}
+
+
+.bego-about__text h3 {
+    margin: 0;
+
+    color: var(--bego-black);
+
+    font-size: clamp(
+        52px,
+        6vw,
+        88px
+    );
+
+    line-height: 0.90;
+
+    letter-spacing: -0.065em;
+
+    font-weight: 650;
+}
+
+
+/* =====================================================
+   LÍNEA ANTES DEL TEXTO
+===================================================== */
+
+.bego-about__text p:first-of-type::before {
+    content: "";
+
+    display: block;
+
+    width: 64px;
+    height: 2px;
+
+    margin-bottom: 25px;
+
+    background: var(--bego-black);
+}
+
+
+/* =====================================================
+   PÁRRAFOS
+===================================================== */
+
+.bego-about__text p {
+    max-width: 440px;
+
+    margin: 28px 0 0;
+
+    color: var(--bego-black-60);
+
+    font-size: 16px;
+
+    line-height: 1.7;
+}
+
+
+/* =====================================================
+   LINK
+===================================================== */
+
+.bego-about__link {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 18px;
+
+    margin-top: 35px;
+
+    padding:
+        8px
+        8px
+        8px
+        24px;
+
+    border-radius: 999px;
+
+    background: var(--bego-black);
+
+    color: var(--bego-white);
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    text-decoration: none;
+
+    transition:
+        transform var(--transition),
+        opacity var(--transition);
+}
+
+
+.bego-about__link:hover {
+    transform: translateY(-4px);
+
+    opacity: 0.92;
+}
+
+
+/* =====================================================
+   FLECHA
+===================================================== */
+
+.bego-about__arrow {
+    width: 44px;
+    height: 44px;
+
+    display: grid;
+
+    place-items: center;
+
+    border-radius: 50%;
+
+    background: var(--bego-white);
+
+    color: var(--bego-black);
+
+    font-size: 19px;
+}
+
+
+/* =====================================================
+   VALEURS
+===================================================== */
+
+.bego-about__values {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            3,
+            1fr
+        );
+
+    margin-top: 100px;
+
+    border-top:
+        1px solid
+        rgba(
+            0,
+            0,
+            0,
+            0.10
+        );
+
+    border-bottom:
+        1px solid
+        rgba(
+            0,
+            0,
+            0,
+            0.10
+        );
+}
+
+
+.bego-about__value {
+    min-height: 250px;
+
+    padding:
+        35px
+        30px;
+}
+
+
+.bego-about__value
++ .bego-about__value {
+    border-left:
+        1px solid
+        rgba(
+            0,
+            0,
+            0,
+            0.10
+        );
+}
+
+
+/* =====================================================
+   VALEUR NUMBER
+===================================================== */
+
+.bego-about__value-number {
+    display: block;
+
+    margin-bottom: 35px;
+
+    color: var(--bego-black-60);
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.16em;
+}
+
+
+/* =====================================================
+   VALEUR TITRE
+===================================================== */
+
+.bego-about__value h3 {
+    margin: 0;
+
+    color: var(--bego-black);
+
+    font-size: 32px;
+
+    line-height: 1;
+
+    letter-spacing: -0.04em;
+
+    font-weight: 650;
+}
+
+
+/* =====================================================
+   VALEUR DESCRIPTION
+===================================================== */
+
+.bego-about__value p {
+    max-width: 300px;
+
+    margin: 16px 0 0;
+
+    color: var(--bego-black-60);
+
+    font-size: 14px;
+
+    line-height: 1.65;
+}
+
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width: 1000px) {
+
+    .bego-about {
+        width: calc(100% - 48px);
+
+        padding: 80px 0;
+    }
+
+
+    /* ---------------------------------------------
+       HEADER
+    --------------------------------------------- */
+
+    .bego-about__header {
+        margin-bottom: 55px;
+    }
+
+
+    /* ---------------------------------------------
+       HERO
+    --------------------------------------------- */
+
+    .bego-about__main {
+        min-height: 620px;
+    }
+
+
+    /* ---------------------------------------------
+       IMAGE OVERLAY
+    --------------------------------------------- */
+
+    .bego-about__image-wrapper::before {
+        width: 70%;
+
+        background:
+            linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0.97) 0%,
+                rgba(255, 255, 255, 0.90) 40%,
+                rgba(255, 255, 255, 0.50) 72%,
+                rgba(255, 255, 255, 0) 100%
+            );
+    }
+
+
+    /* ---------------------------------------------
+       CONTENT
+    --------------------------------------------- */
+
+    .bego-about__content {
+        width: 62%;
+
+        min-height: 620px;
+
+        padding:
+            70px
+            0
+            70px
+            50px;
+    }
+
+
+    .bego-about__text h3 {
+        font-size: clamp(
+            48px,
+            6vw,
+            72px
+        );
+    }
+
+
+    /* ---------------------------------------------
+       VALUES
+    --------------------------------------------- */
+
+    .bego-about__values {
+        margin-top: 70px;
+    }
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 700px) {
+
+
+    .bego-about {
+        width: calc(100% - 32px);
+
+        padding: 60px 0;
+    }
+
+
+    /* ---------------------------------------------
+       HEADER
+    --------------------------------------------- */
+
+    .bego-about__header {
+        margin-bottom: 45px;
+    }
+
+
+    .bego-about__header h2 {
+        font-size: 52px;
+    }
+
+
+    /* ---------------------------------------------
+       HERO
+    --------------------------------------------- */
+
+    .bego-about__main {
+        min-height: 700px;
+
+        border-radius: 24px;
+    }
+
+
+    /* ---------------------------------------------
+       IMAGE
+    --------------------------------------------- */
+
+    .bego-about__image {
+        object-position: 62% center;
+    }
+
+
+    /* ---------------------------------------------
+       MOBILE OVERLAY
+    --------------------------------------------- */
+
+    .bego-about__image-wrapper::before {
+        width: 100%;
+
+        background:
+            linear-gradient(
+                180deg,
+                rgba(255, 255, 255, 0.98) 0%,
+                rgba(255, 255, 255, 0.94) 32%,
+                rgba(255, 255, 255, 0.72) 52%,
+                rgba(255, 255, 255, 0.20) 72%,
+                rgba(255, 255, 255, 0) 100%
+            );
+    }
+
+
+    /* ---------------------------------------------
+       CONTENT
+    --------------------------------------------- */
+
+    .bego-about__content {
+        width: 100%;
+
+        min-height: 700px;
+
+        padding:
+            55px
+            25px
+            40px;
+
+        gap: 0;
+    }
+
+
+    .bego-about__text {
+        width: 100%;
+
+        max-width: 100%;
+    }
+
+
+    .bego-about__text h3 {
+        font-size: 44px;
+
+        line-height: 0.92;
+    }
+
+
+    .bego-about__text p {
+        max-width: 330px;
+
+        margin-top: 25px;
+
+        font-size: 14px;
+
+        line-height: 1.6;
+    }
+
+
+    .bego-about__text p:first-of-type::before {
+        width: 48px;
+
+        margin-bottom: 20px;
+    }
+
+
+    .bego-about__link {
+        margin-top: 28px;
+    }
+
+
+      /* ---------------------------------------------
+       VALUES
+    --------------------------------------------- */
+
+    .bego-about__values {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+
+        margin-top: 60px;
+    }
+
+
+    .bego-about__value {
+        min-height: auto;
+
+        padding:
+            25px
+            12px;
+    }
+
+
+    .bego-about__value
+    + .bego-about__value {
+        border-left:
+            1px solid
+            rgba(
+                0,
+                0,
+                0,
+                0.10
+            );
+
+        border-top: none;
+    }
+
+
+    .bego-about__value-number {
+        margin-bottom: 20px;
+
+        font-size: 9px;
+    }
+
+
+    .bego-about__value h3 {
+        font-size: 20px;
+
+        line-height: 1;
+    }
+
+
+    .bego-about__value p {
+        max-width: none;
+
+        margin-top: 12px;
+
+        font-size: 11px;
+
+        line-height: 1.5;
+    }
+
+}
+
+
+/* =====================================================
+   MOBILE PEQUEÑO
+===================================================== */
+
+@media (max-width: 480px) {
+
+    .bego-about {
+        width: calc(100% - 24px);
+
+        padding: 45px 0;
+    }
+
+
+    /* ---------------------------------------------
+       HEADER
+    --------------------------------------------- */
+
+    .bego-about__header h2 {
+        font-size: 44px;
+    }
+
+
+    /* ---------------------------------------------
+       HERO
+    --------------------------------------------- */
+
+    .bego-about__main {
+        min-height: 650px;
+
+        border-radius: 20px;
+    }
+
+
+    .bego-about__image {
+        object-position: 63% center;
+    }
+
+
+    /* ---------------------------------------------
+       CONTENT
+    --------------------------------------------- */
+
+    .bego-about__content {
+        min-height: 650px;
+
+        padding:
+            40px
+            18px
+            30px;
+    }
+
+
+    .bego-about__eyebrow {
+        font-size: 10px;
+
+        letter-spacing: 0.15em;
+    }
+
+
+    .bego-about__text h3 {
+        font-size: 36px;
+    }
+
+
+    .bego-about__text p {
+        max-width: 300px;
+
+        font-size: 14px;
+    }
+
+
+    /* ---------------------------------------------
+       BUTTON
+    --------------------------------------------- */
+
+    .bego-about__link {
+        padding-left: 20px;
+    }
+
+
+    .bego-about__arrow {
+        width: 40px;
+        height: 40px;
+    }
+
+
+    /* ---------------------------------------------
+       VALUES
+    --------------------------------------------- */
+
+    .bego-about__value {
+        padding:
+            30px
+            20px;
+    }
+
+}
+
+
+/* =====================================================
+   DOWNLOAD CTA — CENTRADO
+===================================================== */
+
+.bego-download-cta {
+
+    width: 100%;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding: 70px 20px 90px;
+}
+
+
+.bego-download-cta__button {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 16px;
+
+    padding: 7px 7px 7px 24px;
+
+    border-radius: 999px;
+
+    background: #000;
+
+    color: #fff;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    letter-spacing: -.01em;
+
+    transition:
+        transform .3s ease,
+        box-shadow .3s ease;
+}
+
+
+.bego-download-cta__button:hover {
+
+    transform: translateY(-4px);
+
+    box-shadow:
+        0 15px 35px rgba(0, 0, 0, .18);
+}
+
+
+.bego-download-cta__arrow {
+
+    width: 44px;
+    height: 44px;
+
+    display: grid;
+
+    place-items: center;
+
+    border-radius: 50%;
+
+    background: #fff;
+
+    color: #000;
+
+    font-size: 18px;
+
+    transition:
+        transform .3s ease;
+}
+
+
+.bego-download-cta__button:hover
+.bego-download-cta__arrow {
+
+    transform: rotate(5deg);
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 600px) {
+
+    .bego-download-cta {
+
+        padding:
+            55px
+            20px
+            70px;
+    }
+
+    .bego-download-cta__button {
+
+        font-size: 13px;
+
+        padding-left: 20px;
+    }
+
+    .bego-download-cta__arrow {
+
+        width: 40px;
+        height: 40px;
+    }
+
+}
