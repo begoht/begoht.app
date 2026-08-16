@@ -1,6 +1,6 @@
 /* =====================================================
    BEGO
-   CHAUFFEURS
+   ENVOI
 ===================================================== */
 
 
@@ -8,7 +8,7 @@
    SECTION
 ===================================================== */
 
-.bego-drivers {
+.bego-envoi {
 
     position: relative;
 
@@ -19,7 +19,7 @@
 
     margin: 0 auto;
 
-    padding: 100px 0 0;
+    padding: 100px 0;
 }
 
 
@@ -27,7 +27,7 @@
    HEADER
 ===================================================== */
 
-.bego-drivers__header {
+.bego-envoi__header {
 
     max-width: 900px;
 
@@ -35,7 +35,7 @@
 }
 
 
-.bego-drivers__eyebrow {
+.bego-envoi__eyebrow {
 
     display: inline-block;
 
@@ -51,7 +51,7 @@
 }
 
 
-.bego-drivers__header h2 {
+.bego-envoi__header h2 {
 
     margin: 0;
 
@@ -71,7 +71,7 @@
 }
 
 
-.bego-drivers__header h2 span {
+.bego-envoi__header h2 span {
 
     display: block;
 
@@ -79,7 +79,7 @@
 }
 
 
-.bego-drivers__header p {
+.bego-envoi__header p {
 
     max-width: 600px;
 
@@ -95,9 +95,10 @@
 
 /* =====================================================
    CONTENIDO PRINCIPAL
+   IMAGEN + TEXTO SUPERPUESTO
 ===================================================== */
 
-.bego-drivers__main {
+.bego-envoi__main {
 
     position: relative;
 
@@ -119,7 +120,7 @@
    IMAGE WRAPPER
 ===================================================== */
 
-.bego-drivers__image-wrapper {
+.bego-envoi__image-wrapper {
 
     position: absolute;
 
@@ -128,6 +129,8 @@
     width: 100%;
 
     height: 100%;
+
+    min-height: 0;
 
     display: block;
 
@@ -145,7 +148,7 @@
    IMAGE
 ===================================================== */
 
-.bego-drivers__image {
+.bego-envoi__image {
 
     position: absolute;
 
@@ -172,18 +175,18 @@
 }
 
 
-.bego-drivers__image-wrapper:hover
-.bego-drivers__image {
+.bego-envoi__image-wrapper:hover
+.bego-envoi__image {
 
     transform: scale(1.02);
 }
 
 
 /* =====================================================
-   OVERLAY
+   OVERLAY BLANCO
 ===================================================== */
 
-.bego-drivers__image-wrapper::before {
+.bego-envoi__image-wrapper::before {
 
     content: "";
 
@@ -210,10 +213,10 @@
 
 
 /* =====================================================
-   DESACTIVAR DECORACIÓN ANTERIOR
+   DESACTIVAR DECORACIÓN
 ===================================================== */
 
-.bego-drivers__image-wrapper::after {
+.bego-envoi__image-wrapper::after {
 
     display: none;
 }
@@ -223,7 +226,7 @@
    CONTENIDO SOBRE LA IMAGEN
 ===================================================== */
 
-.bego-drivers__content {
+.bego-envoi__content {
 
     position: relative;
 
@@ -251,7 +254,7 @@
    NÚMERO
 ===================================================== */
 
-.bego-drivers__number {
+.bego-envoi__number {
 
     display: none;
 }
@@ -261,13 +264,13 @@
    TEXTO
 ===================================================== */
 
-.bego-drivers__text {
+.bego-envoi__text {
 
     max-width: 520px;
 }
 
 
-.bego-drivers__label {
+.bego-envoi__label {
 
     display: block;
 
@@ -283,7 +286,7 @@
 }
 
 
-.bego-drivers__text h3 {
+.bego-envoi__text h3 {
 
     margin: 0;
 
@@ -303,7 +306,7 @@
 }
 
 
-.bego-drivers__text h3 span {
+.bego-envoi__text h3 span {
 
     display: block;
 
@@ -311,7 +314,7 @@
 }
 
 
-.bego-drivers__text p {
+.bego-envoi__text p {
 
     max-width: 440px;
 
@@ -329,7 +332,7 @@
    LÍNEA DECORATIVA
 ===================================================== */
 
-.bego-drivers__text p::before {
+.bego-envoi__text p::before {
 
     content: "";
 
@@ -349,7 +352,7 @@
    BUTTON
 ===================================================== */
 
-.bego-drivers__button {
+.bego-envoi__button {
 
     display: inline-flex;
 
@@ -383,10 +386,9 @@
 }
 
 
-.bego-drivers__button:hover {
+.bego-envoi__button:hover {
 
-    transform:
-        translateY(-4px);
+    transform: translateY(-4px);
 
     opacity: 0.92;
 }
@@ -396,7 +398,7 @@
    ARROW
 ===================================================== */
 
-.bego-drivers__arrow {
+.bego-envoi__arrow {
 
     width: 44px;
 
@@ -418,16 +420,15 @@
 
 /* =====================================================
    BENEFICIOS
+   SOBRE LA IMAGEN — PARTE INFERIOR
 ===================================================== */
 
-.bego-drivers__benefits {
+.bego-envoi__benefits {
 
     position: absolute;
 
     left: 0;
-
     right: 0;
-
     bottom: 0;
 
     z-index: 10;
@@ -435,7 +436,10 @@
     display: grid;
 
     grid-template-columns:
-        repeat(3, 1fr);
+        repeat(
+            3,
+            1fr
+        );
 
     width: 100%;
 
@@ -443,10 +447,20 @@
 
     border-top:
         1px solid
-        rgba(0, 0, 0, 0.10);
+        rgba(
+            0,
+            0,
+            0,
+            0.10
+        );
 
     background:
-        rgba(255, 255, 255, 0.94);
+        rgba(
+            255,
+            255,
+            255,
+            0.94
+        );
 
     backdrop-filter: blur(18px);
 
@@ -454,7 +468,11 @@
 }
 
 
-.bego-drivers__benefit {
+/* =====================================================
+   BENEFIT
+===================================================== */
+
+.bego-envoi__benefit {
 
     min-height: 190px;
 
@@ -470,22 +488,36 @@
 }
 
 
-.bego-drivers__benefit
-+ .bego-drivers__benefit {
+/* =====================================================
+   SEPARADORES
+===================================================== */
+
+.bego-envoi__benefit
++ .bego-envoi__benefit {
 
     border-left:
         1px solid
-        rgba(0, 0, 0, 0.10);
+        rgba(
+            0,
+            0,
+            0,
+            0.10
+        );
 }
 
 
-.bego-drivers__benefit-number {
+/* =====================================================
+   NUMBER
+===================================================== */
+
+.bego-envoi__benefit-number {
 
     display: block;
 
     margin-bottom: 20px;
 
-    color: var(--bego-black-60);
+    color:
+        var(--bego-black-60);
 
     font-size: 10px;
 
@@ -495,11 +527,16 @@
 }
 
 
-.bego-drivers__benefit h3 {
+/* =====================================================
+   TITLE
+===================================================== */
+
+.bego-envoi__benefit h3 {
 
     margin: 0;
 
-    color: var(--bego-black);
+    color:
+        var(--bego-black);
 
     font-size: 30px;
 
@@ -511,25 +548,29 @@
 }
 
 
-.bego-drivers__benefit p {
+/* =====================================================
+   DESCRIPTION
+===================================================== */
+
+.bego-envoi__benefit p {
 
     max-width: 300px;
 
     margin: 12px 0 0;
 
-    color: var(--bego-black-60);
+    color:
+        var(--bego-black-60);
 
     font-size: 13px;
 
     line-height: 1.55;
 }
 
-
 /* =====================================================
    CTA FINAL
 ===================================================== */
 
-.bego-drivers__cta {
+.bego-envoi__cta {
 
     position: relative;
 
@@ -541,7 +582,7 @@
 
     gap: 40px;
 
-    margin-top: 70px;
+    margin-top: 100px;
 
     padding:
         55px
@@ -557,7 +598,7 @@
 }
 
 
-.bego-drivers__cta > div {
+.bego-envoi__cta > div {
 
     position: relative;
 
@@ -565,7 +606,7 @@
 }
 
 
-.bego-drivers__cta h3 {
+.bego-envoi__cta h3 {
 
     margin: 0;
 
@@ -585,7 +626,7 @@
 }
 
 
-.bego-drivers__cta h3 strong {
+.bego-envoi__cta h3 strong {
 
     color: var(--bego-white-60);
 
@@ -597,7 +638,7 @@
    CTA BUTTON
 ===================================================== */
 
-.bego-drivers__cta-button {
+.bego-envoi__cta-button {
 
     position: relative;
 
@@ -634,14 +675,13 @@
 }
 
 
-.bego-drivers__cta-button:hover {
+.bego-envoi__cta-button:hover {
 
-    transform:
-        translateY(-4px);
+    transform: translateY(-4px);
 }
 
 
-.bego-drivers__cta-button span:last-child {
+.bego-envoi__cta-button span:last-child {
 
     width: 48px;
 
@@ -667,31 +707,54 @@
 
 @media (max-width: 1000px) {
 
-    .bego-drivers {
+    .bego-envoi__benefits {
 
-        width:
-            calc(100% - 48px);
-
-        padding:
-            80px
-            0
-            0;
+        min-height: 170px;
     }
 
 
-    .bego-drivers__header {
+    .bego-envoi__benefit {
+
+        min-height: 170px;
+
+        padding:
+            25px
+            24px;
+    }
+
+
+    .bego-envoi__benefit h3 {
+
+        font-size: 26px;
+    }
+
+
+    .bego-envoi__benefit p {
+
+        font-size: 12px;
+    }
+
+    .bego-envoi {
+
+        width: calc(100% - 48px);
+
+        padding: 80px 0;
+    }
+
+
+    .bego-envoi__header {
 
         margin-bottom: 55px;
     }
 
 
-    .bego-drivers__main {
+    .bego-envoi__main {
 
         min-height: 620px;
     }
 
 
-    .bego-drivers__image-wrapper::before {
+    .bego-envoi__image-wrapper::before {
 
         width: 70%;
 
@@ -706,7 +769,7 @@
     }
 
 
-    .bego-drivers__content {
+    .bego-envoi__content {
 
         width: 62%;
 
@@ -720,7 +783,7 @@
     }
 
 
-    .bego-drivers__text h3 {
+    .bego-envoi__text h3 {
 
         font-size: clamp(
             48px,
@@ -730,37 +793,13 @@
     }
 
 
-    .bego-drivers__benefits {
+    .bego-envoi__benefits {
 
-        min-height: 170px;
+        margin-top: 70px;
     }
 
 
-    .bego-drivers__benefit {
-
-        min-height: 170px;
-
-        padding:
-            25px
-            24px;
-    }
-
-
-    .bego-drivers__benefit h3 {
-
-        font-size: 26px;
-    }
-
-
-    .bego-drivers__benefit p {
-
-        font-size: 12px;
-    }
-
-
-    .bego-drivers__cta {
-
-        margin-top: 60px;
+    .bego-envoi__cta {
 
         padding: 45px;
     }
@@ -774,83 +813,19 @@
 
 @media (max-width: 700px) {
 
-    .bego-drivers {
-
-        width:
-            calc(100% - 32px);
-
-        padding:
-            60px
-            0
-            0;
-    }
-
-
-    .bego-drivers__header {
-
-        margin-bottom: 40px;
-    }
-
-
-    .bego-drivers__header h2 {
-
-        font-size: 58px;
-    }
-
-
-    .bego-drivers__header p {
-
-        margin-top: 25px;
-
-        font-size: 15px;
-    }
-
-
-    .bego-drivers__main {
-
-        min-height: 650px;
-
-        border-radius: 24px;
-    }
-
-
-    .bego-drivers__content {
-
-        width: 100%;
-
-        min-height: 650px;
-
-        padding:
-            45px
-            24px
-            30px;
-    }
-
-
-    .bego-drivers__text h3 {
-
-        font-size: 42px;
-    }
-
-
-    .bego-drivers__text p {
-
-        max-width: 360px;
-
-        font-size: 14px;
-    }
-
-
-    .bego-drivers__benefits {
+    .bego-envoi__benefits {
 
         grid-template-columns:
-            repeat(3, 1fr);
+            repeat(
+                3,
+                1fr
+            );
 
         min-height: 145px;
     }
 
 
-    .bego-drivers__benefit {
+    .bego-envoi__benefit {
 
         min-height: 145px;
 
@@ -860,18 +835,7 @@
     }
 
 
-    .bego-drivers__benefit
-    + .bego-drivers__benefit {
-
-        border-left:
-            1px solid
-            rgba(0, 0, 0, 0.10);
-
-        border-top: none;
-    }
-
-
-    .bego-drivers__benefit-number {
+    .bego-envoi__benefit-number {
 
         margin-bottom: 12px;
 
@@ -879,13 +843,13 @@
     }
 
 
-    .bego-drivers__benefit h3 {
+    .bego-envoi__benefit h3 {
 
         font-size: 18px;
     }
 
 
-    .bego-drivers__benefit p {
+    .bego-envoi__benefit p {
 
         max-width: none;
 
@@ -894,22 +858,6 @@
         font-size: 10px;
 
         line-height: 1.4;
-    }
-
-
-    .bego-drivers__cta {
-
-        flex-direction: column;
-
-        align-items: flex-start;
-
-        gap: 30px;
-
-        margin-top: 50px;
-
-        padding:
-            38px
-            24px;
     }
 
 }
@@ -921,100 +869,13 @@
 
 @media (max-width: 480px) {
 
-    .bego-drivers {
-
-        width:
-            calc(100% - 24px);
-
-        padding:
-            50px
-            0
-            0;
-    }
-
-
-    .bego-drivers__header h2 {
-
-        font-size: 44px;
-    }
-
-
-    .bego-drivers__header p {
-
-        font-size: 14px;
-    }
-
-
-    .bego-drivers__main {
-
-        min-height: 650px;
-
-        border-radius: 20px;
-    }
-
-
-    .bego-drivers__image {
-
-        object-position:
-            63%
-            center;
-    }
-
-
-    .bego-drivers__content {
-
-        min-height: 650px;
-
-        padding:
-            40px
-            18px
-            30px;
-    }
-
-
-    .bego-drivers__label {
-
-        font-size: 9px;
-
-        letter-spacing: 0.15em;
-    }
-
-
-    .bego-drivers__text h3 {
-
-        font-size: 36px;
-    }
-
-
-    .bego-drivers__text p {
-
-        max-width: 300px;
-
-        font-size: 14px;
-    }
-
-
-    .bego-drivers__button {
-
-        padding-left: 20px;
-    }
-
-
-    .bego-drivers__arrow {
-
-        width: 40px;
-
-        height: 40px;
-    }
-
-
-    .bego-drivers__benefits {
+    .bego-envoi__benefits {
 
         min-height: 125px;
     }
 
 
-    .bego-drivers__benefit {
+    .bego-envoi__benefit {
 
         min-height: 125px;
 
@@ -1024,7 +885,7 @@
     }
 
 
-    .bego-drivers__benefit-number {
+    .bego-envoi__benefit-number {
 
         margin-bottom: 10px;
 
@@ -1032,33 +893,17 @@
     }
 
 
-    .bego-drivers__benefit h3 {
+    .bego-envoi__benefit h3 {
 
         font-size: 15px;
     }
 
 
-    .bego-drivers__benefit p {
+    .bego-envoi__benefit p {
 
         font-size: 9px;
 
         line-height: 1.35;
-    }
-
-
-    .bego-drivers__cta {
-
-        margin-top: 40px;
-
-        padding:
-            32px
-            22px;
-    }
-
-
-    .bego-drivers__cta h3 {
-
-        font-size: 36px;
     }
 
 }

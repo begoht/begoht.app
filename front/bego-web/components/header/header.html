@@ -14,70 +14,52 @@
             >
         </a>
 
-        <!-- DESKTOP NAVIGATION -->
-        <nav
-            class="bego-nav"
-            aria-label="Navegación principal"
-        >
 
-            <a
-                href="#inicio"
-                class="bego-nav__link"
-            >
+        <!-- DESKTOP NAVIGATION -->
+        <nav class="bego-nav">
+
+            <a href="#inicio" class="bego-nav__link">
                 Accueil
             </a>
 
             <a
-                href="#como-funciona"
-                class="bego-nav__link"
-            >
-                Comment ça marche
-            </a>
-
-            <a
-                href="#viajes"
+                href="#voyages"
                 class="bego-nav__link"
             >
                 Voyages
             </a>
 
-            <a
-                href="#chauffeurs"
-                class="bego-nav__link"
-            >
-                Chauffeurs
+            <a href="#como-funciona" class="bego-nav__link">
+                Comment ça marche
             </a>
 
             <a
-                href="#bego"
+                href="/envoi"
                 class="bego-nav__link"
             >
+                Envoi
+            </a>
+
+            <a href="#chauffeurs" class="bego-nav__link">
+                Chauffeurs
+            </a>
+
+            <a href="#bego" class="bego-nav__link">
                 À propos de BeGO
             </a>
 
         </nav>
 
-        <!-- ACTIONS -->
+
+        <!-- DESKTOP ACTIONS -->
         <div class="bego-header__actions">
 
-            <!-- LANGUAGE -->
-            <button
-                class="bego-language"
-                type="button"
-                aria-label="Seleccionar idioma"
-            >
-                <span class="bego-language__globe">
-                    ◉
-                </span>
-
+            <button class="bego-language" type="button">
+                <span class="bego-language__globe">◉</span>
                 <span>FR</span>
-
-                <span class="bego-language__arrow">
-                    ↓
-                </span>
+                <span class="bego-language__arrow">↓</span>
             </button>
 
-            <!-- LOGIN -->
             <a
                 href="/front/www/registro.html"
                 class="bego-login"
@@ -85,12 +67,32 @@
                 connexion
             </a>
 
-            <!-- PRIMARY CTA -->
             <a
                 href="/pedir-viaje"
                 class="bego-cta"
             >
                 <span>Demande de voyage</span>
+                <span class="bego-cta__arrow">→</span>
+            </a>
+
+        </div>
+
+
+        <!-- MOBILE ACTIONS -->
+        <div class="bego-header__mobile-actions">
+
+            <a
+                href="/front/www/registro.html"
+                class="bego-login"
+            >
+                connexion
+            </a>
+
+            <a
+                href="/pedir-viaje"
+                class="bego-cta"
+            >
+                <span>Demande</span>
 
                 <span class="bego-cta__arrow">
                     →
@@ -99,18 +101,56 @@
 
         </div>
 
-        <!-- MOBILE MENU BUTTON -->
+
+        <!-- MENU BUTTON -->
         <button
             class="bego-menu-button"
             id="bego-menu-button"
             type="button"
             aria-label="Abrir menú"
             aria-expanded="false"
+            aria-controls="bego-mobile-menu"
         >
             <span></span>
             <span></span>
         </button>
 
     </div>
+
+
+    <!-- =================================================
+         MOBILE MENU
+    ================================================= -->
+
+    <nav
+        class="bego-mobile-menu"
+        id="bego-mobile-menu"
+        aria-label="Menú móvil"
+    >
+
+        <a href="#inicio">
+            Accueil
+        </a>
+
+        <a href="#como-funciona">
+            Comment ça marche
+        </a>
+
+        <a href="#voyages">
+            Voyages
+        </a>
+        <a href="#envoi">
+            Envoi
+        </a>
+
+        <a href="#chauffeurs">
+            Chauffeurs
+        </a>
+
+        <a href="#bego">
+            À propos de BeGO
+        </a>
+
+    </nav>
 
 </header>

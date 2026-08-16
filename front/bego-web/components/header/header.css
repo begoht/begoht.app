@@ -4,6 +4,7 @@
 ===================================================== */
 
 .bego-header {
+
     position: fixed;
 
     top: 0;
@@ -14,10 +15,14 @@
     width: 100%;
     height: var(--header-height);
 
-    background: var(--bego-black-soft);
+    background:
+        var(--bego-black-soft);
 
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter:
+        blur(18px);
+
+    -webkit-backdrop-filter:
+        blur(18px);
 
     border-bottom:
         1px solid transparent;
@@ -27,6 +32,7 @@
         border-color var(--transition),
         box-shadow var(--transition);
 }
+
 
 
 /* =====================================================
@@ -47,29 +53,37 @@
 }
 
 
+
 /* =====================================================
    INNER
 ===================================================== */
 
 .bego-header__inner {
 
-    width: min(
-        calc(100% - 48px),
-        var(--container)
-    );
+    width:
+        min(
+            calc(100% - 48px),
+            var(--container)
+        );
 
     height: 100%;
 
-    margin: 0 auto;
+    margin:
+        0 auto;
 
-    display: flex;
+    display:
+        flex;
 
-    align-items: center;
+    align-items:
+        center;
 
-    justify-content: space-between;
+    justify-content:
+        space-between;
 
-    gap: 32px;
+    gap:
+        32px;
 }
+
 
 
 /* =====================================================
@@ -78,54 +92,70 @@
 
 .bego-header__logo {
 
-    display: flex;
+    display:
+        flex;
 
-    align-items: center;
+    align-items:
+        center;
 
-    flex-shrink: 0;
+    flex-shrink:
+        0;
 }
 
 
 .bego-header__logo img {
 
-    width: 112px;
+    width:
+        112px;
 
-    height: auto;
+    height:
+        auto;
 
-    display: block;
+    display:
+        block;
 }
 
 
+
 /* =====================================================
-   NAVIGATION
+   DESKTOP NAVIGATION
 ===================================================== */
 
 .bego-nav {
 
-    display: flex;
+    display:
+        flex;
 
-    align-items: center;
+    align-items:
+        center;
 
-    gap: 34px;
+    gap:
+        34px;
 
-    margin-left: auto;
+    margin-left:
+        auto;
 }
 
 
 .bego-nav__link {
 
-    position: relative;
+    position:
+        relative;
 
     color:
         var(--bego-white-75);
 
-    font-size: 14px;
+    font-size:
+        14px;
 
-    font-weight: 500;
+    font-weight:
+        500;
 
-    text-decoration: none;
+    text-decoration:
+        none;
 
-    white-space: nowrap;
+    white-space:
+        nowrap;
 
     transition:
         color var(--transition);
@@ -139,23 +169,30 @@
 }
 
 
+
 /* =====================================================
    ACTIVE / HOVER LINE
 ===================================================== */
 
 .bego-nav__link::after {
 
-    content: "";
+    content:
+        "";
 
-    position: absolute;
+    position:
+        absolute;
 
-    left: 0;
+    left:
+        0;
 
-    bottom: -10px;
+    bottom:
+        -10px;
 
-    width: 0;
+    width:
+        0;
 
-    height: 2px;
+    height:
+        2px;
 
     background:
         var(--bego-white);
@@ -168,7 +205,8 @@
 .bego-nav__link:hover::after,
 .bego-nav__link.is-active::after {
 
-    width: 100%;
+    width:
+        100%;
 }
 
 
@@ -179,20 +217,26 @@
 }
 
 
+
 /* =====================================================
-   ACTIONS
+   DESKTOP ACTIONS
 ===================================================== */
 
 .bego-header__actions {
 
-    display: flex;
+    display:
+        flex;
 
-    align-items: center;
+    align-items:
+        center;
 
-    gap: 12px;
+    gap:
+        12px;
 
-    flex-shrink: 0;
+    flex-shrink:
+        0;
 }
+
 
 
 /* =====================================================
@@ -201,11 +245,14 @@
 
 .bego-language {
 
-    display: flex;
+    display:
+        flex;
 
-    align-items: center;
+    align-items:
+        center;
 
-    gap: 8px;
+    gap:
+        8px;
 
     padding:
         11px
@@ -224,9 +271,11 @@
     color:
         var(--bego-white);
 
-    cursor: pointer;
+    cursor:
+        pointer;
 
-    font-size: 13px;
+    font-size:
+        13px;
 
     transition:
         background var(--transition),
@@ -249,7 +298,8 @@
     color:
         var(--bego-white);
 
-    font-size: 15px;
+    font-size:
+        15px;
 }
 
 
@@ -260,17 +310,21 @@
 }
 
 
+
 /* =====================================================
    LOGIN
 ===================================================== */
 
 .bego-login {
 
-    display: inline-flex;
+    display:
+        inline-flex;
 
-    align-items: center;
+    align-items:
+        center;
 
-    justify-content: center;
+    justify-content:
+        center;
 
     padding:
         12px
@@ -286,13 +340,17 @@
     color:
         var(--bego-white);
 
-    font-size: 14px;
+    font-size:
+        14px;
 
-    font-weight: 600;
+    font-weight:
+        600;
 
-    text-decoration: none;
+    text-decoration:
+        none;
 
-    white-space: nowrap;
+    white-space:
+        nowrap;
 
     transition:
         background var(--transition),
@@ -314,17 +372,21 @@
 }
 
 
+
 /* =====================================================
    PRIMARY CTA
 ===================================================== */
 
 .bego-cta {
 
-    display: flex;
+    display:
+        flex;
 
-    align-items: center;
+    align-items:
+        center;
 
-    gap: 16px;
+    gap:
+        16px;
 
     padding:
         7px
@@ -341,13 +403,17 @@
     color:
         var(--bego-black);
 
-    font-size: 14px;
+    font-size:
+        14px;
 
-    font-weight: 700;
+    font-weight:
+        700;
 
-    text-decoration: none;
+    text-decoration:
+        none;
 
-    white-space: nowrap;
+    white-space:
+        nowrap;
 
     transition:
         transform var(--transition),
@@ -365,21 +431,27 @@
 }
 
 
+
 /* =====================================================
    CTA ARROW
 ===================================================== */
 
 .bego-cta__arrow {
 
-    width: 34px;
+    width:
+        34px;
 
-    height: 34px;
+    height:
+        34px;
 
-    display: grid;
+    display:
+        grid;
 
-    place-items: center;
+    place-items:
+        center;
 
-    flex-shrink: 0;
+    flex-shrink:
+        0;
 
     border-radius:
         50%;
@@ -390,7 +462,8 @@
     color:
         var(--bego-white);
 
-    font-size: 19px;
+    font-size:
+        19px;
 
     transition:
         transform var(--transition);
@@ -405,29 +478,63 @@
 }
 
 
+
+/* =====================================================
+   MOBILE ACTIONS
+===================================================== */
+
+.bego-header__mobile-actions {
+
+    display:
+        none;
+
+    align-items:
+        center;
+
+    gap:
+        8px;
+
+    margin-left:
+        auto;
+
+    flex-shrink:
+        0;
+}
+
+
+
 /* =====================================================
    MOBILE MENU BUTTON
 ===================================================== */
 
 .bego-menu-button {
 
-    display: none;
+    display:
+        none;
 
-    width: 44px;
+    width:
+        44px;
 
-    height: 44px;
+    height:
+        44px;
 
-    align-items: center;
+    align-items:
+        center;
 
-    justify-content: center;
+    justify-content:
+        center;
 
-    flex-direction: column;
+    flex-direction:
+        column;
 
-    gap: 6px;
+    gap:
+        6px;
 
-    flex-shrink: 0;
+    flex-shrink:
+        0;
 
-    padding: 0;
+    padding:
+        0;
 
     border:
         1px solid
@@ -439,7 +546,8 @@
     background:
         transparent;
 
-    cursor: pointer;
+    cursor:
+        pointer;
 
     transition:
         background var(--transition),
@@ -459,11 +567,14 @@
 
 .bego-menu-button span {
 
-    width: 18px;
+    width:
+        18px;
 
-    height: 1.5px;
+    height:
+        1.5px;
 
-    display: block;
+    display:
+        block;
 
     background:
         var(--bego-white);
@@ -481,27 +592,218 @@
 }
 
 
+
 /* =====================================================
-   RESPONSIVE — TABLET
+   MENU OPEN — HAMBURGER TO X
+===================================================== */
+
+.bego-header.menu-open
+.bego-menu-button span:first-child {
+
+    transform:
+        translateY(3.75px)
+        rotate(45deg);
+}
+
+
+.bego-header.menu-open
+.bego-menu-button span:last-child {
+
+    transform:
+        translateY(-3.75px)
+        rotate(-45deg);
+}
+
+
+
+/* =====================================================
+   MOBILE MENU
+===================================================== */
+
+.bego-mobile-menu {
+
+    display:
+        none;
+
+    position:
+        absolute;
+
+    top:
+        var(--header-height);
+
+    left:
+        0;
+
+    width:
+        100%;
+
+    padding:
+        25px
+        24px
+        30px;
+
+    background:
+        rgba(0, 0, 0, 0.97);
+
+    border-top:
+        1px solid
+        var(--bego-white-15);
+
+    border-bottom:
+        1px solid
+        var(--bego-white-15);
+
+    box-shadow:
+        0 25px 60px
+        rgba(0, 0, 0, 0.45);
+
+    opacity:
+        0;
+
+    transform:
+        translateY(-10px);
+
+    pointer-events:
+        none;
+
+    transition:
+        opacity .25s ease,
+        transform .25s ease;
+}
+
+
+
+/* =====================================================
+   MOBILE MENU OPEN
+===================================================== */
+
+.bego-header.menu-open
+.bego-mobile-menu {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    opacity:
+        1;
+
+    transform:
+        translateY(0);
+
+    pointer-events:
+        auto;
+}
+
+
+
+/* =====================================================
+   MOBILE MENU LINKS
+===================================================== */
+
+.bego-mobile-menu a {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    min-height:
+        60px;
+
+    padding:
+        0
+        4px;
+
+    border-bottom:
+        1px solid
+        var(--bego-white-15);
+
+    color:
+        var(--bego-white);
+
+    font-size:
+        16px;
+
+    font-weight:
+        500;
+
+    text-decoration:
+        none;
+
+    transition:
+        opacity var(--transition),
+        padding var(--transition);
+}
+
+
+.bego-mobile-menu a:last-child {
+
+    border-bottom:
+        none;
+}
+
+
+.bego-mobile-menu a span:last-child {
+
+    color:
+        var(--bego-white-60);
+
+    font-size:
+        18px;
+
+    transition:
+        transform var(--transition);
+}
+
+
+.bego-mobile-menu a:hover {
+
+    opacity:
+        .7;
+
+    padding-left:
+        10px;
+}
+
+
+.bego-mobile-menu a:hover span:last-child {
+
+    transform:
+        translateX(4px);
+}
+
+
+
+/* =====================================================
+   TABLET
 ===================================================== */
 
 @media (max-width: 1100px) {
 
     .bego-header__inner {
 
-        gap: 20px;
+        gap:
+            20px;
     }
 
 
     .bego-nav {
 
-        gap: 20px;
+        gap:
+            20px;
     }
 
 
     .bego-header__actions {
 
-        gap: 7px;
+        gap:
+            7px;
     }
 
 
@@ -518,7 +820,8 @@
         padding-left:
             15px;
 
-        gap: 10px;
+        gap:
+            10px;
     }
 
 
@@ -528,54 +831,142 @@
             10px
             12px;
     }
+
 }
 
 
+
 /* =====================================================
-   RESPONSIVE — MOBILE
+   MOBILE
 ===================================================== */
 
 @media (max-width: 900px) {
 
     .bego-header {
 
-        height: var(--header-height);
+        height:
+            var(--header-height);
     }
 
 
-    .bego-nav,
+    /* Hide desktop navigation */
+
+    .bego-nav {
+
+        display:
+            none;
+    }
+
+
+    /* Hide desktop actions */
+
     .bego-header__actions {
 
-        display: none;
+        display:
+            none;
     }
 
+
+    /* Show mobile actions */
+
+    .bego-header__mobile-actions {
+
+        display:
+            flex;
+    }
+
+
+    /* Show menu button */
 
     .bego-menu-button {
 
-        display: flex;
+        display:
+            flex;
+
+        position:
+            relative;
+
+        z-index:
+            1001;
     }
 
 
     .bego-header__inner {
 
-        width: min(
-            calc(100% - 32px),
-            var(--container)
-        );
+        width:
+            min(
+                calc(100% - 32px),
+                var(--container)
+            );
 
-        gap: 16px;
+        gap:
+            8px;
     }
 
 
     .bego-header__logo img {
 
-        width: 100px;
+        width:
+            100px;
     }
+
+
+    /* =================================================
+       MOBILE LOGIN
+    ================================================= */
+
+    .bego-header__mobile-actions
+    .bego-login {
+
+        padding:
+            9px
+            12px;
+
+        font-size:
+            11px;
+    }
+
+
+    /* =================================================
+       MOBILE CTA
+    ================================================= */
+
+    .bego-header__mobile-actions
+    .bego-cta {
+
+        gap:
+            6px;
+
+        padding:
+            5px
+            5px
+            5px
+            12px;
+
+        font-size:
+            11px;
+    }
+
+
+    .bego-header__mobile-actions
+    .bego-cta__arrow {
+
+        width:
+            30px;
+
+        height:
+            30px;
+
+        font-size:
+            14px;
+    }
+
 }
 
 
+
 /* =====================================================
-   RESPONSIVE — SMALL MOBILE
+   SMALL MOBILE
 ===================================================== */
 
 @media (max-width: 480px) {
@@ -583,20 +974,96 @@
     .bego-header__inner {
 
         width:
-            calc(100% - 24px);
+            calc(100% - 16px);
+
+        gap:
+            5px;
     }
 
 
     .bego-header__logo img {
 
-        width: 92px;
+        width:
+            82px;
+    }
+
+
+    .bego-header__mobile-actions {
+
+        gap:
+            4px;
+    }
+
+
+    .bego-header__mobile-actions
+    .bego-login {
+
+        padding:
+            8px
+            9px;
+
+        font-size:
+            10px;
+    }
+
+
+    .bego-header__mobile-actions
+    .bego-cta {
+
+        padding:
+            4px
+            4px
+            4px
+            8px;
+
+        gap:
+            4px;
+
+        font-size:
+            9px;
+    }
+
+
+    .bego-header__mobile-actions
+    .bego-cta__arrow {
+
+        width:
+            27px;
+
+        height:
+            27px;
+
+        font-size:
+            14px;
     }
 
 
     .bego-menu-button {
 
-        width: 42px;
+        width:
+            40px;
 
-        height: 42px;
+        height:
+            40px;
     }
+
+
+    .bego-mobile-menu {
+
+        padding:
+            20px
+            18px
+            25px;
+    }
+
+
+    .bego-mobile-menu a {
+
+        min-height:
+            56px;
+
+        font-size:
+            15px;
+    }
+
 }

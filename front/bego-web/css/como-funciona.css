@@ -10,20 +10,17 @@
 
 .bego-how {
 
-    position:
-        relative;
+    position: relative;
 
-    width:
-        min(
-            calc(100% - 48px),
-            var(--container)
-        );
+    width: min(
+        calc(100% - 48px),
+        var(--container)
+    );
 
-    margin:
-        0 auto;
+    margin: 0 auto;
 
-    padding:
-        130px 0;
+    padding: 130px 0;
+
 }
 
 
@@ -33,46 +30,35 @@
 
 .bego-how__header {
 
-    max-width:
-        760px;
+    max-width: 760px;
 
-    margin:
-        0 auto 100px;
+    margin: 0 auto 100px;
 
-    text-align:
-        center;
+    text-align: center;
 }
 
 
 .bego-how__eyebrow {
 
-    display:
-        inline-block;
+    display: inline-block;
 
-    margin-bottom:
-        22px;
+    margin-bottom: 22px;
 
-    color:
-        var(--bego-black-60);
+    color: var(--bego-black-60);
 
-    font-size:
-        12px;
+    font-size: 12px;
 
-    font-weight:
-        800;
+    font-weight: 800;
 
-    letter-spacing:
-        0.18em;
+    letter-spacing: 0.18em;
 }
 
 
 .bego-how__header h2 {
 
-    margin:
-        0;
+    margin: 0;
 
-    color:
-        var(--bego-black);
+    color: var(--bego-black);
 
     font-size:
         clamp(
@@ -81,43 +67,33 @@
             82px
         );
 
-    line-height:
-        0.95;
+    line-height: 0.95;
 
-    letter-spacing:
-        -0.055em;
+    letter-spacing: -0.055em;
 
-    font-weight:
-        650;
+    font-weight: 650;
 }
 
 
 .bego-how__header h2 span {
 
-    display:
-        block;
+    display: block;
 
-    color:
-        var(--bego-black-60);
+    color: var(--bego-black-60);
 }
 
 
 .bego-how__header p {
 
-    max-width:
-        580px;
+    max-width: 580px;
 
-    margin:
-        28px auto 0;
+    margin: 28px auto 0;
 
-    color:
-        var(--bego-black-60);
+    color: var(--bego-black-60);
 
-    font-size:
-        17px;
+    font-size: 17px;
 
-    line-height:
-        1.65;
+    line-height: 1.65;
 }
 
 
@@ -128,8 +104,7 @@
 
 .bego-how__steps {
 
-    display:
-        grid;
+    display: grid;
 
     grid-template-columns:
         repeat(
@@ -137,11 +112,9 @@
             minmax(0, 1fr)
         );
 
-    gap:
-        24px;
+    gap: 24px;
 
-    width:
-        100%;
+    width: 100%;
 }
 
 
@@ -151,35 +124,25 @@
 
 .bego-how__step {
 
-    position:
-        relative;
+    position: relative;
 
-    display:
-        flex;
+    display: flex;
 
-    flex-direction:
-        column;
+    flex-direction: column;
 
-    min-height:
-        620px;
+    min-height: 620px;
 
-    margin:
-        0;
+    margin: 0;
 
-    padding:
-        42px;
+    padding: 42px;
 
-    overflow:
-        hidden;
+    overflow: hidden;
 
-    border-radius:
-        30px;
+    border-radius: 30px;
 
-    background:
-        #f5f5f5;
+    background: #f5f5f5;
 
-    direction:
-        ltr;
+    direction: ltr;
 }
 
 
@@ -189,64 +152,47 @@
 
 .bego-how__content {
 
-    position:
-        relative;
+    position: relative;
 
-    z-index:
-        2;
+    z-index: 2;
 
-    display:
-        flex;
+    display: flex;
 
-    align-items:
-        flex-start;
+    align-items: flex-start;
 
-    gap:
-        20px;
+    gap: 20px;
 
-    width:
-        100%;
+    width: 100%;
 }
 
 
 /* =====================================================
-   NUMERO
+   NÚMERO
 ===================================================== */
 
 .bego-how__number {
 
-    flex-shrink:
-        0;
+    flex-shrink: 0;
 
-    width:
-        58px;
+    width: 58px;
 
-    height:
-        58px;
+    height: 58px;
 
-    display:
-        grid;
+    display: grid;
 
-    place-items:
-        center;
+    place-items: center;
 
-    border-radius:
-        50%;
+    border-radius: 50%;
 
-    background:
-        var(--bego-black);
+    background: var(--bego-black);
 
-    color:
-        var(--bego-white);
+    color: var(--bego-white);
 
-    font-size:
-        17px;
+    font-size: 17px;
 
-    font-weight:
-        700;
+    font-weight: 700;
 
-    letter-spacing:
-        -0.03em;
+    letter-spacing: -0.03em;
 }
 
 
@@ -256,40 +202,33 @@
 
 .bego-how__text {
 
-    max-width:
-        400px;
+    min-width: 0;
+
+    max-width: 400px;
 }
 
 
 .bego-how__label {
 
-    display:
-        block;
+    display: block;
 
-    margin-bottom:
-        12px;
+    margin-bottom: 12px;
 
-    color:
-        var(--bego-black-60);
+    color: var(--bego-black-60);
 
-    font-size:
-        10px;
+    font-size: 10px;
 
-    font-weight:
-        800;
+    font-weight: 800;
 
-    letter-spacing:
-        0.16em;
+    letter-spacing: 0.16em;
 }
 
 
 .bego-how__text h3 {
 
-    margin:
-        0;
+    margin: 0;
 
-    color:
-        var(--bego-black);
+    color: var(--bego-black);
 
     font-size:
         clamp(
@@ -298,33 +237,25 @@
             44px
         );
 
-    line-height:
-        0.98;
+    line-height: 0.98;
 
-    letter-spacing:
-        -0.045em;
+    letter-spacing: -0.045em;
 
-    font-weight:
-        650;
+    font-weight: 650;
 }
 
 
 .bego-how__text p {
 
-    max-width:
-        390px;
+    max-width: 390px;
 
-    margin:
-        20px 0 0;
+    margin: 20px 0 0;
 
-    color:
-        var(--bego-black-60);
+    color: var(--bego-black-60);
 
-    font-size:
-        15px;
+    font-size: 15px;
 
-    line-height:
-        1.6;
+    line-height: 1.6;
 }
 
 
@@ -334,41 +265,29 @@
 
 .bego-how__image-wrapper {
 
-    position:
-        relative;
+    position: relative;
 
-    flex:
-        1;
+    flex: 1;
 
-    display:
-        flex;
+    display: flex;
 
-    align-items:
-        center;
+    align-items: center;
 
-    justify-content:
-        center;
+    justify-content: center;
 
-    min-width:
-        0;
+    min-width: 0;
 
-    min-height:
-        320px;
+    min-height: 320px;
 
-    margin-top:
-        30px;
+    margin-top: 30px;
 
-    padding:
-        20px;
+    padding: 20px;
 
-    overflow:
-        hidden;
+    overflow: hidden;
 
-    border-radius:
-        24px;
+    border-radius: 24px;
 
-    background:
-        #ffffff;
+    background: #ffffff;
 }
 
 
@@ -378,32 +297,23 @@
 
 .bego-how__image {
 
-    position:
-        relative;
+    position: relative;
 
-    z-index:
-        2;
+    z-index: 2;
 
-    display:
-        block;
+    display: block;
 
-    width:
-        auto;
+    width: auto;
 
-    max-width:
-        100%;
+    max-width: 100%;
 
-    max-height:
-        390px;
+    max-height: 390px;
 
-    height:
-        auto;
+    height: auto;
 
-    object-fit:
-        contain;
+    object-fit: contain;
 
-    border-radius:
-        16px;
+    border-radius: 16px;
 
     transition:
         transform
@@ -413,8 +323,7 @@
 
 .bego-how__image:hover {
 
-    transform:
-        scale(1.025);
+    transform: scale(1.025);
 }
 
 
@@ -424,23 +333,17 @@
 
 .bego-how__image-wrapper::before {
 
-    content:
-        "";
+    content: "";
 
-    position:
-        absolute;
+    position: absolute;
 
-    width:
-        260px;
+    width: 260px;
 
-    height:
-        260px;
+    height: 260px;
 
-    right:
-        -130px;
+    right: -130px;
 
-    top:
-        -130px;
+    top: -130px;
 
     border:
         1px solid
@@ -451,33 +354,25 @@
             0.06
         );
 
-    border-radius:
-        50%;
+    border-radius: 50%;
 
-    pointer-events:
-        none;
+    pointer-events: none;
 }
 
 
 .bego-how__image-wrapper::after {
 
-    content:
-        "";
+    content: "";
 
-    position:
-        absolute;
+    position: absolute;
 
-    width:
-        320px;
+    width: 320px;
 
-    height:
-        320px;
+    height: 320px;
 
-    left:
-        -160px;
+    left: -160px;
 
-    bottom:
-        -180px;
+    bottom: -180px;
 
     border:
         1px solid
@@ -488,11 +383,9 @@
             0.05
         );
 
-    border-radius:
-        50%;
+    border-radius: 50%;
 
-    pointer-events:
-        none;
+    pointer-events: none;
 }
 
 
@@ -502,13 +395,10 @@
 
 .bego-content-placeholder {
 
-    min-height:
-        400px;
+    min-height: 400px;
 
-    padding:
-        100px 5%;
+    padding: 100px 5%;
 }
-
 
 /* =====================================================
    TABLET
@@ -526,34 +416,81 @@
     }
 
 
-    /*
-       En tablet mantenemos 2 columnas
-       pero reducimos el espacio.
-    */
+    /* =================================================
+       GRID 2 × 2
+    ================================================= */
 
     .bego-how__steps {
 
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
         gap:
-            18px;
+            20px;
     }
 
+
+    /* =================================================
+       CARD
+    ================================================= */
 
     .bego-how__step {
 
         min-height:
-            560px;
+            620px;
 
         padding:
-            32px;
+            35px 28px;
+
+        display:
+            flex;
+
+        flex-direction:
+            column;
+
+        align-items:
+            center;
+
+        text-align:
+            center;
+
+        border-radius:
+            26px;
     }
 
+
+    /* =================================================
+       CONTENIDO
+    ================================================= */
 
     .bego-how__content {
 
+        width:
+            100%;
+
+        display:
+            flex;
+
+        flex-direction:
+            column;
+
+        align-items:
+            center;
+
+        justify-content:
+            flex-start;
+
         gap:
-            16px;
+            18px;
+
+        text-align:
+            center;
     }
 
+
+    /* =================================================
+       NÚMERO
+    ================================================= */
 
     .bego-how__number {
 
@@ -563,26 +500,126 @@
         height:
             54px;
 
+        flex-shrink:
+            0;
+
+        display:
+            grid;
+
+        place-items:
+            center;
+
         font-size:
             16px;
     }
 
 
+    /* =================================================
+       TEXTO
+    ================================================= */
+
+    .bego-how__text {
+
+        width:
+            100%;
+
+        max-width:
+            430px;
+
+        min-width:
+            0;
+
+        display:
+            flex;
+
+        flex-direction:
+            column;
+
+        align-items:
+            center;
+
+        text-align:
+            center;
+    }
+
+
+    .bego-how__label {
+
+        display:
+            block;
+
+        text-align:
+            center;
+    }
+
+
     .bego-how__text h3 {
+
+        width:
+            100%;
+
+        margin:
+            0;
 
         font-size:
             38px;
+
+        line-height:
+            0.95;
+
+        text-align:
+            center;
     }
 
 
     .bego-how__text p {
 
+        width:
+            100%;
+
+        max-width:
+            360px;
+
+        margin-left:
+            auto;
+
+        margin-right:
+            auto;
+
         font-size:
             14px;
+
+        line-height:
+            1.6;
+
+        text-align:
+            center;
     }
 
 
+    /* =================================================
+       LÍNEA DECORATIVA
+       CENTRADA
+    ================================================= */
+
+    .bego-how__text p::before {
+
+        margin-left:
+            auto;
+
+        margin-right:
+            auto;
+    }
+
+
+    /* =================================================
+       IMAGEN
+    ================================================= */
+
     .bego-how__image-wrapper {
+
+        width:
+            100%;
 
         min-height:
             300px;
@@ -592,13 +629,34 @@
 
         padding:
             15px;
+
+        display:
+            flex;
+
+        align-items:
+            center;
+
+        justify-content:
+            center;
+
+        border-radius:
+            22px;
     }
 
 
     .bego-how__image {
 
+        width:
+            auto;
+
+        max-width:
+            100%;
+
         max-height:
             360px;
+
+        margin:
+            0 auto;
     }
 
 }
@@ -620,10 +678,17 @@
     }
 
 
+    /* =================================================
+       HEADER
+    ================================================= */
+
     .bego-how__header {
 
         margin-bottom:
             55px;
+
+        text-align:
+            center;
     }
 
 
@@ -631,87 +696,217 @@
 
         font-size:
             48px;
+
+        text-align:
+            center;
     }
 
 
     .bego-how__header p {
 
+        margin-left:
+            auto;
+
+        margin-right:
+            auto;
+
         font-size:
             15px;
+
+        text-align:
+            center;
     }
 
 
-    /*
-       En móvil los pasos pasan a
-       una sola columna.
-    */
+    /* =================================================
+       GRID 2 × 2
+    ================================================= */
 
     .bego-how__steps {
 
         grid-template-columns:
-            1fr;
+            repeat(2, minmax(0, 1fr));
 
         gap:
-            18px;
+            16px;
     }
 
+
+    /* =================================================
+       CARD
+    ================================================= */
 
     .bego-how__step {
 
         min-height:
-            auto;
+            570px;
 
         padding:
-            35px 25px;
+            30px 18px;
 
         border-radius:
-            24px;
+            22px;
+
+        display:
+            flex;
+
+        flex-direction:
+            column;
+
+        align-items:
+            center;
+
+        text-align:
+            center;
     }
 
+
+    /* =================================================
+       CONTENIDO
+    ================================================= */
 
     .bego-how__content {
 
         width:
             100%;
 
+        display:
+            flex;
+
+        flex-direction:
+            column;
+
+        align-items:
+            center;
+
         gap:
-            18px;
+            14px;
+
+        text-align:
+            center;
     }
 
+
+    /* =================================================
+       NÚMERO
+    ================================================= */
 
     .bego-how__number {
 
         width:
-            55px;
+            48px;
 
         height:
-            55px;
+            48px;
+
+        flex-shrink:
+            0;
+
+        display:
+            grid;
+
+        place-items:
+            center;
 
         font-size:
-            17px;
+            14px;
     }
 
 
+    /* =================================================
+       TEXTO
+    ================================================= */
+
     .bego-how__text {
+
+        width:
+            100%;
 
         min-width:
             0;
+
+        display:
+            flex;
+
+        flex-direction:
+            column;
+
+        align-items:
+            center;
+
+        text-align:
+            center;
+    }
+
+
+    .bego-how__label {
+
+        margin-bottom:
+            14px;
+
+        font-size:
+            9px;
+
+        text-align:
+            center;
     }
 
 
     .bego-how__text h3 {
 
+        width:
+            100%;
+
         font-size:
-            36px;
+            27px;
+
+        line-height:
+            0.95;
+
+        letter-spacing:
+            -0.045em;
+
+        text-align:
+            center;
     }
 
 
     .bego-how__text p {
 
+        width:
+            100%;
+
+        max-width:
+            230px;
+
+        margin:
+            18px auto 0;
+
         font-size:
-            15px;
+            12px;
+
+        line-height:
+            1.55;
+
+        text-align:
+            center;
     }
 
+
+    /* =================================================
+       LÍNEA CENTRADA
+    ================================================= */
+
+    .bego-how__text p::before {
+
+        margin:
+            0 auto 18px;
+    }
+
+
+    /* =================================================
+       IMAGEN
+    ================================================= */
 
     .bego-how__image-wrapper {
 
@@ -719,16 +914,25 @@
             100%;
 
         min-height:
-            300px;
+            240px;
 
         margin-top:
-            25px;
+            22px;
 
         padding:
-            15px;
+            10px;
+
+        display:
+            flex;
+
+        align-items:
+            center;
+
+        justify-content:
+            center;
 
         border-radius:
-            22px;
+            18px;
     }
 
 
@@ -741,10 +945,13 @@
             100%;
 
         max-height:
-            430px;
+            330px;
+
+        margin:
+            0 auto;
 
         border-radius:
-            14px;
+            12px;
     }
 
 }
@@ -766,10 +973,27 @@
     }
 
 
+    /* =================================================
+       HEADER
+    ================================================= */
+
+    .bego-how__header {
+
+        margin-bottom:
+            45px;
+
+        text-align:
+            center;
+    }
+
+
     .bego-how__header h2 {
 
         font-size:
-            42px;
+            40px;
+
+        text-align:
+            center;
     }
 
 
@@ -777,93 +1001,164 @@
 
         font-size:
             14px;
+
+        text-align:
+            center;
     }
 
+
+    /* =================================================
+       GRID
+       SIEMPRE 2 × 2
+    ================================================= */
 
     .bego-how__steps {
 
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
         gap:
-            16px;
+            12px;
     }
 
+
+    /* =================================================
+       CARD
+    ================================================= */
 
     .bego-how__step {
 
+        min-height:
+            510px;
+
         padding:
-            28px 20px;
+            24px 12px;
 
         border-radius:
-            22px;
+            18px;
     }
 
 
-    .bego-how__content {
-
-        gap:
-            13px;
-    }
-
+    /* =================================================
+       NÚMERO
+    ================================================= */
 
     .bego-how__number {
 
         width:
-            48px;
+            42px;
 
         height:
-            48px;
+            42px;
 
         font-size:
-            15px;
+            13px;
+    }
+
+
+    /* =================================================
+       TEXTO
+    ================================================= */
+
+    .bego-how__content {
+
+        gap:
+            12px;
     }
 
 
     .bego-how__label {
 
-        font-size:
+        margin-bottom:
             10px;
+
+        font-size:
+            8px;
+
+        letter-spacing:
+            0.13em;
+
+        text-align:
+            center;
     }
 
 
     .bego-how__text h3 {
 
         font-size:
-            31px;
+            23px;
+
+        line-height:
+            0.95;
+
+        text-align:
+            center;
     }
 
 
     .bego-how__text p {
 
-        margin-top:
-            18px;
+        max-width:
+            180px;
+
+        margin:
+            16px auto 0;
 
         font-size:
-            14px;
+            11px;
+
+        line-height:
+            1.5;
+
+        text-align:
+            center;
     }
 
+
+    /* =================================================
+       LÍNEA
+    ================================================= */
+
+    .bego-how__text p::before {
+
+        width:
+            42px;
+
+        height:
+            2px;
+
+        margin:
+            0 auto 14px;
+    }
+
+
+    /* =================================================
+       IMAGEN
+    ================================================= */
 
     .bego-how__image-wrapper {
 
         min-height:
-            260px;
+            210px;
 
         margin-top:
-            20px;
+            18px;
 
         padding:
-            12px;
+            8px;
 
         border-radius:
-            20px;
+            16px;
     }
 
 
     .bego-how__image {
 
         max-height:
-            380px;
+            290px;
 
         border-radius:
-            12px;
+            10px;
     }
 
 }

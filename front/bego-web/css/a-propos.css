@@ -9,6 +9,7 @@
 ===================================================== */
 
 .bego-about {
+
     position: relative;
 
     width: min(
@@ -27,6 +28,7 @@
 ===================================================== */
 
 .bego-about__header {
+
     max-width: 900px;
 
     margin: 0 0 70px;
@@ -34,6 +36,7 @@
 
 
 .bego-about__eyebrow {
+
     display: inline-block;
 
     margin-bottom: 24px;
@@ -49,6 +52,7 @@
 
 
 .bego-about__header h2 {
+
     margin: 0;
 
     color: var(--bego-black);
@@ -68,6 +72,7 @@
 
 
 .bego-about__header h2 span {
+
     display: block;
 
     color: var(--bego-black-60);
@@ -75,18 +80,24 @@
 
 
 /* =====================================================
-   CONTENIDO PRINCIPAL
-   IMAGEN + TEXTO SUPERPUESTO
+   CONTENU PRINCIPAL
 ===================================================== */
 
 .bego-about__main {
+
     position: relative;
 
     display: block;
 
     width: 100%;
 
-    min-height: 720px;
+    /*
+       IMPORTANT:
+       La hauteur doit venir du contenu.
+    */
+    min-height: 0;
+
+    height: auto;
 
     overflow: hidden;
 
@@ -97,109 +108,11 @@
 
 
 /* =====================================================
-   IMAGE WRAPPER
-===================================================== */
-
-.bego-about__image-wrapper {
-    position: absolute;
-
-    inset: 0;
-
-    width: 100%;
-    height: 100%;
-
-    min-height: 0;
-
-    display: block;
-
-    padding: 0;
-
-    overflow: hidden;
-
-    border-radius: inherit;
-
-    background: var(--bego-white);
-}
-
-
-/* =====================================================
-   IMAGE
-===================================================== */
-
-.bego-about__image {
-    position: absolute;
-
-    inset: 0;
-
-    z-index: 1;
-
-    display: block;
-
-    width: 100%;
-    height: 100%;
-
-    max-width: none;
-    max-height: none;
-
-    object-fit: cover;
-
-    object-position: center;
-
-    transition:
-        transform var(--transition);
-}
-
-
-.bego-about__image-wrapper:hover
-.bego-about__image {
-    transform: scale(1.02);
-}
-
-
-/* =====================================================
-   OVERLAY BLANCO
-   SOLO NEGRO / BLANCO
-===================================================== */
-
-.bego-about__image-wrapper::before {
-    content: "";
-
-    position: absolute;
-
-    inset: 0;
-
-    z-index: 2;
-
-    width: 58%;
-
-    background:
-        linear-gradient(
-            90deg,
-            rgba(255, 255, 255, 0.97) 0%,
-            rgba(255, 255, 255, 0.93) 32%,
-            rgba(255, 255, 255, 0.72) 58%,
-            rgba(255, 255, 255, 0.22) 82%,
-            rgba(255, 255, 255, 0) 100%
-        );
-
-    pointer-events: none;
-}
-
-
-/* =====================================================
-   DESACTIVAR DECORACIONES ANTERIORES
-===================================================== */
-
-.bego-about__image-wrapper::after {
-    display: none;
-}
-
-
-/* =====================================================
-   CONTENIDO SOBRE LA IMAGEN
+   CONTENU
 ===================================================== */
 
 .bego-about__content {
+
     position: relative;
 
     z-index: 5;
@@ -208,40 +121,54 @@
 
     align-items: flex-start;
 
-    gap: 25px;
-
     width: 52%;
 
-    min-height: 720px;
+    /*
+       IMPORTANT:
+       Aucun min-height qui force un espace vide.
+    */
+    min-height: 0;
+
+    height: auto;
 
     padding:
         90px
         0
-        90px
+        35px
         70px;
 }
 
 
 /* =====================================================
+   TEXT BOX
+===================================================== */
+
+.bego-about__text-box {
+
+    position: relative;
+
+    width: 100%;
+
+    max-width: 520px;
+}
+
+
+/* =====================================================
    NÚMERO
-   OCULTO PARA EL DISEÑO PREMIUM
 ===================================================== */
 
 .bego-about__number {
+
     display: none;
 }
 
 
 /* =====================================================
-   TEXTO
+   TÍTULO PRINCIPAL
 ===================================================== */
 
-.bego-about__text {
-    max-width: 520px;
-}
+.bego-about__text-box h3 {
 
-
-.bego-about__text h3 {
     margin: 0;
 
     color: var(--bego-black);
@@ -261,28 +188,23 @@
 
 
 /* =====================================================
-   LÍNEA ANTES DEL TEXTO
+   TEXTO PRINCIPAL
 ===================================================== */
 
-.bego-about__text p:first-of-type::before {
-    content: "";
+.bego-about__text {
 
-    display: block;
+    width: 100%;
 
-    width: 64px;
-    height: 2px;
-
-    margin-bottom: 25px;
-
-    background: var(--bego-black);
+    max-width: 520px;
 }
 
 
 /* =====================================================
-   PÁRRAFOS
+   PARAGRAPHES
 ===================================================== */
 
 .bego-about__text p {
+
     max-width: 440px;
 
     margin: 28px 0 0;
@@ -296,10 +218,220 @@
 
 
 /* =====================================================
-   LINK
+   LÍNEA ANTES DEL PRIMER TEXTO
+===================================================== */
+
+.bego-about__text p:first-of-type::before {
+
+    content: "";
+
+    display: block;
+
+    width: 64px;
+
+    height: 2px;
+
+    margin-bottom: 25px;
+
+    background: var(--bego-black);
+}
+
+
+/* =====================================================
+   CONTENIDO PRINCIPAL — COLLAPSED
+===================================================== */
+
+.bego-about__text--collapsed {
+
+    position: relative;
+
+    max-height: 390px;
+
+    overflow: hidden;
+
+    transition:
+        max-height 0.65s cubic-bezier(
+            .22,
+            1,
+            .36,
+            1
+        );
+}
+
+
+/* =====================================================
+   DEGRADADO TEXTO PRINCIPAL
+===================================================== */
+
+.bego-about__text--collapsed::after {
+
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+
+    right: 0;
+
+    bottom: 0;
+
+    height: 110px;
+
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(255,255,255,0),
+            var(--bego-white)
+        );
+
+    transition:
+        opacity 0.35s ease,
+        visibility 0.35s ease;
+}
+
+
+/* =====================================================
+   CONTENIDO PRINCIPAL — EXPANDED
+===================================================== */
+
+.bego-about__text--expanded {
+
+    max-height: 1200px;
+}
+
+
+.bego-about__text--expanded::after {
+
+    opacity: 0;
+
+    visibility: hidden;
+}
+
+
+/* =====================================================
+   BOTÓN PRINCIPAL
+===================================================== */
+
+.bego-about__text-toggle {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 16px;
+
+    margin-top: 28px;
+
+    padding:
+        8px
+        8px
+        8px
+        22px;
+
+    border: none;
+
+    border-radius: 999px;
+
+    background: var(--bego-black);
+
+    color: var(--bego-white);
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    letter-spacing: -0.01em;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.3s ease,
+        opacity 0.3s ease;
+}
+
+
+.bego-about__text-toggle:hover {
+
+    transform: translateY(-3px);
+
+    opacity: 0.90;
+}
+
+
+/* =====================================================
+   ICONO PRINCIPAL
+===================================================== */
+
+.bego-about__text-toggle-icon {
+
+    width: 42px;
+
+    height: 42px;
+
+    display: grid;
+
+    place-items: center;
+
+    border-radius: 50%;
+
+    background: var(--bego-white);
+
+    color: var(--bego-black);
+
+    font-size: 20px;
+
+    line-height: 1;
+
+    transition:
+        transform 0.35s ease;
+}
+
+
+/* =====================================================
+   ICONO PRINCIPAL ABIERTO
+===================================================== */
+
+.bego-about__text-box.is-open
+.bego-about__text-toggle-icon {
+
+    transform: rotate(45deg);
+}
+
+
+/* =====================================================
+   TEXTO BOTÓN PRINCIPAL
+===================================================== */
+
+.bego-about__text-box.is-open
+.bego-about__text-toggle
+span:first-child {
+
+    font-size: 0;
+}
+
+
+.bego-about__text-box.is-open
+.bego-about__text-toggle
+span:first-child::after {
+
+    content: "Voir moins";
+
+    font-size: 13px;
+}
+
+
+/* =====================================================
+   LINK — ANTIGUO / COMPATIBILIDAD
 ===================================================== */
 
 .bego-about__link {
+
     display: inline-flex;
 
     align-items: center;
@@ -333,6 +465,7 @@
 
 
 .bego-about__link:hover {
+
     transform: translateY(-4px);
 
     opacity: 0.92;
@@ -344,7 +477,9 @@
 ===================================================== */
 
 .bego-about__arrow {
+
     width: 44px;
+
     height: 44px;
 
     display: grid;
@@ -362,10 +497,11 @@
 
 
 /* =====================================================
-   VALEURS
+   VALEURS / PILIERS
 ===================================================== */
 
 .bego-about__values {
+
     display: grid;
 
     grid-template-columns:
@@ -374,7 +510,11 @@
             1fr
         );
 
-    margin-top: 100px;
+    /*
+       ESPACIO ENTRE LE CONTENU PRINCIPAL
+       ET LES PILIERS
+    */
+    margin-top: 35px;
 
     border-top:
         1px solid
@@ -396,17 +536,39 @@
 }
 
 
+/* =====================================================
+   CARTE PILIER
+===================================================== */
+
 .bego-about__value {
+
+    position: relative;
+
+    display: flex;
+
+    flex-direction: column;
+
     min-height: 250px;
 
     padding:
         35px
         30px;
+
+    overflow: hidden;
+
+    transition:
+        min-height 0.45s ease,
+        background 0.3s ease;
 }
 
 
+/* =====================================================
+   SÉPARATION DES CARTES
+===================================================== */
+
 .bego-about__value
 + .bego-about__value {
+
     border-left:
         1px solid
         rgba(
@@ -419,10 +581,23 @@
 
 
 /* =====================================================
-   VALEUR NUMBER
+   HEADER CARTE
+===================================================== */
+
+.bego-about__value-header {
+
+    position: relative;
+
+    z-index: 2;
+}
+
+
+/* =====================================================
+   NUMÉRO CARTE
 ===================================================== */
 
 .bego-about__value-number {
+
     display: block;
 
     margin-bottom: 35px;
@@ -438,10 +613,11 @@
 
 
 /* =====================================================
-   VALEUR TITRE
+   TITRE CARTE
 ===================================================== */
 
 .bego-about__value h3 {
+
     margin: 0;
 
     color: var(--bego-black);
@@ -456,11 +632,41 @@
 }
 
 
+.bego-about__value h3 span {
+
+    display: inline;
+}
+
+
 /* =====================================================
-   VALEUR DESCRIPTION
+   TEXTO CARTE
+===================================================== */
+
+.bego-about__value-text {
+
+    position: relative;
+
+    overflow: hidden;
+
+    max-height: 145px;
+
+    transition:
+        max-height 0.55s
+        cubic-bezier(
+            .22,
+            1,
+            .36,
+            1
+        );
+}
+
+
+/* =====================================================
+   PARAGRAPHE CARTE
 ===================================================== */
 
 .bego-about__value p {
+
     max-width: 300px;
 
     margin: 16px 0 0;
@@ -474,377 +680,179 @@
 
 
 /* =====================================================
-   TABLET
+   DEGRADADO CARTE
 ===================================================== */
 
-@media (max-width: 1000px) {
+.bego-about__value.is-collapsed
+.bego-about__value-text::after {
 
-    .bego-about {
-        width: calc(100% - 48px);
+    content: "";
 
-        padding: 80px 0;
-    }
+    position: absolute;
 
+    left: 0;
 
-    /* ---------------------------------------------
-       HEADER
-    --------------------------------------------- */
+    right: 0;
 
-    .bego-about__header {
-        margin-bottom: 55px;
-    }
+    bottom: 0;
 
+    height: 65px;
 
-    /* ---------------------------------------------
-       HERO
-    --------------------------------------------- */
+    pointer-events: none;
 
-    .bego-about__main {
-        min-height: 620px;
-    }
-
-
-    /* ---------------------------------------------
-       IMAGE OVERLAY
-    --------------------------------------------- */
-
-    .bego-about__image-wrapper::before {
-        width: 70%;
-
-        background:
-            linear-gradient(
-                90deg,
-                rgba(255, 255, 255, 0.97) 0%,
-                rgba(255, 255, 255, 0.90) 40%,
-                rgba(255, 255, 255, 0.50) 72%,
-                rgba(255, 255, 255, 0) 100%
-            );
-    }
-
-
-    /* ---------------------------------------------
-       CONTENT
-    --------------------------------------------- */
-
-    .bego-about__content {
-        width: 62%;
-
-        min-height: 620px;
-
-        padding:
-            70px
-            0
-            70px
-            50px;
-    }
-
-
-    .bego-about__text h3 {
-        font-size: clamp(
-            48px,
-            6vw,
-            72px
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(255,255,255,0),
+            var(--bego-white)
         );
-    }
 
-
-    /* ---------------------------------------------
-       VALUES
-    --------------------------------------------- */
-
-    .bego-about__values {
-        margin-top: 70px;
-    }
-
+    transition:
+        opacity 0.35s ease,
+        visibility 0.35s ease;
 }
 
 
 /* =====================================================
-   MOBILE
+   CARTE OUVERTE
 ===================================================== */
 
-@media (max-width: 700px) {
+.bego-about__value.is-open
+.bego-about__value-text {
+
+    max-height: 1000px;
+}
 
 
-    .bego-about {
-        width: calc(100% - 32px);
+.bego-about__value.is-open
+.bego-about__value-text::after {
 
-        padding: 60px 0;
-    }
+    opacity: 0;
 
-
-    /* ---------------------------------------------
-       HEADER
-    --------------------------------------------- */
-
-    .bego-about__header {
-        margin-bottom: 45px;
-    }
-
-
-    .bego-about__header h2 {
-        font-size: 52px;
-    }
-
-
-    /* ---------------------------------------------
-       HERO
-    --------------------------------------------- */
-
-    .bego-about__main {
-        min-height: 700px;
-
-        border-radius: 24px;
-    }
-
-
-    /* ---------------------------------------------
-       IMAGE
-    --------------------------------------------- */
-
-    .bego-about__image {
-        object-position: 62% center;
-    }
-
-
-    /* ---------------------------------------------
-       MOBILE OVERLAY
-    --------------------------------------------- */
-
-    .bego-about__image-wrapper::before {
-        width: 100%;
-
-        background:
-            linear-gradient(
-                180deg,
-                rgba(255, 255, 255, 0.98) 0%,
-                rgba(255, 255, 255, 0.94) 32%,
-                rgba(255, 255, 255, 0.72) 52%,
-                rgba(255, 255, 255, 0.20) 72%,
-                rgba(255, 255, 255, 0) 100%
-            );
-    }
-
-
-    /* ---------------------------------------------
-       CONTENT
-    --------------------------------------------- */
-
-    .bego-about__content {
-        width: 100%;
-
-        min-height: 700px;
-
-        padding:
-            55px
-            25px
-            40px;
-
-        gap: 0;
-    }
-
-
-    .bego-about__text {
-        width: 100%;
-
-        max-width: 100%;
-    }
-
-
-    .bego-about__text h3 {
-        font-size: 44px;
-
-        line-height: 0.92;
-    }
-
-
-    .bego-about__text p {
-        max-width: 330px;
-
-        margin-top: 25px;
-
-        font-size: 14px;
-
-        line-height: 1.6;
-    }
-
-
-    .bego-about__text p:first-of-type::before {
-        width: 48px;
-
-        margin-bottom: 20px;
-    }
-
-
-    .bego-about__link {
-        margin-top: 28px;
-    }
-
-
-      /* ---------------------------------------------
-       VALUES
-    --------------------------------------------- */
-
-    .bego-about__values {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-
-        margin-top: 60px;
-    }
-
-
-    .bego-about__value {
-        min-height: auto;
-
-        padding:
-            25px
-            12px;
-    }
-
-
-    .bego-about__value
-    + .bego-about__value {
-        border-left:
-            1px solid
-            rgba(
-                0,
-                0,
-                0,
-                0.10
-            );
-
-        border-top: none;
-    }
-
-
-    .bego-about__value-number {
-        margin-bottom: 20px;
-
-        font-size: 9px;
-    }
-
-
-    .bego-about__value h3 {
-        font-size: 20px;
-
-        line-height: 1;
-    }
-
-
-    .bego-about__value p {
-        max-width: none;
-
-        margin-top: 12px;
-
-        font-size: 11px;
-
-        line-height: 1.5;
-    }
-
+    visibility: hidden;
 }
 
 
 /* =====================================================
-   MOBILE PEQUEÑO
+   BOUTON CARTE
 ===================================================== */
 
-@media (max-width: 480px) {
+.bego-about__value-toggle {
 
-    .bego-about {
-        width: calc(100% - 24px);
+    display: inline-flex;
 
-        padding: 45px 0;
-    }
+    align-items: center;
 
+    justify-content: space-between;
 
-    /* ---------------------------------------------
-       HEADER
-    --------------------------------------------- */
+    gap: 14px;
 
-    .bego-about__header h2 {
-        font-size: 44px;
-    }
+    width: fit-content;
 
+    margin-top: 22px;
 
-    /* ---------------------------------------------
-       HERO
-    --------------------------------------------- */
+    padding:
+        8px
+        8px
+        8px
+        18px;
 
-    .bego-about__main {
-        min-height: 650px;
+    border: none;
 
-        border-radius: 20px;
-    }
+    border-radius: 999px;
 
+    background: var(--bego-black);
 
-    .bego-about__image {
-        object-position: 63% center;
-    }
+    color: var(--bego-white);
 
+    font-family: inherit;
 
-    /* ---------------------------------------------
-       CONTENT
-    --------------------------------------------- */
+    font-size: 12px;
 
-    .bego-about__content {
-        min-height: 650px;
+    font-weight: 700;
 
-        padding:
-            40px
-            18px
-            30px;
-    }
+    letter-spacing: -0.01em;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.3s ease,
+        opacity 0.3s ease;
+}
 
 
-    .bego-about__eyebrow {
-        font-size: 10px;
+.bego-about__value-toggle:hover {
 
-        letter-spacing: 0.15em;
-    }
+    transform: translateY(-2px);
 
-
-    .bego-about__text h3 {
-        font-size: 36px;
-    }
-
-
-    .bego-about__text p {
-        max-width: 300px;
-
-        font-size: 14px;
-    }
-
-
-    /* ---------------------------------------------
-       BUTTON
-    --------------------------------------------- */
-
-    .bego-about__link {
-        padding-left: 20px;
-    }
-
-
-    .bego-about__arrow {
-        width: 40px;
-        height: 40px;
-    }
-
-
-    /* ---------------------------------------------
-       VALUES
-    --------------------------------------------- */
-
-    .bego-about__value {
-        padding:
-            30px
-            20px;
-    }
-
+    opacity: 0.88;
 }
 
 
 /* =====================================================
-   DOWNLOAD CTA — CENTRADO
+   ICONO CARTE
+===================================================== */
+
+.bego-about__value-toggle-icon {
+
+    width: 28px;
+
+    height: 28px;
+
+    display: grid;
+
+    place-items: center;
+
+    border-radius: 50%;
+
+    background: var(--bego-white);
+
+    color: var(--bego-black);
+
+    font-size: 18px;
+
+    line-height: 1;
+
+    transition:
+        transform 0.35s ease;
+}
+
+
+/* =====================================================
+   ICONO CARTE OUVERTE
+===================================================== */
+
+.bego-about__value.is-open
+.bego-about__value-toggle-icon {
+
+    transform: rotate(45deg);
+}
+
+
+/* =====================================================
+   TEXTO BOTÓN CARTE
+===================================================== */
+
+.bego-about__value.is-open
+.bego-about__value-toggle
+span:first-child {
+
+    font-size: 0;
+}
+
+
+.bego-about__value.is-open
+.bego-about__value-toggle
+span:first-child::after {
+
+    content: "Voir moins";
+
+    font-size: 12px;
+}
+
+
+/* =====================================================
+   DOWNLOAD CTA
 ===================================================== */
 
 .bego-download-cta {
@@ -857,7 +865,10 @@
 
     align-items: center;
 
-    padding: 70px 20px 90px;
+    padding:
+        70px
+        20px
+        90px;
 }
 
 
@@ -869,7 +880,11 @@
 
     gap: 16px;
 
-    padding: 7px 7px 7px 24px;
+    padding:
+        7px
+        7px
+        7px
+        24px;
 
     border-radius: 999px;
 
@@ -883,11 +898,11 @@
 
     font-weight: 700;
 
-    letter-spacing: -.01em;
+    letter-spacing: -0.01em;
 
     transition:
-        transform .3s ease,
-        box-shadow .3s ease;
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
 }
 
 
@@ -896,13 +911,20 @@
     transform: translateY(-4px);
 
     box-shadow:
-        0 15px 35px rgba(0, 0, 0, .18);
+        0 15px 35px
+        rgba(
+            0,
+            0,
+            0,
+            0.18
+        );
 }
 
 
 .bego-download-cta__arrow {
 
     width: 44px;
+
     height: 44px;
 
     display: grid;
@@ -918,7 +940,7 @@
     font-size: 18px;
 
     transition:
-        transform .3s ease;
+        transform 0.3s ease;
 }
 
 
@@ -930,10 +952,366 @@
 
 
 /* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width: 1000px) {
+
+    .bego-about {
+
+        width: calc(100% - 48px);
+
+        padding: 80px 0;
+    }
+
+
+    /* ---------------------------------------------
+       HEADER
+    --------------------------------------------- */
+
+    .bego-about__header {
+
+        margin-bottom: 55px;
+    }
+
+
+    /* ---------------------------------------------
+       MAIN
+    --------------------------------------------- */
+
+    .bego-about__main {
+
+        min-height: 0;
+
+        height: auto;
+    }
+
+
+    /* ---------------------------------------------
+       CONTENT
+    --------------------------------------------- */
+
+    .bego-about__content {
+
+        width: 62%;
+
+        min-height: 0;
+
+        height: auto;
+
+        padding:
+            70px
+            0
+            30px
+            50px;
+    }
+
+
+    .bego-about__text-box h3 {
+
+        font-size: clamp(
+            48px,
+            6vw,
+            72px
+        );
+    }
+
+
+    /* ---------------------------------------------
+       VALUES
+    --------------------------------------------- */
+
+    .bego-about__values {
+
+        margin-top: 30px;
+    }
+
+}
+
+
+/* =====================================================
    MOBILE
 ===================================================== */
 
-@media (max-width: 600px) {
+@media (max-width: 700px) {
+
+    .bego-about {
+
+        width: calc(100% - 32px);
+
+        padding: 60px 0;
+    }
+
+
+    /* ---------------------------------------------
+       HEADER
+    --------------------------------------------- */
+
+    .bego-about__header {
+
+        margin-bottom: 45px;
+    }
+
+
+    .bego-about__header h2 {
+
+        font-size: 52px;
+    }
+
+
+    /* ---------------------------------------------
+       MAIN
+    --------------------------------------------- */
+
+    .bego-about__main {
+
+        min-height: 0;
+
+        height: auto;
+
+        border-radius: 24px;
+    }
+
+
+    /* ---------------------------------------------
+       IMAGE
+    --------------------------------------------- */
+
+    .bego-about__image {
+
+        object-position: 62% center;
+    }
+
+
+    /* ---------------------------------------------
+       CONTENT
+    --------------------------------------------- */
+
+    .bego-about__content {
+
+        width: 100%;
+
+        min-height: 0;
+
+        height: auto;
+
+        padding:
+            55px
+            25px
+            25px;
+    }
+
+
+    /* ---------------------------------------------
+       TEXT BOX
+    --------------------------------------------- */
+
+    .bego-about__text-box {
+
+        width: 100%;
+
+        max-width: 100%;
+    }
+
+
+    /* ---------------------------------------------
+       TITLE
+    --------------------------------------------- */
+
+    .bego-about__text-box h3 {
+
+        font-size: 44px;
+
+        line-height: 0.92;
+    }
+
+
+    /* ---------------------------------------------
+       TEXT
+    --------------------------------------------- */
+
+    .bego-about__text {
+
+        width: 100%;
+
+        max-width: 100%;
+    }
+
+
+    .bego-about__text p {
+
+        max-width: 330px;
+
+        margin-top: 25px;
+
+        font-size: 14px;
+
+        line-height: 1.6;
+    }
+
+
+    .bego-about__text
+    p:first-of-type::before {
+
+        width: 48px;
+
+        margin-bottom: 20px;
+    }
+
+
+    /* ---------------------------------------------
+       TEXT COLLAPSED
+    --------------------------------------------- */
+
+    .bego-about__text--collapsed {
+
+        max-height: 300px;
+    }
+
+
+    .bego-about__text--collapsed::after {
+
+        height: 90px;
+    }
+
+
+    /* ---------------------------------------------
+       MAIN BUTTON
+    --------------------------------------------- */
+
+    .bego-about__text-toggle {
+
+        margin-top: 22px;
+
+        padding:
+            7px
+            7px
+            7px
+            18px;
+
+        font-size: 12px;
+    }
+
+
+    .bego-about__text-toggle-icon {
+
+        width: 38px;
+
+        height: 38px;
+
+        font-size: 18px;
+    }
+
+
+    /* ---------------------------------------------
+       VALUES
+    --------------------------------------------- */
+
+    .bego-about__values {
+
+        display: grid;
+
+        grid-template-columns:
+            repeat(
+                3,
+                1fr
+            );
+
+        margin-top: 25px;
+    }
+
+
+    .bego-about__value {
+
+        min-height: 230px;
+
+        padding:
+            25px
+            12px;
+    }
+
+
+    .bego-about__value
+    + .bego-about__value {
+
+        border-left:
+            1px solid
+            rgba(
+                0,
+                0,
+                0,
+                0.10
+            );
+
+        border-top: none;
+    }
+
+
+    /* ---------------------------------------------
+       VALUE TITLE
+    --------------------------------------------- */
+
+    .bego-about__value h3 {
+
+        font-size: 20px;
+
+        line-height: 1;
+    }
+
+
+    /* ---------------------------------------------
+       VALUE TEXT
+    --------------------------------------------- */
+
+    .bego-about__value-text {
+
+        max-height: 105px;
+    }
+
+
+    .bego-about__value p {
+
+        max-width: none;
+
+        margin-top: 12px;
+
+        font-size: 11px;
+
+        line-height: 1.5;
+    }
+
+
+    /* ---------------------------------------------
+       VALUE BUTTON
+    --------------------------------------------- */
+
+    .bego-about__value-toggle {
+
+        margin-top: 18px;
+
+        padding:
+            7px
+            7px
+            7px
+            14px;
+
+        font-size: 11px;
+    }
+
+
+    .bego-about__value-toggle-icon {
+
+        width: 26px;
+
+        height: 26px;
+
+        font-size: 16px;
+    }
+
+
+    /* ---------------------------------------------
+       DOWNLOAD CTA
+    --------------------------------------------- */
 
     .bego-download-cta {
 
@@ -943,6 +1321,7 @@
             70px;
     }
 
+
     .bego-download-cta__button {
 
         font-size: 13px;
@@ -950,10 +1329,149 @@
         padding-left: 20px;
     }
 
+
     .bego-download-cta__arrow {
 
         width: 40px;
+
         height: 40px;
+    }
+
+}
+
+
+/* =====================================================
+   MOBILE PETIT
+===================================================== */
+
+@media (max-width: 480px) {
+
+    .bego-about {
+
+        width: calc(100% - 24px);
+
+        padding: 45px 0;
+    }
+
+
+    /* ---------------------------------------------
+       HEADER
+    --------------------------------------------- */
+
+    .bego-about__header h2 {
+
+        font-size: 44px;
+    }
+
+
+    .bego-about__eyebrow {
+
+        font-size: 10px;
+
+        letter-spacing: 0.15em;
+    }
+
+
+    /* ---------------------------------------------
+       MAIN
+    --------------------------------------------- */
+
+    .bego-about__main {
+
+        min-height: 0;
+
+        height: auto;
+
+        border-radius: 20px;
+    }
+
+
+    /* ---------------------------------------------
+       IMAGE
+    --------------------------------------------- */
+
+    .bego-about__image {
+
+        object-position: 63% center;
+    }
+
+
+    /* ---------------------------------------------
+       CONTENT
+    --------------------------------------------- */
+
+    .bego-about__content {
+
+        min-height: 0;
+
+        height: auto;
+
+        padding:
+            40px
+            18px
+            20px;
+    }
+
+
+    /* ---------------------------------------------
+       TITLE
+    --------------------------------------------- */
+
+    .bego-about__text-box h3 {
+
+        font-size: 36px;
+    }
+
+
+    /* ---------------------------------------------
+       TEXT
+    --------------------------------------------- */
+
+    .bego-about__text p {
+
+        max-width: 300px;
+
+        font-size: 14px;
+    }
+
+
+    .bego-about__text--collapsed {
+
+        max-height: 260px;
+    }
+
+
+    /* ---------------------------------------------
+       MAIN BUTTON
+    --------------------------------------------- */
+
+    .bego-about__text-toggle {
+
+        margin-top: 20px;
+    }
+
+
+    /* ---------------------------------------------
+       VALUES
+    --------------------------------------------- */
+
+    .bego-about__values {
+
+        margin-top: 20px;
+    }
+
+
+    .bego-about__value {
+
+        padding:
+            25px
+            20px;
+    }
+
+
+    .bego-about__value-text {
+
+        max-height: 105px;
     }
 
 }

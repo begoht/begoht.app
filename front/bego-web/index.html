@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="es">
+<html lang="fr">
 
 <head>
 
@@ -9,6 +9,41 @@
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="robots"
+        content="index, follow"
+    >
+
+    <meta
+        name="theme-color"
+        content="#ffffff"
+    >
+
+    <meta
+        property="og:title"
+        content="BeGO"
+    >
+
+    <meta
+        property="og:type"
+        content="website"
+    >
+
+    <meta
+        property="og:site_name"
+        content="BeGO"
+    >
+
+    <meta
+        name="twitter:card"
+        content="summary_large_image"
+    >
+
+    <meta
+        name="twitter:title"
+        content="BeGO"
     >
 
     <title>
@@ -67,6 +102,26 @@
 
 
     <!-- =================================================
+         ENVOI
+    ================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="/front/bego-web/components/envoi/envoi.css"
+    >
+
+
+    <!-- =================================================
+         VOYAGES
+    ================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="/front/bego-web/components/voyages/voyages.css"
+    >
+
+
+    <!-- =================================================
          À PROPOS DE BEGO
     ================================================== -->
 
@@ -80,6 +135,7 @@
         href="/front/bego-web/components/chauffeurs/chauffeurs.css"
     >
 
+
 </head>
 
 
@@ -87,10 +143,32 @@
 
 
     <!-- =================================================
+         AVERTISSEMENT JAVASCRIPT
+    ================================================== -->
+
+    <noscript>
+
+        <div
+            role="alert"
+            style="
+                padding: 1rem;
+                text-align: center;
+            "
+        >
+            JavaScript est nécessaire pour afficher certains éléments de cette page.
+        </div>
+
+    </noscript>
+
+
+    <!-- =================================================
          HEADER
     ================================================== -->
 
-    <div id="header-container"></div>
+    <div
+        id="header-container"
+        aria-label="BeGO"
+    ></div>
 
 
 
@@ -102,13 +180,30 @@
 
 
         <!-- =================================================
-             HERO
+             VOYAGES
         ================================================== -->
 
-            <div id="chauffeurs-container"></div>
+        <div
+            id="voyages-container"
+        ></div>
 
 
+        <!-- =================================================
+             CHAUFFEURS
+        ================================================== -->
 
+        <div
+            id="chauffeurs-container"
+        ></div>
+
+
+        <!-- =================================================
+             ENVOI
+        ================================================== -->
+
+        <div
+            id="envoi-container"
+        ></div>
 
 
         <!-- =================================================
@@ -140,11 +235,16 @@
 
                 <!-- PASO 01 -->
 
-                <article class="bego-how__step">
+                <article
+                    class="bego-how__step"
+                >
 
                     <div class="bego-how__content">
 
-                        <div class="bego-how__number">
+                        <div
+                            class="bego-how__number"
+                            aria-hidden="true"
+                        >
                             01
                         </div>
 
@@ -157,7 +257,7 @@
 
 
                             <h3>
-                                Selecioner votre destination
+                                Sélectionner votre destination
                             </h3>
 
 
@@ -180,6 +280,7 @@
                             alt="BeGO — Seleccionar destino"
                             class="bego-how__image"
                             loading="lazy"
+                            decoding="async"
                         >
 
                     </div>
@@ -190,11 +291,16 @@
 
                 <!-- PASO 02 -->
 
-                <article class="bego-how__step">
+                <article
+                    class="bego-how__step"
+                >
 
                     <div class="bego-how__content">
 
-                        <div class="bego-how__number">
+                        <div
+                            class="bego-how__number"
+                            aria-hidden="true"
+                        >
                             02
                         </div>
 
@@ -231,6 +337,7 @@
                             alt="BeGO — Elegir método de pago"
                             class="bego-how__image"
                             loading="lazy"
+                            decoding="async"
                         >
 
                     </div>
@@ -241,11 +348,16 @@
 
                 <!-- PASO 03 -->
 
-                <article class="bego-how__step">
+                <article
+                    class="bego-how__step"
+                >
 
                     <div class="bego-how__content">
 
-                        <div class="bego-how__number">
+                        <div
+                            class="bego-how__number"
+                            aria-hidden="true"
+                        >
                             03
                         </div>
 
@@ -281,6 +393,7 @@
                             alt="BeGO — Pedir viaje"
                             class="bego-how__image"
                             loading="lazy"
+                            decoding="async"
                         >
 
                     </div>
@@ -291,11 +404,16 @@
 
                 <!-- PASO 04 -->
 
-                <article class="bego-how__step">
+                <article
+                    class="bego-how__step"
+                >
 
                     <div class="bego-how__content">
 
-                        <div class="bego-how__number">
+                        <div
+                            class="bego-how__number"
+                            aria-hidden="true"
+                        >
                             04
                         </div>
 
@@ -329,6 +447,7 @@
                             alt="BeGO — Confirmar viaje"
                             class="bego-how__image"
                             loading="lazy"
+                            decoding="async"
                         >
 
                     </div>
@@ -346,32 +465,37 @@
              À PROPOS DE BEGO
         ================================================== -->
 
-        <div id="a-propos-container"></div>
+        <div
+            id="a-propos-container"
+        ></div>
 
 
 
-         <!-- =================================================
-         TÉLÉCHARGER l'APPLICATION
-         ================================================== -->
+        <!-- =================================================
+             TÉLÉCHARGER l'APPLICATION
+        ================================================== -->
 
-         <div class="bego-download-cta">
+        <div class="bego-download-cta">
 
-             <a
+            <a
                 href="/front/bego-web/components/telecharger/telecharger.html"
                 class="bego-download-cta__button"
-             >
+            >
 
                 <span>
                     Télécharger l'application
                 </span>
 
-                <span class="bego-download-cta__arrow">
+                <span
+                    class="bego-download-cta__arrow"
+                    aria-hidden="true"
+                >
                     ↗
                 </span>
 
             </a>
-        </div>
 
+        </div>
 
 
     </main>
@@ -382,7 +506,9 @@
          FOOTER
     ================================================== -->
 
-    <div id="footer-container"></div>
+    <div
+        id="footer-container"
+    ></div>
 
 
 
@@ -392,6 +518,13 @@
 
     <script>
 
+        "use strict";
+
+
+        /* =================================================
+           LOAD HTML COMPONENT
+        ================================================= */
+
         async function loadComponent(
             selector,
             file
@@ -400,31 +533,53 @@
             const element =
                 document.querySelector(selector);
 
-            if (!element) return;
+
+            if (!element) {
+
+                console.error(
+                    `Contenedor no encontrado: ${selector}`
+                );
+
+                return;
+
+            }
 
 
             try {
 
                 const response =
-                    await fetch(file);
+                    await fetch(
+                        file,
+                        {
+                            method: "GET",
+                            cache: "default"
+                        }
+                    );
 
 
                 if (!response.ok) {
 
                     throw new Error(
-                        `No se pudo cargar ${file}`
+                        `HTTP ${response.status} — ${file}`
                     );
 
                 }
 
 
-                element.innerHTML =
+                const html =
                     await response.text();
+
+
+                element.innerHTML =
+                    html;
 
 
             } catch (error) {
 
-                console.error(error);
+                console.error(
+                    `No se pudo cargar el componente: ${file}`,
+                    error
+                );
 
             }
 
@@ -432,60 +587,184 @@
 
 
 
-        async function init() {
+        /* =================================================
+           LOAD JAVASCRIPT
+        ================================================== */
+
+        function loadScript(src) {
+
+            return new Promise(
+                (
+                    resolve,
+                    reject
+                ) => {
+
+                    const script =
+                        document.createElement(
+                            "script"
+                        );
 
 
-            <!-- HEADER -->
-
-            await loadComponent(
-                "#header-container",
-                "/front/bego-web/components/header/header.html"
-            );
+                    script.src =
+                        src;
 
 
-            <!-- À PROPOS -->
-
-            await loadComponent(
-                "#a-propos-container",
-                "/front/bego-web/components/a-propos/a-propos.html"
-            );
-
-            <!-- CHAUFFEURS -->
-
-            await loadComponent(
-                "#chauffeurs-container",
-                "/front/bego-web/components/chauffeurs/chauffeurs.html"
-            );
+                    script.async =
+                        true;
 
 
-            <!-- FOOTER -->
-
-            await loadComponent(
-                "#footer-container",
-                "/front/bego-web/components/footer/footer.html"
-            );
+                    script.onload =
+                        resolve;
 
 
-            /*
-             * JS DEL HEADER
-             */
+                    script.onerror =
+                        () => {
 
-            const headerScript =
-                document.createElement("script");
+                            reject(
+                                new Error(
+                                    `No se pudo cargar el script: ${src}`
+                                )
+                            );
+
+                        };
 
 
-            headerScript.src =
-                "/front/bego-web/components/header/header.js";
+                    document.body.appendChild(
+                        script
+                    );
 
-
-            document.body.appendChild(
-                headerScript
+                }
             );
 
         }
 
 
-        init();
+
+        /* =================================================
+           INITIALISATION
+        ================================================== */
+
+        async function init() {
+
+
+            /* =================================================
+               HTML COMPONENTS
+            ================================================== */
+
+            const components = [
+
+                [
+                    "#header-container",
+                    "/front/bego-web/components/header/header.html"
+                ],
+
+                [
+                    "#voyages-container",
+                    "/front/bego-web/components/voyages/voyages.html"
+                ],
+
+                [
+                    "#chauffeurs-container",
+                    "/front/bego-web/components/chauffeurs/chauffeurs.html"
+                ],
+
+                [
+                    "#envoi-container",
+                    "/front/bego-web/components/envoi/envoi.html"
+                ],
+
+                [
+                    "#a-propos-container",
+                    "/front/bego-web/components/a-propos/a-propos.html"
+                ],
+
+                [
+                    "#footer-container",
+                    "/front/bego-web/components/footer/footer.html"
+                ]
+
+            ];
+
+
+            /*
+             * Les composants indépendants sont chargés
+             * en parallèle afin de réduire le temps d'attente.
+             */
+
+            await Promise.all(
+                components.map(
+                    (
+                        [
+                            selector,
+                            file
+                        ]
+                    ) =>
+                        loadComponent(
+                            selector,
+                            file
+                        )
+                )
+            );
+
+
+
+            /* =================================================
+               JAVASCRIPT COMPONENTS
+            ================================================== */
+
+            const scripts = [
+
+                "/front/bego-web/components/header/header.js",
+
+                "/front/bego-web/components/JS/a-propos.js"
+
+            ];
+
+
+            await Promise.all(
+
+                scripts.map(
+                    src =>
+                        loadScript(
+                            src
+                        ).catch(
+                            error => {
+
+                                console.error(
+                                    error
+                                );
+
+                            }
+                        )
+                )
+
+            );
+
+        }
+
+
+
+        /* =================================================
+           START
+        ================================================== */
+
+        if (
+            document.readyState === "loading"
+        ) {
+
+            document.addEventListener(
+                "DOMContentLoaded",
+                init,
+                {
+                    once: true
+                }
+            );
+
+        } else {
+
+            init();
+
+        }
 
     </script>
 
