@@ -1,6 +1,7 @@
 User-agent: *
 Allow: /
+
 Disallow: /Admin-html/
 Disallow: /paginas/admin-dashboard.html
 
-Sitemap: https://bego.com.ht/sitemap.xml
+Sitemap: https://www.bego.com.ht/sitemap.xml

@@ -21,9 +21,67 @@
         content="#ffffff"
     >
 
+
+    <!-- =================================================
+         FAVICON / LOGO DU SITE
+    ================================================== -->
+
+    <link
+        rel="icon"
+        type="image/png"
+        sizes="32x32"
+        href="/front/bego-web/assets/images/bego-favicon.png"
+    >
+
+    <link
+        rel="icon"
+        type="image/png"
+        sizes="192x192"
+        href="/front/bego-web/assets/images/bego-favicon.png"
+    >
+
+    <link
+        rel="apple-touch-icon"
+        sizes="180x180"
+        href="/front/bego-web/assets/images/bego-favicon.png"
+    >
+
+    <!-- =================================================
+         SEO PRINCIPAL
+    ================================================== -->
+
+    <title>
+       BeGO Haïti — Transport, voyages et livraison
+    </title>
+
+    <meta
+        name="description"
+        content="BeGO est une plateforme de transport en Haïti pour réserver un voyage, envoyer des colis et devenir chauffeur."
+        >
+
+    <meta
+        name="keywords"
+        content="BeGO, BeGO Haïti, transport Haïti, voyages Haïti, chauffeur Haïti, livraison Haïti"
+        >
+
+    <link
+        rel="canonical"
+        href="https://www.bego.com.ht/"
+    >
+
+
+    <!-- =================================================
+         OPEN GRAPH
+    ================================================== -->
+
     <meta
         property="og:title"
-        content="BeGO"
+        content="BeGO Haïti — Transport, voyages et livraison"
+    >
+
+    <meta
+        property="og:description"
+        content="BeGO est une plateforme de transport en Haïti pour réserver un voyage, envoyer des colis et devenir chauffeur."
     >
 
     <meta
@@ -37,18 +95,95 @@
     >
 
     <meta
+        property="og:url"
+        content="https://www.bego.com.ht/"
+    >
+
+    <meta
+        property="og:image"
+        content="https://www.bego.com.ht/front/bego-web/assets/images/logo-bego.png"
+    >
+
+    <meta
+        property="og:image:alt"
+        content="BeGO — Transport, voyages et livraison en Haïti"
+    >
+
+    <meta
+        property="og:locale"
+        content="fr_HT"
+    >
+
+
+    <!-- =================================================
+         TWITTER / X
+    ================================================== -->
+
+    <meta
         name="twitter:card"
         content="summary_large_image"
     >
 
     <meta
         name="twitter:title"
-        content="BeGO"
+        content="BeGO Haïti — Transport, voyages et livraison"
     >
 
-    <title>
-        BeGO
-    </title>
+    <meta
+        name="twitter:description"
+        content="BeGO est une plateforme de transport en Haïti pour réserver un voyage, envoyer des colis et devenir chauffeur."
+    >
+
+    <meta
+        name="twitter:image"
+        content="https://www.bego.com.ht/front/bego-web/assets/images/logo-bego.png"
+    >
+
+    <meta
+        name="twitter:image:alt"
+        content="BeGO — Transport, voyages et livraison en Haïti"
+    >
+
+
+    <!-- =================================================
+         DONNÉES STRUCTURÉES
+         WEBSITE
+    ================================================== -->
+
+    <script type="application/ld+json">
+
+        {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "BeGO",
+            "url": "https://www.bego.com.ht/"
+        }
+
+    </script>
+
+
+    <!-- =================================================
+         DONNÉES STRUCTURÉES
+         ORGANIZATION
+    ================================================== -->
+
+    <script type="application/ld+json">
+
+        {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "BeGO",
+            "url": "https://www.bego.com.ht/",
+            "logo": "https://www.bego.com.ht/front/bego-web/assets/images/logo-bego.png",
+            "description": "BeGO est une plateforme de transport en Haïti pour réserver des voyages, envoyer des colis et devenir chauffeur.",
+            "areaServed": {
+                "@type": "Country",
+                "name": "Haïti"
+            }
+        }
+
+
+    </script>
 
 
     <!-- =================================================
@@ -130,6 +265,11 @@
         href="/front/bego-web/css/a-propos.css"
     >
 
+
+    <!-- =================================================
+         CHAUFFEURS
+    ================================================== -->
+
     <link
         rel="stylesheet"
         href="/front/bego-web/components/chauffeurs/chauffeurs.css"
@@ -161,6 +301,7 @@
     </noscript>
 
 
+
     <!-- =================================================
          HEADER
     ================================================== -->
@@ -188,6 +329,7 @@
         ></div>
 
 
+
         <!-- =================================================
              CHAUFFEURS
         ================================================== -->
@@ -197,6 +339,7 @@
         ></div>
 
 
+
         <!-- =================================================
              ENVOI
         ================================================== -->
@@ -204,6 +347,7 @@
         <div
             id="envoi-container"
         ></div>
+
 
 
         <!-- =================================================
@@ -230,10 +374,13 @@
             </div>
 
 
+
             <div class="bego-how__steps">
 
 
-                <!-- PASO 01 -->
+                <!-- =================================================
+                     PASO 01
+                ================================================== -->
 
                 <article
                     class="bego-how__step"
@@ -273,6 +420,7 @@
                     </div>
 
 
+
                     <div class="bego-how__image-wrapper">
 
                         <img
@@ -289,7 +437,9 @@
 
 
 
-                <!-- PASO 02 -->
+                <!-- =================================================
+                     PASO 02
+                ================================================== -->
 
                 <article
                     class="bego-how__step"
@@ -330,6 +480,7 @@
                     </div>
 
 
+
                     <div class="bego-how__image-wrapper">
 
                         <img
@@ -346,7 +497,9 @@
 
 
 
-                <!-- PASO 03 -->
+                <!-- =================================================
+                     PASO 03
+                ================================================== -->
 
                 <article
                     class="bego-how__step"
@@ -386,6 +539,7 @@
                     </div>
 
 
+
                     <div class="bego-how__image-wrapper">
 
                         <img
@@ -402,7 +556,9 @@
 
 
 
-                <!-- PASO 04 -->
+                <!-- =================================================
+                     PASO 04
+                ================================================== -->
 
                 <article
                     class="bego-how__step"
@@ -440,6 +596,7 @@
                     </div>
 
 
+
                     <div class="bego-how__image-wrapper">
 
                         <img
@@ -472,7 +629,7 @@
 
 
         <!-- =================================================
-             TÉLÉCHARGER l'APPLICATION
+             TÉLÉCHARGER L'APPLICATION
         ================================================== -->
 
         <div class="bego-download-cta">
@@ -589,7 +746,7 @@
 
         /* =================================================
            LOAD JAVASCRIPT
-        ================================================== */
+        ================================================= */
 
         function loadScript(src) {
 
@@ -642,7 +799,7 @@
 
         /* =================================================
            INITIALISATION
-        ================================================== */
+        ================================================= */
 
         async function init() {
 
@@ -692,6 +849,7 @@
              */
 
             await Promise.all(
+
                 components.map(
                     (
                         [
@@ -704,6 +862,7 @@
                             file
                         )
                 )
+
             );
 
 
@@ -746,7 +905,7 @@
 
         /* =================================================
            START
-        ================================================== */
+        ================================================= */
 
         if (
             document.readyState === "loading"
