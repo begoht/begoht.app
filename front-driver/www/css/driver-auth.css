@@ -1,669 +1,1574 @@
+/* =========================================================
+   BeGO
+   CHAUFFEUR AUTH
+   LOGIN + REGISTRO
+   STYLE OFFICIEL
+========================================================= */
+
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
 :root {
-  color-scheme: light;
-  --page: #f5f7fb;
-  --panel: #ffffff;
-  --ink: #101828;
-  --muted: #667085;
-  --line: #d8e1ea;
-  --soft: #eef3f7;
-  --brand: #0f766e;
-  --brand-dark: #0b5f59;
-  --road: #111827;
-  --gold: #c7902e;
-  --danger: #c62828;
-  --success: #0f7a3a;
-  --shadow: 0 22px 64px rgba(16, 24, 40, 0.15);
+
+  --black: #000000;
+  --black-soft: #050505;
+  --black-card: #080808;
+
+  --white: #ffffff;
+
+  --gray-1: #f2f2f2;
+  --gray-2: #b8b8b8;
+  --gray-3: #777777;
+  --gray-4: #444444;
+
+  --border:
+    rgba(255, 255, 255, 0.13);
+
+  --border-soft:
+    rgba(255, 255, 255, 0.08);
+
+  --border-hover:
+    rgba(255, 255, 255, 0.30);
+
+  --radius:
+    26px;
+
+  --radius-small:
+    12px;
 }
+
+
+/* =========================================================
+   RESET
+========================================================= */
 
 * {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  -webkit-tap-highlight-color: transparent;
 }
 
-html,
-body {
+html {
+
+  width: 100%;
   min-height: 100%;
+
+  background:
+    #000000;
+
+  color-scheme:
+    dark;
 }
 
 body {
-  font-family: Inter, "Segoe UI", system-ui, -apple-system, sans-serif;
-  color: var(--ink);
+
+  margin: 0;
+
+  min-width: 320px;
+  min-height: 100vh;
+
   background:
-    linear-gradient(135deg, rgba(15, 118, 110, 0.12), transparent 34%),
-    linear-gradient(315deg, rgba(199, 144, 46, 0.14), transparent 30%),
-    var(--page);
+    #000000;
+
+  color:
+    #ffffff;
+
+  font-family:
+    Inter,
+    "Helvetica Neue",
+    Helvetica,
+    Arial,
+    sans-serif;
+
+  -webkit-font-smoothing:
+    antialiased;
+
+  -moz-osx-font-smoothing:
+    grayscale;
 }
+
+
+/* =========================================================
+   PAGE
+========================================================= */
 
 .driver-auth-page {
-  min-height: 100dvh;
-  display: grid;
-  place-items: center;
-  padding: 24px;
+
+  position:
+    relative;
+
+  width:
+    100%;
+
+  min-height:
+    100vh;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  padding:
+    60px 20px;
+
+  overflow:
+    hidden;
+
+  background:
+    #000000;
 }
+
+
+/* =========================================================
+   BACKGROUND LOGO
+========================================================= */
+
+.driver-auth-background {
+
+  position:
+    absolute;
+
+  inset:
+    0;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  pointer-events:
+    none;
+
+  z-index:
+    0;
+
+  overflow:
+    hidden;
+}
+
+.driver-auth-background::after {
+
+  content:
+    "";
+
+  position:
+    absolute;
+
+  inset:
+    0;
+
+  background:
+    radial-gradient(
+      circle at center,
+      transparent 0%,
+      rgba(0, 0, 0, 0.30) 55%,
+      #000000 100%
+    );
+}
+
+.driver-auth-background img {
+
+  width:
+    min(950px, 100vw);
+
+  height:
+    min(950px, 100vw);
+
+  object-fit:
+    contain;
+
+
+  filter:
+    grayscale(1);
+
+  user-select:
+    none;
+}
+
+
+/* =========================================================
+   MAIN CARD
+========================================================= */
 
 .driver-auth-shell {
-  width: min(1080px, 100%);
-  min-height: 640px;
-  display: grid;
-  grid-template-columns: minmax(300px, 0.95fr) minmax(360px, 1.05fr);
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  box-shadow: var(--shadow);
-  overflow: hidden;
-}
 
-.driver-auth-brand {
+  position:
+    relative;
+
+  z-index:
+    2;
+
+  width:
+    min(560px, 100%);
+
+  padding:
+    48px;
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:
+    var(--radius);
+
   background:
-    linear-gradient(160deg, rgba(17, 24, 39, 0.98), rgba(15, 118, 110, 0.96)),
-    var(--road);
-  color: #ffffff;
-  padding: 38px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 30px;
+    rgba(5, 5, 5, 0.96);
+
+  box-shadow:
+    0 35px 100px
+    rgba(0, 0, 0, 0.70);
+
+  backdrop-filter:
+    blur(18px);
+
+  -webkit-backdrop-filter:
+    blur(18px);
 }
 
-.brand-mark {
-  width: fit-content;
-  min-height: 46px;
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 0 14px;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.1);
-  font-weight: 950;
+
+/* =========================================================
+   LOGO
+========================================================= */
+
+.driver-auth-logo {
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  margin:
+    0 0 42px;
 }
 
-.brand-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 999px;
-  background: #22c55e;
-  box-shadow: 0 0 0 6px rgba(34, 197, 94, 0.16);
+.driver-auth-logo img {
+
+  display:
+    block;
+
+  width:
+    min(280px, 80%);
+
+  max-height:
+    115px;
+
+  object-fit:
+    contain;
+
+  user-select:
+    none;
+
+  -webkit-user-drag:
+    none;
 }
 
-.driver-auth-copy {
-  display: grid;
-  gap: 14px;
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.driver-auth-header {
+
+  margin:
+    0 0 34px;
 }
 
-.eyebrow,
-.form-kicker {
-  color: #d8b36d;
-  font-size: 12px;
-  font-weight: 950;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+
+.driver-auth-header h1 {
+
+  margin:
+    0 0 12px;
+
+  color:
+    #ffffff;
+
+  font-size:
+    clamp(36px, 6vw, 52px);
+
+  line-height:
+    0.98;
+
+  font-weight:
+    600;
+
+  letter-spacing:
+    -0.055em;
 }
 
-.driver-auth-copy h1 {
-  max-width: 12ch;
-  font-size: clamp(38px, 5vw, 58px);
-  line-height: 0.98;
-  letter-spacing: 0;
+.driver-auth-header p {
+
+  max-width:
+    430px;
+
+  margin:
+    0;
+
+  color:
+    rgba(255, 255, 255, 0.48);
+
+  font-size:
+    14px;
+
+  line-height:
+    1.65;
 }
 
-.driver-auth-copy p {
-  max-width: 36ch;
-  color: #d8e2ef;
-  line-height: 1.6;
-  font-size: 15px;
+
+/* =========================================================
+   FIELD
+========================================================= */
+
+.driver-field {
+
+  width:
+    100%;
+
+  margin:
+    0 0 21px;
 }
 
-.driver-auth-metrics {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+.driver-field label {
+
+  display:
+    block;
+
+  margin:
+    0 0 9px;
+
+  color:
+    rgba(255, 255, 255, 0.70);
+
+  font-size:
+    12px;
+
+  font-weight:
+    500;
+
+  line-height:
+    1.3;
 }
 
-.driver-auth-metrics div {
-  padding: 14px 10px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background: rgba(255, 255, 255, 0.08);
+.driver-field input {
+
+  display:
+    block;
+
+  width:
+    100%;
+
+  height:
+    58px;
+
+  padding:
+    0 17px;
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:
+    var(--radius-small);
+
+  outline:
+    none;
+
+  background:var(--black);
+
+  color:var(--white);
+
+  font-family:
+    inherit;
+
+  font-size:
+    15px;
+
+  transition:
+    border-color 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease;
 }
 
-.driver-auth-metrics strong,
-.driver-auth-metrics span {
-  display: block;
+.driver-field input::placeholder {
+
+  color:var(--gray-3);
 }
 
-.driver-auth-metrics strong {
-  font-size: 18px;
+.driver-field input:hover {
+
+  border-color:
+    var(--border-hover);
 }
 
-.driver-auth-metrics span {
-  margin-top: 4px;
-  color: #c7d2df;
-  font-size: 12px;
-  font-weight: 800;
+.driver-field input:focus {
+
+  border-color:
+    rgba(255, 255, 255, 0.55);
+
+  background:
+    #0b0b0b;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(255, 255, 255, 0.04);
 }
 
-.driver-auth-panel {
-  padding: 40px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 24px;
+
+/* =========================================================
+   INPUT WRAP
+========================================================= */
+
+.driver-input-wrap {
+
+  position:
+    relative;
 }
 
-.driver-auth-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 18px;
+
+/* =========================================================
+   GRID
+========================================================= */
+
+.driver-form-grid {
+
+  display:
+    grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap:
+    14px;
 }
 
-.driver-auth-head h2 {
-  margin-top: 6px;
-  font-size: clamp(28px, 4vw, 36px);
-  line-height: 1.05;
-  letter-spacing: 0;
+
+/* =========================================================
+   LOGIN OPTIONS
+========================================================= */
+
+.driver-login-options {
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    space-between;
+
+  gap:
+    16px;
+
+  margin:
+    2px 0 26px;
 }
 
-.status-pill {
-  flex: 0 0 auto;
-  min-height: 34px;
-  display: inline-flex;
-  align-items: center;
-  padding: 0 12px;
-  border-radius: 999px;
-  background: #ecfdf5;
-  color: var(--success);
-  border: 1px solid #bbf7d0;
-  font-size: 12px;
-  font-weight: 950;
+
+/* =========================================================
+   REMEMBER
+========================================================= */
+
+.driver-remember {
+
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  gap:
+    9px;
+
+  color:
+    rgba(255, 255, 255, 0.45);
+
+  font-size:
+    12px;
+
+  cursor:
+    pointer;
 }
 
-.driver-auth-card {
-  display: grid;
-  gap: 14px;
+.driver-remember input {
+
+  appearance:
+    none;
+
+  width:
+    17px;
+
+  height:
+    17px;
+
+  margin:
+    0;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.28);
+
+  border-radius:
+    4px;
+
+  background:
+    transparent;
+
+  cursor:
+    pointer;
 }
 
-.form-row {
-  display: grid;
-  gap: 8px;
+.driver-remember input:checked {
+
+  background:
+    #ffffff;
+
+  border-color:
+    #ffffff;
 }
 
-.form-row label {
-  color: #253348;
-  font-size: 13px;
-  font-weight: 950;
+.driver-remember input:checked::after {
+
+  content:
+    "";
+
+  display:
+    block;
+
+  width:
+    5px;
+
+  height:
+    9px;
+
+  margin:
+    2px auto 0;
+
+  border:
+    solid #000000;
+
+  border-width:
+    0 2px 2px 0;
+
+  transform:
+    rotate(45deg);
 }
 
-.form-row input {
-  width: 100%;
-  min-height: 52px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: #fbfcfe;
-  color: var(--ink);
-  outline: none;
-  padding: 0 14px;
-  font: inherit;
-  transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+
+/* =========================================================
+   TEXT BUTTON
+========================================================= */
+
+.driver-text-button {
+
+  padding:
+    0;
+
+  border:
+    0;
+
+  background:
+    transparent;
+
+  color:
+    rgba(255, 255, 255, 0.62);
+
+  font:
+    inherit;
+
+  font-size:
+    12px;
+
+  cursor:
+    pointer;
+
+  text-decoration:
+    underline;
+
+  text-decoration-color:
+    rgba(255, 255, 255, 0.30);
+
+  text-underline-offset:
+    3px;
 }
 
-.form-row input::placeholder {
-  color: #98a2b3;
+.driver-text-button:hover {
+
+  color:
+    #ffffff;
+
+  text-decoration-color:
+    #ffffff;
 }
 
-.form-row input:focus {
-  border-color: var(--brand);
-  background: #ffffff;
-  box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.13);
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.driver-actions {
+
+  display:
+    grid;
+
+  gap:
+    10px;
 }
 
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
+
+/* =========================================================
+   PRIMARY
+========================================================= */
+
+.driver-primary {
+
+  width:
+    100%;
+
+  min-height:
+    58px;
+
+  padding:
+    0 20px;
+
+  border:
+    1px solid
+    #ffffff;
+
+  border-radius:
+    var(--radius-small);
+
+  background:
+    #ffffff;
+
+  color:
+    #000000;
+
+  font-family:
+    inherit;
+
+  font-size:
+    14px;
+
+  font-weight:
+    600;
+
+  cursor:
+    pointer;
+
+  transition:
+    transform 160ms ease,
+    background 160ms ease;
 }
 
-.btn,
-.btn-huella,
-.secondary-link {
-  min-height: 52px;
-  border-radius: 8px;
-  font: inherit;
-  font-weight: 950;
+.driver-primary:hover {
+
+  background:
+    #e8e8e8;
+
+  transform:
+    translateY(-1px);
 }
 
-.btn {
-  width: 100%;
-  margin-top: 4px;
-  border: 0;
-  background: var(--brand);
-  color: #ffffff;
-  cursor: pointer;
-  box-shadow: 0 14px 26px rgba(15, 118, 110, 0.22);
-  transition: background 0.18s ease, transform 0.18s ease, opacity 0.18s ease;
+.driver-primary:active {
+
+  transform:
+    translateY(0);
 }
 
-.btn:hover {
-  background: var(--brand-dark);
+
+/* =========================================================
+   SECONDARY
+========================================================= */
+
+.driver-secondary {
+
+  width:
+    100%;
+
+  min-height:
+    56px;
+
+  padding:
+    0 18px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.16);
+
+  border-radius:
+    var(--radius-small);
+
+  background:
+    transparent;
+
+  color:
+    #ffffff;
+
+  font-family:
+    inherit;
+
+  font-size:
+    13px;
+
+  font-weight:
+    500;
+
+  cursor:
+    pointer;
+
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
 }
 
-.btn:active,
-.btn-huella:active {
-  transform: translateY(1px);
+.driver-secondary:hover {
+
+  background:
+    rgba(255, 255, 255, 0.06);
+
+  border-color:
+    rgba(255, 255, 255, 0.38);
+
+  transform:
+    translateY(-1px);
 }
 
-.btn:disabled,
-.btn-huella:disabled {
-  opacity: 0.7;
-  cursor: wait;
+.driver-secondary:active {
+
+  transform:
+    translateY(0);
 }
 
-.btn-huella {
-  display: none;
-  width: 100%;
-  border: 1px solid var(--line);
-  background: #ffffff;
-  color: var(--ink);
-  cursor: pointer;
+.driver-secondary.compact {
+
+  width:
+    auto;
+
+  min-height:
+    48px;
+
+  padding:
+    0 18px;
 }
 
-.btn-huella.visible {
-  display: block;
+
+/* =========================================================
+   FINGERPRINT
+========================================================= */
+
+.driver-fingerprint {
+
+  margin-right:
+    8px;
+
+  font-size:
+    15px;
 }
 
-.btn.secondary {
-  margin-top: 0;
-  border: 1px solid var(--line);
-  background: #ffffff;
-  color: var(--ink);
-  box-shadow: none;
-}
 
-.phone-otp-card {
-  display: grid;
-  gap: 12px;
-  padding: 14px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: #fbfcfe;
-}
-
-.phone-otp-card[hidden] {
-  display: none;
-}
-
-.phone-otp-head {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-}
-
-.phone-otp-icon {
-  width: 34px;
-  height: 34px;
-  display: grid;
-  place-items: center;
-  border-radius: 8px;
-  background: #ecfdf5;
-  color: var(--success);
-  font-weight: 950;
-}
-
-.phone-otp-head strong {
-  display: block;
-  color: var(--ink);
-  font-size: 14px;
-}
-
-.phone-otp-head p {
-  margin-top: 3px;
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.4;
-}
-
-.phone-otp-field input {
-  text-align: center;
-  font-size: 22px;
-  font-weight: 950;
-  letter-spacing: 0.18em;
-}
-
-.phone-otp-actions {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 10px;
-}
-
-.phone-otp-actions .compact {
-  width: auto;
-  min-width: 116px;
-  padding: 0 14px;
-}
+/* =========================================================
+   MESSAGE
+========================================================= */
 
 .driver-msg {
-  min-height: 22px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 850;
-  line-height: 1.45;
-  text-align: center;
+
+  min-height:
+    20px;
+
+  margin:
+    14px 0 0;
+
+  color:
+    rgba(255, 255, 255, 0.68);
+
+  font-size:
+    12px;
+
+  line-height:
+    1.5;
+
+  text-align:
+    center;
 }
 
-.driver-msg.error,
-.driver-msg.ok {
-  padding: 10px 12px;
+
+/* =========================================================
+   RESET PASSWORD
+========================================================= */
+
+.driver-reset {
+
+  margin:
+    24px 0 0;
+
+  padding:
+    24px;
+
+  border:
+    1px solid
+    var(--border-soft);
+
+  border-radius:
+    18px;
+
+  background:
+    #070707;
 }
 
-.driver-msg.error {
-  color: var(--danger);
-  background: #fff1f2;
-  border: 1px solid #fecdd3;
+.driver-reset-header {
+
+  margin:
+    0 0 22px;
 }
 
-.driver-msg.ok {
-  color: var(--success);
-  background: #ecfdf5;
-  border: 1px solid #bbf7d0;
+.driver-reset-header strong {
+
+  display:
+    block;
+
+  margin:
+    0 0 7px;
+
+  color:
+    #ffffff;
+
+  font-size:
+    16px;
 }
 
-.link {
-  color: var(--muted);
-  text-align: center;
-  font-size: 14px;
-  line-height: 1.5;
+.driver-reset-header p {
+
+  margin:
+    0;
+
+  color:
+    rgba(255, 255, 255, 0.42);
+
+  font-size:
+    12px;
+
+  line-height:
+    1.5;
 }
 
-.link a {
-  color: #2563eb;
-  font-weight: 950;
-  text-decoration: none;
+.driver-reset-actions {
+
+  display:
+    grid;
+
+  gap:
+    10px;
 }
 
-.link a:hover {
-  text-decoration: underline;
+
+/* =========================================================
+   INFO
+========================================================= */
+
+.driver-info {
+
+  display:
+    flex;
+
+  align-items:
+    flex-start;
+
+  gap:
+    12px;
+
+  margin:
+    26px 0 0;
+
+  padding:
+    16px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.08);
+
+  border-radius:
+    14px;
+
+  background:
+    rgba(255, 255, 255, 0.025);
 }
 
-.driver-note {
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
-  padding: 12px;
-  border-radius: 8px;
-  background: var(--soft);
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.45;
+.driver-info-mark {
+
+  flex:
+    0 0 auto;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  min-width:
+    34px;
+
+  height:
+    28px;
+
+  padding:
+    0 7px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.16);
+
+  border-radius:
+    7px;
+
+  color:
+    rgba(255, 255, 255, 0.78);
+
+  font-size:
+    9px;
+
+  font-weight:
+    600;
+
+  letter-spacing:
+    0.08em;
 }
 
-.driver-note strong {
-  color: var(--ink);
+.driver-info p {
+
+  margin:
+    0;
+
+  color:
+    rgba(255, 255, 255, 0.43);
+
+  font-size:
+    11px;
+
+  line-height:
+    1.55;
 }
 
-.download-block,
-.social-block {
-  display: grid;
-  gap: 10px;
+.driver-info strong {
+
+  color:
+    rgba(255, 255, 255, 0.72);
 }
 
-.download-title,
-.social-title {
-  color: var(--muted);
-  font-size: 13px;
-  font-weight: 900;
-  text-align: center;
+
+/* =========================================================
+   SWITCH
+========================================================= */
+
+.driver-switch {
+
+  margin:
+    30px 0 0;
+
+  padding-top:
+    25px;
+
+  border-top:
+    1px solid
+    rgba(255, 255, 255, 0.08);
+
+  color:
+    rgba(255, 255, 255, 0.42);
+
+  font-size:
+    12px;
+
+  line-height:
+    1.5;
+
+  text-align:
+    center;
 }
 
-.download-links,
-.social-links {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
+.driver-switch a {
+
+  margin-left:
+    4px;
+
+  color:
+    #ffffff;
+
+  text-decoration:
+    underline;
+
+  text-decoration-color:
+    rgba(255, 255, 255, 0.32);
+
+  text-underline-offset:
+    3px;
 }
 
-.download-link,
-.social-link {
-  min-height: 36px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 12px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: #ffffff;
-  color: var(--ink);
-  text-decoration: none;
-  font-size: 12px;
-  font-weight: 900;
+
+/* =========================================================
+   LEGAL
+========================================================= */
+
+.driver-legal {
+
+  margin:
+    22px 0 0;
+
+  text-align:
+    center;
 }
 
-.download-link {
-  background: var(--brand);
-  border-color: var(--brand);
-  color: #ffffff;
+.driver-legal a {
+
+  color:
+    rgba(255, 255, 255, 0.30);
+
+  font-size:
+    10px;
+
+  text-decoration:
+    none;
+
+  transition:
+    color 160ms ease;
 }
 
-.download-link.driver {
-  background: var(--road);
-  border-color: var(--road);
+.driver-legal a:hover {
+
+  color:
+    rgba(255, 255, 255, 0.72);
 }
 
-.download-link span,
-.social-link span {
-  width: 22px;
-  height: 22px;
-  display: grid;
-  place-items: center;
-  border-radius: 999px;
-  background: #eef3f7;
-  color: var(--brand);
-  font-size: 10px;
+
+
+
+
+/* =========================================================
+   OTP
+========================================================= */
+
+.driver-otp {
+
+  margin:
+    20px 0 22px;
+
+  padding:
+    22px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.10);
+
+  border-radius:
+    18px;
+
+  background:
+    #070707;
 }
 
-.download-link span {
-  background: rgba(255, 255, 255, 0.18);
-  color: #ffffff;
+.driver-otp-header {
+
+  display:
+    flex;
+
+  align-items:
+    flex-start;
+
+  gap:
+    12px;
+
+  margin:
+    0 0 20px;
 }
 
-@media (max-width: 840px) {
+.driver-otp-icon {
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  flex:
+    0 0 36px;
+
+  width:
+    36px;
+
+  height:
+    36px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.16);
+
+  border-radius:
+    9px;
+
+  color:
+    #ffffff;
+
+  font-size:
+    15px;
+}
+
+.driver-otp-header strong {
+
+  display:
+    block;
+
+  margin:
+    0 0 5px;
+
+  color:
+    #ffffff;
+
+  font-size:
+    14px;
+}
+
+.driver-otp-header p {
+
+  margin:
+    0;
+
+  color:
+    rgba(255, 255, 255, 0.42);
+
+  font-size:
+    11px;
+
+  line-height:
+    1.5;
+}
+
+.driver-otp-actions {
+
+  display:
+    flex;
+
+  gap:
+    10px;
+}
+
+.driver-otp-actions .driver-secondary:first-child {
+
+  flex:
+    1;
+}
+
+
+/* =========================================================
+   CHECKBOX REGISTER
+========================================================= */
+
+.driver-check {
+
+  display:
+    flex;
+
+  align-items:
+    flex-start;
+
+  gap:
+    10px;
+
+  margin:
+    22px 0 24px;
+
+  color:
+    rgba(255, 255, 255, 0.40);
+
+  font-size:
+    11px;
+
+  line-height:
+    1.55;
+
+  cursor:
+    pointer;
+}
+
+.driver-check input {
+
+  appearance:
+    none;
+
+  flex:
+    0 0 auto;
+
+  width:
+    17px;
+
+  height:
+    17px;
+
+  margin:
+    1px 0 0;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.28);
+
+  border-radius:
+    4px;
+
+  background:
+    transparent;
+
+  cursor:
+    pointer;
+}
+
+.driver-check input:checked {
+
+  background:
+    #ffffff;
+
+  border-color:
+    #ffffff;
+}
+
+.driver-check input:checked::after {
+
+  content:
+    "";
+
+  display:
+    block;
+
+  width:
+    5px;
+
+  height:
+    9px;
+
+  margin:
+    2px auto 0;
+
+  border:
+    solid #000000;
+
+  border-width:
+    0 2px 2px 0;
+
+  transform:
+    rotate(45deg);
+}
+
+
+/* =========================================================
+   REGISTER PAGE
+========================================================= */
+
+.driver-register-page {
+
+  align-items:
+    flex-start;
+
+  padding-top:
+    55px;
+
+  padding-bottom:
+    70px;
+}
+
+
+/* =========================================================
+   REGISTER CARD
+========================================================= */
+
+.driver-register-page .driver-auth-shell {
+
+  width:
+    min(650px, 100%);
+}
+
+
+/* =========================================================
+   AUTOFILL
+========================================================= */
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+
+  -webkit-text-fill-color:
+    #ffffff;
+
+  -webkit-box-shadow:
+    0 0 0 1000px
+    #080808 inset;
+
+  transition:
+    background-color 9999s ease-out;
+}
+
+
+/* =========================================================
+   SELECTION
+========================================================= */
+
+::selection {
+
+  background:
+    rgba(255, 255, 255, 0.18);
+
+  color:
+    #ffffff;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 700px) {
+
   .driver-auth-page {
-    padding: 0;
-    place-items: stretch;
+
+    padding:
+      40px 16px 55px;
   }
 
   .driver-auth-shell {
-    min-height: 100dvh;
-    grid-template-columns: 1fr;
-    border: 0;
-    border-radius: 0;
+
+    padding:
+      40px 34px;
   }
 
-  .driver-auth-brand {
-    min-height: 248px;
-    padding: 26px 22px;
-  }
+  .driver-register-page .driver-auth-shell {
 
-  .driver-auth-copy h1 {
-    max-width: 13ch;
-    font-size: 36px;
-  }
-
-  .driver-auth-copy p {
-    font-size: 14px;
-  }
-
-  .driver-auth-metrics {
-    display: none;
-  }
-
-  .driver-auth-panel {
-    justify-content: flex-start;
-    padding: 28px 20px 34px;
-  }
-
-  .driver-auth-head {
-    display: grid;
+    width:
+      min(620px, 100%);
   }
 }
 
-@media (max-width: 520px) {
-  .form-grid {
-    grid-template-columns: 1fr;
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 560px) {
+
+  .driver-auth-page {
+
+    min-height:
+      100svh;
+
+    padding:
+      22px 10px 40px;
+
+    align-items:
+      flex-start;
   }
 
-  .phone-otp-actions {
-    grid-template-columns: 1fr;
+  .driver-auth-shell {
+
+    width:
+      100%;
+
+    padding:
+      34px 20px 28px;
+
+    border-radius:
+      23px;
   }
 
-  .phone-otp-actions .compact {
-    width: 100%;
+  .driver-auth-logo {
+
+    margin-bottom:
+      34px;
   }
 
-  .driver-auth-brand {
-    min-height: 220px;
+  .driver-auth-logo img {
+
+    width:
+      80%;
+
+    max-height:
+      90px;
   }
 
-  .driver-auth-copy h1 {
-    font-size: 32px;
+  .driver-auth-header {
+
+    margin-bottom:
+      28px;
   }
 
-  .driver-auth-panel {
-    padding-inline: 16px;
+  .driver-auth-header h1 {
+
+    font-size:
+      36px;
+  }
+
+  .driver-form-grid {
+
+    grid-template-columns:
+      1fr;
+
+    gap:
+      0;
+  }
+
+  .driver-login-options {
+
+    align-items:
+      flex-start;
+
+    flex-direction:
+      column;
+
+    gap:
+      13px;
+  }
+
+  .driver-otp-actions {
+
+    flex-direction:
+      column;
+  }
+
+  .driver-secondary.compact {
+
+    width:
+      100%;
+  }
+
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 380px) {
+
+  .driver-auth-page {
+
+    padding:
+      12px 7px 30px;
+  }
+
+  .driver-auth-shell {
+
+    padding:
+      28px 15px 25px;
+  }
+
+  .driver-auth-logo img {
+
+    width:
+      84%;
+  }
+
+  .driver-auth-header h1 {
+
+    font-size:
+      32px;
+  }
+
+  .driver-auth-header p {
+
+    font-size:
+      13px;
+  }
+
+  .driver-field input {
+
+    height:
+      55px;
+  }
+
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+
+    animation-duration:
+      0.01ms !important;
+
+    animation-iteration-count:
+      1 !important;
+
+    transition-duration:
+      0.01ms !important;
   }
 }
 
-/* App premium skin: matches BeGO dark background and footer material. */
-body {
-  background:
-    radial-gradient(circle at 50% -8%, rgba(255, 122, 0, 0.18), transparent 28%),
-    radial-gradient(circle at 8% 18%, rgba(37, 99, 235, 0.2), transparent 30%),
-    radial-gradient(circle at 92% 70%, rgba(34, 197, 94, 0.12), transparent 28%),
-    #020616;
-  color: #e5e7eb;
-}
+/* =========================================================
+   LÍNEA VERTICAL DECORATIVA DE FONDO
+========================================================= */
 
 .driver-auth-shell {
-  background:
-    linear-gradient(180deg, rgba(15, 23, 42, 0.9), rgba(2, 6, 23, 0.96));
-  border-color: rgba(148, 163, 184, 0.16);
-  box-shadow:
-    0 24px 70px rgba(0, 0, 0, 0.62),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    position: relative;
+    overflow: hidden;
 }
 
-.driver-auth-brand {
-  background:
-    radial-gradient(circle at 42% 0%, rgba(255, 122, 0, 0.2), transparent 31%),
-    linear-gradient(160deg, rgba(15, 23, 42, 0.98), rgba(2, 6, 23, 0.98));
-  border-right: 1px solid rgba(148, 163, 184, 0.12);
+
+/* Línea */
+
+.driver-auth-shell::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    bottom: 0;
+
+    left: 50%;
+
+    width: 1px;
+
+    background:
+        linear-gradient(
+            to bottom,
+            transparent 0%,
+            rgba(255, 255, 255, 0.05) 15%,
+            rgba(255, 255, 255, 0.12) 50%,
+            rgba(255, 255, 255, 0.05) 85%,
+            transparent 100%
+        );
+
+    pointer-events: none;
+
+    z-index: 0;
 }
 
-.brand-mark,
-.driver-auth-metrics div {
-  background:
-    linear-gradient(180deg, rgba(31, 41, 55, 0.78), rgba(15, 23, 42, 0.86));
-  border-color: rgba(148, 163, 184, 0.16);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
-}
 
-.driver-auth-panel {
-  background:
-    radial-gradient(circle at 100% 0%, rgba(56, 189, 248, 0.12), transparent 26%),
-    rgba(2, 6, 23, 0.72);
-}
+/* Todo el contenido por encima de la línea */
 
-.driver-auth-head h2,
-.form-row label,
-.driver-note strong,
-.phone-otp-head strong,
-.download-title,
-.social-title {
-  color: #e5e7eb;
-}
+.driver-auth-logo,
+.driver-auth-content {
 
-.driver-auth-copy p,
-.driver-note,
-.phone-otp-head p,
-.link,
-.download-title,
-.social-title {
-  color: #94a3b8;
-}
+    position: relative;
 
-.status-pill {
-  background: rgba(34, 197, 94, 0.1);
-  border-color: rgba(34, 197, 94, 0.24);
-  color: #86efac;
-}
-
-.driver-note,
-.phone-otp-card {
-  background: rgba(15, 23, 42, 0.84);
-  border: 1px solid rgba(148, 163, 184, 0.16);
-}
-
-.form-row input {
-  background: rgba(15, 23, 42, 0.86);
-  border-color: rgba(148, 163, 184, 0.16);
-  color: #e5e7eb;
-}
-
-.form-row input:focus {
-  border-color: #38bdf8;
-  box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.14);
-  background: rgba(15, 23, 42, 0.96);
-}
-
-.btn,
-.download-link {
-  background:
-    radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.28), transparent 16%),
-    linear-gradient(180deg, #ff8b1a 0%, #ff6a00 62%, #d94d00 100%);
-  border: 1px solid rgba(255, 122, 0, 0.34);
-  color: #ffffff;
-  box-shadow:
-    0 14px 28px rgba(255, 106, 0, 0.22),
-    inset 0 2px 2px rgba(255, 255, 255, 0.18),
-    inset 0 -9px 14px rgba(139, 45, 0, 0.22);
-}
-
-.btn-huella,
-.btn.secondary,
-.social-link {
-  background:
-    linear-gradient(180deg, rgba(31, 31, 35, 0.98), rgba(12, 13, 17, 0.98));
-  border-color: rgba(148, 163, 184, 0.14);
-  color: #d5d7dc;
-  box-shadow:
-    0 12px 24px rgba(0, 0, 0, 0.36),
-    inset 0 8px 18px rgba(255, 255, 255, 0.035);
-}
-
-.download-link.driver {
-  background:
-    linear-gradient(180deg, rgba(37, 99, 235, 0.95), rgba(15, 23, 42, 0.98));
-  border-color: rgba(56, 189, 248, 0.24);
-}
-
-.social-link span,
-.download-link span,
-.phone-otp-icon {
-  background: rgba(255, 122, 0, 0.16);
-  color: #ffb36b;
-}
-
-.driver-msg.error {
-  background: rgba(198, 40, 40, 0.14);
-  border-color: rgba(248, 113, 113, 0.28);
-  color: #fecaca;
-}
-
-.driver-msg.ok {
-  background: rgba(34, 197, 94, 0.12);
-  border-color: rgba(34, 197, 94, 0.28);
-  color: #bbf7d0;
+    z-index: 1;
 }

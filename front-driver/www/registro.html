@@ -1,160 +1,441 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#111827">
-  <title>Motorista BeGO - Registro</title>
-  <link rel="stylesheet" href="./css/driver-auth.css">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="theme-color"
+    content="#000000"
+  >
+
+  <meta
+    name="color-scheme"
+    content="dark"
+  >
+
+  <title>BeGO — Inscription chauffeur</title>
+
+  <link
+    rel="stylesheet"
+    href="./css/driver-auth.css"
+  >
+
 </head>
+
+
 <body>
-  <main class="driver-auth-page">
-    <section class="driver-auth-shell" aria-label="Registro motorista BeGO">
-      <aside class="driver-auth-brand">
-        <div class="brand-mark">
-          <span class="brand-dot" aria-hidden="true"></span>
-          <span>BeGO Driver</span>
-        </div>
 
-        <div class="driver-auth-copy">
-          <p class="eyebrow">Alta de motorista</p>
-          <h1>Activa tu perfil para trabajar.</h1>
-          <p>Registra tus datos y la informacion de tu vehiculo para empezar a recibir viajes.</p>
-        </div>
+  <main
+    class="driver-auth-page driver-register-page"
+  >
 
-        <div class="driver-auth-metrics" aria-hidden="true">
-          <div>
-            <strong>ID</strong>
-            <span>Perfil</span>
-          </div>
-          <div>
-            <strong>Moto</strong>
-            <span>Vehiculo</span>
-          </div>
-          <div>
-            <strong>PIN</strong>
-            <span>Seguro</span>
-          </div>
-        </div>
-      </aside>
+    <!-- =====================================================
+         BACKGROUND LOGO
+    ====================================================== -->
 
-      <section class="driver-auth-panel">
-        <header class="driver-auth-head">
-          <div>
-            <span class="form-kicker">Cuenta motorista</span>
-            <h2>Crear cuenta</h2>
-          </div>
-          <span class="status-pill">Registro seguro</span>
+    <div
+      class="driver-auth-background"
+      aria-hidden="true"
+    >
+
+      <img
+        src="./assets/logo-bego.png"
+        alt=""
+      >
+
+    </div>
+
+
+    <!-- =====================================================
+         AUTH CARD
+    ====================================================== -->
+
+    <section
+      class="driver-auth-shell"
+      aria-label="Inscription chauffeur BeGO"
+    >
+
+
+      <!-- ===================================================
+           LOGO
+      ==================================================== -->
+
+      <div class="driver-auth-logo">
+
+        <img
+          src="./assets/logo-bego.png"
+          alt="BeGO"
+        >
+
+      </div>
+
+
+      <!-- ===================================================
+           REGISTER
+      ==================================================== -->
+
+      <section class="driver-auth-content">
+
+
+        <!-- =================================================
+             HEADER
+        ================================================== -->
+
+        <header class="driver-auth-header">
+
+          <h1>
+            Créez votre compte.
+          </h1>
+
+
         </header>
 
-        <div class="driver-auth-card">
-          <div class="form-row">
-            <label for="nombre">Nombre completo</label>
-            <input type="text" id="nombre" placeholder="Tu nombre y apellido" autocomplete="name">
-          </div>
 
-          <div class="form-grid">
-            <div class="form-row">
-              <label for="email">Email</label>
-              <input type="email" id="email" placeholder="nombre@email.com" autocomplete="email">
-            </div>
+        <!-- =================================================
+             NAME
+        ================================================== -->
 
-            <div class="form-row">
-              <label for="telefono">Telefono</label>
-              <input type="tel" id="telefono" placeholder="+50937123456" autocomplete="tel">
-            </div>
-          </div>
+        <div class="driver-field">
 
-          <div class="form-row">
-            <label for="password">Contrasena</label>
-            <input type="password" id="password" placeholder="Minimo 8 caracteres" autocomplete="new-password">
-          </div>
+          <label for="nombre">
+            Nom complet
+          </label>
 
-          <div class="phone-otp-card" id="phoneOtpBox" hidden>
-            <div class="phone-otp-head">
-              <span class="phone-otp-icon">#</span>
-              <div>
-                <strong>Verificar email</strong>
-                <p id="phoneOtpHint">Te enviaremos un codigo de 6 digitos a tu correo.</p>
-              </div>
-            </div>
-            <div class="form-row phone-otp-field">
-              <label for="phoneOtpCode">Codigo SMS</label>
-              <input type="text" id="phoneOtpCode" inputmode="numeric" maxlength="6" placeholder="000000" autocomplete="one-time-code">
-            </div>
-            <div class="phone-otp-actions">
-              <button type="button" class="btn secondary" id="btnVerifyPhone">Confirmar codigo</button>
-              <button type="button" class="btn secondary compact" id="btnResendPhone">Reenviar</button>
-            </div>
-          </div>
+          <input
+            type="text"
+            id="nombre"
+            placeholder="Votre nom et prénom"
+            autocomplete="name"
+          >
 
-          <div class="form-grid">
-            <div class="form-row">
-              <label for="marca">Marca del vehiculo</label>
-              <input type="text" id="marca" placeholder="Honda, Yamaha...">
-            </div>
-
-            <div class="form-row">
-              <label for="modelo">Modelo</label>
-              <input type="text" id="modelo" placeholder="Wave, Navi...">
-            </div>
-          </div>
-
-          <div class="form-row">
-            <label for="placa">Placa</label>
-            <input type="text" id="placa" placeholder="Numero de placa">
-          </div>
-
-          <button class="btn" id="btnRegistro" type="button">Verificar y crear cuenta</button>
-          <div id="msgRegistro" class="driver-msg" role="status" aria-live="polite"></div>
-
-          <div class="driver-note">
-            <span aria-hidden="true">OK</span>
-            <p><strong>Importante:</strong> usa datos reales para que soporte pueda validar tu perfil si hace falta.</p>
-          </div>
-
-          <div class="link">
-            Ya tienes cuenta? <a href="login.html">Iniciar sesion</a>
-          </div>
-
-          <div class="link">
-            <a href="https://bego.com.ht/legal.html" target="_blank" rel="noopener">Legal, confidentialite et contact officiel</a>
-          </div>
-
-          <div class="download-block">
-            <p class="download-title">Descargar app Android</p>
-            <div class="download-links">
-              <a class="download-link driver" href="/download/bego-motorista.apk?v=20260703-driver-install" download>
-                <span>↓</span> App motorista
-              </a>
-              <a class="download-link" href="/download/bego-pasajero.apk?v=20260705-passenger-header-up" download>
-                <span>↓</span> App pasajero
-              </a>
-            </div>
-          </div>
-
-          <div class="social-block">
-            <p class="social-title">Redes sociales oficiales</p>
-            <div class="social-links">
-              <a class="social-link" href="https://www.facebook.com/search/top?q=bego%20haiti" target="_blank" rel="noopener">
-                <span>f</span> BeGO Haiti
-              </a>
-              <a class="social-link" href="https://www.instagram.com/bego.haiti" target="_blank" rel="noopener">
-                <span>IG</span> @bego.haiti
-              </a>
-              <a class="social-link" href="https://www.tiktok.com/@bego.ht" target="_blank" rel="noopener">
-                <span>TT</span> @bego.ht
-              </a>
-            </div>
-          </div>
         </div>
+
+
+        <!-- =================================================
+             EMAIL / PHONE
+        ================================================== -->
+
+        <div class="driver-form-grid">
+
+          <div class="driver-field">
+
+            <label for="email">
+              Email
+            </label>
+
+            <input
+              type="email"
+              id="email"
+              placeholder="nom@email.com"
+              autocomplete="email"
+            >
+
+          </div>
+
+
+          <div class="driver-field">
+
+            <label for="telefono">
+              Téléphone
+            </label>
+
+            <input
+              type="tel"
+              id="telefono"
+              placeholder="+50937123456"
+              autocomplete="tel"
+            >
+
+          </div>
+
+        </div>
+
+
+        <!-- =================================================
+             PASSWORD
+        ================================================== -->
+
+        <div class="driver-field">
+
+          <label for="password">
+            Mot de passe
+          </label>
+
+          <input
+            type="password"
+            id="password"
+            placeholder="Minimum 8 caractères"
+            autocomplete="new-password"
+          >
+
+        </div>
+
+
+        <!-- =================================================
+             OTP
+        ================================================== -->
+
+        <div
+          class="driver-otp"
+          id="phoneOtpBox"
+          hidden
+        >
+
+          <div class="driver-otp-header">
+
+            <span
+              class="driver-otp-icon"
+              aria-hidden="true"
+            >
+              #
+            </span>
+
+            <div>
+
+              <strong>
+                Vérifier votre email
+              </strong>
+
+              <p id="phoneOtpHint">
+                Nous vous enverrons un code de 6 chiffres
+                à votre adresse email.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="driver-field">
+
+            <label for="phoneOtpCode">
+              Code de vérification
+            </label>
+
+            <input
+              type="text"
+              id="phoneOtpCode"
+              inputmode="numeric"
+              maxlength="6"
+              placeholder="000000"
+              autocomplete="one-time-code"
+            >
+
+          </div>
+
+
+          <div class="driver-otp-actions">
+
+            <button
+              type="button"
+              class="driver-secondary"
+              id="btnVerifyPhone"
+            >
+              Confirmer le code
+            </button>
+
+            <button
+              type="button"
+              class="driver-secondary compact"
+              id="btnResendPhone"
+            >
+              Renvoyer
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- =================================================
+             VEHICLE
+        ================================================== -->
+
+        <div class="driver-form-grid">
+
+          <div class="driver-field">
+
+            <label for="marca">
+              Marque du véhicule
+            </label>
+
+            <input
+              type="text"
+              id="marca"
+              placeholder="Honda, Yamaha..."
+            >
+
+          </div>
+
+
+          <div class="driver-field">
+
+            <label for="modelo">
+              Modèle
+            </label>
+
+            <input
+              type="text"
+              id="modelo"
+              placeholder="Wave, Navi..."
+            >
+
+          </div>
+
+        </div>
+
+
+        <!-- =================================================
+             PLATE
+        ================================================== -->
+
+        <div class="driver-field">
+
+          <label for="placa">
+            Plaque d'immatriculation
+          </label>
+
+          <input
+            type="text"
+            id="placa"
+            placeholder="Numéro de plaque"
+          >
+
+        </div>
+
+
+        <!-- =================================================
+             TERMS
+        ================================================== -->
+
+        <label class="driver-check">
+
+          <input
+            type="checkbox"
+            id="terms"
+          >
+
+          <span>
+            J'accepte les conditions d'utilisation et la
+            politique de confidentialité de BeGO.
+          </span>
+
+        </label>
+
+
+        <!-- =================================================
+             REGISTER
+        ================================================== -->
+
+        <button
+          class="driver-primary"
+          id="btnRegistro"
+          type="button"
+        >
+          Vérifier et créer mon compte
+        </button>
+
+
+        <!-- =================================================
+             MESSAGE
+        ================================================== -->
+
+        <div
+          id="msgRegistro"
+          class="driver-msg"
+          role="status"
+          aria-live="polite"
+        ></div>
+
+
+        <!-- =================================================
+             INFO
+        ================================================== -->
+
+        <div class="driver-info">
+
+          <span
+            class="driver-info-mark"
+            aria-hidden="true"
+          >
+            OK
+          </span>
+
+          <p>
+            <strong>Important :</strong>
+            utilisez des informations réelles afin que
+            notre équipe puisse valider votre profil.
+          </p>
+
+        </div>
+
+
+        <!-- =================================================
+             LOGIN
+        ================================================== -->
+
+        <div class="driver-switch">
+
+          Vous avez déjà un compte ?
+
+          <a href="login.html">
+            Se connecter
+          </a>
+
+        </div>
+
+
+        <!-- =================================================
+             LEGAL
+        ================================================== -->
+
+        <div class="driver-legal">
+
+          <a
+            href="https://bego.com.ht/legal.html"
+            target="_blank"
+            rel="noopener"
+          >
+            Legal, confidentialité et contact officiel
+          </a>
+
+        </div>
+
+
       </section>
+
     </section>
+
   </main>
 
-  <script src="./js/core/production-console.js?v=20260606-console-clean"></script>
-  <script src="./js/core/conexion.js"></script>
-  <script src="./js/auth/registro.js?v=20260619-account-security"></script>
-  <script src="./js/i18n/fr.visual.js?v=20260601-fr"></script>
+
+  <!-- =======================================================
+       SCRIPTS
+  ======================================================== -->
+
+  <script
+    src="./js/core/production-console.js?v=20260606-console-clean"
+  ></script>
+
+  <script
+    src="./js/core/conexion.js"
+  ></script>
+
+  <script
+    src="./js/auth/registro.js?v=20260619-account-security"
+  ></script>
+
+  <script
+    src="./js/i18n/fr.visual.js?v=20260601-fr"
+  ></script>
+
 </body>
+
 </html>

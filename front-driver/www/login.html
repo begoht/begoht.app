@@ -1,136 +1,406 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#111827">
-  <title>Motorista BeGO - Acceso</title>
-  <link rel="stylesheet" href="./css/driver-auth.css">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="theme-color"
+    content="#000000"
+  >
+
+  <meta
+    name="color-scheme"
+    content="dark"
+  >
+
+  <title>BeGO — Chauffeur</title>
+
+  <link
+    rel="stylesheet"
+    href="./css/driver-auth.css"
+  >
+
 </head>
+
+
 <body>
-  <main class="driver-auth-page">
-    <section class="driver-auth-shell" aria-label="Acceso motorista BeGO">
-      <aside class="driver-auth-brand">
-        <div class="brand-mark">
-          <span class="brand-dot" aria-hidden="true"></span>
-          <span>BeGO Driver</span>
-        </div>
 
-        <div class="driver-auth-copy">
-          <p class="eyebrow">Motoristas verificados</p>
-          <h1>Entra listo para tomar viajes.</h1>
-          <p>Controla tu disponibilidad, recibe ofertas y mantente conectado con GPS en tiempo real.</p>
-        </div>
+  <main
+    class="driver-auth-page"
+    id="driver-auth-page"
+  >
 
-        <div class="driver-auth-metrics" aria-hidden="true">
-          <div>
-            <strong>GPS</strong>
-            <span>Activo</span>
-          </div>
-          <div>
-            <strong>Wallet</strong>
-            <span>En vivo</span>
-          </div>
-          <div>
-            <strong>24/7</strong>
-            <span>Soporte</span>
-          </div>
-        </div>
-      </aside>
+    <!-- =====================================================
+         BACKGROUND LOGO
+    ====================================================== -->
 
-      <section class="driver-auth-panel">
-        <header class="driver-auth-head">
-          <div>
-            <span class="form-kicker">Cuenta motorista</span>
-            <h2>Iniciar sesion</h2>
-          </div>
-          <span class="status-pill">Conexion segura</span>
+    <div
+      class="driver-auth-background"
+      aria-hidden="true"
+    >
+
+      <img
+        src="./assets/logo-bego.png"
+        alt=""
+      >
+
+    </div>
+
+
+    <!-- =====================================================
+         AUTH CARD
+    ====================================================== -->
+
+    <section
+      class="driver-auth-shell"
+      aria-label="Connexion chauffeur BeGO"
+    >
+
+
+      <!-- ===================================================
+           LOGO
+      ==================================================== -->
+
+      <div class="driver-auth-logo">
+
+        <img
+          src="./assets/logo-bego.png"
+          alt="BeGO"
+        >
+
+      </div>
+
+
+      <!-- ===================================================
+           LOGIN
+      ==================================================== -->
+
+      <section
+        class="driver-auth-content"
+        id="loginSection"
+      >
+
+        <header class="driver-auth-header">
+
+          <h1>
+            Bienvenue
+          </h1>
+
         </header>
 
-        <div class="driver-auth-card">
-          <div class="form-row">
-            <label for="telefono">Telefono</label>
-            <input type="tel" id="telefono" placeholder="+50937123456" autocomplete="username">
+
+        <!-- =================================================
+             PHONE
+        ================================================== -->
+
+        <div class="driver-field">
+
+          <label for="telefono">
+            Téléphone
+          </label>
+
+          <div class="driver-input-wrap">
+
+            <input
+              type="tel"
+              id="telefono"
+              placeholder="+50937123456"
+              autocomplete="username"
+            >
+
           </div>
 
-          <div class="form-row">
-            <label for="password">Contrasena</label>
-            <input type="password" id="password" placeholder="Tu contrasena" autocomplete="current-password">
-          </div>
-
-          <button class="btn" id="btnLogin" type="button">Ingresar</button>
-          <button class="btn-huella" id="btnHuella" type="button">Ingresar con huella</button>
-          <button class="btn-huella" id="btnForgotPassword" type="button">Olvide mi contrasena</button>
-          <div id="msgLogin" class="driver-msg" role="status" aria-live="polite"></div>
-
-          <div class="driver-note" id="passwordResetBox" hidden>
-            <div>
-              <strong>Recuperar contrasena</strong>
-              <div class="form-row">
-                <label for="resetEmail">Email</label>
-                <input id="resetEmail" type="email" autocomplete="email" placeholder="nombre@email.com">
-              </div>
-              <div class="form-row">
-                <label for="resetCode">Codigo</label>
-                <input id="resetCode" type="text" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="000000">
-              </div>
-              <div class="form-row">
-                <label for="resetPassword">Nueva contrasena</label>
-                <input id="resetPassword" type="password" autocomplete="new-password" placeholder="Minimo 8 caracteres">
-              </div>
-              <button class="btn-huella" id="btnSendResetCode" type="button">Enviar codigo</button>
-              <button class="btn-huella" id="btnResetPassword" type="button">Cambiar contrasena</button>
-            </div>
-          </div>
-
-          <div class="driver-note">
-            <span aria-hidden="true">GPS</span>
-            <p><strong>Tip:</strong> al entrar, la app verificara ubicacion para conectarte al matching.</p>
-          </div>
-
-          <div class="link">
-            No tienes cuenta? <a href="registro.html">Registrarse</a>
-          </div>
-
-          <div class="link">
-            <a href="https://bego.com.ht/legal.html" target="_blank" rel="noopener">Legal, confidentialite et contact officiel</a>
-          </div>
-
-          <div class="download-block">
-            <p class="download-title">Descargar app Android</p>
-            <div class="download-links">
-              <a class="download-link driver" href="/download/bego-motorista.apk?v=20260703-driver-install" download>
-                <span>↓</span> App motorista
-              </a>
-              <a class="download-link" href="/download/bego-pasajero.apk?v=20260705-passenger-header-up" download>
-                <span>↓</span> App pasajero
-              </a>
-            </div>
-          </div>
-
-          <div class="social-block">
-            <p class="social-title">Redes sociales oficiales</p>
-            <div class="social-links">
-              <a class="social-link" href="https://www.facebook.com/search/top?q=bego%20haiti" target="_blank" rel="noopener">
-                <span>f</span> BeGO Haiti
-              </a>
-              <a class="social-link" href="https://www.instagram.com/bego.haiti" target="_blank" rel="noopener">
-                <span>IG</span> @bego.haiti
-              </a>
-              <a class="social-link" href="https://www.tiktok.com/@bego.ht" target="_blank" rel="noopener">
-                <span>TT</span> @bego.ht
-              </a>
-            </div>
-          </div>
         </div>
+
+
+        <!-- =================================================
+             PASSWORD
+        ================================================== -->
+
+        <div class="driver-field">
+
+          <label for="password">
+            Mot de passe
+          </label>
+
+          <div class="driver-input-wrap">
+
+            <input
+              type="password"
+              id="password"
+              placeholder="Votre mot de passe"
+              autocomplete="current-password"
+            >
+
+          </div>
+
+        </div>
+
+
+        <!-- =================================================
+             OPTIONS
+        ================================================== -->
+
+        <div class="driver-login-options">
+
+          <label class="driver-remember">
+
+            <input
+              type="checkbox"
+              id="rememberMe"
+            >
+
+            <span>
+              Se souvenir de moi
+            </span>
+
+          </label>
+
+
+          <button
+            type="button"
+            class="driver-text-button"
+            id="btnForgotPassword"
+          >
+            Mot de passe oublié ?
+          </button>
+
+        </div>
+
+
+        <!-- =================================================
+             ACTIONS
+        ================================================== -->
+
+        <div class="driver-actions">
+
+          <button
+            class="driver-primary"
+            id="btnLogin"
+            type="button"
+          >
+            Se connecter
+          </button>
+
+
+          <button
+            class="driver-secondary"
+            id="btnHuella"
+            type="button"
+          >
+            <span
+              class="driver-fingerprint"
+              aria-hidden="true"
+            >
+              ◉
+            </span>
+
+            Se connecter avec empreinte
+          </button>
+
+        </div>
+
+
+        <!-- =================================================
+             LOGIN MESSAGE
+        ================================================== -->
+
+        <div
+          id="msgLogin"
+          class="driver-msg"
+          role="status"
+          aria-live="polite"
+        ></div>
+
+
+        <!-- =================================================
+             PASSWORD RESET
+        ================================================== -->
+
+        <div
+          class="driver-reset"
+          id="passwordResetBox"
+          hidden
+        >
+
+          <div class="driver-reset-header">
+
+            <strong>
+              Récupérer votre mot de passe
+            </strong>
+
+            <p>
+              Entrez votre email afin de recevoir votre code.
+            </p>
+
+          </div>
+
+
+          <div class="driver-field">
+
+            <label for="resetEmail">
+              Email
+            </label>
+
+            <input
+              id="resetEmail"
+              type="email"
+              autocomplete="email"
+              placeholder="nom@email.com"
+            >
+
+          </div>
+
+
+          <div class="driver-field">
+
+            <label for="resetCode">
+              Code
+            </label>
+
+            <input
+              id="resetCode"
+              type="text"
+              inputmode="numeric"
+              maxlength="6"
+              autocomplete="one-time-code"
+              placeholder="000000"
+            >
+
+          </div>
+
+
+          <div class="driver-field">
+
+            <label for="resetPassword">
+              Nouveau mot de passe
+            </label>
+
+            <input
+              id="resetPassword"
+              type="password"
+              autocomplete="new-password"
+              placeholder="Minimum 8 caractères"
+            >
+
+          </div>
+
+
+          <div class="driver-reset-actions">
+
+            <button
+              class="driver-secondary"
+              id="btnSendResetCode"
+              type="button"
+            >
+              Envoyer le code
+            </button>
+
+            <button
+              class="driver-primary"
+              id="btnResetPassword"
+              type="button"
+            >
+              Modifier le mot de passe
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- =================================================
+             GPS NOTE
+        ================================================== -->
+
+        <div class="driver-info">
+
+          <span
+            class="driver-info-mark"
+            aria-hidden="true"
+          >
+            GPS
+          </span>
+
+          <p>
+            <strong>Important :</strong>
+            votre position sera vérifiée afin de vous connecter
+            au système de matching.
+          </p>
+
+        </div>
+
+
+        <!-- =================================================
+             REGISTER
+        ================================================== -->
+
+        <div class="driver-switch">
+
+          Vous n'avez pas encore de compte ?
+
+          <a href="registro.html">
+            Créer un compte
+          </a>
+
+        </div>
+
+
+        <!-- =================================================
+             LEGAL
+        ================================================== -->
+
+        <div class="driver-legal">
+
+          <a
+            href="https://bego.com.ht/legal.html"
+            target="_blank"
+            rel="noopener"
+          >
+            Legal, confidentialité et contact officiel
+          </a>
+
+        </div>
+
       </section>
+
     </section>
+
   </main>
 
-  <script src="./js/core/production-console.js?v=20260606-console-clean"></script>
-  <script src="./js/core/conexion.js?v=20260710-local-login"></script>
-  <script src="./js/auth/login.js?v=20260619-account-security"></script>
-  <script type="module" src="./js/modules/huellas/huellas.login.js"></script>
-  <script src="./js/i18n/fr.visual.js?v=20260601-fr"></script>
+
+  <!-- =======================================================
+       SCRIPTS
+  ======================================================== -->
+
+  <script
+    src="./js/core/production-console.js?v=20260606-console-clean"
+  ></script>
+
+  <script
+    src="./js/core/conexion.js?v=20260710-local-login"
+  ></script>
+
+  <script
+    src="./js/auth/login.js?v=20260619-account-security"
+  ></script>
+
+  <script
+    type="module"
+    src="./js/modules/huellas/huellas.login.js"
+  ></script>
+
+  <script
+    src="./js/i18n/fr.visual.js?v=20260601-fr"
+  ></script>
+
 </body>
+
 </html>
