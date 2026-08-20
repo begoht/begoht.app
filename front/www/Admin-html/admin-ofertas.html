@@ -1,200 +1,1114 @@
 <!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Offres passager | BeGO Admin</title>
-  <link rel="stylesheet" href="../css/admin-ofertas.css?v=20260604-admin-offers">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-</head>
-<body>
-  <main class="offers-admin-shell">
-    <aside class="offers-sidebar">
-      <a class="back-link" href="../paginas/admin-dashboard.html">
-        <i class="fa-solid fa-chevron-left"></i>
-        Tableau de bord
-      </a>
 
-      <div class="offers-brand">
-        <span>BeGO Admin</span>
-        <h1>Offres passager</h1>
-        <p>Publiez, mettez en pause et organisez les promotions visibles dans l'app passager.</p>
+<html lang="fr">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  >
+
+  <title>
+    Offres passager | BeGO Admin
+  </title>
+
+
+  <!-- =====================================================
+       CSS ADMIN OFFRES
+  ====================================================== -->
+
+  <link
+    rel="stylesheet"
+    href="../css/admin-ofertas.css?v=20260820-admin-offers-v2"
+  >
+
+
+  <!-- =====================================================
+       FONT AWESOME
+  ====================================================== -->
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  >
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     BEGO ADMIN
+     OFFRES PASSAGER
+========================================================= -->
+
+<main class="offers-admin-shell">
+
+
+  <!-- =====================================================
+       SIDEBAR
+  ====================================================== -->
+
+  <aside class="offers-sidebar">
+
+
+    <!-- =================================================
+         RETOUR
+    ================================================== -->
+
+    <a
+      class="back-link"
+      href="../paginas/admin-dashboard.html"
+    >
+
+      <i class="fa-solid fa-chevron-left"></i>
+
+      <span>
+        Tableau de bord
+      </span>
+
+    </a>
+
+
+
+    <!-- =================================================
+         BRAND
+    ================================================== -->
+
+    <div class="offers-brand">
+
+      <span>
+        BeGO Admin
+      </span>
+
+      <h1>
+        Offres passager
+      </h1>
+
+      <p>
+        Créez, publiez et organisez les campagnes
+        visibles dans l'application passager.
+      </p>
+
+    </div>
+
+
+
+    <!-- =================================================
+         NOUVELLE OFFRE
+    ================================================== -->
+
+    <button
+      class="new-offer-btn"
+      id="newOfferBtn"
+      type="button"
+    >
+
+      <i class="fa-solid fa-plus"></i>
+
+      <span>
+        Nouvelle offre
+      </span>
+
+    </button>
+
+
+
+    <!-- =================================================
+         RECHERCHE
+    ================================================== -->
+
+    <label
+      class="offer-search"
+      for="offerSearch"
+    >
+
+      <i class="fa-solid fa-magnifying-glass"></i>
+
+      <input
+        id="offerSearch"
+        type="search"
+        placeholder="Rechercher une offre"
+        autocomplete="off"
+      >
+
+    </label>
+
+
+
+    <!-- =================================================
+         LISTE DES OFFRES
+    ================================================== -->
+
+    <section
+      class="offers-list"
+      id="offersList"
+      aria-live="polite"
+    ></section>
+
+
+  </aside>
+
+
+
+  <!-- =====================================================
+       EDITOR
+  ====================================================== -->
+
+  <section class="offers-editor">
+
+
+    <!-- =================================================
+         TOPBAR
+    ================================================== -->
+
+    <header class="offers-topbar">
+
+      <div class="offers-topbar-copy">
+
+        <span id="editorMode">
+          Créer une offre
+        </span>
+
+        <h2 id="editorTitle">
+          Contrôle de publication
+        </h2>
+
       </div>
 
-      <button class="new-offer-btn" id="newOfferBtn" type="button">
-        <i class="fa-solid fa-plus"></i>
-        Nouvelle offre
-      </button>
 
-      <label class="offer-search" for="offerSearch">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <input id="offerSearch" type="search" placeholder="Rechercher une offre">
-      </label>
+      <div class="offers-toolbar">
 
-      <section class="offers-list" id="offersList" aria-live="polite"></section>
-    </aside>
+        <span
+          class="status-pill"
+          id="selectedStatus"
+        >
+          Brouillon
+        </span>
 
-    <section class="offers-editor">
-      <header class="offers-topbar">
-        <div>
-          <span id="editorMode">Creer une offre</span>
-          <h2 id="editorTitle">Controle de publication</h2>
-        </div>
-        <div class="offers-toolbar">
-          <span class="status-pill" id="selectedStatus">Brouillon</span>
-          <button id="refreshOffersBtn" type="button">
-            <i class="fa-solid fa-rotate"></i>
+
+        <button
+          id="refreshOffersBtn"
+          type="button"
+        >
+
+          <i class="fa-solid fa-rotate"></i>
+
+          <span>
             Actualiser
-          </button>
-        </div>
-      </header>
+          </span>
 
-      <div class="offers-grid">
-        <form class="offer-form" id="offerForm">
-          <input type="hidden" id="offerId">
+        </button>
+
+      </div>
+
+    </header>
+
+
+
+    <!-- =================================================
+         GRID
+    ================================================== -->
+
+    <div class="offers-grid">
+
+
+      <!-- =================================================
+           FORM
+      ================================================== -->
+
+      <form
+        class="offer-form"
+        id="offerForm"
+        enctype="multipart/form-data"
+      >
+
+        <input
+          type="hidden"
+          id="offerId"
+        >
+
+
+        <!-- =============================================
+             IDENTITÉ
+        ============================================== -->
+
+        <div class="form-section">
+
+          <div class="form-section-heading">
+
+            <span>
+              01
+            </span>
+
+            <div>
+
+              <h3>
+                Contenu
+              </h3>
+
+              <p>
+                Texte principal de la campagne.
+              </p>
+
+            </div>
+
+          </div>
+
 
           <div class="field-row two">
+
             <label>
+
               Titre
-              <input id="offerTitle" type="text" maxlength="80" required placeholder="-25% aujourd'hui">
+
+              <input
+                id="offerTitle"
+                type="text"
+                maxlength="100"
+                required
+                placeholder="Faites vos courses sans perdre de temps."
+              >
+
             </label>
+
+
             <label>
-              Etiquette superieure
-              <input id="offerKicker" type="text" maxlength="40" placeholder="Trajet premium">
+
+              Etiquette supérieure
+
+              <input
+                id="offerKicker"
+                type="text"
+                maxlength="40"
+                placeholder="SUPERMARCHÉ"
+              >
+
             </label>
+
           </div>
+
 
           <label>
+
             Description
-            <textarea id="offerDescription" maxlength="180" rows="3" placeholder="Texte court que le passager verra"></textarea>
+
+            <textarea
+              id="offerDescription"
+              maxlength="220"
+              rows="4"
+              placeholder="Commandez vos produits préférés et recevez-les directement chez vous."
+            ></textarea>
+
           </label>
 
-          <div class="field-row three">
-            <label>
-              Badge
-              <input id="offerBadge" type="text" maxlength="24" placeholder="BeGO+">
-            </label>
-            <label>
-              Icone FontAwesome
-              <input id="offerIcon" type="text" maxlength="40" placeholder="fa-bolt">
-            </label>
-            <label>
-              Ordre
-              <input id="offerOrder" type="number" step="1" value="100">
-            </label>
+        </div>
+
+
+
+        <!-- =============================================
+             OFFRE
+        ============================================== -->
+
+        <div class="form-section">
+
+          <div class="form-section-heading">
+
+            <span>
+              02
+            </span>
+
+            <div>
+
+              <h3>
+                Promotion
+              </h3>
+
+              <p>
+                Valeur commerciale visible dans le banner.
+              </p>
+
+            </div>
+
           </div>
 
+
           <div class="field-row three">
+
             <label>
-              Theme
-              <select id="offerTheme">
-                <option value="primary">Bleu premium</option>
-                <option value="package">Colis</option>
-                <option value="wallet">Wallet</option>
-                <option value="gold">Dore</option>
-                <option value="emerald">Vert</option>
-                <option value="night">Sombre</option>
-              </select>
+
+              Texte avant réduction
+
+              <input
+                id="offerDiscountLabel"
+                type="text"
+                maxlength="30"
+                placeholder="Jusqu'à"
+                value="Jusqu'à"
+              >
+
             </label>
+
+
             <label>
-              Emplacement
-              <select id="offerPlacement">
-                <option value="both">Accueil et Promos</option>
-                <option value="home">Accueil seulement</option>
-                <option value="promos">Promos seulement</option>
-              </select>
+
+              Réduction
+
+              <input
+                id="offerDiscount"
+                type="text"
+                maxlength="16"
+                placeholder="50%"
+              >
+
             </label>
+
+
             <label>
-              Ville
-              <select id="offerCity">
-                <option value="all">Toutes</option>
-                <option value="jacmel">Jacmel</option>
-                <option value="cordoba">Cordoba test</option>
-              </select>
+
+              Suffixe
+
+              <input
+                id="offerDiscountSuffix"
+                type="text"
+                maxlength="12"
+                placeholder="OFF"
+                value="OFF"
+              >
+
             </label>
+
           </div>
+
+        </div>
+
+
+
+        <!-- =============================================
+             IMAGE
+        ============================================== -->
+
+        <div class="form-section">
+
+          <div class="form-section-heading">
+
+            <span>
+              03
+            </span>
+
+            <div>
+
+              <h3>
+                Image de campagne
+              </h3>
+
+              <p>
+                Utilisez une image verticale ou portrait de haute qualité.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <label>
+
+            URL / chemin de l'image
+
+            <input
+              id="offerImage"
+              type="text"
+              maxlength="300"
+              placeholder="/front/www/assets/images/promos/bego-super.jpg"
+            >
+
+          </label>
+
+
+          <label>
+
+            Télécharger une image
+
+            <input
+              id="offerImageFile"
+              type="file"
+              accept="image/png,image/jpeg,image/webp"
+            >
+
+          </label>
+
+
+          <div
+            class="image-upload-preview"
+            id="imageUploadPreview"
+          >
+
+            <div class="image-upload-empty">
+
+              <i class="fa-regular fa-image"></i>
+
+              <span>
+                Aucun fichier sélectionné
+              </span>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- =============================================
+             CTA
+        ============================================== -->
+
+        <div class="form-section">
+
+          <div class="form-section-heading">
+
+            <span>
+              04
+            </span>
+
+            <div>
+
+              <h3>
+                Action
+              </h3>
+
+              <p>
+                Définissez où le passager sera dirigé.
+              </p>
+
+            </div>
+
+          </div>
+
 
           <div class="field-row two">
+
             <label>
+
               Bouton / CTA
-              <input id="offerCta" type="text" maxlength="28" placeholder="Voir">
+
+              <input
+                id="offerCta"
+                type="text"
+                maxlength="40"
+                placeholder="Commander maintenant"
+              >
+
             </label>
+
+
             <label>
-              Action
+
+              Destination
+
               <select id="offerAction">
-                <option value="#/promos">Voir les promotions</option>
-                <option value="#/">Demander une course</option>
-                <option value="#/wallet">Wallet</option>
-                <option value="#/servicios">Services</option>
-                <option value="#/actividad">Activite</option>
+
+                <option value="#/promos">
+                  Voir les promotions
+                </option>
+
+                <option value="#/">
+                  Demander une course
+                </option>
+
+                <option value="#/wallet">
+                  Wallet
+                </option>
+
+                <option value="#/servicios">
+                  Services
+                </option>
+
+                <option value="#/actividad">
+                  Activité
+                </option>
+
+                <option value="#/cuenta">
+                  Compte
+                </option>
+
               </select>
+
             </label>
+
           </div>
 
-          <div class="field-row two">
+        </div>
+
+
+
+        <!-- =============================================
+             VISIBILITÉ
+        ============================================== -->
+
+        <div class="form-section">
+
+          <div class="form-section-heading">
+
+            <span>
+              05
+            </span>
+
+            <div>
+
+              <h3>
+                Visibilité
+              </h3>
+
+              <p>
+                Contrôlez où et pour qui l'offre apparaît.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="field-row three">
+
             <label>
-              Debut
-              <input id="offerStartsAt" type="datetime-local">
+
+              Emplacement
+
+              <select id="offerPlacement">
+
+                <option value="both">
+                  Accueil et Promos
+                </option>
+
+                <option value="home">
+                  Accueil seulement
+                </option>
+
+                <option value="promos">
+                  Promos seulement
+                </option>
+
+              </select>
+
             </label>
+
+
             <label>
+
+              Ville
+
+              <select id="offerCity">
+
+                <option value="all">
+                  Toutes
+                </option>
+
+                <option value="jacmel">
+                  Jacmel
+                </option>
+
+                <option value="cordoba">
+                  Cordoba test
+                </option>
+
+              </select>
+
+            </label>
+
+
+            <label>
+
+              Ordre
+
+              <input
+                id="offerOrder"
+                type="number"
+                step="1"
+                value="100"
+                min="0"
+              >
+
+            </label>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- =============================================
+             PÉRIODE
+        ============================================== -->
+
+        <div class="form-section">
+
+          <div class="form-section-heading">
+
+            <span>
+              06
+            </span>
+
+            <div>
+
+              <h3>
+                Période
+              </h3>
+
+              <p>
+                Définissez la période de disponibilité.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="field-row two">
+
+            <label>
+
+              Début
+
+              <input
+                id="offerStartsAt"
+                type="datetime-local"
+              >
+
+            </label>
+
+
+            <label>
+
               Fin
-              <input id="offerEndsAt" type="datetime-local">
+
+              <input
+                id="offerEndsAt"
+                type="datetime-local"
+              >
+
             </label>
+
           </div>
+
+        </div>
+
+
+
+        <!-- =============================================
+             ÉTAT
+        ============================================== -->
+
+        <div class="form-section">
+
+          <div class="form-section-heading">
+
+            <span>
+              07
+            </span>
+
+            <div>
+
+              <h3>
+                Publication
+              </h3>
+
+              <p>
+                Choisissez l'état actuel de l'offre.
+              </p>
+
+            </div>
+
+          </div>
+
 
           <div class="field-row two">
+
             <label>
+
               Etat
+
               <select id="offerStatus">
-                <option value="draft">Brouillon</option>
-                <option value="published">Publie</option>
-                <option value="paused">En pause</option>
-                <option value="archived">Archive</option>
+
+                <option value="draft">
+                  Brouillon
+                </option>
+
+                <option value="published">
+                  Publié
+                </option>
+
+                <option value="paused">
+                  En pause
+                </option>
+
+                <option value="archived">
+                  Archivé
+                </option>
+
               </select>
+
             </label>
+
+
             <div class="form-actions">
-              <button class="secondary" id="resetFormBtn" type="button">Effacer</button>
-              <button class="primary" type="submit">Enregistrer</button>
-            </div>
-          </div>
-        </form>
 
-        <aside class="offer-preview-panel">
-          <div class="preview-title">
-            <span>Apercu</span>
-            <small id="previewMeta">Accueil</small>
+              <button
+                class="secondary"
+                id="resetFormBtn"
+                type="button"
+              >
+
+                Effacer
+
+              </button>
+
+
+              <button
+                class="primary"
+                type="submit"
+              >
+
+                <i class="fa-solid fa-floppy-disk"></i>
+
+                Enregistrer
+
+              </button>
+
+            </div>
+
           </div>
 
-          <article class="preview-card home-promo-card home-promo-card-primary" id="offerPreview">
-            <div class="home-promo-copy">
-              <span class="home-promo-kicker" id="previewKicker">Trajet premium</span>
-              <h2 id="previewTitle">-25% aujourd'hui</h2>
-              <p id="previewDescription">Activez votre course avec Wallet BeGO.</p>
+        </div>
+
+
+      </form>
+
+
+
+      <!-- =================================================
+           PREVIEW PANEL
+      ================================================== -->
+
+      <aside class="offer-preview-panel">
+
+
+        <!-- =============================================
+             PREVIEW HEADER
+        ============================================== -->
+
+        <div class="preview-title">
+
+          <div>
+
+            <span>
+              Aperçu
+            </span>
+
+            <small id="previewMeta">
+              Accueil
+            </small>
+
+          </div>
+
+          <span class="preview-live-badge">
+            LIVE PREVIEW
+          </span>
+
+        </div>
+
+
+
+        <!-- =============================================
+             PHONE PREVIEW
+        ============================================== -->
+
+        <div class="offer-preview-device">
+
+
+          <div class="offer-preview-device-top">
+
+            <span>
+              9:41
+            </span>
+
+            <div>
+
+              <i class="fa-solid fa-signal"></i>
+              <i class="fa-solid fa-wifi"></i>
+              <i class="fa-solid fa-battery-full"></i>
+
             </div>
-            <div class="home-promo-badge">
-              <i class="fa-solid fa-bolt" id="previewIcon"></i>
-              <span id="previewBadge">BeGO+</span>
+
+          </div>
+
+
+
+          <!-- ===========================================
+               PROMO CARD
+          ============================================ -->
+
+          <article
+            class="preview-card home-promo-card"
+            id="offerPreview"
+          >
+
+
+            <!-- IMAGE -->
+
+            <img
+              class="home-promo-image"
+              id="previewImage"
+              src="/front/www/assets/images/promos/bego-super.jpg"
+              alt=""
+            >
+
+
+            <!-- OVERLAY -->
+
+            <div class="home-promo-overlay"></div>
+
+
+
+            <!-- CONTENT -->
+
+            <div class="home-promo-content">
+
+
+              <!-- BRAND -->
+
+              <div class="home-promo-brand">
+                BeGO
+              </div>
+
+
+
+              <!-- COPY -->
+
+              <div class="home-promo-copy">
+
+
+                <span
+                  class="home-promo-kicker"
+                  id="previewKicker"
+                >
+                  SUPERMARCHÉ
+                </span>
+
+
+                <h2 id="previewTitle">
+
+                  Faites vos courses
+
+                  <span>
+                    sans perdre de temps.
+                  </span>
+
+                </h2>
+
+
+
+                <!-- DISCOUNT -->
+
+                <div class="home-promo-discount">
+
+                  <small id="previewDiscountLabel">
+                    Jusqu'à
+                  </small>
+
+                  <strong id="previewDiscount">
+                    50%
+                  </strong>
+
+                  <span id="previewDiscountSuffix">
+                    OFF
+                  </span>
+
+                </div>
+
+
+
+                <!-- DESCRIPTION -->
+
+                <p id="previewDescription">
+
+                  Commandez vos produits préférés
+                  et recevez-les directement chez vous.
+
+                </p>
+
+
+
+                <!-- CTA -->
+
+                <div
+                  class="home-promo-preview-cta"
+                  id="previewCtaWrap"
+                >
+
+                  <span id="previewCta">
+                    Commander maintenant
+                  </span>
+
+                  <i class="fa-solid fa-arrow-right"></i>
+
+                </div>
+
+
+              </div>
+
             </div>
+
           </article>
 
-          <div class="status-actions">
-            <button type="button" data-status-action="published"><i class="fa-solid fa-eye"></i> Publier</button>
-            <button type="button" data-status-action="paused"><i class="fa-solid fa-pause"></i> Mettre en pause</button>
-            <button type="button" data-status-action="draft"><i class="fa-solid fa-file"></i> Brouillon</button>
-            <button class="danger" type="button" data-status-action="archived"><i class="fa-solid fa-box-archive"></i> Archiver</button>
+
+          <!-- ===========================================
+               DOTS
+          ============================================ -->
+
+          <div class="offer-preview-dots">
+
+            <span class="active"></span>
+            <span></span>
+            <span></span>
+
           </div>
 
-          <div class="help-card">
-            <strong>Production</strong>
-            <p>Seules les offres publiees et dans la periode active apparaissent dans l'app passager.</p>
-          </div>
-        </aside>
-      </div>
-    </section>
-  </main>
 
-  <script src="../js/core/production-console.js?v=20260606-console-clean"></script>
-  <script src="../js/i18n/admin-fr.visual.js?v=20260606-admin-fr"></script>
-  <script src="../js/Admin-js/admin-ofertas.js?v=20260606-admin-fr"></script>
+        </div>
+
+
+
+        <!-- =============================================
+             STATUS ACTIONS
+        ============================================== -->
+
+        <div class="status-actions">
+
+
+          <button
+            type="button"
+            data-status-action="published"
+          >
+
+            <i class="fa-solid fa-eye"></i>
+
+            <span>
+              Publier
+            </span>
+
+          </button>
+
+
+          <button
+            type="button"
+            data-status-action="paused"
+          >
+
+            <i class="fa-solid fa-pause"></i>
+
+            <span>
+              Mettre en pause
+            </span>
+
+          </button>
+
+
+          <button
+            type="button"
+            data-status-action="draft"
+          >
+
+            <i class="fa-solid fa-file"></i>
+
+            <span>
+              Brouillon
+            </span>
+
+          </button>
+
+
+          <button
+            class="danger"
+            type="button"
+            data-status-action="archived"
+          >
+
+            <i class="fa-solid fa-box-archive"></i>
+
+            <span>
+              Archiver
+            </span>
+
+          </button>
+
+
+        </div>
+
+
+
+        <!-- =============================================
+             PRODUCTION INFO
+        ============================================== -->
+
+        <div class="help-card">
+
+          <div class="help-card-icon">
+
+            <i class="fa-solid fa-circle-info"></i>
+
+          </div>
+
+          <div>
+
+            <strong>
+              Production
+            </strong>
+
+            <p>
+              Seules les offres publiées, compatibles avec
+              l'emplacement sélectionné et comprises dans leur
+              période active apparaissent dans l'application passager.
+            </p>
+
+          </div>
+
+        </div>
+
+
+      </aside>
+
+
+    </div>
+
+  </section>
+
+
+</main>
+
+
+
+<!-- =========================================================
+     SCRIPTS
+========================================================= -->
+
+<script
+  src="../js/core/production-console.js?v=20260606-console-clean"
+></script>
+
+<script
+  src="../js/i18n/admin-fr.visual.js?v=20260606-admin-fr"
+></script>
+
+<script
+  src="../js/Admin-js/admin-ofertas.js?v=20260820-admin-offers-v2"
+></script>
+
+
 </body>
+
 </html>

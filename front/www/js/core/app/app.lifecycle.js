@@ -55,7 +55,7 @@ async function initHome(initId) {
     const map = getMap();
     if (!map) return;
 
-    const { initPasajero } = await import("../../pasajero/pasajero.main.js?v=20260713-passenger-connection-hotfix");
+    const { initPasajero } = await import("../../pasajero/pasajero.main.js?v=20260820-promo-bg-admin");
 
     if (initId !== currentInitId) return;
 

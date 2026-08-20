@@ -1,39 +1,6 @@
 import { getServerUrl } from "../conexion.js";
 import { cityConfig } from "../map/config/index.js?v=20260624-cordoba-gps";
 
-const FALLBACK_OFFERS = [
-  {
-    id: "fallback-ride",
-    title: "-25% aujourd'hui",
-    kicker: "Trajet premium",
-    description: "Activez votre course avec Wallet BeGO et profitez d'un tarif preferentiel.",
-    badgeLabel: "BeGO+",
-    icon: "fa-bolt",
-    theme: "primary",
-    actionRoute: "#/wallet",
-  },
-  {
-    id: "fallback-package",
-    title: "Jusqu'a 5 kg",
-    kicker: "Colis rapide",
-    description: "Envoyez un paquet avec code de livraison securise en 4 chiffres.",
-    badgeLabel: "Colis",
-    icon: "fa-box",
-    theme: "package",
-    actionRoute: "#/",
-  },
-  {
-    id: "fallback-wallet",
-    title: "Bonus Wallet",
-    kicker: "Paiement malin",
-    description: "Rechargez votre solde et gardez vos trajets, recus et promotions au meme endroit.",
-    badgeLabel: "Wallet",
-    icon: "fa-wallet",
-    theme: "wallet",
-    actionRoute: "#/wallet",
-  },
-];
-
 export async function fetchPassengerOffers({ placement = "home", limit = 8 } = {}) {
   const city = cityConfig?.id || "all";
   const url = new URL(`${getServerUrl()}/api/offers/passenger`);
@@ -56,21 +23,24 @@ export async function fetchPassengerOffers({ placement = "home", limit = 8 } = {
 export async function initHomeOffers() {
   const section = document.getElementById("homePromos");
   const track = document.getElementById("homePromosTrack");
+  const dots = document.getElementById("homePromosDots");
   if (!section || !track) return;
 
+  section.classList.add("hidden");
+  track.innerHTML = "";
+  if (dots) dots.innerHTML = "";
+
   try {
-    const offers = await fetchPassengerOffers({ placement: "home", limit: 6 });
-    if (!offers.length) {
-      section.classList.add("hidden");
-      return;
-    }
+    const offers = await fetchPassengerOffers({ placement: "home", limit: 8 });
+    const visibleOffers = offers.filter((offer) => offer.imageUrl);
+    if (!visibleOffers.length) return;
 
     section.classList.remove("hidden");
-    track.innerHTML = offers.map(renderHomeOfferCard).join("");
+    track.innerHTML = visibleOffers.map(renderHomeOfferCard).join("");
+    renderDots(dots, visibleOffers.length);
+    bindPromoDots(track, dots);
   } catch (err) {
     console.warn("No se pudieron cargar ofertas publicadas:", err);
-    track.innerHTML = FALLBACK_OFFERS.map(renderHomeOfferCard).join("");
-    section.classList.remove("hidden");
   }
 }
 
@@ -94,25 +64,29 @@ export async function initPromosPage() {
     list.innerHTML = offers.map(renderPromoListCard).join("");
   } catch (err) {
     console.warn("No se pudieron cargar promociones:", err);
-    if (status) status.textContent = "Offres de secours";
-    list.innerHTML = FALLBACK_OFFERS.map(renderPromoListCard).join("");
+    if (status) status.textContent = "Erreur de chargement";
+    list.innerHTML = renderEmpty();
   }
 }
 
 export function renderHomeOfferCard(offer) {
   const actionRoute = normalizeRoute(offer.actionRoute);
+  const imageUrl = normalizeImageUrl(offer.imageUrl);
 
   return `
-    <article class="home-promo-card ${themeClass(offer.theme)}" data-offer-id="${escapeAttr(offer.id)}">
+    <article class="home-promo-card" data-offer-id="${escapeAttr(offer.id)}">
       <a class="home-promo-link" href="${escapeAttr(actionRoute)}" data-link>
-        <div class="home-promo-copy">
-          <span class="home-promo-kicker">${escapeHtml(offer.kicker || "Offre BeGO")}</span>
-          <h2>${escapeHtml(offer.title || "Offre BeGO")}</h2>
-          <p>${escapeHtml(offer.description || "")}</p>
-        </div>
-        <div class="home-promo-badge">
-          <i class="fa-solid ${escapeAttr(offer.icon || "fa-gift")}"></i>
-          <span>${escapeHtml(offer.badgeLabel || "BeGO")}</span>
+        <img class="home-promo-image" src="${escapeAttr(imageUrl)}" alt="" loading="lazy">
+        <div class="home-promo-overlay"></div>
+        <div class="home-promo-content">
+          <div class="home-promo-brand">BeGO</div>
+          <div class="home-promo-copy">
+            <span class="home-promo-kicker">${escapeHtml(offer.kicker || "Offre BeGO")}</span>
+            <h2>${renderTitle(offer.title || "Offre BeGO")}</h2>
+            ${renderDiscount(offer)}
+            <p>${escapeHtml(offer.description || "")}</p>
+            ${renderCta(offer.ctaLabel)}
+          </div>
         </div>
       </a>
     </article>
@@ -121,23 +95,91 @@ export function renderHomeOfferCard(offer) {
 
 function renderPromoListCard(offer) {
   const actionRoute = normalizeRoute(offer.actionRoute);
+  const imageUrl = normalizeImageUrl(offer.imageUrl);
 
   return `
-    <article class="promo-page-card ${themeClass(offer.theme)}">
+    <article class="promo-page-card">
       <a href="${escapeAttr(actionRoute)}" data-link>
-        <div class="promo-page-icon">
-          <i class="fa-solid ${escapeAttr(offer.icon || "fa-gift")}"></i>
-        </div>
+        ${imageUrl ? `<img class="promo-page-image" src="${escapeAttr(imageUrl)}" alt="" loading="lazy">` : ""}
         <div>
           <span>${escapeHtml(offer.kicker || "Offre BeGO")}</span>
           <h3>${escapeHtml(offer.title || "Offre BeGO")}</h3>
           <p>${escapeHtml(offer.description || "")}</p>
-          <small>${escapeHtml(offer.badgeLabel || "BeGO")}</small>
+          <small>${escapeHtml(offer.ctaLabel || "Voir")}</small>
         </div>
         <i class="fa-solid fa-chevron-right"></i>
       </a>
     </article>
   `;
+}
+
+function renderTitle(title = "") {
+  const [first, ...rest] = String(title).split(/\s*\|\s*/);
+  const second = rest.join(" | ").trim();
+  if (!second) return escapeHtml(first.trim());
+  return `${escapeHtml(first.trim())}<span>${escapeHtml(second)}</span>`;
+}
+
+function renderDiscount(offer) {
+  if (!offer.discount && !offer.discountLabel && !offer.discountSuffix) return "";
+
+  return `
+    <div class="home-promo-discount">
+      ${offer.discountLabel ? `<small>${escapeHtml(offer.discountLabel)}</small>` : ""}
+      ${offer.discount ? `<strong>${escapeHtml(offer.discount)}</strong>` : ""}
+      ${offer.discountSuffix ? `<span>${escapeHtml(offer.discountSuffix)}</span>` : ""}
+    </div>
+  `;
+}
+
+function renderCta(label = "") {
+  if (!label) return "";
+  return `
+    <div class="home-promo-preview-cta">
+      <span>${escapeHtml(label)}</span>
+      <i class="fa-solid fa-arrow-right"></i>
+    </div>
+  `;
+}
+
+function renderDots(container, count) {
+  if (!container || count <= 1) {
+    if (container) container.innerHTML = "";
+    return;
+  }
+
+  container.innerHTML = Array.from({ length: count }, (_, index) => (
+    `<button type="button" class="${index === 0 ? "active" : ""}" data-promo-dot="${index}" aria-label="Promotion ${index + 1}"></button>`
+  )).join("");
+}
+
+function bindPromoDots(track, dots) {
+  if (!track || !dots) return;
+  const buttons = [...dots.querySelectorAll("[data-promo-dot]")];
+  if (!buttons.length) return;
+
+  buttons.forEach((button, index) => {
+    button.addEventListener("click", () => {
+      const card = track.children[index];
+      card?.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
+    });
+  });
+
+  const updateActiveDot = () => {
+    const cards = [...track.children];
+    const nearestIndex = cards.reduce((bestIndex, card, index) => {
+      const current = Math.abs(card.offsetLeft - track.scrollLeft);
+      const best = Math.abs(cards[bestIndex].offsetLeft - track.scrollLeft);
+      return current < best ? index : bestIndex;
+    }, 0);
+
+    buttons.forEach((button, index) => {
+      button.classList.toggle("active", index === nearestIndex);
+    });
+  };
+
+  track.addEventListener("scroll", () => requestAnimationFrame(updateActiveDot), { passive: true });
+  updateActiveDot();
 }
 
 function renderLoading() {
@@ -158,15 +200,18 @@ function renderEmpty() {
   `;
 }
 
-function themeClass(theme = "primary") {
-  return `home-promo-card-${String(theme || "primary").replace(/[^a-z0-9-]/gi, "")}`;
-}
-
 function normalizeRoute(value = "#/promos") {
   const route = String(value || "#/promos").trim();
   if (route.startsWith("#/")) return route;
   if (route.startsWith("/")) return route;
   return "#/promos";
+}
+
+function normalizeImageUrl(value = "") {
+  const url = String(value || "").trim();
+  if (!url) return "";
+  if (url.startsWith("http") || url.startsWith("/") || url.startsWith("./")) return url;
+  return "";
 }
 
 function escapeHtml(value = "") {

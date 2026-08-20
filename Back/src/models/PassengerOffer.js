@@ -6,7 +6,7 @@ const PassengerOfferSchema = new mongoose.Schema(
       type: String,
       trim: true,
       required: true,
-      maxlength: 80,
+      maxlength: 100,
     },
     kicker: {
       type: String,
@@ -18,7 +18,31 @@ const PassengerOfferSchema = new mongoose.Schema(
       type: String,
       trim: true,
       default: "",
-      maxlength: 180,
+      maxlength: 220,
+    },
+    imageUrl: {
+      type: String,
+      trim: true,
+      default: "",
+      maxlength: 500,
+    },
+    discountLabel: {
+      type: String,
+      trim: true,
+      default: "",
+      maxlength: 30,
+    },
+    discount: {
+      type: String,
+      trim: true,
+      default: "",
+      maxlength: 16,
+    },
+    discountSuffix: {
+      type: String,
+      trim: true,
+      default: "",
+      maxlength: 12,
     },
     badgeLabel: {
       type: String,
@@ -61,7 +85,7 @@ const PassengerOfferSchema = new mongoose.Schema(
       type: String,
       trim: true,
       default: "Voir",
-      maxlength: 28,
+      maxlength: 40,
     },
     actionRoute: {
       type: String,

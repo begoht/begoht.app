@@ -1,385 +1,635 @@
+/* =========================================================
+   HOME PROMOS
+   ESTILO GRAN BANNER CON IMAGEN DE FONDO
+========================================================= */
+
 #appMain .home-promos {
-  display: block;
-  margin: 18px 0 0;
-  padding: 0;
-  overflow: hidden;
+    display: block;
+
+    width: 100%;
+
+    margin: 28px 0 0;
+
+    padding: 0;
+
+    overflow: hidden;
+
+    background: transparent !important;
 }
 
-.home-promos-head {
-  margin: 0 16px 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  gap: 2px;
-}
 
-.home-promos-head span {
-  color: var(--muted);
-  font-size: 0.72rem;
-  font-weight: 850;
-  letter-spacing: 0;
-  text-transform: uppercase;
-}
-
-.home-promos-head strong {
-  color: #f8fafc;
-  font-size: 1.08rem;
-  font-weight: 900;
-  white-space: nowrap;
-}
+/* =========================================================
+   TRACK
+========================================================= */
 
 .home-promos-track {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(236px, 70vw);
-  gap: 10px;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scroll-snap-type: x mandatory;
-  scroll-padding-inline: 16px;
-  padding: 2px 16px 14px;
-  -webkit-overflow-scrolling: touch;
-  touch-action: pan-x;
+    display: grid;
+    grid-auto-flow: column;
+
+    grid-auto-columns:
+        calc(100vw - 54px);
+
+    gap: 10px;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    padding:
+        2px
+        18px
+        14px;
+
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 18px;
+
+    overscroll-behavior-x: contain;
+
+    -webkit-overflow-scrolling: touch;
+
+    touch-action: pan-x;
+
+    scrollbar-width: none;
 }
 
 .home-promos-track::-webkit-scrollbar {
-  display: none;
+    display: none;
 }
+
+
+/* =========================================================
+   CARD
+========================================================= */
 
 .home-promo-card {
-  min-height: 146px;
-  scroll-snap-align: start;
-  border-radius: 8px;
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 16px;
-  color: #f8fafc;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow:
-    0 18px 34px rgba(0, 0, 0, 0.38),
-    inset 0 1px 1px rgba(255, 255, 255, 0.16);
-  isolation: isolate;
-}
+    position: relative;
 
-.home-promos.hidden {
-  display: none !important;
+    width: 100%;
+
+    min-height: 470px;
+
+    overflow: hidden;
+
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+
+    border-radius: 32px;
+
+    background: #111;
+
+    box-shadow:
+        0 18px 42px
+        rgba(0, 0, 0, 0.18);
+
+    isolation: isolate;
 }
 
 .home-promo-link {
-  min-height: 100%;
-  color: inherit;
-  text-decoration: none;
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  justify-content: space-between;
+    position: relative;
+
+    min-height: inherit;
+
+    display: block;
+
+    color: inherit;
+    text-decoration: none;
 }
 
-.home-promo-card::before,
-.home-promo-card::after {
-  content: "";
-  position: absolute;
-  pointer-events: none;
-  z-index: -1;
+
+/* =========================================================
+   BACKGROUND IMAGE
+========================================================= */
+
+.home-promo-image {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    object-position: center;
+
+    z-index: -3;
+
+    transform: scale(1.01);
 }
 
-.home-promo-card::before {
-  inset: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.16), transparent 42%);
+
+/* =========================================================
+   OVERLAY
+========================================================= */
+
+.home-promo-overlay {
+    position: absolute;
+
+    inset: 0;
+
+    z-index: -2;
+
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(0, 0, 0, 0.08) 0%,
+            rgba(0, 0, 0, 0.02) 28%,
+            rgba(0, 0, 0, 0.12) 48%,
+            rgba(0, 0, 0, 0.58) 72%,
+            rgba(0, 0, 0, 0.91) 100%
+        );
 }
 
-.home-promo-card::after {
-  right: -30px;
-  bottom: -42px;
-  width: 118px;
-  height: 118px;
-  border-radius: 999px;
-  border: 22px solid rgba(255, 255, 255, 0.1);
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.home-promo-content {
+    position: relative;
+
+    z-index: 2;
+
+    min-height: 470px;
+
+    padding: 20px;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: space-between;
 }
 
-.home-promo-card-primary {
-  background:
-    linear-gradient(135deg, rgba(37, 99, 235, 0.98), rgba(2, 6, 23, 0.98));
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+.home-promo-brand {
+    color: #ffffff;
+
+    font-size: 1rem;
+    line-height: 1;
+
+    font-weight: 950;
+
+    letter-spacing: -0.04em;
+
+    text-shadow:
+        0 2px 15px
+        rgba(0, 0, 0, 0.28);
 }
 
-.home-promo-card-package {
-  background:
-    linear-gradient(135deg, rgba(15, 118, 110, 0.96), rgba(3, 7, 18, 0.98));
-}
 
-.home-promo-card-wallet {
-  background:
-    linear-gradient(135deg, rgba(124, 58, 237, 0.94), rgba(2, 6, 23, 0.98));
-}
-
-.home-promo-card-gold {
-  background:
-    linear-gradient(135deg, rgba(180, 83, 9, 0.96), rgba(3, 7, 18, 0.98));
-}
-
-.home-promo-card-emerald {
-  background:
-    linear-gradient(135deg, rgba(22, 163, 74, 0.95), rgba(3, 7, 18, 0.98));
-}
-
-.home-promo-card-night {
-  background:
-    linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.98));
-}
+/* =========================================================
+   COPY
+========================================================= */
 
 .home-promo-copy {
-  max-width: 92%;
+    width: 100%;
+
+    max-width: 330px;
 }
+
+
+/* =========================================================
+   KICKER
+========================================================= */
 
 .home-promo-kicker {
-  display: inline-flex;
-  margin-bottom: 7px;
-  color: rgba(248, 250, 252, 0.76);
-  font-size: 0.68rem;
-  font-weight: 900;
-  letter-spacing: 0;
-  text-transform: uppercase;
+    display: block;
+
+    margin-bottom: 8px;
+
+    color:
+        rgba(255, 255, 255, 0.72);
+
+    font-size: 0.62rem;
+    line-height: 1;
+
+    font-weight: 900;
+
+    letter-spacing: 0.12em;
+
+    text-transform: uppercase;
 }
+
+
+/* =========================================================
+   TITLE
+========================================================= */
 
 .home-promo-card h2 {
-  margin: 0;
-  color: #ffffff;
-  font-size: 1.28rem;
-  line-height: 1.04;
-  font-weight: 950;
-  letter-spacing: 0;
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size:
+        clamp(
+            2rem,
+            8.7vw,
+            2.8rem
+        );
+
+    line-height: 0.94;
+
+    font-weight: 800;
+
+    letter-spacing: -0.055em;
+
+    text-shadow:
+        0 5px 24px
+        rgba(0, 0, 0, 0.28);
 }
+
+.home-promo-card h2 span {
+    display: block;
+
+    color:
+        rgba(255, 255, 255, 0.74);
+}
+
+
+/* =========================================================
+   DISCOUNT
+========================================================= */
+
+.home-promo-discount {
+    width: fit-content;
+
+    margin-top: 16px;
+
+    display: grid;
+
+    grid-template-columns:
+        auto auto;
+
+    align-items: end;
+
+    column-gap: 8px;
+
+    color: #ffffff;
+}
+
+.home-promo-discount small {
+    grid-column: 1 / -1;
+
+    margin-bottom: -2px;
+
+    color:
+        rgba(255, 255, 255, 0.70);
+
+    font-size: 0.7rem;
+    line-height: 1;
+
+    font-weight: 800;
+}
+
+.home-promo-discount strong {
+    font-size: 4.3rem;
+    line-height: 0.9;
+
+    font-weight: 950;
+
+    letter-spacing: -0.08em;
+
+    text-shadow:
+        0 5px 25px
+        rgba(0, 0, 0, 0.26);
+}
+
+.home-promo-discount span {
+    padding-bottom: 5px;
+
+    color: #ffffff;
+
+    font-size: 1.35rem;
+    line-height: 1;
+
+    font-weight: 900;
+}
+
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
 
 .home-promo-card p {
-  margin: 7px 0 0;
-  color: rgba(248, 250, 252, 0.76);
-  font-size: 0.78rem;
-  line-height: 1.35;
-  font-weight: 650;
+    max-width: 290px;
+
+    margin:
+        11px
+        0
+        0;
+
+    color:
+        rgba(255, 255, 255, 0.75);
+
+    font-size: 0.75rem;
+    line-height: 1.45;
+
+    font-weight: 550;
+
+    text-shadow:
+        0 2px 12px
+        rgba(0, 0, 0, 0.3);
 }
 
-.home-promo-badge {
-  width: fit-content;
-  min-height: 32px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 7px 10px;
-  border-radius: 8px;
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+
+/* =========================================================
+   DOTS
+========================================================= */
+
+.home-promos-dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    min-height: 20px;
+
+    margin-top: 1px;
 }
 
-.home-promo-badge i {
-  font-size: 0.88rem;
+.home-promos-dots button {
+    width: 7px;
+    height: 7px;
+
+    display: block;
+
+    padding: 0;
+
+    border: 0;
+    border-radius: 999px;
+
+    background:
+        rgba(148, 163, 184, 0.48);
+
+    transition:
+        width 220ms ease,
+        background 220ms ease;
 }
 
-.home-promo-badge span {
-  font-size: 0.72rem;
-  font-weight: 900;
+.home-promos-dots button.active {
+    width: 19px;
+
+    background: #111827;
 }
+
+.home-promo-preview-cta {
+    width: fit-content;
+
+    min-height: 36px;
+
+    margin-top: 14px;
+    padding: 0 13px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    color: #0f172a;
+
+    border-radius: 999px;
+
+    background: rgba(255, 255, 255, 0.9);
+
+    font-size: 0.78rem;
+    font-weight: 900;
+}
+
+
+/* =========================================================
+   HIDDEN
+========================================================= */
+
+.home-promos.hidden {
+    display: none !important;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
 
 @media (min-width: 720px) {
-  .home-promos {
-    max-width: 720px;
-    margin-left: auto;
-    margin-right: auto;
-  }
 
-  .home-promos-track {
-    grid-auto-columns: 504px;
-  }
+    #appMain .home-promos {
+        max-width: 760px;
+
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .home-promos-track {
+        grid-auto-columns: 560px;
+    }
+
+    .home-promo-card,
+    .home-promo-content {
+        min-height: 510px;
+    }
+
 }
 
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
 @media (max-width: 380px) {
-  .home-promos-head {
-    margin-left: 12px;
-    margin-right: 12px;
-  }
 
-  .home-promos-track {
-    grid-auto-columns: minmax(226px, 70vw);
-    scroll-padding-inline: 12px;
-    padding-left: 12px;
-    padding-right: 12px;
-  }
+    #appMain .home-promos {
+        margin-top: 22px;
+    }
 
-  .home-promo-card {
-    min-height: 138px;
-    padding: 14px;
-  }
+    .home-promos-track {
+        grid-auto-columns:
+            calc(100vw - 42px);
 
-  .home-promo-card h2 {
-    font-size: 1.14rem;
-  }
+        padding-left: 14px;
+        padding-right: 14px;
+
+        scroll-padding-inline: 14px;
+    }
+
+    .home-promo-card {
+        border-radius: 28px;
+    }
+
+    .home-promo-card,
+    .home-promo-content {
+        min-height: 430px;
+    }
+
+    .home-promo-content {
+        padding: 17px;
+    }
+
+    .home-promo-card h2 {
+        font-size: 2rem;
+    }
+
+    .home-promo-discount strong {
+        font-size: 3.7rem;
+    }
+
 }
 
 .promos-page-shell {
-  min-height: calc(100dvh - 120px);
-  padding: 18px 16px 104px;
-  color: #f8fafc;
-  background:
-    radial-gradient(circle at 20% 0%, rgba(37, 99, 235, 0.24), transparent 30%),
-    linear-gradient(180deg, rgba(2, 6, 23, 0.96), rgba(7, 17, 31, 0.98));
+    min-height: calc(100dvh - 120px);
+    padding: 18px 16px 104px;
+    color: #f8fafc;
+    background:
+        radial-gradient(circle at 20% 0%, rgba(37, 99, 235, 0.24), transparent 30%),
+        linear-gradient(180deg, rgba(2, 6, 23, 0.96), rgba(7, 17, 31, 0.98));
 }
 
 .promos-page-hero {
-  margin: 0 auto 14px;
-  max-width: 720px;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 14px;
+    max-width: 720px;
+    margin: 0 auto 14px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 14px;
 }
 
 .promos-page-hero span,
 .promos-page-hero strong {
-  display: block;
+    display: block;
 }
 
 .promos-page-hero span {
-  color: #93c5fd;
-  font-size: 0.72rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0;
+    color: #93c5fd;
+    font-size: 0.72rem;
+    font-weight: 900;
+    text-transform: uppercase;
 }
 
 .promos-page-hero h1 {
-  margin: 4px 0 6px;
-  font-size: 2rem;
-  line-height: 1;
-  letter-spacing: 0;
+    margin: 4px 0 6px;
+    font-size: 2rem;
+    line-height: 1;
 }
 
 .promos-page-hero p {
-  max-width: 520px;
-  margin: 0;
-  color: rgba(226, 232, 240, 0.72);
-  line-height: 1.4;
+    max-width: 520px;
+    margin: 0;
+    color: rgba(226, 232, 240, 0.72);
+    line-height: 1.4;
 }
 
 .promos-page-hero strong {
-  flex: 0 0 auto;
-  min-height: 34px;
-  padding: 8px 10px;
-  border-radius: 8px;
-  color: #dbeafe;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  font-size: 0.78rem;
+    flex: 0 0 auto;
+    min-height: 34px;
+    padding: 8px 10px;
+    border-radius: 999px;
+    color: #dbeafe;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    font-size: 0.78rem;
 }
 
 .promos-page-list {
-  max-width: 720px;
-  margin: 0 auto;
-  display: grid;
-  gap: 10px;
+    max-width: 720px;
+    margin: 0 auto;
+    display: grid;
+    gap: 10px;
 }
 
 .promo-page-card {
-  min-height: 116px;
-  border-radius: 8px;
-  overflow: hidden;
-  color: #f8fafc;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.26);
+    min-height: 128px;
+    overflow: hidden;
+    border-radius: 18px;
+    color: #f8fafc;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .promo-page-card a {
-  min-height: 116px;
-  padding: 14px;
-  display: grid;
-  grid-template-columns: 46px minmax(0, 1fr) 18px;
-  align-items: center;
-  gap: 12px;
-  color: inherit;
-  text-decoration: none;
+    min-height: 128px;
+    padding: 12px;
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr) 18px;
+    align-items: center;
+    gap: 12px;
+    color: inherit;
+    text-decoration: none;
 }
 
-.promo-page-icon {
-  width: 46px;
-  height: 46px;
-  display: grid;
-  place-items: center;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+.promo-page-image {
+    width: 96px;
+    height: 104px;
+    border-radius: 14px;
+    object-fit: cover;
 }
 
 .promo-page-card span,
 .promo-page-card small {
-  display: block;
-  color: rgba(248, 250, 252, 0.72);
-  font-size: 0.72rem;
-  font-weight: 850;
+    display: block;
+    color: rgba(248, 250, 252, 0.72);
+    font-size: 0.72rem;
+    font-weight: 850;
 }
 
 .promo-page-card h3 {
-  margin: 4px 0 4px;
-  font-size: 1.2rem;
-  line-height: 1.08;
+    margin: 4px 0;
+    font-size: 1.2rem;
+    line-height: 1.08;
 }
 
 .promo-page-card p {
-  margin: 0 0 7px;
-  color: rgba(248, 250, 252, 0.76);
-  line-height: 1.35;
-  font-size: 0.86rem;
+    margin: 0 0 7px;
+    color: rgba(248, 250, 252, 0.76);
+    line-height: 1.35;
+    font-size: 0.86rem;
 }
 
 .promos-empty-state {
-  min-height: 160px;
-  padding: 24px;
-  display: grid;
-  place-items: center;
-  gap: 10px;
-  text-align: center;
-  border-radius: 8px;
-  color: rgba(226, 232, 240, 0.78);
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+    min-height: 160px;
+    padding: 24px;
+    display: grid;
+    place-items: center;
+    gap: 10px;
+    text-align: center;
+    border-radius: 18px;
+    color: rgba(226, 232, 240, 0.78);
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .promos-empty-state i {
-  width: 46px;
-  height: 46px;
-  display: grid;
-  place-items: center;
-  border-radius: 8px;
-  color: #dbeafe;
-  background: rgba(37, 99, 235, 0.2);
+    width: 46px;
+    height: 46px;
+    display: grid;
+    place-items: center;
+    border-radius: 14px;
+    color: #dbeafe;
+    background: rgba(37, 99, 235, 0.2);
 }
 
 @media (max-width: 520px) {
-  .promos-page-shell {
-    padding: 16px 12px 96px;
-  }
+    .promos-page-shell {
+        padding: 16px 12px 96px;
+    }
 
-  .promos-page-hero {
-    display: grid;
-    align-items: start;
-  }
+    .promos-page-hero {
+        display: grid;
+        align-items: start;
+    }
 
-  .promos-page-hero h1 {
-    font-size: 1.72rem;
-  }
+    .promos-page-hero h1 {
+        font-size: 1.72rem;
+    }
 
-  .promo-page-card a {
-    grid-template-columns: 42px minmax(0, 1fr) 14px;
-    gap: 10px;
-    padding: 12px;
-  }
+    .promo-page-card a {
+        grid-template-columns: 78px minmax(0, 1fr) 14px;
+        gap: 10px;
+    }
 
-  .promo-page-icon {
-    width: 42px;
-    height: 42px;
-  }
+    .promo-page-image {
+        width: 78px;
+        height: 94px;
+    }
 }

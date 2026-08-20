@@ -1,8 +1,18 @@
 const express = require("express");
+const multer = require("multer");
 const PassengerOffer = require("../models/PassengerOffer");
 const authAdmin = require("../middleware/authAdmin");
+const cloudinary = require("../config/cloudinary");
 
 const router = express.Router();
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 8 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    if (/^image\/(png|jpe?g|webp)$/i.test(file.mimetype)) return cb(null, true);
+    return cb(new Error("Formato de imagen no permitido"));
+  },
+});
 
 const THEMES = new Set(["primary", "package", "wallet", "gold", "emerald", "night"]);
 const PLACEMENTS = new Set(["home", "promos", "both"]);
@@ -13,6 +23,10 @@ const DEFAULT_OFFERS = [
     title: "-25% aujourd'hui",
     kicker: "Trajet premium",
     description: "Activez votre course avec Wallet BeGO et profitez d'un tarif preferentiel.",
+    imageUrl: "",
+    discountLabel: "Jusqu'a",
+    discount: "25%",
+    discountSuffix: "OFF",
     badgeLabel: "BeGO+",
     icon: "fa-bolt",
     theme: "primary",
@@ -25,6 +39,10 @@ const DEFAULT_OFFERS = [
     title: "Jusqu'a 5 kg",
     kicker: "Colis rapide",
     description: "Envoyez un paquet avec code de livraison securise en 4 chiffres.",
+    imageUrl: "",
+    discountLabel: "",
+    discount: "",
+    discountSuffix: "",
     badgeLabel: "Colis",
     icon: "fa-box",
     theme: "package",
@@ -37,6 +55,10 @@ const DEFAULT_OFFERS = [
     title: "Bonus Wallet",
     kicker: "Paiement malin",
     description: "Rechargez votre solde et gardez vos trajets, recus et promotions au meme endroit.",
+    imageUrl: "",
+    discountLabel: "Bonus",
+    discount: "",
+    discountSuffix: "",
     badgeLabel: "Wallet",
     icon: "fa-wallet",
     theme: "wallet",
@@ -65,6 +87,20 @@ function parseDate(value) {
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
+function cleanImageUrl(value, fallback = "") {
+  const url = cleanText(value, fallback, 500);
+  if (!url) return "";
+  if (
+    url.startsWith("/") ||
+    url.startsWith("./") ||
+    /^https?:\/\//i.test(url) ||
+    /^data:image\/(png|jpe?g|webp);base64,/i.test(url)
+  ) {
+    return url;
+  }
+  return fallback || "";
+}
+
 function normalizePayload(body = {}, fallback = {}) {
   const theme = THEMES.has(body.theme) ? body.theme : fallback.theme || "primary";
   const placement = PLACEMENTS.has(body.placement) ? body.placement : fallback.placement || "both";
@@ -72,16 +108,20 @@ function normalizePayload(body = {}, fallback = {}) {
   const sortOrder = Number(body.sortOrder);
 
   return {
-    title: cleanText(body.title, fallback.title, 80),
+    title: cleanText(body.title, fallback.title, 100),
     kicker: cleanText(body.kicker, fallback.kicker || "Offre BeGO", 40),
-    description: cleanText(body.description, fallback.description, 180),
+    description: cleanText(body.description, fallback.description, 220),
+    imageUrl: cleanImageUrl(body.imageUrl, fallback.imageUrl || ""),
+    discountLabel: cleanText(body.discountLabel, fallback.discountLabel || "", 30),
+    discount: cleanText(body.discount, fallback.discount || "", 16),
+    discountSuffix: cleanText(body.discountSuffix, fallback.discountSuffix || "", 12),
     badgeLabel: cleanText(body.badgeLabel, fallback.badgeLabel || "BeGO", 24),
     icon: cleanText(body.icon, fallback.icon || "fa-gift", 40).replace(/[^a-z0-9 -]/gi, ""),
     theme,
     placement,
     status,
     city: cleanText(body.city, fallback.city || "all", 40).toLowerCase() || "all",
-    ctaLabel: cleanText(body.ctaLabel, fallback.ctaLabel || "Voir", 28),
+    ctaLabel: cleanText(body.ctaLabel, fallback.ctaLabel || "Voir", 40),
     actionRoute: cleanText(body.actionRoute, fallback.actionRoute || "#/promos", 120),
     sortOrder: Number.isFinite(sortOrder) ? sortOrder : Number(fallback.sortOrder || 100),
     startsAt: parseDate(body.startsAt) || null,
@@ -95,6 +135,10 @@ function serialize(offer) {
     title: offer.title,
     kicker: offer.kicker,
     description: offer.description,
+    imageUrl: offer.imageUrl || "",
+    discountLabel: offer.discountLabel || "",
+    discount: offer.discount || "",
+    discountSuffix: offer.discountSuffix || "",
     badgeLabel: offer.badgeLabel,
     icon: offer.icon,
     theme: offer.theme,
@@ -153,6 +197,35 @@ router.get("/offers/passenger", async (req, res) => {
   } catch (err) {
     console.error("Passenger offers error:", err);
     res.status(500).json({ error: "No se pudieron cargar las ofertas" });
+  }
+});
+
+router.post("/admin/offers/upload-image", authAdmin, upload.single("image"), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: "Imagen obligatoria" });
+
+    const result = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          folder: "BeGO/offers",
+          resource_type: "image",
+          transformation: [{ quality: "auto", fetch_format: "auto" }],
+        },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      );
+      stream.end(req.file.buffer);
+    });
+
+    res.status(201).json({
+      imageUrl: result.secure_url,
+      publicId: result.public_id,
+    });
+  } catch (err) {
+    console.error("Admin offers image upload error:", err);
+    res.status(500).json({ error: "No se pudo subir la imagen" });
   }
 });
 

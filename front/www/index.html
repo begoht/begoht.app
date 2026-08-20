@@ -679,49 +679,29 @@
 
 
 
-  <section class="home-promos" id="homePromos" aria-label="Promotions BeGO">
-    <div class="home-promos-head">
-      <span>Avantages</span>
-      <strong>Offres BeGO</strong>
-    </div>
+  <section
+    class="home-promos"
+    id="homePromos"
+    aria-label="Promotions BeGO"
+  >
 
-    <div class="home-promos-track" id="homePromosTrack" aria-label="Promotions disponibles">
-      <article class="home-promo-card home-promo-card-primary">
-        <div class="home-promo-copy">
-          <span class="home-promo-kicker">Trajet premium</span>
-          <h2>-25% aujourd'hui</h2>
-          <p>Activez votre course avec Wallet BeGO et profitez d'un tarif preferentiel.</p>
-        </div>
-        <div class="home-promo-badge">
-          <i class="fa-solid fa-bolt"></i>
-          <span>BeGO+</span>
-        </div>
-      </article>
+    <div
+        class="home-promos-track"
+        id="homePromosTrack"
+        aria-label="Promotions disponibles"
+    ></div>
 
-      <article class="home-promo-card home-promo-card-package">
-        <div class="home-promo-copy">
-          <span class="home-promo-kicker">Colis rapide</span>
-          <h2>Jusqu'a 5 kg</h2>
-          <p>Envoyez un paquet avec code de livraison securise en 4 chiffres.</p>
-        </div>
-        <div class="home-promo-badge">
-          <i class="fa-solid fa-box"></i>
-          <span>Colis</span>
-        </div>
-      </article>
 
-      <article class="home-promo-card home-promo-card-wallet">
-        <div class="home-promo-copy">
-          <span class="home-promo-kicker">Paiement malin</span>
-          <h2>Bonus Wallet</h2>
-          <p>Rechargez votre solde et gardez vos trajets, recus et promotions au meme endroit.</p>
-        </div>
-        <div class="home-promo-badge">
-          <i class="fa-solid fa-wallet"></i>
-          <span>Wallet</span>
-        </div>
-      </article>
-    </div>
+    <!-- =================================================
+         DOTS
+    ================================================== -->
+
+    <div
+        class="home-promos-dots"
+        id="homePromosDots"
+        aria-hidden="true"
+    ></div>
+
   </section>
 
 </main>
@@ -932,7 +912,7 @@
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 <script type="module" src="./js/monitoring/frontend-monitor.js?v=20260607-monitor-suspend"></script>
 <script type="module">
-  import { initApp } from "./js/core/app/app.js?v=20260713-profile-photo-stable";
+  import { initApp } from "./js/core/app/app.js?v=20260820-promo-bg-admin";
   initApp();
 </script>
 

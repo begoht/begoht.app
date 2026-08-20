@@ -16,6 +16,7 @@ const API_BASE =
 const state = {
   offers: [],
   selectedId: "",
+  localImageUrl: "",
 };
 
 const els = {
@@ -26,12 +27,17 @@ const els = {
   editorTitle: document.getElementById("editorTitle"),
   selectedStatus: document.getElementById("selectedStatus"),
   preview: document.getElementById("offerPreview"),
+  previewImage: document.getElementById("previewImage"),
   previewKicker: document.getElementById("previewKicker"),
   previewTitle: document.getElementById("previewTitle"),
   previewDescription: document.getElementById("previewDescription"),
-  previewBadge: document.getElementById("previewBadge"),
-  previewIcon: document.getElementById("previewIcon"),
+  previewDiscountLabel: document.getElementById("previewDiscountLabel"),
+  previewDiscount: document.getElementById("previewDiscount"),
+  previewDiscountSuffix: document.getElementById("previewDiscountSuffix"),
+  previewCtaWrap: document.getElementById("previewCtaWrap"),
+  previewCta: document.getElementById("previewCta"),
   previewMeta: document.getElementById("previewMeta"),
+  imageUploadPreview: document.getElementById("imageUploadPreview"),
 };
 
 const fields = {
@@ -39,10 +45,12 @@ const fields = {
   title: document.getElementById("offerTitle"),
   kicker: document.getElementById("offerKicker"),
   description: document.getElementById("offerDescription"),
-  badgeLabel: document.getElementById("offerBadge"),
-  icon: document.getElementById("offerIcon"),
+  discountLabel: document.getElementById("offerDiscountLabel"),
+  discount: document.getElementById("offerDiscount"),
+  discountSuffix: document.getElementById("offerDiscountSuffix"),
+  imageUrl: document.getElementById("offerImage"),
+  imageFile: document.getElementById("offerImageFile"),
   sortOrder: document.getElementById("offerOrder"),
-  theme: document.getElementById("offerTheme"),
   placement: document.getElementById("offerPlacement"),
   city: document.getElementById("offerCity"),
   ctaLabel: document.getElementById("offerCta"),
@@ -62,6 +70,8 @@ Object.values(fields).forEach((field) => {
   field?.addEventListener("change", renderPreview);
 });
 
+fields.imageFile?.addEventListener("change", handleLocalImagePreview);
+
 els.form?.addEventListener("submit", async (event) => {
   event.preventDefault();
   await saveOffer();
@@ -78,10 +88,11 @@ loadOffers().catch((err) => {
 });
 
 async function api(path, options = {}) {
+  const isFormData = options.body instanceof FormData;
   const res = await fetch(`${API_BASE}${path}`, {
     ...options,
     headers: {
-      "Content-Type": "application/json",
+      ...(isFormData ? {} : { "Content-Type": "application/json" }),
       Authorization: `Bearer ${token}`,
       "ngrok-skip-browser-warning": "true",
       ...(options.headers || {}),
@@ -149,15 +160,17 @@ function selectOffer(id) {
   const offer = state.offers.find((item) => item.id === id);
   if (!offer) return;
 
+  clearLocalImageUrl();
   state.selectedId = id;
   fields.id.value = offer.id;
   fields.title.value = offer.title || "";
   fields.kicker.value = offer.kicker || "";
   fields.description.value = offer.description || "";
-  fields.badgeLabel.value = offer.badgeLabel || "";
-  fields.icon.value = offer.icon || "fa-gift";
+  fields.discountLabel.value = offer.discountLabel || "";
+  fields.discount.value = offer.discount || "";
+  fields.discountSuffix.value = offer.discountSuffix || "";
+  fields.imageUrl.value = offer.imageUrl || "";
   fields.sortOrder.value = offer.sortOrder ?? 100;
-  fields.theme.value = offer.theme || "primary";
   fields.placement.value = offer.placement || "both";
   fields.city.value = offer.city || "all";
   fields.ctaLabel.value = offer.ctaLabel || "Voir";
@@ -165,6 +178,7 @@ function selectOffer(id) {
   fields.startsAt.value = toDateInput(offer.startsAt);
   fields.endsAt.value = toDateInput(offer.endsAt);
   fields.status.value = offer.status || "draft";
+  if (fields.imageFile) fields.imageFile.value = "";
 
   els.mode.textContent = "Modifier l'offre";
   els.editorTitle.textContent = offer.title || "Controle de publication";
@@ -173,14 +187,16 @@ function selectOffer(id) {
 }
 
 function resetForm() {
+  clearLocalImageUrl();
   state.selectedId = "";
   els.form?.reset();
   fields.id.value = "";
   fields.kicker.value = "Offre BeGO";
-  fields.badgeLabel.value = "BeGO";
-  fields.icon.value = "fa-gift";
+  fields.discountLabel.value = "Jusqu'a";
+  fields.discount.value = "";
+  fields.discountSuffix.value = "OFF";
+  fields.imageUrl.value = "";
   fields.sortOrder.value = "100";
-  fields.theme.value = "primary";
   fields.placement.value = "both";
   fields.city.value = "all";
   fields.ctaLabel.value = "Voir";
@@ -200,6 +216,19 @@ async function saveOffer() {
     return;
   }
 
+  if (fields.imageFile?.files?.[0]) {
+    const uploaded = await uploadOfferImage(fields.imageFile.files[0]);
+    payload.imageUrl = uploaded.imageUrl;
+    fields.imageUrl.value = uploaded.imageUrl;
+    if (fields.imageFile) fields.imageFile.value = "";
+    clearLocalImageUrl();
+  }
+
+  if (!payload.imageUrl) {
+    alert("Ajoutez une image de campagne pour que le banner couvre tout le fond.");
+    return;
+  }
+
   const id = fields.id.value;
   const saved = id
     ? await api(`/api/admin/offers/${id}`, { method: "PUT", body: JSON.stringify(payload) })
@@ -207,6 +236,15 @@ async function saveOffer() {
 
   state.selectedId = saved.id;
   await loadOffers();
+}
+
+async function uploadOfferImage(file) {
+  const formData = new FormData();
+  formData.append("image", file);
+  return api("/api/admin/offers/upload-image", {
+    method: "POST",
+    body: formData,
+  });
 }
 
 async function changeStatus(status) {
@@ -235,10 +273,11 @@ function getPayload() {
     title: fields.title.value.trim(),
     kicker: fields.kicker.value.trim(),
     description: fields.description.value.trim(),
-    badgeLabel: fields.badgeLabel.value.trim(),
-    icon: fields.icon.value.trim(),
+    discountLabel: fields.discountLabel.value.trim(),
+    discount: fields.discount.value.trim(),
+    discountSuffix: fields.discountSuffix.value.trim(),
+    imageUrl: fields.imageUrl.value.trim(),
     sortOrder: Number(fields.sortOrder.value || 100),
-    theme: fields.theme.value,
     placement: fields.placement.value,
     city: fields.city.value,
     ctaLabel: fields.ctaLabel.value.trim(),
@@ -249,19 +288,53 @@ function getPayload() {
   };
 }
 
+function handleLocalImagePreview() {
+  clearLocalImageUrl();
+  const file = fields.imageFile?.files?.[0];
+  if (!file) {
+    renderPreview();
+    return;
+  }
+
+  state.localImageUrl = URL.createObjectURL(file);
+  renderPreview();
+}
+
+function clearLocalImageUrl() {
+  if (state.localImageUrl) URL.revokeObjectURL(state.localImageUrl);
+  state.localImageUrl = "";
+}
+
 function renderPreview() {
   const payload = getPayload();
-  const theme = payload.theme || "primary";
+  const imageUrl = state.localImageUrl || payload.imageUrl || "/front/www/assets/logo-bego.png";
 
-  els.preview.className = `preview-card home-promo-card home-promo-card-${theme}`;
+  els.previewImage.src = imageUrl;
+  els.previewImage.hidden = !imageUrl;
   els.previewKicker.textContent = payload.kicker || "Offre BeGO";
-  els.previewTitle.textContent = payload.title || "Titre de l'offre";
+  els.previewTitle.innerHTML = renderTitle(payload.title || "Titre de l'offre");
   els.previewDescription.textContent = payload.description || "Description de l'offre visible par le passager.";
-  els.previewBadge.textContent = payload.badgeLabel || "BeGO";
-  els.previewIcon.className = `fa-solid ${payload.icon || "fa-gift"}`;
+  els.previewDiscountLabel.textContent = payload.discountLabel || "";
+  els.previewDiscount.textContent = payload.discount || "";
+  els.previewDiscountSuffix.textContent = payload.discountSuffix || "";
+  els.previewCta.textContent = payload.ctaLabel || "Voir";
+  els.previewCtaWrap.hidden = !payload.ctaLabel;
   els.previewMeta.textContent = placementLabel(payload.placement);
   els.selectedStatus.textContent = statusLabel(payload.status);
   els.selectedStatus.className = `status-pill ${payload.status || "draft"}`;
+
+  if (els.imageUploadPreview) {
+    els.imageUploadPreview.innerHTML = imageUrl
+      ? `<img src="${escapeAttr(imageUrl)}" alt="">`
+      : `<div class="image-upload-empty"><i class="fa-regular fa-image"></i><span>Aucun fichier sélectionné</span></div>`;
+  }
+}
+
+function renderTitle(title = "") {
+  const [first, ...rest] = String(title).split(/\s*\|\s*/);
+  const second = rest.join(" | ").trim();
+  if (!second) return escapeHtml(first.trim());
+  return `${escapeHtml(first.trim())}<span>${escapeHtml(second)}</span>`;
 }
 
 function showListMessage(message) {

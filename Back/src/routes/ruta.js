@@ -128,7 +128,11 @@ async function consultarRutaOSRM(puntos, city = null) {
   const cached = routeCache.get(key);
 
   if (cached && cached.expiresAt > Date.now()) {
-    return cached.route;
+    if (!cached.route?.fallback) {
+      return cached.route;
+    }
+
+    routeCache.delete(key);
   }
 
   const coords = puntosNorm.map((p) => `${p.lng},${p.lat}`).join(";");
@@ -167,10 +171,9 @@ async function consultarRutaOSRM(puntos, city = null) {
   const fallbackRoute = crearRutaFallback(puntosNorm);
 
   if (fallbackRoute) {
-    limpiarCacheSiHaceFalta();
-    routeCache.set(key, {
-      route: fallbackRoute,
-      expiresAt: Date.now() + ROUTE_CACHE_TTL_MS
+    console.warn("OSRM fallback recto usado sin cache:", {
+      city: city?.id || null,
+      puntos: puntosNorm
     });
   }
 

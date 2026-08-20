@@ -37,11 +37,11 @@ test("cadena de cache: la app pasajero carga el handler nuevo de vuelta", () => 
   const passengerMain = readWorkspaceFile("front/www/js/pasajero/pasajero.main.js");
   const passengerSocket = readWorkspaceFile("front/www/js/socket/pasajero.socket.js");
 
-  assert.match(index, /app\.js\?v=20260713-profile-photo-stable/);
-  assert.match(app, /router\.js\?v=20260713-profile-photo-stable/);
-  assert.match(router, /app\.lifecycle\.js\?v=20260713-profile-photo-stable/);
-  assert.match(lifecycle, /pasajero\.main\.js\?v=20260713-passenger-connection-hotfix/);
-  assert.match(passengerMain, /pasajero\.socket\.js\?v=20260713-passenger-connection-hotfix/);
+  assert.match(index, /app\.js\?v=20260820-promo-bg-admin/);
+  assert.match(app, /router\.js\?v=20260820-promo-bg-admin/);
+  assert.match(router, /app\.lifecycle\.js\?v=20260820-promo-bg-admin/);
+  assert.match(lifecycle, /pasajero\.main\.js\?v=20260820-promo-bg-admin/);
+  assert.match(passengerMain, /pasajero\.socket\.js\?v=20260716-passenger-connection-hotfix/);
   assert.match(passengerSocket, /idaVuelta\.handler\.js\?v=20260713-live-trip-tracking/);
 });
 
