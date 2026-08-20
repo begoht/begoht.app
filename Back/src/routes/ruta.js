@@ -46,7 +46,15 @@ function getOsrmCandidates() {
 function requestText(url, timeoutMs = OSRM_TIMEOUT_MS) {
   return new Promise((resolve, reject) => {
     const client = url.startsWith("https:") ? https : http;
-    const req = client.get(url, (response) => {
+    const req = client.get(
+      url,
+      {
+        headers: {
+          Accept: "application/json",
+          "User-Agent": "BeGO/1.0 routing (https://www.bego.com.ht)"
+        }
+      },
+      (response) => {
       let body = "";
 
       response.setEncoding("utf8");
