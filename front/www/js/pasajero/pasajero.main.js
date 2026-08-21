@@ -7,7 +7,7 @@ import { initPasajeroSocket } from "../socket/pasajero.socket.js?v=20260716-pass
 import { setMapa, limpiarMotoristas } from "../map/map.motorista.js?v=20260711-car-route-center";
 import { initSavedDestinations } from "../map/map.saved-destinations.js?v=20260628-dark-route-locked";
 import { initEnvioPaquete } from "./envio.paquete.js?v=20260628-dark-route-locked";
-import { initHomeOffers } from "../promos/passenger-offers.js?v=20260820-promo-bg-admin";
+import { initHomeOffers } from "../promos/passenger-offers.js?v=20260821-promo-autoplay";
 import { initWalletDiscountUI } from "./wallet-discount.js?v=20260605-price-premium-cancel";
 import { viajeState } from "../viaje/viaje.state.js";
 

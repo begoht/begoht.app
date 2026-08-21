@@ -1,4 +1,4 @@
-import { resetRutaCache } from "../map.ruta.js?v=20260710-route-camera";
+import { resetRutaCache } from "../map.ruta.js?v=20260821-local-route";
 
 let lastEstado = null;
 

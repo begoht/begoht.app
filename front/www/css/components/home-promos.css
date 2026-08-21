@@ -83,6 +83,30 @@
     isolation: isolate;
 }
 
+.home-promo-card-primary {
+    background: linear-gradient(135deg, #2563eb, #0f172a);
+}
+
+.home-promo-card-package {
+    background: linear-gradient(135deg, #0f766e, #111827);
+}
+
+.home-promo-card-wallet {
+    background: linear-gradient(135deg, #7c3aed, #111827);
+}
+
+.home-promo-card-gold {
+    background: linear-gradient(135deg, #b45309, #111827);
+}
+
+.home-promo-card-emerald {
+    background: linear-gradient(135deg, #16a34a, #111827);
+}
+
+.home-promo-card-night {
+    background: linear-gradient(135deg, #0f172a, #1f2937);
+}
+
 .home-promo-link {
     position: relative;
 

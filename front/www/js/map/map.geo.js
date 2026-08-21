@@ -166,7 +166,7 @@ function aplicarUbicacionGps(map, lat, lng, direccion, { center = false, animate
   renderPasajeroMarker(map, lat, lng, direccion, { animate });
 
   if (!center && tieneDestino && distanciaDesdeOrigen >= GPS_ORIGEN_RUTA_LOCK_METERS) {
-    import("./map.ruta.js?v=20260710-route-camera")
+    import("./map.ruta.js?v=20260821-local-route")
       .then(({ dibujarRuta }) => dibujarRuta(origenGps, viajeState.destino, true))
       .catch((err) => console.warn("No se pudo reajustar la ruta al GPS:", err));
   }

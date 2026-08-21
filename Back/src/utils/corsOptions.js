@@ -46,6 +46,7 @@ function buildCorsOptions() {
       return callback(null, false);
     },
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    credentials: true,
     allowedHeaders: [
       "Content-Type",
       "Authorization",

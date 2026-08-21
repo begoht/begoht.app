@@ -1,6 +1,8 @@
 import { getServerUrl } from "../conexion.js";
 import { cityConfig } from "../map/config/index.js?v=20260624-cordoba-gps";
 
+const HOME_PROMO_AUTOPLAY_MS = 4500;
+
 export async function fetchPassengerOffers({ placement = "home", limit = 8 } = {}) {
   const city = cityConfig?.id || "all";
   const url = new URL(`${getServerUrl()}/api/offers/passenger`);
@@ -27,18 +29,26 @@ export async function initHomeOffers() {
   if (!section || !track) return;
 
   section.classList.add("hidden");
+  stopHomePromoAutoplay(section);
   track.innerHTML = "";
   if (dots) dots.innerHTML = "";
 
   try {
     const offers = await fetchPassengerOffers({ placement: "home", limit: 8 });
-    const visibleOffers = offers.filter((offer) => offer.imageUrl);
+    const visibleOffers = offers.filter((offer) => (
+      offer.imageUrl ||
+      offer.title ||
+      offer.description ||
+      offer.discount ||
+      offer.discountLabel
+    ));
     if (!visibleOffers.length) return;
 
     section.classList.remove("hidden");
     track.innerHTML = visibleOffers.map(renderHomeOfferCard).join("");
     renderDots(dots, visibleOffers.length);
-    bindPromoDots(track, dots);
+    const updateActiveDot = bindPromoDots(track, dots);
+    startHomePromoAutoplay(section, track, updateActiveDot);
   } catch (err) {
     console.warn("No se pudieron cargar ofertas publicadas:", err);
   }
@@ -72,11 +82,15 @@ export async function initPromosPage() {
 export function renderHomeOfferCard(offer) {
   const actionRoute = normalizeRoute(offer.actionRoute);
   const imageUrl = normalizeImageUrl(offer.imageUrl);
+  const theme = normalizeTheme(offer.theme);
+  const imageMarkup = imageUrl
+    ? `<img class="home-promo-image" src="${escapeAttr(imageUrl)}" alt="" loading="lazy">`
+    : "";
 
   return `
-    <article class="home-promo-card" data-offer-id="${escapeAttr(offer.id)}">
+    <article class="home-promo-card home-promo-card-${escapeAttr(theme)}" data-offer-id="${escapeAttr(offer.id)}">
       <a class="home-promo-link" href="${escapeAttr(actionRoute)}" data-link>
-        <img class="home-promo-image" src="${escapeAttr(imageUrl)}" alt="" loading="lazy">
+        ${imageMarkup}
         <div class="home-promo-overlay"></div>
         <div class="home-promo-content">
           <div class="home-promo-brand">BeGO</div>
@@ -154,9 +168,9 @@ function renderDots(container, count) {
 }
 
 function bindPromoDots(track, dots) {
-  if (!track || !dots) return;
+  if (!track || !dots) return () => {};
   const buttons = [...dots.querySelectorAll("[data-promo-dot]")];
-  if (!buttons.length) return;
+  if (!buttons.length) return () => {};
 
   buttons.forEach((button, index) => {
     button.addEventListener("click", () => {
@@ -180,6 +194,48 @@ function bindPromoDots(track, dots) {
 
   track.addEventListener("scroll", () => requestAnimationFrame(updateActiveDot), { passive: true });
   updateActiveDot();
+
+  return updateActiveDot;
+}
+
+function startHomePromoAutoplay(section, track, updateActiveDot) {
+  if (!section || !track || track.children.length <= 1) return;
+
+  let pausedUntil = 0;
+  const pauseBriefly = () => {
+    pausedUntil = Date.now() + HOME_PROMO_AUTOPLAY_MS;
+  };
+
+  track.addEventListener("pointerdown", pauseBriefly, { passive: true });
+  track.addEventListener("wheel", pauseBriefly, { passive: true });
+  track.addEventListener("touchstart", pauseBriefly, { passive: true });
+
+  section.__begoPromoAutoTimer = window.setInterval(() => {
+    if (Date.now() < pausedUntil) return;
+
+    const cards = [...track.children];
+    if (cards.length <= 1) return;
+
+    const nearestIndex = cards.reduce((bestIndex, card, index) => {
+      const current = Math.abs(card.offsetLeft - track.scrollLeft);
+      const best = Math.abs(cards[bestIndex].offsetLeft - track.scrollLeft);
+      return current < best ? index : bestIndex;
+    }, 0);
+    const nextCard = cards[(nearestIndex + 1) % cards.length];
+
+    track.scrollTo({
+      left: nextCard.offsetLeft,
+      behavior: "smooth"
+    });
+
+    window.setTimeout(() => updateActiveDot?.(), 420);
+  }, HOME_PROMO_AUTOPLAY_MS);
+}
+
+function stopHomePromoAutoplay(section) {
+  if (!section?.__begoPromoAutoTimer) return;
+  window.clearInterval(section.__begoPromoAutoTimer);
+  section.__begoPromoAutoTimer = null;
 }
 
 function renderLoading() {
@@ -212,6 +268,13 @@ function normalizeImageUrl(value = "") {
   if (!url) return "";
   if (url.startsWith("http") || url.startsWith("/") || url.startsWith("./")) return url;
   return "";
+}
+
+function normalizeTheme(value = "primary") {
+  const theme = String(value || "primary").trim().toLowerCase();
+  return ["primary", "package", "wallet", "gold", "emerald", "night"].includes(theme)
+    ? theme
+    : "primary";
 }
 
 function escapeHtml(value = "") {

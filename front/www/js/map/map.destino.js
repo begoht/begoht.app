@@ -2,7 +2,7 @@
 
 import { viajeState } from "../viaje/viaje.state.js";
 
-import { dibujarRuta } from "./map.ruta.js?v=20260710-route-camera";
+import { dibujarRuta } from "./map.ruta.js?v=20260821-local-route";
 
 import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260624-cordoba-gps";
 

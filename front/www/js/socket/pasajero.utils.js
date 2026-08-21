@@ -3,7 +3,7 @@ import { viajeState } from "../viaje/viaje.state.js";
 import { actualizarBotonViaje } from "../pasajero/ui/boton/botonViaje.ui.js?v=20260623-roundtrip-v2";
 import { cerrarBuscandoMotorista } from "../pasajero/pasajero.ui.js";
 import { limpiarViajePasajero } from "../socket/viaje.limpieza.js";
-import { limpiarRutas } from "../map/map.ruta.js?v=20260710-route-camera";
+import { limpiarRutas } from "../map/map.ruta.js?v=20260821-local-route";
 import { initDriverMinimize } from "../ui/driver.minimize.js?v=20260710-photo-fix";
 import { resetRutaController } from "../map/map.route.flow.js?v=20260710-route-camera";
 import { actualizarETA, resetETA } from "../pasajero/pasajero.eta.js?v=20260713-live-trip-tracking";

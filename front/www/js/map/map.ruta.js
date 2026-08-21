@@ -8,7 +8,7 @@ import {
 import {
   fetchRutaSimple,
   fetchRutaReserva
-} from "./services/map.route.js?v=20260624-cordoba-gps";
+} from "./services/map.route.js?v=20260821-public-osrm";
 
 import {
   renderRuta,
@@ -141,8 +141,25 @@ export async function dibujarRuta(
       return;
     }
 
-    const geometry =
-      data.routes?.[0]?.geometry?.coordinates;
+    const route = data.routes?.[0];
+    const geometry = route?.geometry?.coordinates;
+
+    if (route?.fallback) {
+      console.warn("Ruta OSRM no disponible; se muestra linea recta de respaldo.", {
+        source: route.source,
+        city: data.city
+      });
+
+      renderLineaRecta(
+        map,
+        origen,
+        destino,
+        { fit: !rutaInicialDibujada }
+      );
+      rutaInicialDibujada = true;
+
+      return;
+    }
 
     if (!geometry?.length) {
 
@@ -161,7 +178,7 @@ export async function dibujarRuta(
       ([lng, lat]) => [lat, lng]
     );
 
-    const route =
+    const routeLayer =
       renderRuta(map, coords, {
         fit: !rutaInicialDibujada,
         origen,

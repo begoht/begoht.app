@@ -2,7 +2,7 @@ import {
   dibujarRuta,
   dibujarRutaReserva,
   limpiarRutas
-} from "../map.ruta.js?v=20260710-route-camera";
+} from "../map.ruta.js?v=20260821-local-route";
 
 import {
   mismaPosicion,
