@@ -4,7 +4,7 @@ import {
   consumirRutaDesde,
   seguirMotoristaEnMapa
 } from "./map.js?v=20260712-route-700m-small-pins";
-import { isDriverOnline, updateDriverPosition } from "./driver.status.js?v=20260627-map-icons";
+import { isDriverOnline, updateDriverPosition } from "./driver.status.js?v=20260821-driver-online-fix";
 import { crearMotoIcon, motoIcon } from "./map.icons.js?v=20260718-bego-moto-clean";
 import {
   setMotorcycleMarkerPose
@@ -56,6 +56,7 @@ export async function initGPS(socket) {
   }
 
   await requestBackgroundNotificationPermission();
+  await refreshDriverLocation({ force: true });
 
   if (!startBackgroundGeolocation()) {
     startWebGeolocation();

@@ -14,7 +14,7 @@ import {
 import { setViajeActual, ofertaState, getViajeId, getOfertaExpiraEn } from "./oferta.state.js";
 import { initMiniMapa, renderMiniRuta } from "./oferta.miniMap.js?v=20260614-mobile-runtime";
 import { siguienteDeCola } from "./oferta.queue.js";
-import { isDriverOnline } from "../driver.status.js?v=20260627-map-icons";
+import { isDriverOnline } from "../driver.status.js?v=20260821-driver-online-fix";
 import { formatGourdes, getPaymentLabel, getTripMoney } from "./oferta.money.js?v=20260608-offer-net-cash";
 
 /*************************************************

@@ -1,13 +1,13 @@
-import { renderOferta, limpiarOferta } from "./oferta.render.js?v=20260702-offer-recovery";
+import { renderOferta, limpiarOferta } from "./oferta.render.js?v=20260821-driver-online-fix";
 import { agregarACola } from "./oferta.queue.js";
 import { seenOfertas, ofertaState, CONFIG, getViajeId, getOfertaExpiraEn } from "./oferta.state.js";
 import { notificar, reproducirSonido } from "./oferta.ui.js?v=20260608-offer-net-cash";
-import { registrarViaje } from "../viajeControl/viajeControl.js?v=20260608-offer-net-cash";
+import { registrarViaje } from "../viajeControl/viajeControl.js?v=20260821-driver-online-fix";
 import { setViajeEnCurso } from "../viajeControl/viajeEstado.js";
 import { dibujarRutaPremium } from "../map.js?v=20260712-route-700m-small-pins";
-import { getUltimaPosicion, refreshDriverLocation } from "../gps.js?v=20260716-live-trip-tracking";
-import { isDriverOnline } from "../driver.status.js?v=20260627-map-icons";
-import { normalizarPunto, notificarGuardia } from "../tripGuards.js?v=20260627-map-fluid-arrival";
+import { getUltimaPosicion, refreshDriverLocation } from "../gps.js?v=20260821-driver-online-fix";
+import { isDriverOnline } from "../driver.status.js?v=20260821-driver-online-fix";
+import { normalizarPunto, notificarGuardia } from "../tripGuards.js?v=20260821-driver-online-fix";
 
 const viajesTomadosProcesados = new Set();
 

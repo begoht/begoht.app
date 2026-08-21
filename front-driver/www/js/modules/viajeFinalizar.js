@@ -10,7 +10,7 @@ import { formatGourdes, getPaymentLabel, isCashMethod } from "./oferta/oferta.mo
 import {
     FINISH_MAX_DISTANCE_METERS,
     validarCercaniaViaje
-} from "./tripGuards.js?v=20260627-map-fluid-arrival";
+} from "./tripGuards.js?v=20260821-driver-online-fix";
 
 const viajesFinalizadosProcesados = new Set();
 const finalizacionesPendientes = new Map();

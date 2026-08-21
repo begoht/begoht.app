@@ -1,4 +1,4 @@
-import { isDriverOnline, updateDriverPosition } from "./driver.status.js?v=20260627-map-icons";
+import { isDriverOnline, updateDriverPosition } from "./driver.status.js?v=20260821-driver-online-fix";
 import {
   clearDriverSession,
   refreshDriverAccessToken,
@@ -36,7 +36,7 @@ export function initSocket(serverUrl, token) {
     console.log("🟢 Socket conectado:", socketInstance.id);
     socketInstance.emit("wallet:subscribe");
     socketInstance.emit("driver:availability", { disponible: isDriverOnline() });
-    enviarPosicionActual();
+    enviarPosicionActual({ force: true, source: "socket-connect" });
   });
   
   socketInstance.on("connect_error", async (err) => {
@@ -74,6 +74,9 @@ export function initSocket(serverUrl, token) {
 
   socketInstance.on("session:revoked", () => closeForSecurity("Session fermee."));
   socketInstance.on("sesion-reemplazada", () => closeForSecurity("Session ouverte sur un autre appareil."));
+  socketInstance.on("driver:location-refresh-required", () => {
+    enviarPosicionActual({ force: true, source: "server-refresh" });
+  });
   socketInstance.on("driver:verification-required", (payload) =>
     closeForSecurity(payload?.message || "Compte en attente de verification.")
   );
@@ -81,7 +84,7 @@ export function initSocket(serverUrl, token) {
     closeForSecurity(payload?.message || "Verification retiree.")
   );
 
-  function enviarPosicionActual() {
+  function enviarPosicionActual({ force = false, source = "socket" } = {}) {
     if (!navigator.geolocation) return;
     
     navigator.geolocation.getCurrentPosition(
@@ -96,11 +99,13 @@ export function initSocket(serverUrl, token) {
           lat: pos.coords.latitude,
           lng: pos.coords.longitude,
           heading,
-          disponible: isDriverOnline()
+          disponible: isDriverOnline(),
+          force,
+          source
         });
       },
       (err) => console.error("❌ Error GPS:", err),
-      { enableHighAccuracy: true }
+      { enableHighAccuracy: true, maximumAge: 5000, timeout: 8000 }
     );
   }
 

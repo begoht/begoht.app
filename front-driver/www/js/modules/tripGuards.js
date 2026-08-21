@@ -1,4 +1,4 @@
-import { getUltimaPosicion, refreshDriverLocation } from "./gps.js?v=20260716-live-trip-tracking";
+import { getUltimaPosicion, refreshDriverLocation } from "./gps.js?v=20260821-driver-online-fix";
 import {
   ARRIVAL_MAX_DISTANCE_METERS,
   FINISH_MAX_DISTANCE_METERS,
