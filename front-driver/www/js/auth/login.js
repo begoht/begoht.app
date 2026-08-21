@@ -87,7 +87,10 @@ document.addEventListener("DOMContentLoaded", () => {
       window.location.href = "index.html";
 
     } catch (err) {
-      console.error("Error login:", err.message);
+      console.error("Error login:", err.message, {
+        serverUrl: typeof window.getServerUrl === "function" ? window.getServerUrl() : null,
+        online: navigator.onLine
+      });
       showMsg(err.message || "Error al iniciar sesion");
     } finally {
       btnLogin.disabled = false;

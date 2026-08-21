@@ -1,5 +1,5 @@
 (function () {
-  const PROD_URL = "https://bego.com.ht";
+  const PROD_URL = "https://www.bego.com.ht";
   const DEV_URL = "http://localhost:3000";
 
   function getServerUrl() {
@@ -27,12 +27,12 @@
     // Desarrollo local
     if (hostname === "localhost" || hostname === "127.0.0.1") {
       console.log("Desarrollo local detectado");
-      return `${window.location.protocol}//${hostname}:3000`;
+      return DEV_URL;
     }
 
     // Producción
     console.log("Entorno de produccion");
-    return PROD_URL;
+    return hostname === "www.bego.com.ht" ? window.location.origin : PROD_URL;
   }
 
   window.getServerUrl = getServerUrl;

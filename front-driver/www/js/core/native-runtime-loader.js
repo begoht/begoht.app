@@ -1,5 +1,5 @@
 (function () {
-  const PROD_URL = "https://bego.com.ht";
+  const PROD_URL = "https://www.bego.com.ht";
   const LOAD_TIMEOUT_MS = 8000;
 
   function baseUrl() {
