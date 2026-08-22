@@ -4,13 +4,13 @@ import {
   consumirRutaDesde,
   seguirMotoristaEnMapa
 } from "./map.js?v=20260712-route-700m-small-pins";
-import { isDriverOnline, updateDriverPosition } from "./driver.status.js?v=20260821-driver-online-fix";
+import { isDriverOnline, updateDriverPosition } from "./driver.status.js?v=20260822-driver-gps-real";
 import { crearMotoIcon, motoIcon } from "./map.icons.js?v=20260718-bego-moto-clean";
 import {
   setMotorcycleMarkerPose
 } from "./map.motion.js?v=20260627-map-fluid-arrival";
 import { patchDriverLocation } from "./gps/gps.http.js?v=20260716-driver-gps-http";
-import { normalizePosition, readFreshPosition } from "./gps/gps.position.js?v=20260711-driver-gps-position";
+import { normalizePosition, readFreshPosition } from "./gps/gps.position.js?v=20260822-driver-gps-real";
 
 let ultimaPosicion = null;
 let ultimaLectura = null;
@@ -26,6 +26,7 @@ let ultimaEmisionHttpTime = 0;
 let httpFallbackInFlight = false;
 let heartbeatTimer = null;
 let heartbeatInFlight = false;
+let lastGpsWatchWarningAt = 0;
 
 const FRECUENCIA_MS = 4000;
 const HEARTBEAT_MS = 12000;
@@ -168,11 +169,24 @@ function startWebGeolocation() {
 
   webWatchId = navigator.geolocation.watchPosition(
     (pos) => handlePosition(pos, { source: "web" }),
-    (err) => console.error("GPS error:", err),
+    (err) => {
+      const now = Date.now();
+      if (now - lastGpsWatchWarningAt > 15000) {
+        lastGpsWatchWarningAt = now;
+        console.warn("GPS watch pendiente:", err?.message || err);
+      }
+      window.dispatchEvent(new CustomEvent("driver:gps-unavailable", {
+        detail: {
+          code: err?.code,
+          message: err?.message || "GPS no disponible",
+          source: "watch"
+        }
+      }));
+    },
     {
       enableHighAccuracy: true,
-      maximumAge: 5000,
-      timeout: 10000
+      maximumAge: 15000,
+      timeout: 20000
     }
   );
 }

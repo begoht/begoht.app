@@ -51,21 +51,37 @@
     ================================================== -->
 
     <title>
-       BeGO Haïti — Transport, voyages et livraison
+       BeGO Haïti | Transport moto, voyages et livraison
     </title>
 
     <meta
         name="description"
-        content="BeGO est une plateforme de transport en Haïti pour réserver un voyage, envoyer des colis et devenir chauffeur."
+        content="Site officiel de BeGO Haïti: transport moto, voyages, livraison de colis, wallet et inscription chauffeur. Téléchargez l'application BeGO."
         >
 
     <meta
         name="keywords"
-        content="BeGO, BeGO Haïti, transport Haïti, voyages Haïti, chauffeur Haïti, livraison Haïti"
+        content="BeGO, BeGO Haiti, BeGO Haïti, BeGO livraison, BeGO transport, transport moto Haiti, livraison Haiti, chauffeur BeGO, app BeGO"
         >
+
+    <meta
+        name="application-name"
+        content="BeGO"
+    >
+
+    <meta
+        name="apple-mobile-web-app-title"
+        content="BeGO Haïti"
+    >
 
     <link
         rel="canonical"
+        href="https://www.bego.com.ht/"
+    >
+
+    <link
+        rel="alternate"
+        hreflang="fr-HT"
         href="https://www.bego.com.ht/"
     >
 
@@ -76,12 +92,12 @@
 
     <meta
         property="og:title"
-        content="BeGO Haïti — Transport, voyages et livraison"
+        content="BeGO Haïti | Transport moto, voyages et livraison"
     >
 
     <meta
         property="og:description"
-        content="BeGO est une plateforme de transport en Haïti pour réserver un voyage, envoyer des colis et devenir chauffeur."
+        content="Site officiel de BeGO Haïti: réservez un voyage, envoyez un colis, utilisez le wallet ou devenez chauffeur."
     >
 
     <meta
@@ -126,12 +142,12 @@
 
     <meta
         name="twitter:title"
-        content="BeGO Haïti — Transport, voyages et livraison"
+        content="BeGO Haïti | Transport moto, voyages et livraison"
     >
 
     <meta
         name="twitter:description"
-        content="BeGO est une plateforme de transport en Haïti pour réserver un voyage, envoyer des colis et devenir chauffeur."
+        content="Site officiel de BeGO Haïti: transport moto, livraison de colis, wallet et inscription chauffeur."
     >
 
     <meta
@@ -156,7 +172,13 @@
             "@context": "https://schema.org",
             "@type": "WebSite",
             "name": "BeGO",
-            "url": "https://www.bego.com.ht/"
+            "alternateName": [
+                "BeGO Haïti",
+                "BeGO Haiti",
+                "BeGO Livraison"
+            ],
+            "url": "https://www.bego.com.ht/",
+            "inLanguage": "fr-HT"
         }
 
     </script>
@@ -173,15 +195,55 @@
             "@context": "https://schema.org",
             "@type": "Organization",
             "name": "BeGO",
+            "alternateName": [
+                "BeGO Haïti",
+                "BeGO Haiti",
+                "BeGO Livraison"
+            ],
             "url": "https://www.bego.com.ht/",
             "logo": "https://www.bego.com.ht/front/bego-web/assets/images/logo-bego.png",
-            "description": "BeGO est une plateforme de transport en Haïti pour réserver des voyages, envoyer des colis et devenir chauffeur.",
+            "description": "BeGO est la plateforme de transport moto, de voyages, de livraison de colis et de wallet en Haïti.",
             "areaServed": {
                 "@type": "Country",
                 "name": "Haïti"
-            }
+            },
+            "sameAs": [
+                "https://instagram.com/bego.haiti",
+                "https://www.tiktok.com/@bego.ht",
+                "https://facebook.com/bego.haiti"
+            ]
         }
 
+
+    </script>
+
+    <!-- =================================================
+         DONNÉES STRUCTURÉES
+         SERVICES
+    ================================================== -->
+
+    <script type="application/ld+json">
+
+        {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": "BeGO Haïti transport moto et livraison",
+            "alternateName": "BeGO livraison",
+            "serviceType": "Transport moto, voyages et livraison de colis",
+            "provider": {
+                "@type": "Organization",
+                "name": "BeGO",
+                "url": "https://www.bego.com.ht/"
+            },
+            "areaServed": {
+                "@type": "Country",
+                "name": "Haïti"
+            },
+            "availableChannel": {
+                "@type": "ServiceChannel",
+                "serviceUrl": "https://www.bego.com.ht/front/bego-web/components/telecharger/telecharger.html"
+            }
+        }
 
     </script>
 
@@ -223,6 +285,15 @@
     <link
         rel="stylesheet"
         href="/front/bego-web/components/footer/footer.css"
+    >
+
+    <!-- =================================================
+         HERO / LANCEMENT
+    ================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="/front/bego-web/css/hero.css"
     >
 
 
@@ -319,6 +390,48 @@
 
     <main>
 
+        <!-- =================================================
+             HERO
+        ================================================== -->
+
+        <section
+            id="inicio"
+            class="bego-hero"
+        >
+
+            <div class="bego-hero__media" aria-hidden="true">
+                <img
+                    src="/front/bego-web/assets/images/bego1.png"
+                    alt=""
+                    class="bego-hero__image"
+                    fetchpriority="high"
+                    decoding="async"
+                >
+            </div>
+
+            <div class="bego-hero__content">
+                
+                <h1>
+                    Transport moto et livraisons
+                    <span>dans une seule app</span>
+                </h1>
+                
+                <p>
+                    Réservez un trajet, envoyez un colis ou devenez chauffeur
+                    avec une plateforme pensée pour les déplacements du quotidien
+                    en Haïti.
+                </p>
+                
+                <div class="bego-hero__proof" aria-label="Points forts BeGO">
+                    <span>Prix estimé avant confirmation</span>
+                    <span>Suivi en temps réel</span>
+                    <span>Support et sécurité</span>
+                </div>
+                
+            </div>
+
+        </section>
+
 
         <!-- =================================================
              VOYAGES
@@ -327,8 +440,6 @@
         <div
             id="voyages-container"
         ></div>
-
-
 
         <!-- =================================================
              CHAUFFEURS
@@ -368,8 +479,13 @@
 
                 <h2>
                     Demander un voyage
-                    <span>es très simple.</span>
+                    <span>est très simple.</span>
                 </h2>
+
+                <p>
+                    Chaque étape est pensée pour confirmer le prix, le trajet
+                    et le chauffeur avant le départ.
+                </p>
 
             </div>
 
@@ -409,10 +525,9 @@
 
 
                             <p>
-                                Indique ou tu veux aller et la
-                                application tracera le chemin
-                                et te montrera le prix estimé
-                                de ton voyage.
+                                Indiquez où vous voulez aller. L'application
+                                trace le trajet et affiche le prix estimé
+                                avant la confirmation.
                             </p>
 
                         </div>
@@ -463,16 +578,15 @@
 
 
                             <h3>
-                                choisir le mode de paiement
+                                Choisir le mode de paiement
                             </h3>
 
 
                             <p>
                                 Choisissez le mode de paiement
                                 que vous souhaitez utiliser pour
-                                votre voyage. Vous pouvez payer
-                                en espèces ou avec votre carte
-                                de debit.
+                                votre voyage, selon les options
+                                disponibles dans l'application.
                             </p>
 
                         </div>
@@ -523,15 +637,13 @@
 
 
                             <h3>
-                                Appuyer sur le bouton pour
-                                demander votre voyage
+                                Demander votre voyage
                             </h3>
 
 
                             <p>
-                                Appuyez sur le bouton pour demander
-                                votre voyage et attendez qu'un
-                                chauffeur accepte votre demande.
+                                Lancez la demande et attendez qu'un
+                                chauffeur disponible accepte votre trajet.
                             </p>
 
                         </div>
@@ -582,13 +694,13 @@
 
 
                             <h3>
-                                Confirmer le voyage
+                                Confirmer le prix
                             </h3>
 
 
                             <p>
-                                Confirmez votre demande et attendez
-                                qu'un chauffeur accepte votre demande.
+                                Confirmer le prix avant 
+                                de chercher le chauffeur.
                             </p>
 
                         </div>
@@ -625,6 +737,60 @@
         <div
             id="a-propos-container"
         ></div>
+
+        <!-- =================================================
+             CONFIANCE
+        ================================================== -->
+
+        <section class="bego-trust" id="securite">
+            <div class="bego-trust__header">
+                <h2>
+                    Les détails qui rassurent
+                    <strong>avant chaque course.</strong>
+                </h2>
+            </div>
+
+            <div class="bego-trust__grid">
+                <article>
+                    <span aria-hidden="true">01</span>
+                    <h3>Chauffeurs identifiés</h3>
+                    <p>Les informations du chauffeur et du voyage restent visibles pendant la course.</p>
+                </article>
+
+                <article>
+                    <span aria-hidden="true">02</span>
+                    <h3>Prix transparent</h3>
+                    <p>Le montant estimé est présenté avant de lancer la recherche.</p>
+                </article>
+
+                <article>
+                    <span aria-hidden="true">03</span>
+                    <h3>Livraison protégée</h3>
+                    <p>Les envois peuvent utiliser un code de sécurité pour confirmer la remise du colis.</p>
+                </article>
+            </div>
+        </section>
+
+        <!-- =================================================
+             ZONES
+        ================================================== -->
+
+        <section class="bego-areas" id="zones">
+            <div>
+                <span>ZONES DE SERVICE</span>
+                <h2>BeGO se prépare pour les trajets urbains et les livraisons locales.</h2>
+            </div>
+
+            <ul aria-label="Zones BeGO">
+                <li>Jacmel</li>
+                <li>Autres villes à venir</li>
+            </ul>
+        </section>
+
+        <!-- =================================================
+             FAQ
+        ================================================== -->
+
 
 
 

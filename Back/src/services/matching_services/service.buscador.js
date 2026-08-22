@@ -26,6 +26,21 @@ function getGeoKeyForViaje(viaje, origen) {
   return cityId ? `${GEO_KEY}:${cityId}` : GEO_KEY;
 }
 
+async function buscarGeo({ geoKey, lng, lat, radio }) {
+  return redis.call(
+    "GEOSEARCH",
+    geoKey,
+    "FROMLONLAT",
+    String(lng),
+    String(lat),
+    "BYRADIUS",
+    String(radio),
+    "km",
+    "WITHDIST",
+    "ASC"
+  );
+}
+
 function calcularScore({ dist, enViaje, kmRestantes }) {
   let score = dist;
 
@@ -68,18 +83,15 @@ async function obtenerCandidatos(viaje, radioKm = DISTANCIA_MAX_KM) {
 
     if (cancelado || estado === "aceptado") return [];
 
-    const raw = await redis.call(
-      "GEOSEARCH",
-      geoKey,
-      "FROMLONLAT",
-      String(lng),
-      String(lat),
-      "BYRADIUS",
-      String(radio),
-      "km",
-      "WITHDIST",
-      "ASC"
-    );
+    let raw = await buscarGeo({ geoKey, lng, lat, radio });
+
+    if (!raw?.length && geoKey !== GEO_KEY) {
+      if (DEBUG) {
+        console.log(`BUSQUEDA -> sin datos en ${geoKey}; fallback geo:${GEO_KEY}`);
+      }
+
+      raw = await buscarGeo({ geoKey: GEO_KEY, lng, lat, radio });
+    }
 
     if (!raw?.length) return [];
 

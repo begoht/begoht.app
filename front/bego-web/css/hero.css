@@ -1,0 +1,238 @@
+.bego-hero {
+    position: relative;
+    min-height: 92vh;
+    display: grid;
+    align-items: end;
+    padding: 140px clamp(20px, 5vw, 80px) 56px;
+    overflow: hidden;
+    color: #ffffff;
+    background: #050505;
+}
+
+.bego-hero__media {
+    position: absolute;
+    inset: 0;
+}
+
+.bego-hero__media::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(90deg, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.56) 42%, rgba(0, 0, 0, 0.16) 100%),
+        linear-gradient(180deg, rgba(0, 0, 0, 0.12) 0%, rgba(0, 0, 0, 0.78) 100%);
+}
+
+.bego-hero__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.bego-hero__content {
+    position: relative;
+    z-index: 1;
+    width: min(780px, 100%);
+}
+
+.bego-hero__eyebrow,
+.bego-trust__header > span,
+.bego-areas span {
+    display: inline-flex;
+    margin-bottom: 18px;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.76rem;
+    font-weight: 900;
+    letter-spacing: 0;
+}
+
+.bego-hero h1 {
+    margin: 0;
+    font-size: clamp(3.5rem, 7vw, 6.8rem);
+    line-height: 0.92;
+    letter-spacing: 0;
+}
+
+.bego-hero h1 span {
+    display: block;
+    color: rgba(255, 255, 255, 0.72);
+}
+
+.bego-hero p {
+    width: min(650px, 100%);
+    margin: 24px 0 0;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: clamp(1rem, 2vw, 1.28rem);
+    line-height: 1.55;
+}
+
+.bego-hero__actions,
+.bego-hero__proof {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 30px;
+}
+
+.bego-hero__button {
+    min-height: 54px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 0 22px;
+    border-radius: 999px;
+    font-weight: 850;
+    transition: transform 180ms ease, background 180ms ease, color 180ms ease;
+}
+
+.bego-hero__button:hover {
+    transform: translateY(-2px);
+}
+
+.bego-hero__button--primary {
+    color: #050505;
+    background: #ffffff;
+}
+
+.bego-hero__button--secondary {
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+}
+
+.bego-hero__proof {
+    margin-top: 26px;
+}
+
+.bego-hero__proof span {
+    padding: 10px 13px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+    color: rgba(255, 255, 255, 0.78);
+    background: rgba(0, 0, 0, 0.28);
+    font-size: 0.88rem;
+}
+
+.bego-trust,
+.bego-areas {
+    padding: clamp(76px, 9vw, 130px) clamp(20px, 5vw, 80px);
+}
+
+.bego-trust {
+    color: #ffffff;
+    background: #050505;
+}
+
+.bego-trust__header {
+    width: min(780px, 100%);
+}
+
+.bego-trust__header h2,
+.bego-areas h2 {
+    margin: 0;
+    font-size: clamp(2.2rem, 5vw, 4.8rem);
+    line-height: 0.98;
+    letter-spacing: 0;
+}
+
+.bego-trust__header strong {
+    display: block;
+    color: rgba(255, 255, 255, 0.62);
+    font-weight: inherit;
+}
+
+.bego-trust__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 42px;
+}
+
+.bego-trust__grid article {
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.055);
+}
+
+.bego-trust__grid article {
+    min-height: 240px;
+    padding: 24px;
+}
+
+.bego-trust__grid span {
+    color: rgba(255, 255, 255, 0.45);
+    font-weight: 900;
+}
+
+.bego-trust__grid h3 {
+    margin: 54px 0 10px;
+    font-size: 1.35rem;
+}
+
+.bego-trust__grid p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.68);
+    line-height: 1.55;
+}
+
+.bego-areas {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+    gap: 40px;
+    align-items: center;
+    color: #050505;
+    background: #ffffff;
+}
+
+.bego-areas span {
+    color: rgba(0, 0, 0, 0.52);
+}
+
+.bego-areas ul {
+    display: grid;
+    gap: 10px;
+}
+
+.bego-areas li {
+    padding: 18px 20px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    font-weight: 850;
+    background: #f6f6f6;
+}
+
+@media (max-width: 900px) {
+    .bego-hero {
+        min-height: 88vh;
+        padding-top: 120px;
+    }
+
+    .bego-hero__media::after {
+        background:
+            linear-gradient(180deg, rgba(0, 0, 0, 0.34) 0%, rgba(0, 0, 0, 0.92) 100%),
+            linear-gradient(90deg, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.14));
+    }
+
+    .bego-trust__grid,
+    .bego-areas {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 520px) {
+    .bego-hero {
+        min-height: 86vh;
+        padding-bottom: 34px;
+    }
+
+    .bego-hero__button {
+        width: 100%;
+    }
+
+    .bego-hero__proof span {
+        width: 100%;
+    }
+}

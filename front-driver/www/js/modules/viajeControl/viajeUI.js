@@ -9,12 +9,12 @@ import {
     setLlegadaRetryTimeout,
     setLlegadaLock
 } from "./viajeEstado.js";
-import { inicializarAccionesViaje } from "./viajeEvents.js?v=20260821-driver-online-fix";
+import { inicializarAccionesViaje } from "./viajeEvents.js?v=20260822-driver-gps-real";
 import {
     actualizarBotonCobro,
     actualizarDetalleViaje,
     actualizarResumenReserva
-} from "./viajeRender.js?v=20260821-driver-online-fix";
+} from "./viajeRender.js?v=20260822-driver-gps-real";
 import { obtenerViajeActualUI } from "./viajeSelectors.js?v=20260711-trip-selectors";
 import { mostrarPanelViaje, ocultarPanelViaje } from "./viajeSheet.js?v=20260713-live-trip-tracking";
 
@@ -78,7 +78,7 @@ export function limpiarViajeMain(ui = {}) {
     clearTimeout(llegadaRetryTimeout);
     setLlegadaRetryTimeout(null);
 
-    import("../oferta/oferta.render.js?v=20260821-driver-online-fix").then(mod => {
+    import("../oferta/oferta.render.js?v=20260822-driver-gps-real").then(mod => {
         mod.limpiarOferta();
     }).catch(err => {
         console.warn("No se pudo limpiar oferta:", err);

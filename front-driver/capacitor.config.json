@@ -10,8 +10,5 @@
   },
   "server": {
     "androidScheme": "https"
-  },
-  "android": {
-    "useLegacyBridge": true
   }
 }

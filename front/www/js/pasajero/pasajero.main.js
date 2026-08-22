@@ -1,7 +1,7 @@
 import { initGeo } from "../map/map.geo.js?v=20260711-map-geo-split";
 import { initSeleccionDestino } from "../map/map.destino.js?v=20260710-route-camera";
-import { actualizarBotonViaje } from "../pasajero/pasajero.ui.js?v=20260713-passenger-connection-hotfix";
-import { initPaymentMethodSettings, initToggleMenuDriver, seleccionarPago } from "./pasajero.ui.js?v=20260713-passenger-connection-hotfix";
+import { actualizarBotonViaje } from "../pasajero/pasajero.ui.js?v=20260821-precio-folder-stable";
+import { initPaymentMethodSettings, initToggleMenuDriver, seleccionarPago } from "./pasajero.ui.js?v=20260821-precio-folder-stable";
 import { getSocket } from "../socket/socket.js?v=20260713-passenger-connection-hotfix";
 import { initPasajeroSocket } from "../socket/pasajero.socket.js?v=20260716-passenger-connection-hotfix";
 import { setMapa, limpiarMotoristas } from "../map/map.motorista.js?v=20260711-car-route-center";

@@ -1,4 +1,8 @@
-import { isDriverOnline, updateDriverPosition } from "./driver.status.js?v=20260821-driver-online-fix";
+import {
+  getCachedDriverPosition,
+  isDriverOnline,
+  updateDriverPosition
+} from "./driver.status.js?v=20260822-driver-gps-real";
 import {
   clearDriverSession,
   refreshDriverAccessToken,
@@ -86,25 +90,46 @@ export function initSocket(serverUrl, token) {
 
   function enviarPosicionActual({ force = false, source = "socket" } = {}) {
     if (!navigator.geolocation) return;
-    
+
+    const emitPosition = ({ lat, lng, heading = null }, positionSource) => {
+      updateDriverPosition({ lat, lng, heading });
+      socketInstance.emit("motoristas:ubicacion", {
+        lat,
+        lng,
+        heading,
+        disponible: isDriverOnline(),
+        force,
+        source: positionSource
+      });
+    };
+
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const heading = Number.isFinite(pos.coords.heading) ? pos.coords.heading : null;
-        updateDriverPosition({
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude
-        });
-        socketInstance.emit("driver:availability", { disponible: isDriverOnline() });
-        socketInstance.emit("motoristas:ubicacion", {
+        emitPosition({
           lat: pos.coords.latitude,
           lng: pos.coords.longitude,
-          heading,
-          disponible: isDriverOnline(),
-          force,
-          source
-        });
+          heading
+        }, source);
       },
-      (err) => console.error("❌ Error GPS:", err),
+      (err) => {
+        const fallback = getCachedDriverPosition();
+
+        if (fallback) {
+          console.warn("GPS no disponible; usando ultima posicion real guardada:", err?.message || err);
+          emitPosition(fallback, `${source}:cache`);
+          return;
+        }
+
+        console.error("❌ Error GPS:", err);
+        window.dispatchEvent(new CustomEvent("driver:gps-unavailable", {
+          detail: {
+            code: err?.code,
+            message: err?.message || "GPS no disponible",
+            source
+          }
+        }));
+      },
       { enableHighAccuracy: true, maximumAge: 5000, timeout: 8000 }
     );
   }

@@ -1,6 +1,6 @@
 // handlers/precio.handler.js
 import { viajeState } from "../../viaje/viaje.state.js";
-import { mostrarModalPrecio, mostrarBuscandoMotorista } from "../../pasajero/pasajero.ui.js";
+import { mostrarModalPrecio, mostrarBuscandoMotorista } from "../../pasajero/pasajero.ui.js?v=20260821-precio-folder-stable";
 import { guardarSesionViaje } from "../pasajero.utils.js?v=20260713-live-trip-tracking";
 import { actualizarBotonViaje } from "../../pasajero/ui/boton/botonViaje.ui.js?v=20260623-roundtrip-v2";
 import { cityConfig } from "../../map/config/index.js?v=20260624-cordoba-gps";

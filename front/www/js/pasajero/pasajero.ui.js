@@ -14,7 +14,7 @@ export {
 } from "./ui/overlays/buscandoMotorista.ui.js?v=20260608-search-modal";
 
 export { mostrarModalConfirmacion } from "./ui/modales/modalConfirmacion.ui.js";
-export { mostrarModalPrecio } from "./ui/modales/modalPrecio.ui.js?v=20260623-roundtrip-v2";
+export { mostrarModalPrecio } from "./ui/modales/precio/modalPrecio.js?v=20260821-precio-folder-stable";
 export { mostrarModalConfirmarCancelacion } from "./ui/modales/modalCancelacion.ui.js";
 
 export {

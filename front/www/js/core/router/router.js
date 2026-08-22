@@ -2,7 +2,7 @@ import { routes } from "./router.routes.js?v=20260821-promo-autoplay";
 import { renderLayout } from "./router.render.js?v=20260628-dark-route-locked";
 import { runCleanup, setCleanup } from "./router.cleanup.js";
 import { afterRender, pushURL, actualizarLinksActivos } from "./router.utils.js";
-import { runPageInit } from "../app/app.lifecycle.js?v=20260821-local-route-promos";
+import { runPageInit } from "../app/app.lifecycle.js?v=20260820-promo-bg-admin";
 import { AppState } from "../state.js";
 import { stopGeo } from "../../map/map.geo.js?v=20260711-map-geo-split";
 

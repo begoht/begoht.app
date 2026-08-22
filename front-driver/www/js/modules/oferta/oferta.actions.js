@@ -1,8 +1,8 @@
 import { ofertaState, setLastDecision, getViajeId, CONFIG } from "./oferta.state.js";
 import { UI, notificar, resetBotonAceptar, ocultarPanel, detenerSonidoOferta } from "./oferta.ui.js?v=20260608-offer-net-cash";
-import { getUltimaPosicion, setUltimaPosicion } from "../gps.js?v=20260821-driver-online-fix";
-import { limpiarOferta } from "./oferta.render.js?v=20260821-driver-online-fix";
-import { getDriverAvailability, isDriverOnline } from "../driver.status.js?v=20260821-driver-online-fix";
+import { getUltimaPosicion, setUltimaPosicion } from "../gps.js?v=20260822-driver-gps-real";
+import { limpiarOferta } from "./oferta.render.js?v=20260822-driver-gps-real";
+import { getDriverAvailability, isDriverOnline } from "../driver.status.js?v=20260822-driver-gps-real";
 
 export async function aceptarViaje(socket) {
   if (!isDriverOnline()) {

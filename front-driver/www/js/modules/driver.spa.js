@@ -1,4 +1,4 @@
-import { getDriverAvailability, onDriverAvailabilityChange } from "./driver.status.js?v=20260821-driver-online-fix";
+import { getDriverAvailability, onDriverAvailabilityChange } from "./driver.status.js?v=20260822-driver-gps-real";
 import { initDriverSupportChat } from "./support/supportChat.js?v=20260716-chat-history";
 import {
   clearDriverSession,

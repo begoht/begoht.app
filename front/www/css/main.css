@@ -14,7 +14,6 @@
 @import "./layout/app-layout.css";
 
 /* 5. COMPONENTES (botones, cards, etc) */
-@import "./components/buttons.css";
 @import "./components/cards.css";
 @import "./components/cuentas.css?v=20260607-mobile-pages-2x2";
 @import "./components/home-promos.css?v=20260820-promo-bg-admin";
@@ -30,13 +29,10 @@
 @import "./pages/actividad.css?v=20260605-rating-premium";
 @import "./pages/detalle-viaje.css?v=20260605-rating-premium";
 @import "./components/trip-finished.css?v=20260629-email-receipt";
-@import "./pages/billetera.css";
 @import "./pages/pagos.css?v=20260607-payments-mobile";
 @import "./pages/configuracion.css?v=20260607-config-functional";
-@import "./pages/perfil.css";
 @import "./pages/ganancias.css?v=20260605-earnings-page";
 @import "./pages/seguridad.css?v=20260607-support-grid-fix";
-@import "./pages/familia.css";
 @import "./pages/ayuda.css?v=20260712-assistance-footer-clearance";
 @import "./pages/soporte.css?v=20260607-support-grid-fix";
 @import "./pages/recarga.css?v=20260602-recarga-premium";
@@ -45,7 +41,6 @@
 @import "./pages/noticias.css?v=20260629-news-push";
 
 /* 7. 🔥 OVERRIDES GLOBALES (ESTO TE FALTA) */
-@import "./base/theme.css";
 @import "./components/map-motion.css?v=20260710-route-camera";
 @import "./components/arrival.css?v=20260628-dark-route-locked";
 

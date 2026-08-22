@@ -1,51 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-
     <url>
         <loc>https://www.bego.com.ht/</loc>
         <lastmod>2026-08-22</lastmod>
         <changefreq>weekly</changefreq>
         <priority>1.0</priority>
     </url>
-
-    <url>
-        <loc>https://www.bego.com.ht/front/bego-web/index.html</loc>
-        <lastmod>2026-08-22</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>1.0</priority>
-    </url>
-
     <url>
         <loc>https://www.bego.com.ht/front/bego-web/components/telecharger/telecharger.html</loc>
         <lastmod>2026-08-22</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.9</priority>
     </url>
-
+    <url>
+        <loc>https://www.bego.com.ht/front-driver/www/registro.html</loc>
+        <lastmod>2026-08-22</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
     <url>
         <loc>https://www.bego.com.ht/front/bego-web/components/centre-aide/centre-aide.html</loc>
         <lastmod>2026-08-22</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
     </url>
-
     <url>
-        <loc>https://www.bego.com.ht/registro.html</loc>
-        <changefreq>monthly</changefreq>
-        <priority>0.8</priority>
-    </url>
-
-    <url>
-        <loc>https://www.bego.com.ht/legal.html</loc>
-        <changefreq>monthly</changefreq>
-        <priority>0.7</priority>
-    </url>
-
-    <url>
-        <loc>https://www.bego.com.ht/delete-account.html</loc>
+        <loc>https://www.bego.com.ht/front/bego-web/components/politique-confidentialite/politique-confidentialite.html</loc>
+        <lastmod>2026-08-22</lastmod>
         <changefreq>yearly</changefreq>
-        <priority>0.4</priority>
+        <priority>0.5</priority>
     </url>
-
 </urlset>

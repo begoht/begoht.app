@@ -1,9 +1,12 @@
 const AVAILABILITY_KEY = "driver:availability";
+const LAST_POSITION_KEY = "driver:lastPosition:v2";
+const LAST_POSITION_MAX_AGE_MS = 10 * 60 * 1000;
 
 let socketRef = null;
 let online = localStorage.getItem(AVAILABILITY_KEY) !== "0";
 let lastPosition = null;
 let lastHeading = null;
+let lastGpsUnavailableToastAt = 0;
 
 const subscribers = new Set();
 
@@ -11,6 +14,7 @@ export function initDriverStatus(socket) {
   socketRef = socket;
   bindAvailabilityButton();
   bindSocketEvents();
+  bindGpsUnavailableNotice();
   renderAvailability();
 
   if (!lastPosition && navigator.geolocation) {
@@ -57,6 +61,46 @@ export function updateDriverPosition(position) {
   if (position.heading != null && Number.isFinite(Number(position.heading))) {
     lastHeading = Number(position.heading);
   }
+
+  try {
+    localStorage.setItem(LAST_POSITION_KEY, JSON.stringify({
+      lat: lastPosition.lat,
+      lng: lastPosition.lng,
+      heading: lastHeading,
+      savedAt: Date.now()
+    }));
+  } catch {}
+}
+
+export function getCachedDriverPosition(maxAgeMs = LAST_POSITION_MAX_AGE_MS) {
+  if (lastPosition) {
+    return {
+      ...lastPosition,
+      heading: lastHeading
+    };
+  }
+
+  try {
+    const parsed = JSON.parse(localStorage.getItem(LAST_POSITION_KEY) || "null");
+    const lat = Number(parsed?.lat);
+    const lng = Number(parsed?.lng);
+    const heading = parsed?.heading == null ? null : Number(parsed.heading);
+    const savedAt = Number(parsed?.savedAt || 0);
+
+    if (
+      Number.isFinite(lat) &&
+      Number.isFinite(lng) &&
+      (!savedAt || Date.now() - savedAt <= maxAgeMs)
+    ) {
+      return {
+        lat,
+        lng,
+        heading: Number.isFinite(heading) ? heading : null
+      };
+    }
+  } catch {}
+
+  return null;
 }
 
 export function setDriverAvailability(nextOnline, { silent = false } = {}) {
@@ -77,7 +121,7 @@ export function setDriverAvailability(nextOnline, { silent = false } = {}) {
 
   if (!online) {
     Promise.all([
-      import("./oferta/oferta.render.js?v=20260821-driver-online-fix"),
+      import("./oferta/oferta.render.js?v=20260822-driver-gps-real"),
       import("./oferta/oferta.queue.js")
     ])
       .then(([{ limpiarOferta }, { limpiarColaOfertas }]) => {
@@ -140,6 +184,23 @@ function bindSocketEvents() {
     const deuda = Number(status.comisionPendiente || 0).toLocaleString("fr-HT");
     const limite = Number(status.comisionLimite || status.commissionDebtLimit || 0).toLocaleString("fr-HT");
     showToast(`Commission BeGO pendiente: ${deuda} G / limite ${limite} G. Paga en Wallet.`, "#dc2626");
+  });
+}
+
+function bindGpsUnavailableNotice() {
+  if (window.__driverGpsUnavailableNoticeBound) return;
+  window.__driverGpsUnavailableNoticeBound = true;
+
+  window.addEventListener("driver:gps-unavailable", (event) => {
+    const now = Date.now();
+    if (now - lastGpsUnavailableToastAt < 15000) return;
+    lastGpsUnavailableToastAt = now;
+
+    const message = event?.detail?.code === 1
+      ? "Autorise la position GPS pour recevoir des courses."
+      : "GPS en attente. Verifie la position du navigateur ou de Windows.";
+
+    showToast(message, "#dc2626");
   });
 }
 

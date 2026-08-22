@@ -1,5 +1,5 @@
 import { formatGourdes, getTripMoney, isCashMethod } from "../oferta/oferta.money.js?v=20260608-offer-net-cash";
-import { getUltimaPosicion } from "../gps.js?v=20260821-driver-online-fix";
+import { getUltimaPosicion } from "../gps.js?v=20260822-driver-gps-real";
 import { getViajeEnCursoId } from "./viajeEstado.js";
 import {
     formatearMetodoPago,
